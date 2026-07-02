@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How was Mum's Day?</title>
+<style>
+* {
+box-sizing: border-box;
+}
+
+body {
+margin: 0;
+padding: 0;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+overflow: hidden;
+transition: background 0.5s ease;
+}
+
+/* --- THE CARTOON MUM (CSS Art) --- */
+.character-container {
+position: relative;
+width: 150px;
+height: 180px;
+margin-bottom: 20px;
+}
+
+.hair {
+position: absolute;
+top: 10px;
+left: 20px;
+width: 110px;
+height: 90px;
+background-color: #f39c12; /* Orange/Ginger hair */
+border-radius: 50% 50% 20% 20%;
+}
+
+.hair-bun {
+position: absolute;
+top: -15px;
+left: 50px;
+width: 50px;
+height: 50px;
+background-color: #f39c12;
+border-radius: 50%;
+}
+
+.head {
+position: absolute;
+top: 35px;
+left: 30px;
+width: 90px;
+height: 100px;
+background-color: #ffdbac; /* Skin tone */
+border-radius: 40% 40% 50% 50%;
+display: flex;
+justify-content: center;
+}
+
+.eyes {
+position: absolute;
+top: 35px;
+width: 60px;
+display: flex;
+justify-content: space-between;
+}
+
+.eye {
+width: 12px;
+height: 12px;
+background-color: #333;
+border-radius: 50%;
+transition: all 0.2s ease;
+}
+
+.smile {
+position: absolute;
+top: 55px;
+width: 35px;
+height: 20px;
+border-bottom: 4px solid #333;
+border-radius: 0 0 50% 50%;
+transition: all 0.2s ease;
+}
+
+/* --- INTERACTIVE INTERFACE --- */
+.caption {
+font-size: 2.5rem;
+color: #2c3e50;
+margin-bottom: 30px;
+text-align: center;
+text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.btn-container {
+display: flex;
+gap: 20px;
+z-index: 10;
+}
+
+.btn {
+padding: 15px 40px;
+font-size: 1.5rem;
+font-weight: bold;
+border: none;
+border-radius: 50px;
+cursor: pointer;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.btn:active {
+transform: scale(0.95);
+}
+
+.btn-good {
+background-color: #2ecc71;
+color: white;
+}
+
+.btn-bad {
+background-color: #e74c3c;
+color: white;
+}
+
+/* --- ANIMATION CANVAS STYLING --- */
+#effect-canvas {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+pointer-events: none;
+z-index: 1;
+}
+
+/* Screen Shake for Bad Day */
+@keyframes shake {
+0% { transform: translate(1px, 1px) rotate(0deg); }
+10% { transform: translate(-1px, -2px) rotate(-1deg); }
+20% { transform: translate(-3px, 0px) rotate(1deg); }
+30% { transform: translate(0px, 2px) rotate(0deg); }
+40% { transform: translate(1px, -1px) rotate(1deg); }
+50% { transform: translate(-1px, 2px) rotate(-1deg); }
+60% { transform: translate(-3px, 1px) rotate(0deg); }
+70% { transform: translate(2px, 1px) rotate(-1deg); }
+80% { transform: translate(-1px, -1px) rotate(1deg); }
+90% { transform: translate(2px, 2px) rotate(0deg); }
+100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+.shake-screen {
+animation: shake 0.15s infinite;
+}
+
+/* Falling Doom particles */
+.particle {
+position: absolute;
+font-size: 2rem;
+pointer-events: none;
+animation: fall linear forwards;
+}
+
+@keyframes fall {
+to {
+transform: translateY(105vh) rotate(360deg);
+}
+}
+</style>
+</head>
+<body>
+
+<div class="character-container" id="mum-character">
+<div class="hair-bun"></div>
+<div class="hair"></div>
+<div class="head">
+<div class="eyes">
+<div class="eye" id="left-eye"></div>
+<div class="eye" id="right-eye"></div>
+</div>
+<div class="smile" id="mum-mouth"></div>
+</div>
+</div>
+
+<div class="caption" id="main-caption">Good or bad day?</div>
+
+<div class="btn-container">
+<button class="btn btn-good" onclick="handleGoodDay()">Good</button>
+<button class="btn btn-bad" onclick="handleBadDay()">Bad</button>
+</div>
+
+<div id="effect-canvas"></div>
+
+<script>
+const body = document.body;
+const mouth = document.getElementById('mum-mouth');
+const leftEye = document.getElementById('left-eye');
+const rightEye = document.getElementById('right-eye');
+const caption = document.getElementById('main-caption');
+const canvas = document.getElementById('effect-canvas');
+
+// Clear any ongoing animation particles
+function clearEffects() {
+canvas.innerHTML = '';
+body.classList.remove('shake-screen');
+}
+
+// --- GOOD DAY: Fireworks & Joy ---
+function handleGoodDay() {
+clearEffects();
+
+// Adjust Mum's Expression
+body.style.background = 'linear-gradient(135deg, #ffe259, #ffa751)';
+caption.innerText = "Hooray! Best day ever! 🎉";
+caption.style.color = "#fff";
+
+mouth.style.height = "35px";
+mouth.style.borderRadius = "0 0 50% 50%";
+mouth.style.borderBottom = "6px solid #333";
+leftEye.style.borderRadius = "50%";
+rightEye.style.borderRadius = "50%";
+
+// Launch Fireworks
+for (let i = 0; i < 40; i++) {
+setTimeout(spawnFirework, i * 150);
+}
+}
+
+function spawnFirework() {
+const firework = document.createElement('div');
+firework.className = 'particle';
+const emojis = ['✨', '💥', '🎉', '🥳', '🌈', '❤️'];
+firework.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+firework.style.left = Math.random() * 100 + 'vw';
+firework.style.top = '100vh';
+firework.style.animationDuration = (Math.random() * 2 + 1) + 's';
+
+// Alter direction so they burst upwards
+firework.style.transform = scale(${Math.random() * 1.5 + 0.5})`;
+
+canvas.appendChild(firework);
+
+// Keyframe override to move upwards for fireworks
+firework.animate([
+{ transform: translateY(0px) scale(0.5), opacity: 1 },
+{ transform: translateY(-${Math.random() * 70 + 30}vh) scale(1.5)`, opacity: 0 }
+ ], {
+duration: 1500,
+easing: 'ease-out'
+}).onfinish = () => firework.remove();
+}
+
+// --- BAD DAY: Catastrophe ---
+function handleBadDay() {
+clearEffects();
+
+// Set Environment to Doom Mode
+body.style.background = '#0a0a0a';
+body.classList.add('shake-screen');
+caption.innerText = "OH NO! RUN FOR COVER! 😱";
+caption.style.color = "#ff3333";
+
+// Make Mum look furious/terrified
+mouth.style.height = "25px";
+mouth.style.borderRadius = "50% 50% 0 0";
+mouth.style.borderBottom = "none";
+mouth.style.borderTop = "5px solid #333";
+mouth.style.top = "65px";
+
+leftEye.style.height = "4px"; // Angry slit eyes
+rightEye.style.height = "4px";
+
+// Rain down complete terror particles
+for (let i = 0; i < 150; i++) {
+setTimeout(spawnDoom, i * 50);
+}
+}
+
+function spawnDoom() {
+const doom = document.createElement('div');
+doom.className = 'particle';
+const doomEmojis = ['⚡', '🌧️', '⛈️', '🔥', '☄️', '💀', '💥'];
+doom.innerText = doomEmojis[Math.floor(Math.random() * doomEmojis.length)];
+
+doom.style.left = Math.random() * 100 + 'vw';
+doom.style.top = '-5vh';
+doom.style.animationDuration = (Math.random() * 1 + 0.5) + 's';
+
+canvas.appendChild(doom);
+
+setTimeout(() => {
+doom.remove();
+}, 1500);
+}
+</script>
+</body>
+</html>
