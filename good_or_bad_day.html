@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Good or Bad Day?</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(to bottom, #bfe3ff, #eaf7ff);
+    font-family: 'Comic Sans MS', 'Trebuchet MS', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  h1 {
+    color: #40506b;
+    font-size: 2.2rem;
+    margin: 20px 0 10px;
+    text-align: center;
+    z-index: 5;
+  }
+
+  #stage {
+    position: relative;
+    width: 300px;
+    height: 360px;
+    z-index: 5;
+  }
+
+  #mum {
+    width: 100%;
+    height: 100%;
+  }
+
+  .tear {
+    position: absolute;
+    width: 10px;
+    height: 14px;
+    background: #5ec2e8;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0;
+    top: 160px;
+  }
+
+  .tear.left { left: 103px; }
+  .tear.right { left: 185px; }
+
+  @keyframes fall {
+    0%   { opacity: 0; transform: translateY(0) scale(0.6); }
+    15%  { opacity: 1; transform: translateY(5px) scale(1); }
+    100% { opacity: 0; transform: translateY(120px) scale(0.9); }
+  }
+
+  .tear.animate {
+    animation: fall 1.1s ease-in infinite;
+  }
+  .tear.right.animate { animation-delay: 0.35s; }
+
+  #buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 25px;
+    z-index: 5;
+  }
+
+  button {
+    font-family: inherit;
+    font-size: 1.2rem;
+    padding: 14px 34px;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: transform 0.1s ease;
+  }
+
+  button:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  }
+
+  #goodBtn { background: #4caf50; }
+  #goodBtn:hover { background: #43a047; }
+
+  #badBtn { background: #e57373; }
+  #badBtn:hover { background: #ef5350; }
+
+  #fireworksCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  #message {
+    margin-top: 16px;
+    font-size: 1.3rem;
+    min-height: 1.6em;
+    color: #40506b;
+    z-index: 5;
+  }
+
+  #soundNote {
+    font-size: 0.85rem;
+    color: #6c7a94;
+    margin-top: 4px;
+    z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<h1>Good or Bad day?</h1>
+
+<div id="stage">
+  <svg id="mum" viewBox="0 0 300 340">
+    <!-- long hair back, flowing past shoulders -->
+    <path d="M55 140 Q40 230 65 300 Q85 320 100 300 Q80 220 90 140 Z" fill="#6b3f24"/>
+    <path d="M245 140 Q260 230 235 300 Q215 320 200 300 Q220 220 210 140 Z" fill="#6b3f24"/>
+    <ellipse cx="150" cy="145" rx="98" ry="102" fill="#6b3f24"/>
+
+    <!-- shoulders / dress -->
+    <path d="M95 255 Q150 235 205 255 L225 340 L75 340 Z" fill="#d46a9e"/>
+    <path d="M95 255 Q150 275 205 255 L205 268 Q150 288 95 268 Z" fill="#c15a8c"/>
+
+    <!-- neck -->
+    <rect x="135" y="215" width="30" height="35" rx="10" fill="#ffd9b3"/>
+
+    <!-- face -->
+    <circle cx="150" cy="155" r="78" fill="#ffd9b3"/>
+
+    <!-- fringe / styled hair front -->
+    <path d="M74 128 Q150 45 226 128 Q212 78 150 72 Q88 78 74 128 Z" fill="#7a4a2b"/>
+    <path d="M70 140 Q95 100 120 110 Q95 130 96 165 Z" fill="#7a4a2b"/>
+    <path d="M230 140 Q205 100 180 110 Q205 130 204 165 Z" fill="#7a4a2b"/>
+
+    <!-- earrings -->
+    <circle cx="76" cy="185" r="5" fill="#f2c14e"/>
+    <circle cx="224" cy="185" r="5" fill="#f2c14e"/>
+
+    <!-- eyebrows (normal, softly arched) -->
+    <path id="browL" d="M108 122 Q122 110 140 118" stroke="#5a3820" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+    <path id="browR" d="M160 118 Q178 110 192 122" stroke="#5a3820" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+
+    <!-- eyes with lashes -->
+    <g id="eyeL">
+      <circle cx="122" cy="145" r="12" fill="white"/>
+      <circle cx="122" cy="145" r="6" fill="#3a2a1a"/>
+      <circle cx="119" cy="142" r="1.6" fill="white"/>
+      <path d="M110 137 L104 132" stroke="#3a2a1a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M113 133 L109 127" stroke="#3a2a1a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M118 131 L116 124" stroke="#3a2a1a" stroke-width="2" stroke-linecap="round"/>
+    </g>
+    <g id="eyeR">
+      <circle cx="178" cy="145" r="12" fill="white"/>
+      <circle cx="178" cy="145" r="6" fill="#3a2a1a"/>
+      <circle cx="175" cy="142" r="1.6" fill="white"/>
+      <path d="M190 137 L196 132" stroke="#3a2a1a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M187 133 L191 127" stroke="#3a2a1a" stroke-width="2" stroke-linecap="round"/>
+      <path d="M182 131 L184 124" stroke="#3a2a1a" stroke-width="2" stroke-linecap="round"/>
+    </g>
+
+    <!-- blush -->
+    <ellipse cx="105" cy="180" rx="14" ry="8" fill="#ffb3ab" opacity="0.7"/>
+    <ellipse cx="195" cy="180" rx="14" ry="8" fill="#ffb3ab" opacity="0.7"/>
+
+    <!-- mouth (normal smile, lipstick colour) -->
+    <path id="mouth" d="M118 195 Q150 225 182 195" stroke="#c2436b" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <div class="tear left" id="tearL"></div>
+  <div class="tear right" id="tearR"></div>
+</div>
+
+<div id="buttons">
+  <button id="goodBtn">Good</button>
+  <button id="badBtn">Bad</button>
+</div>
+
+<div id="message"></div>
+<div id="soundNote">Click a button to hear it too — turn your sound on</div>
+
+<canvas id="fireworksCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById('fireworksCanvas');
+const ctx = canvas.getContext('2d');
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+let particles = [];
+let fireworkTimer = null;
+
+function randomColor() {
+  const colors = ['#ff595e','#ffca3a','#8ac926','#1982c4','#6a4c93','#ff924c','#ff6fb0'];
+  return colors[Math.floor(Math.random() * colors.length)];
+}
+
+/* ---------- Audio (synthesized, no external files) ---------- */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playLaunchWhistle() {
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  const osc = ac.createOscillator();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(500, now);
+  osc.frequency.exponentialRampToValueAtTime(1600, now + 0.22);
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.12, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+  osc.connect(gain).connect(ac.destination);
+  osc.start(now);
+  osc.stop(now + 0.22);
+}
+
+function playPop() {
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  const bufferSize = Math.floor(ac.sampleRate * 0.3);
+  const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+  }
+  const noise = ac.createBufferSource();
+  noise.buffer = buffer;
+  const bandpass = ac.createBiquadFilter();
+  bandpass.type = 'bandpass';
+  bandpass.frequency.value = 900 + Math.random() * 1200;
+  bandpass.Q.value = 0.9;
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.45, now);
+  gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+  noise.connect(bandpass).connect(gain).connect(ac.destination);
+  noise.start(now);
+  noise.stop(now + 0.3);
+}
+
+function playCrySound() {
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  for (let i = 0; i < 2; i++) {
+    const start = now + i * 0.55;
+    const osc = ac.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(420, start);
+    osc.frequency.exponentialRampToValueAtTime(260, start + 0.4);
+    const gain = ac.createGain();
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.linearRampToValueAtTime(0.18, start + 0.05);
+    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.45);
+    osc.connect(gain).connect(ac.destination);
+    osc.start(start);
+    osc.stop(start + 0.45);
+  }
+}
+
+/* ---------- Fireworks visuals ---------- */
+function launchFirework() {
+  const x = Math.random() * canvas.width * 0.8 + canvas.width * 0.1;
+  const y = Math.random() * canvas.height * 0.4 + canvas.height * 0.1;
+  const color = randomColor();
+  const count = 60;
+  playLaunchWhistle();
+  setTimeout(playPop, 220);
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count;
+    const speed = Math.random() * 3 + 2;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      alpha: 1,
+      color,
+      size: Math.random() * 2 + 1.5
+    });
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.03;
+    p.alpha -= 0.012;
+  });
+  particles = particles.filter(p => p.alpha > 0);
+  particles.forEach(p => {
+    ctx.globalAlpha = Math.max(p.alpha, 0);
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(animate);
+}
+animate();
+
+function startFireworks() {
+  stopFireworks();
+  launchFirework();
+  fireworkTimer = setInterval(launchFirework, 450);
+  setTimeout(stopFireworks, 4000);
+}
+
+function stopFireworks() {
+  if (fireworkTimer) {
+    clearInterval(fireworkTimer);
+    fireworkTimer = null;
+  }
+}
+
+/* ---------- Face states ---------- */
+function setHappyFace() {
+  document.getElementById('browL').setAttribute('d', 'M108 122 Q122 110 140 118');
+  document.getElementById('browR').setAttribute('d', 'M160 118 Q178 110 192 122');
+  document.getElementById('mouth').setAttribute('d', 'M113 193 Q150 232 187 193');
+  document.getElementById('tearL').classList.remove('animate');
+  document.getElementById('tearR').classList.remove('animate');
+  document.getElementById('tearL').style.opacity = 0;
+  document.getElementById('tearR').style.opacity = 0;
+}
+
+function setSadFace() {
+  document.getElementById('browL').setAttribute('d', 'M108 126 Q122 136 140 126');
+  document.getElementById('browR').setAttribute('d', 'M160 126 Q178 136 192 126');
+  document.getElementById('mouth').setAttribute('d', 'M118 210 Q150 185 182 210');
+  document.getElementById('tearL').classList.add('animate');
+  document.getElementById('tearR').classList.add('animate');
+}
+
+document.getElementById('goodBtn').addEventListener('click', () => {
+  getAudioCtx();
+  setHappyFace();
+  document.getElementById('message').textContent = "Yay! Let's celebrate!";
+  startFireworks();
+});
+
+document.getElementById('badBtn').addEventListener('click', () => {
+  getAudioCtx();
+  stopFireworks();
+  setSadFace();
+  playCrySound();
+  document.getElementById('message').textContent = "Aww, come here for a hug.";
+});
+</script>
+
+</body>
+</html>
