@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Dino Playground</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #bfe0c9, #e8f3d8);
+    font-family: 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 10px 60px;
+    color: #2f3a24;
+  }
+
+  h1 { margin: 6px 0 2px; font-size: 2rem; text-align: center; }
+
+  #soundNote { font-size: 0.8rem; color: #57684a; margin-top: -2px; margin-bottom: 6px; }
+
+  /* --- Dino selector tabs --- */
+  #dinoTabs {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .dino-tab {
+    font-family: inherit;
+    font-size: 1rem;
+    padding: 10px 16px;
+    border-radius: 30px;
+    border: 2px solid #7a9a5a;
+    background: white;
+    color: #3d4d2c;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .dino-tab.active {
+    background: #7a9a5a;
+    color: white;
+  }
+
+  #nameLabel {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+    color: #3d4d2c;
+  }
+
+  /* --- Habitat / stage --- */
+  #habitat {
+    position: relative;
+    width: 360px;
+    height: 300px;
+    margin-top: 6px;
+    background: linear-gradient(to bottom, #cdeadd 0%, #cdeadd 70%, #b8935c 70%, #b8935c 100%);
+    border-radius: 24px;
+    border: 8px solid #6f8c4f;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.15);
+  }
+
+  .plant {
+    position: absolute;
+    bottom: 88px;
+    font-size: 34px;
+    opacity: 0.9;
+  }
+  #volcano {
+    position: absolute;
+    top: 10px;
+    right: 18px;
+    font-size: 30px;
+    opacity: 0.55;
+  }
+
+  .dino-svg {
+    position: absolute;
+    left: 50%;
+    bottom: 92px;
+    transform: translateX(-50%);
+    width: 220px;
+    height: auto;
+    cursor: pointer;
+    display: none;
+    transition: transform 0.15s ease;
+  }
+  .dino-svg.active { display: block; }
+  .dino-svg:active { transform: translateX(-50%) scale(0.97); }
+
+  .poke { animation: wiggle 0.4s ease; }
+  @keyframes wiggle {
+    0%,100% { transform: translateX(-50%) rotate(0deg); }
+    25% { transform: translateX(-50%) rotate(-3deg); }
+    75% { transform: translateX(-50%) rotate(3deg); }
+  }
+
+  .stomp { animation: stompAnim 0.4s ease 2; }
+  @keyframes stompAnim {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(6px) scaleY(0.96); }
+  }
+
+  #habitat.shake { animation: habitatShake 0.4s ease 2; }
+  @keyframes habitatShake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  .roar { animation: roarAnim 0.5s ease; }
+  @keyframes roarAnim {
+    0%,100% { transform: translateX(-50%) rotate(0deg); }
+    30% { transform: translateX(-50%) rotate(-2deg) translateY(-4px); }
+    60% { transform: translateX(-50%) rotate(2deg) translateY(0); }
+  }
+
+  [class*="mouthGroup"] {
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+  .roaring [class*="mouthGroup"] { animation: jawOpen 0.5s ease; }
+  @keyframes jawOpen {
+    0%,100% { transform: scaleY(1); }
+    40% { transform: scaleY(2.6); }
+  }
+
+  .munching [class*="mouthGroup"] { animation: chew 0.25s ease-in-out 4; }
+  @keyframes chew {
+    0%,100% { transform: scaleY(1); }
+    50% { transform: scaleY(2); }
+  }
+
+  .heart {
+    position: absolute;
+    font-size: 20px;
+    pointer-events: none;
+    opacity: 0.95;
+    animation: floatUp 1.4s ease-out forwards;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) scale(0.6); opacity: 1; }
+    100% { transform: translateY(-90px) scale(1.3); opacity: 0; }
+  }
+
+  .food-item {
+    position: absolute;
+    font-size: 26px;
+    top: 6px;
+    transform: translate(-50%, 0);
+    transition: top 0.55s ease-in, left 0.55s ease-in, opacity 0.2s ease 0.5s;
+  }
+
+  /* --- Controls --- */
+  #controls {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+  button {
+    font-family: inherit;
+    font-size: 0.95rem;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    transition: transform 0.1s ease;
+  }
+  button:active { transform: translateY(2px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
+
+  .food-btn { background: #c97b3d; }
+  .food-btn:hover { background: #b5692e; }
+
+  .sound-btn { background: #4f8f6e; }
+  .sound-btn:hover { background: #417a5c; }
+
+  .action-btn { background: #5a8bd8; }
+  .action-btn:hover { background: #4676c2; }
+
+  .fact-btn { background: #b07bc7; }
+  .fact-btn:hover { background: #9c62b4; }
+
+  #colorRow { display: flex; align-items: center; gap: 8px; }
+
+  #excitementWrap { width: 260px; text-align: center; }
+
+  #excitementBar {
+    width: 100%;
+    height: 16px;
+    background: #dcead0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid #6f8c4f;
+  }
+
+  #excitementFill {
+    height: 100%;
+    width: 15%;
+    background: linear-gradient(to right, #7ecb6f, #f2c14e);
+    transition: width 0.4s ease;
+  }
+
+  #factBox {
+    max-width: 380px;
+    min-height: 50px;
+    text-align: center;
+    background: white;
+    border-radius: 14px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>🦕 Dino Playground</h1>
+<div id="soundNote">Turn your sound on — pick a dino and tap it to hear it roar</div>
+
+<div id="dinoTabs">
+  <button class="dino-tab active" data-dino="trex">🦖 T. rex</button>
+  <button class="dino-tab" data-dino="tri">🦕 Triceratops</button>
+  <button class="dino-tab" data-dino="stego">🦕 Stegosaurus</button>
+</div>
+
+<div id="nameLabel">Meet <span id="nameDisplay">the Tyrannosaurus rex</span></div>
+
+<div id="habitat">
+  <div class="plant" style="left:14px;">🌿</div>
+  <div class="plant" style="right:16px; bottom:80px;">🌴</div>
+  <div class="plant" style="left:50%; bottom:80px; font-size:22px;">🌱</div>
+  <div id="volcano">🌋</div>
+
+  <!-- ================= T-REX ================= -->
+  <svg id="dinoTrex" class="dino-svg active" viewBox="-125 0 420 230">
+    <defs>
+      <radialGradient id="shadeTrex" cx="35%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+        <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0.18"/>
+      </radialGradient>
+    </defs>
+
+    <g id="skinTrex" fill="#5f7a4a">
+      <!-- tail -->
+      <path d="M235,112 C285,102 335,95 370,82 C350,100 350,119 370,137 C335,124 285,131 235,134 Z"/>
+      <!-- back leg (far side) -->
+      <path d="M252,148 C244,171 242,193 249,209 L227,209 C223,190 226,165 234,148 Z"/>
+      <!-- front leg (near side) -->
+      <path d="M190,153 C181,177 179,200 188,213 L163,213 C160,192 163,167 174,153 Z"/>
+      <!-- tiny arm -->
+      <path d="M112,118 C100,124 90,133 92,143 C100,138 108,131 116,122 Z"/>
+      <!-- torso / hip -->
+      <path d="M92,95 C82,64 110,38 155,31 C197,25 238,34 261,58
+               C281,76 288,101 272,126 C260,146 231,156 200,156
+               C167,156 136,150 112,135 C97,125 89,112 92,95 Z"/>
+      <!-- neck (S-curve to head) -->
+      <path d="M92,95 C60,74 28,56 -10,53 C10,67 28,82 42,103
+               C50,117 63,127 80,131 C88,119 93,107 92,95 Z"/>
+      <!-- skull -->
+      <path d="M-10,53 C-38,28 -75,20 -108,37 C-124,47 -127,64 -117,75
+               C-106,84 -88,82 -75,73 C-58,62 -33,56 -10,58 Z"/>
+    </g>
+
+    <path d="M92,95 C82,64 110,38 155,31 C197,25 238,34 261,58
+             C281,76 288,101 272,126 C260,146 231,156 200,156
+             C167,156 136,150 112,135 C97,125 89,112 92,95 Z" fill="url(#shadeTrex)"/>
+    <path d="M92,95 C60,74 28,56 -10,53 C10,67 28,82 42,103
+             C50,117 63,127 80,131 C88,119 93,107 92,95 Z" fill="url(#shadeTrex)"/>
+    <path d="M-10,53 C-38,28 -75,20 -108,37 C-124,47 -127,64 -117,75
+             C-106,84 -88,82 -75,73 C-58,62 -33,56 -10,58 Z" fill="url(#shadeTrex)"/>
+
+    <!-- claws -->
+    <path d="M92,143 L86,150 L91,146 Z" fill="#e9dcb6"/>
+    <path d="M99,139 L94,148 L98,143 Z" fill="#e9dcb6"/>
+    <path d="M188,213 L180,220 L192,220 Z" fill="#e9dcb6"/>
+    <path d="M249,209 L242,216 L254,216 Z" fill="#e9dcb6"/>
+
+    <!-- belly -->
+    <path d="M135,118 C158,133 188,138 218,130 C207,150 179,157 152,148 C140,143 135,131 135,118 Z" fill="#e9dcb6" opacity="0.75"/>
+
+    <!-- skin texture -->
+    <g stroke="#33421f" stroke-width="1" opacity="0.15" stroke-linecap="round">
+      <path d="M135,42 q6,8 1,16" fill="none"/>
+      <path d="M165,32 q5,9 0,18" fill="none"/>
+      <path d="M195,33 q5,9 -1,17" fill="none"/>
+      <path d="M105,67 q9,3 16,-1" fill="none"/>
+      <path d="M180,77 q9,4 17,0" fill="none"/>
+      <path d="M30,68 q8,4 14,0" fill="none"/>
+    </g>
+
+    <!-- lower jaw / mouth with teeth -->
+    <g id="mouthGroupTrex">
+      <path d="M-117,75 C-106,90 -83,96 -57,91 C-40,88 -22,80 -10,72
+               C-25,79 -47,82 -68,80 C-90,78 -107,84 -117,75 Z" fill="#3a2216"/>
+      <path d="M-108,72 L-102,82 L-96,71 Z" fill="#f4ede0"/>
+      <path d="M-92,73 L-86,83 L-80,72 Z" fill="#f4ede0"/>
+      <path d="M-76,73 L-70,83 L-64,73 Z" fill="#f4ede0"/>
+      <path d="M-60,71 L-54,81 L-48,71 Z" fill="#f4ede0"/>
+      <path d="M-44,68 L-38,78 L-32,68 Z" fill="#f4ede0"/>
+    </g>
+
+    <!-- nostril -->
+    <ellipse cx="-113" cy="52" rx="3.2" ry="2.2" fill="#33421f" opacity="0.55"/>
+
+    <!-- eye + brow ridge -->
+    <circle cx="-70" cy="55" r="5.2" fill="#241609"/>
+    <circle cx="-72" cy="53" r="1.2" fill="#f4ede0" opacity="0.9"/>
+    <path d="M-84,46 Q-70,39 -56,46" stroke="#33421f" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round"/>
+  </svg>
+
+
+  <!-- ================= TRICERATOPS ================= -->
+  <svg id="dinoTri" class="dino-svg" viewBox="-30 0 360 220">
+    <defs>
+      <radialGradient id="shadeTri" cx="35%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+        <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0.18"/>
+      </radialGradient>
+    </defs>
+
+    <g id="skinTri" fill="#7a8c9a">
+      <!-- tail -->
+      <path d="M255,120 C280,122 300,126 310,132 C300,138 280,140 255,138 Z"/>
+      <!-- legs -->
+      <path d="M100,150 C94,172 93,193 100,204 L120,204 C119,188 118,168 122,150 Z"/>
+      <path d="M135,153 C130,175 129,196 136,205 L156,205 C155,190 154,170 158,153 Z"/>
+      <path d="M195,150 C190,172 189,194 196,204 L216,204 C215,188 214,168 218,150 Z"/>
+      <path d="M230,153 C226,174 225,195 231,205 L251,205 C250,190 249,171 253,153 Z"/>
+      <!-- torso / hip -->
+      <path d="M110,125 C104,98 130,78 168,74 C205,70 238,82 255,106
+               C267,118 270,128 255,143 C240,157 212,161 182,159
+               C154,157 128,151 112,140 C104,134 106,132 110,125 Z"/>
+      <!-- neck connecting shoulders to head -->
+      <path d="M110,125 C82,110 58,95 35,90 C50,102 60,115 66,130
+               C71,142 82,150 95,152 C102,142 106,133 110,125 Z"/>
+    </g>
+    <path d="M110,125 C104,98 130,78 168,74 C205,70 238,82 255,106
+             C267,118 270,128 255,143 C240,157 212,161 182,159
+             C154,157 128,151 112,140 C104,134 106,132 110,125 Z" fill="url(#shadeTri)"/>
+    <path d="M110,125 C82,110 58,95 35,90 C50,102 60,115 66,130
+             C71,142 82,150 95,152 C102,142 106,133 110,125 Z" fill="url(#shadeTri)"/>
+
+    <!-- belly -->
+    <path d="M150,140 C175,150 205,152 235,146 C225,158 200,162 175,158 C162,155 154,149 150,140 Z" fill="#e3ecec" opacity="0.7"/>
+
+    <!-- frill -->
+    <path d="M35,50 C10,45 -8,58 -8,78 C-8,96 10,106 32,102
+             C22,90 20,72 30,58 C33,54 34,52 35,50 Z" fill="#6a7c89"/>
+    <path d="M35,50 C10,45 -8,58 -8,78 C-8,96 10,106 32,102
+             C22,90 20,72 30,58 C33,54 34,52 35,50 Z" fill="url(#shadeTri)"/>
+    <path d="M0,60 C-4,68 -4,86 2,94" stroke="#4a5a64" stroke-width="1.4" fill="none" opacity="0.5"/>
+
+    <!-- skin texture -->
+    <g stroke="#3f4c54" stroke-width="1" opacity="0.15" stroke-linecap="round">
+      <path d="M130,90 q7,7 3,15" fill="none"/>
+      <path d="M170,84 q6,8 1,16" fill="none"/>
+      <path d="M210,92 q6,7 0,15" fill="none"/>
+      <path d="M55,105 q7,5 13,1" fill="none"/>
+    </g>
+
+    <!-- horns -->
+    <path d="M20,55 C16,40 18,26 26,18 C28,32 27,46 28,58 Z" fill="#e8dcc0"/>
+    <path d="M45,50 C42,34 45,20 54,12 C57,27 56,42 55,54 Z" fill="#e8dcc0"/>
+    <path d="M-5,80 C-14,78 -22,80 -27,86 C-20,90 -12,90 -4,88 Z" fill="#e8dcc0"/>
+
+    <!-- beak / mouth -->
+    <g id="mouthGroupTri">
+      <path d="M-8,92 C-14,96 -16,102 -12,106 C-6,104 -2,100 0,95 Z" fill="#4a5a64"/>
+    </g>
+
+    <!-- eye -->
+    <circle cx="10" cy="82" r="4.5" fill="#241609"/>
+    <circle cx="8.5" cy="80" r="1" fill="#f4ede0" opacity="0.9"/>
+  </svg>
+
+  <!-- ================= STEGOSAURUS ================= -->
+  <svg id="dinoStego" class="dino-svg" viewBox="-30 0 340 220">
+    <defs>
+      <radialGradient id="shadeStego" cx="35%" cy="25%" r="80%">
+        <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+        <stop offset="60%" stop-color="#ffffff" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0.18"/>
+      </radialGradient>
+    </defs>
+
+    <!-- tail with spikes -->
+    <path d="M215,120 C245,128 270,140 288,150 C270,150 245,146 215,138 Z" fill="#8a6b4a"/>
+    <path d="M250,130 L268,120 L262,138 Z" fill="#e8dcc0"/>
+    <path d="M258,144 L280,138 L268,158 Z" fill="#e8dcc0"/>
+    <path d="M235,146 L248,158 L222,158 Z" fill="#e8dcc0"/>
+
+    <g id="skinStego" fill="#8a6b4a">
+      <!-- legs (rear taller, front shorter for the classic humped stance) -->
+      <path d="M85,150 C80,170 79,190 86,200 L104,200 C103,184 102,164 106,150 Z"/>
+      <path d="M120,152 C116,172 115,192 122,201 L140,201 C139,185 138,165 142,152 Z"/>
+      <path d="M175,135 C170,160 169,185 177,198 L198,198 C197,178 196,155 201,135 Z"/>
+      <path d="M215,138 C210,163 209,187 217,199 L238,199 C237,180 236,157 241,138 Z"/>
+      <!-- body: low front, humped back -->
+      <path d="M65,130 C58,110 75,92 105,88 C120,86 130,78 150,75
+               C175,72 205,85 218,110 C225,120 222,132 208,138
+               C185,148 150,152 120,150 C95,148 75,145 65,130 Z"/>
+    </g>
+    <path d="M65,130 C58,110 75,92 105,88 C120,86 130,78 150,75
+             C175,72 205,85 218,110 C225,120 222,132 208,138
+             C185,148 150,152 120,150 C95,148 75,145 65,130 Z" fill="url(#shadeStego)"/>
+
+    <!-- belly -->
+    <path d="M100,130 C125,140 155,142 185,135 C175,146 150,150 125,146 C114,143 105,138 100,130 Z" fill="#ecdfc4" opacity="0.7"/>
+
+    <!-- back plates -->
+    <g fill="#a97d52">
+      <path d="M95,90 L108,60 L120,90 Z"/>
+      <path d="M125,80 L138,48 L150,80 Z"/>
+      <path d="M155,76 L168,46 L180,76 Z"/>
+      <path d="M185,82 L196,54 L207,84 Z"/>
+    </g>
+    <g fill="url(#shadeStego)">
+      <path d="M95,90 L108,60 L120,90 Z"/>
+      <path d="M125,80 L138,48 L150,80 Z"/>
+      <path d="M155,76 L168,46 L180,76 Z"/>
+      <path d="M185,82 L196,54 L207,84 Z"/>
+    </g>
+
+    <!-- skin texture -->
+    <g stroke="#4a3823" stroke-width="1" opacity="0.15" stroke-linecap="round">
+      <path d="M110,110 q8,4 15,0" fill="none"/>
+      <path d="M150,120 q8,5 16,0" fill="none"/>
+      <path d="M185,115 q7,4 14,-1" fill="none"/>
+    </g>
+
+    <!-- small low head -->
+    <path d="M65,130 C45,128 25,132 8,142 C0,147 -2,154 4,158
+             C14,162 28,158 38,150 C48,144 58,138 65,130 Z" fill="#8a6b4a"/>
+    <path d="M65,130 C45,128 25,132 8,142 C0,147 -2,154 4,158
+             C14,162 28,158 38,150 C48,144 58,138 65,130 Z" fill="url(#shadeStego)"/>
+
+    <g id="mouthGroupStego">
+      <path d="M2,148 C-2,152 -2,156 3,158 C7,155 8,151 6,148 Z" fill="#4a3823"/>
+    </g>
+
+    <!-- eye -->
+    <circle cx="20" cy="140" r="3.5" fill="#241609"/>
+    <circle cx="18.8" cy="138.5" r="0.8" fill="#f4ede0" opacity="0.9"/>
+  </svg>
+</div>
+
+<div id="controls">
+  <div id="excitementWrap">
+    <div>Excitement</div>
+    <div id="excitementBar"><div id="excitementFill"></div></div>
+  </div>
+
+  <div class="row">
+    <button class="food-btn" id="feedBtn">Feed 🍖</button>
+    <button class="sound-btn" id="roarBtn">Roar</button>
+    <button class="action-btn" id="stompBtn">Stomp</button>
+  </div>
+
+  <div class="row">
+    <button class="fact-btn" id="factBtn">Random Fact</button>
+  </div>
+
+  <div id="colorRow">
+    <label for="colorPicker">Skin colour:</label>
+    <input type="color" id="colorPicker" value="#5f7a4a">
+  </div>
+
+  <div id="factBox">Pick a dinosaur above, then tap "Random Fact" to learn something!</div>
+</div>
+
+<script>
+/* ---------- Dino configuration ---------- */
+const dinoData = {
+  trex: {
+    label: 'the Tyrannosaurus rex',
+    svgId: 'dinoTrex',
+    skinId: 'skinTrex',
+    defaultColor: '#5f7a4a',
+    diet: 'meat',
+    foodEmoji: '🍖',
+    feedLabel: 'Feed 🍖',
+    roarPitch: 'low',
+    facts: [
+      "Tyrannosaurus rex could grow up to about 12 metres (40 feet) long.",
+      "Despite its huge head, T. rex had very small arms with only two fingers on each hand.",
+      "T. rex had one of the strongest bite forces of any land animal that has ever lived.",
+      "T. rex lived at the very end of the Cretaceous period, around 66 to 68 million years ago.",
+      "Some scientists believe T. rex may have hunted in groups rather than alone."
+    ]
+  },
+  tri: {
+    label: 'the Triceratops',
+    svgId: 'dinoTri',
+    skinId: 'skinTri',
+    defaultColor: '#7a8c9a',
+    diet: 'plants',
+    foodEmoji: '🌿',
+    feedLabel: 'Feed 🌿',
+    roarPitch: 'mid',
+    facts: [
+      "Triceratops had three horns on its face and a huge bony frill at the back of its skull.",
+      "It was a herbivore, using its sharp beak to snip tough plants like ferns and cycads.",
+      "A full-grown Triceratops could weigh as much as an elephant, around 6 to 12 tonnes.",
+      "Its frill may have been used for display, to attract mates, or to look intimidating to predators.",
+      "Triceratops lived alongside T. rex, right at the end of the age of dinosaurs."
+    ]
+  },
+  stego: {
+    label: 'the Stegosaurus',
+    svgId: 'dinoStego',
+    skinId: 'skinStego',
+    defaultColor: '#8a6b4a',
+    diet: 'plants',
+    foodEmoji: '🌿',
+    feedLabel: 'Feed 🌿',
+    roarPitch: 'mid-low',
+    facts: [
+      "Stegosaurus had large bony plates along its back, arranged in two rows.",
+      "Its tail ended in four sharp spikes, nicknamed the 'thagomizer'.",
+      "Despite its huge body, Stegosaurus had a brain roughly the size of a walnut.",
+      "It walked on all fours with much longer back legs than front legs.",
+      "Stegosaurus lived around 150 million years ago, in the late Jurassic period."
+    ]
+  }
+};
+
+let currentDino = 'trex';
+let excitement = { trex: 15, tri: 15, stego: 15 };
+const dinoColors = {
+  trex: dinoData.trex.defaultColor,
+  tri: dinoData.tri.defaultColor,
+  stego: dinoData.stego.defaultColor
+};
+
+const habitat = document.getElementById('habitat');
+const excitementFill = document.getElementById('excitementFill');
+const factBox = document.getElementById('factBox');
+const nameDisplay = document.getElementById('nameDisplay');
+const colorPicker = document.getElementById('colorPicker');
+const feedBtn = document.getElementById('feedBtn');
+
+function setExcitement(v) {
+  excitement[currentDino] = Math.max(0, Math.min(100, v));
+  excitementFill.style.width = excitement[currentDino] + '%';
+}
+
+function bumpExcitement(amount) {
+  setExcitement(excitement[currentDino] + amount);
+}
+
+function activeSvg() {
+  return document.getElementById(dinoData[currentDino].svgId);
+}
+
+function switchDino(key) {
+  currentDino = key;
+  document.querySelectorAll('.dino-svg').forEach(s => s.classList.remove('active'));
+  activeSvg().classList.add('active');
+  document.querySelectorAll('.dino-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.dino === key);
+  });
+  nameDisplay.textContent = dinoData[key].label;
+  colorPicker.value = dinoColors[key];
+  feedBtn.textContent = dinoData[key].feedLabel;
+  excitementFill.style.width = excitement[key] + '%';
+  factBox.textContent = 'Tap "Random Fact" to learn something about ' + dinoData[key].label.replace('the ', '') + '!';
+}
+
+document.querySelectorAll('.dino-tab').forEach(tab => {
+  tab.addEventListener('click', () => switchDino(tab.dataset.dino));
+});
+
+colorPicker.addEventListener('input', (e) => {
+  dinoColors[currentDino] = e.target.value;
+  document.getElementById(dinoData[currentDino].skinId).setAttribute('fill', e.target.value);
+});
+
+/* ---------- Audio (all synthesized, no external files) ---------- */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function tone(freqStart, freqEnd, start, dur, type, peakGain) {
+  const ac = getAudioCtx();
+  const osc = ac.createOscillator();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freqStart, start);
+  osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd, 1), start + dur);
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.linearRampToValueAtTime(peakGain, start + dur * 0.2);
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+  osc.connect(gain).connect(ac.destination);
+  osc.start(start);
+  osc.stop(start + dur + 0.02);
+}
+
+function noiseBurst(start, dur, filterFreq, filterType, peakGain) {
+  const ac = getAudioCtx();
+  const bufferSize = Math.floor(ac.sampleRate * dur);
+  const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / bufferSize, 2);
+  }
+  const noise = ac.createBufferSource();
+  noise.buffer = buffer;
+  const filter = ac.createBiquadFilter();
+  filter.type = filterType;
+  filter.frequency.value = filterFreq;
+  const gain = ac.createGain();
+  gain.gain.setValueAtTime(peakGain, start);
+  gain.gain.exponentialRampToValueAtTime(0.001, start + dur);
+  noise.connect(filter).connect(gain).connect(ac.destination);
+  noise.start(start);
+  noise.stop(start + dur);
+}
+
+function playRoar() {
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  const pitch = dinoData[currentDino].roarPitch;
+  if (pitch === 'low') {
+    // T. rex: deep, aggressive, guttural roar
+    tone(90, 55, now, 0.9, 'sawtooth', 0.28);
+    tone(180, 100, now, 0.9, 'sawtooth', 0.12);
+    noiseBurst(now, 0.9, 400, 'lowpass', 0.18);
+    tone(70, 40, now + 0.75, 0.4, 'sawtooth', 0.2);
+  } else if (pitch === 'mid') {
+    // Triceratops: shorter, nasal bellow
+    tone(150, 90, now, 0.55, 'sawtooth', 0.22);
+    noiseBurst(now, 0.55, 600, 'bandpass', 0.14);
+    tone(140, 85, now + 0.5, 0.3, 'sawtooth', 0.16);
+  } else {
+    // Stegosaurus: low grumbling snort
+    tone(110, 75, now, 0.5, 'triangle', 0.2);
+    noiseBurst(now, 0.5, 350, 'lowpass', 0.15);
+  }
+}
+
+function playStomp() {
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  tone(90, 40, now, 0.25, 'sine', 0.3);
+  noiseBurst(now, 0.2, 200, 'lowpass', 0.22);
+  tone(90, 40, now + 0.3, 0.25, 'sine', 0.26);
+  noiseBurst(now + 0.3, 0.2, 200, 'lowpass', 0.2);
+}
+
+function playChomp() {
+  const ac = getAudioCtx();
+  const now = ac.currentTime;
+  const diet = dinoData[currentDino].diet;
+  for (let i = 0; i < 3; i++) {
+    const start = now + i * 0.2;
+    if (diet === 'meat') {
+      noiseBurst(start, 0.12, 900, 'bandpass', 0.3);
+      tone(400, 150, start, 0.08, 'square', 0.1);
+    } else {
+      noiseBurst(start, 0.1, 1400, 'highpass', 0.22);
+    }
+  }
+}
+
+/* ---------- Interactions ---------- */
+function spawnHeart() {
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+  heart.textContent = '💚';
+  heart.style.left = (40 + Math.random() * 40) + '%';
+  heart.style.bottom = '140px';
+  habitat.appendChild(heart);
+  setTimeout(() => heart.remove(), 1400);
+}
+
+function withDinoClass(cls, duration) {
+  const svg = activeSvg();
+  svg.classList.remove(cls);
+  void svg.offsetWidth;
+  svg.classList.add(cls);
+  setTimeout(() => svg.classList.remove(cls), duration);
+}
+
+document.querySelectorAll('.dino-svg').forEach(svg => {
+  svg.addEventListener('click', () => {
+    getAudioCtx();
+    withDinoClass('poke', 400);
+    withDinoClass('roaring', 500);
+    playRoar();
+    spawnHeart();
+    bumpExcitement(3);
+  });
+});
+
+document.getElementById('roarBtn').addEventListener('click', () => {
+  getAudioCtx();
+  withDinoClass('roar', 500);
+  withDinoClass('roaring', 500);
+  playRoar();
+  bumpExcitement(4);
+});
+
+document.getElementById('stompBtn').addEventListener('click', () => {
+  getAudioCtx();
+  withDinoClass('stomp', 800);
+  habitat.classList.remove('shake');
+  void habitat.offsetWidth;
+  habitat.classList.add('shake');
+  setTimeout(() => habitat.classList.remove('shake'), 800);
+  playStomp();
+  bumpExcitement(3);
+});
+
+feedBtn.addEventListener('click', () => {
+  getAudioCtx();
+  const emoji = dinoData[currentDino].foodEmoji;
+  const food = document.createElement('div');
+  food.className = 'food-item';
+  food.textContent = emoji;
+  const svg = activeSvg();
+  const svgRect = svg.getBoundingClientRect();
+  const habitatRect = habitat.getBoundingClientRect();
+  const targetLeft = (svgRect.left + svgRect.width * 0.12) - habitatRect.left;
+  food.style.left = (30 + Math.random() * 260) + 'px';
+  habitat.appendChild(food);
+  requestAnimationFrame(() => {
+    food.style.top = '190px';
+    food.style.left = targetLeft + 'px';
+  });
+  setTimeout(() => {
+    food.style.opacity = '0';
+    withDinoClass('munching', 1100);
+    playChomp();
+    spawnHeart();
+    bumpExcitement(6);
+    setTimeout(() => food.remove(), 700);
+  }, 560);
+});
+
+document.getElementById('factBtn').addEventListener('click', () => {
+  const facts = dinoData[currentDino].facts;
+  factBox.textContent = facts[Math.floor(Math.random() * facts.length)];
+});
+</script>
+
+</body>
+</html>
