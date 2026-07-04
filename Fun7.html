@@ -380,25 +380,44 @@
   if(window.speechSynthesis){
     loadVoices();
     window.speechSynthesis.onvoiceschanged = loadVoices;
+    // Android Chrome has a long-standing bug where speech synthesis
+    // auto-pauses after ~15s; nudging it keeps longer queues alive.
+    setInterval(()=>{
+      if(window.speechSynthesis.speaking && !window.speechSynthesis.paused){
+        window.speechSynthesis.pause();
+        window.speechSynthesis.resume();
+      }
+    }, 4000);
   }
   function speak(text, opts){
     opts = opts || {};
     const interrupt = opts.interrupt !== false;
     if(!window.speechSynthesis) return Promise.resolve();
+    const synth = window.speechSynthesis;
     return new Promise(resolve=>{
-      if(interrupt) window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(text);
-      if(chosenVoice) utter.voice = chosenVoice;
-      utter.rate = 0.92;
-      utter.pitch = 1.2;
-      utter.volume = 1;
-      let done = false;
-      const finish = ()=>{ if(!done){ done = true; resolve(); } };
-      utter.onend = finish;
-      utter.onerror = finish;
-      window.speechSynthesis.speak(utter);
-      // safety fallback in case onend never fires in some browsers
-      setTimeout(finish, Math.max(1500, text.length*95));
+      function doSpeak(){
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'en-US';
+        if(chosenVoice) utter.voice = chosenVoice;
+        utter.rate = 0.92;
+        utter.pitch = 1.2;
+        utter.volume = 1;
+        let done = false;
+        const finish = ()=>{ if(!done){ done = true; resolve(); } };
+        utter.onend = finish;
+        utter.onerror = finish;
+        synth.speak(utter);
+        // safety fallback in case onend never fires on some browsers
+        setTimeout(finish, Math.max(1500, text.length*95));
+      }
+      if(interrupt && (synth.speaking || synth.pending)){
+        synth.cancel();
+        // brief delay: some mobile browsers silently drop a speak()
+        // called immediately after cancel()
+        setTimeout(doSpeak, 60);
+      } else {
+        doSpeak();
+      }
     });
   }
 
@@ -584,11 +603,9 @@
 
   startBtn.addEventListener('click', ()=>{
     ac(); // unlock Web Audio
-    if(window.speechSynthesis){
-      // a tiny silent-ish nudge helps some browsers unlock speech synthesis on first gesture
-      const unlock = new SpeechSynthesisUtterance(' ');
-      unlock.volume = 0;
-      window.speechSynthesis.speak(unlock);
+    if(window.speechSynthesis && window.speechSynthesis.getVoices().length === 0){
+      // nudge some browsers into loading voices immediately
+      window.speechSynthesis.getVoices();
     }
     startOverlay.style.display = 'none';
     renderRound();
