@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rex's Letter Adventure</title>
+<style>
+  :root{
+    --sky-top:#8fd3f4;
+    --sky-bot:#c9f0ff;
+    --grass-1:#8fce6a;
+    --grass-2:#6cb64d;
+    --ink:#3a4a2f;
+    --accent:#4a9d5f;
+    --accent-dark:#357849;
+    --card-blue:#3fa7d6;
+    --card-yellow:#f4c542;
+    --card-pink:#ef6f8e;
+    --card-purple:#9b6fd6;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:'Trebuchet MS','Segoe UI',sans-serif;
+    background: radial-gradient(ellipse at top, #d8f3ff 0%, #b9e6f7 55%, #9fd4ea 100%);
+    color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh;
+  }
+  .app{ width:100%; max-width:820px; padding:18px; }
+  h1{
+    text-align:center; margin:4px 0 2px;
+    font-size:28px; color:#2d5c39;
+    text-shadow:0 2px 0 rgba(255,255,255,0.6);
+  }
+  .subtitle{ text-align:center; margin:0 0 14px; font-size:13px; color:#3d6b48; opacity:0.85; }
+
+  .stage-wrap{
+    position:relative;
+    border-radius:26px; padding:10px;
+    background:linear-gradient(180deg,#fffef6,#eaf3d8);
+    box-shadow:0 18px 40px rgba(30,60,20,0.25), inset 0 0 0 6px #fffdf2;
+  }
+  svg#scene{ width:100%; height:auto; display:block; border-radius:18px; overflow:hidden; background:var(--sky-top); }
+
+  #say{
+    position:absolute;
+    pointer-events:none;
+    font-size:16px; font-weight:700; color:#2d5c39;
+    background:#ffffff; border:3px solid #cfe8b8;
+    padding:8px 16px; border-radius:16px;
+    opacity:0; transform:translate(-50%,-6px) scale(0.9);
+    transition:opacity .25s ease, transform .25s ease;
+    white-space:nowrap;
+    box-shadow:0 4px 0 rgba(0,0,0,0.06);
+  }
+  #say.show{ opacity:1; transform:translate(-50%,-16px) scale(1); }
+  #say::after{
+    content:''; position:absolute; left:50%; bottom:-9px; transform:translateX(-50%);
+    border-width:9px 8px 0 8px; border-style:solid;
+    border-color:#cfe8b8 transparent transparent transparent;
+  }
+
+  .status{
+    display:flex; justify-content:center; align-items:center; gap:18px;
+    margin-top:14px; font-size:14px; color:#2d5c39; font-weight:700;
+  }
+  .status .stars{ display:flex; gap:2px; }
+  .status .stars span{ font-size:16px; opacity:0.3; filter:grayscale(1); transition:all .3s ease; }
+  .status .stars span.on{ opacity:1; filter:grayscale(0); transform:scale(1.15); }
+
+  .letters{
+    display:flex; justify-content:center; gap:18px; margin-top:20px; flex-wrap:wrap;
+  }
+  .letter-btn{
+    appearance:none; border:none; cursor:pointer;
+    width:100px; height:100px; border-radius:22px;
+    font-size:46px; font-weight:800; color:#fff;
+    font-family:'Trebuchet MS',sans-serif;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 6px 0 rgba(0,0,0,0.18), 0 10px 18px rgba(0,0,0,0.15);
+    transition:transform .08s ease, box-shadow .08s ease, filter .15s ease;
+    text-shadow:0 2px 3px rgba(0,0,0,0.2);
+  }
+  .letter-btn:nth-child(1){ background:linear-gradient(180deg,#5cc4ec,var(--card-blue)); }
+  .letter-btn:nth-child(2){ background:linear-gradient(180deg,#ffd766,var(--card-yellow)); }
+  .letter-btn:nth-child(3){ background:linear-gradient(180deg,#f496ac,var(--card-pink)); }
+  .letter-btn:active{ transform:translateY(5px); box-shadow:0 1px 0 rgba(0,0,0,0.18), 0 3px 8px rgba(0,0,0,0.15); }
+  .letter-btn:disabled{ cursor:not-allowed; filter:grayscale(0.35) brightness(0.95); }
+  .letter-btn.correct-flash{ animation:correctFlash 0.6s ease; }
+  .letter-btn.wrong-flash{ animation:wrongFlash 0.5s ease; }
+  @keyframes correctFlash{
+    0%{ transform:scale(1); }
+    40%{ transform:scale(1.18); box-shadow:0 0 0 6px rgba(120,220,140,0.6), 0 6px 0 rgba(0,0,0,0.18); }
+    100%{ transform:scale(1); }
+  }
+  @keyframes wrongFlash{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-8px); }
+    40%{ transform:translateX(8px); }
+    60%{ transform:translateX(-6px); }
+    80%{ transform:translateX(6px); }
+  }
+  footer{ text-align:center; font-size:11px; color:#3d6b48; margin-top:14px; opacity:0.85; }
+
+  #startOverlay{
+    position:absolute; inset:10px;
+    border-radius:18px;
+    background:rgba(30,60,40,0.55);
+    display:flex; align-items:center; justify-content:center;
+    z-index:10;
+  }
+  #startBtn{
+    appearance:none; border:none; cursor:pointer;
+    font-family:inherit; font-size:26px; font-weight:800; color:#2d5c39;
+    background:linear-gradient(180deg,#fff6c9,#ffd95c);
+    padding:22px 34px; border-radius:22px;
+    box-shadow:0 6px 0 #d1a839, 0 10px 20px rgba(0,0,0,0.25);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  #startBtn:active{ transform:translateY(5px); box-shadow:0 1px 0 #d1a839, 0 3px 8px rgba(0,0,0,0.25); }
+
+  .repeat-btn{
+    appearance:none; border:none; cursor:pointer;
+    font-family:inherit; font-size:15px; font-weight:700; color:#fff;
+    background:linear-gradient(180deg,#6cc9e0,#3fa7d6);
+    padding:10px 18px; border-radius:14px;
+    box-shadow:0 4px 0 #2f7fa3, 0 6px 12px rgba(0,0,0,0.15);
+    transition:transform .08s ease, box-shadow .08s ease, filter .15s ease;
+  }
+  .repeat-btn:active{ transform:translateY(3px); box-shadow:0 1px 0 #2f7fa3, 0 3px 8px rgba(0,0,0,0.15); }
+  .repeat-btn:disabled{ filter:grayscale(0.4) brightness(0.95); cursor:not-allowed; }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🦕 Rex's Letter Adventure</h1>
+  <p class="subtitle">Rex the dino needs help finding letters — click the one he calls out!</p>
+
+  <div class="stage-wrap">
+    <div id="say"></div>
+    <div id="startOverlay">
+      <button id="startBtn">🦕 Tap to Play!</button>
+    </div>
+    <svg id="scene" viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8fd3f4"/>
+          <stop offset="100%" stop-color="#d7f2ff"/>
+        </linearGradient>
+        <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#9adf72"/>
+          <stop offset="100%" stop-color="#6cb64d"/>
+        </linearGradient>
+        <radialGradient id="dinoBody" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#8fe08a"/>
+          <stop offset="55%" stop-color="#5cbf5f"/>
+          <stop offset="100%" stop-color="#3f9a45"/>
+        </radialGradient>
+        <radialGradient id="dinoBelly" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#f3f7d8"/>
+          <stop offset="100%" stop-color="#dcE9ad"/>
+        </radialGradient>
+        <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fff6c9"/>
+          <stop offset="100%" stop-color="#ffd95c"/>
+        </radialGradient>
+        <radialGradient id="shadowGrad2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(30,50,20,0.35)"/>
+          <stop offset="100%" stop-color="rgba(30,50,20,0)"/>
+        </radialGradient>
+      </defs>
+
+      <!-- SKY -->
+      <rect x="0" y="0" width="800" height="300" fill="url(#skyGrad)"/>
+      <circle cx="700" cy="70" r="42" fill="url(#sunGlow)"/>
+      <g fill="#ffffff" opacity="0.85">
+        <ellipse cx="130" cy="70" rx="38" ry="16"/>
+        <ellipse cx="165" cy="60" rx="28" ry="14"/>
+        <ellipse cx="95" cy="62" rx="24" ry="12"/>
+        <ellipse cx="470" cy="110" rx="34" ry="14"/>
+        <ellipse cx="500" cy="100" rx="24" ry="12"/>
+      </g>
+
+      <!-- distant volcano hill for prehistoric vibe -->
+      <path d="M0,300 L120,190 L200,300 Z" fill="#7fae5a" opacity="0.7"/>
+      <path d="M550,300 L640,170 L760,300 Z" fill="#6ea351" opacity="0.7"/>
+
+      <!-- GROUND -->
+      <rect x="0" y="290" width="800" height="130" fill="url(#grassGrad)"/>
+      <g fill="#5aa63f" opacity="0.6">
+        <ellipse cx="80" cy="320" rx="30" ry="7"/>
+        <ellipse cx="680" cy="330" rx="40" ry="8"/>
+        <ellipse cx="380" cy="405" rx="60" ry="10"/>
+      </g>
+      <g stroke="#4d8c37" stroke-width="3" stroke-linecap="round" opacity="0.7">
+        <path d="M40,300 L36,286"/>
+        <path d="M48,300 L52,284"/>
+        <path d="M56,300 L58,288"/>
+        <path d="M720,300 L716,286"/>
+        <path d="M728,300 L732,284"/>
+      </g>
+
+      <!-- shadow -->
+      <ellipse id="dinoShadow" cx="400" cy="372" rx="90" ry="16" fill="url(#shadowGrad2)"/>
+
+      <!-- sparkles for trick -->
+      <g id="sparkles" opacity="0"></g>
+
+      <!-- DINO -->
+      <g id="dino" transform="translate(400,352)">
+        <g id="dinoWobble">
+          <!-- tail -->
+          <path id="tail" d="M-58,-10 C-100,-4 -118,-30 -108,-52 C-102,-64 -88,-64 -82,-52 C-78,-42 -84,-30 -70,-20 C-64,-16 -60,-12 -58,-10 Z" fill="url(#dinoBody)" transform-origin="-58px -10px"/>
+
+          <!-- back legs -->
+          <g id="legs">
+            <path class="leg" d="M-30,20 C-34,40 -34,54 -28,60 L-8,60 C-10,50 -8,36 -6,20 Z" fill="#3f9a45"/>
+            <path class="leg" d="M22,20 C20,40 22,54 28,60 L48,60 C46,50 46,36 42,20 Z" fill="#358a3c"/>
+            <ellipse cx="-18" cy="61" rx="16" ry="6" fill="#2d7a34"/>
+            <ellipse cx="38" cy="61" rx="16" ry="6" fill="#2a6f30"/>
+          </g>
+
+          <!-- body -->
+          <ellipse cx="0" cy="-10" rx="62" ry="48" fill="url(#dinoBody)"/>
+          <ellipse cx="4" cy="6" rx="42" ry="30" fill="url(#dinoBelly)"/>
+
+          <!-- back plates -->
+          <g fill="#3f9a45">
+            <path d="M-40,-52 L-30,-72 L-20,-52 Z"/>
+            <path d="M-14,-58 L-4,-80 L6,-58 Z"/>
+            <path d="M12,-56 L22,-76 L32,-56 Z"/>
+          </g>
+          <g fill="#5cbf5f">
+            <path d="M-38,-54 L-30,-68 L-22,-54 Z"/>
+            <path d="M-12,-60 L-4,-76 L4,-60 Z"/>
+            <path d="M14,-58 L22,-72 L30,-58 Z"/>
+          </g>
+
+          <!-- arms -->
+          <path d="M-46,-2 C-58,4 -64,14 -60,22 C-56,20 -48,14 -42,6 Z" fill="#4ba852"/>
+          <path d="M46,-2 C58,4 64,14 60,22 C56,20 48,14 42,6 Z" fill="#4ba852"/>
+
+          <!-- head group -->
+          <g id="head" transform="translate(38,-58)">
+            <ellipse cx="0" cy="0" rx="34" ry="30" fill="url(#dinoBody)"/>
+            <path d="M22,4 C34,2 44,8 46,16 C42,20 32,20 24,16 Z" fill="url(#dinoBody)"/>
+            <ellipse cx="10" cy="10" rx="18" ry="13" fill="url(#dinoBelly)"/>
+
+            <!-- happy eyes -->
+            <g id="eyesHappy">
+              <circle cx="-4" cy="-12" r="10" fill="#ffffff"/>
+              <circle cx="-2" cy="-10" r="6" fill="#233524"/>
+              <circle cx="0" cy="-13" r="2" fill="#fff"/>
+            </g>
+            <!-- sad/teary eyes -->
+            <g id="eyesSad" style="display:none">
+              <path d="M-14,-16 Q-4,-22 6,-16" stroke="#233524" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M-9,-10 Q-4,-6 1,-10" stroke="#233524" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+            </g>
+            <!-- eyebrow for sad -->
+            <path id="browSad" d="M-16,-22 L4,-16" stroke="#2d6b33" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/>
+
+            <!-- mouth -->
+            <path id="mouthHappy" d="M-6,10 Q10,22 26,8" stroke="#233524" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path id="mouthSad" d="M-6,18 Q10,8 26,16" stroke="#233524" stroke-width="3" fill="none" stroke-linecap="round" style="display:none"/>
+
+            <!-- nostril -->
+            <circle cx="40" cy="12" r="2" fill="#2d6b33"/>
+
+            <!-- tears -->
+            <g id="tears" opacity="0">
+              <ellipse cx="-12" cy="0" rx="3.4" ry="5" fill="#6fc9ee"/>
+              <ellipse cx="4" cy="4" rx="3" ry="4.4" fill="#6fc9ee"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="status">
+    <span>Score:</span>
+    <div class="stars" id="stars">
+      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+    </div>
+    <span id="scoreNum">0</span>
+  </div>
+
+  <div class="letters" id="letters"></div>
+
+  <div style="text-align:center; margin-top:14px;">
+    <button id="repeatBtn" class="repeat-btn">🔊 Hear it again</button>
+  </div>
+
+  <footer>A fresh set of letters appears after every click — sound on for the full effect 🔊</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------------- Audio ----------------
+  let actx = null;
+  function ac(){
+    if(!actx){ actx = new (window.AudioContext||window.webkitAudioContext)(); }
+    if(actx.state === 'suspended'){ actx.resume(); }
+    return actx;
+  }
+  function envGain(ctx,t0,peak,dur){
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(peak,t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur);
+    return g;
+  }
+  function playTone(freqStart,freqEnd,dur,type,peak,delay){
+    const ctx = ac();
+    const t0 = ctx.currentTime + (delay||0);
+    const osc = ctx.createOscillator();
+    osc.type = type||'sine';
+    osc.frequency.setValueAtTime(freqStart,t0);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd,20),t0+dur);
+    const g = envGain(ctx,t0,peak||0.25,dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0+dur+0.05);
+  }
+  function playNote(freq,dur,type,peak,delay){
+    const ctx = ac();
+    const t0 = ctx.currentTime + (delay||0);
+    const osc = ctx.createOscillator();
+    osc.type = type||'sine';
+    osc.frequency.setValueAtTime(freq,t0);
+    const g = envGain(ctx,t0,peak||0.22,dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0+dur+0.05);
+  }
+  function playClick(){ playTone(700,500,0.08,'triangle',0.15); }
+  function playCorrect(){
+    // cheerful ascending arpeggio (major triad + octave)
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((f,i)=> playNote(f, 0.22, 'triangle', 0.2, i*0.09));
+  }
+  function playWrong(){
+    // gentle descending sad tone
+    playTone(340,220,0.35,'sine',0.2);
+    playTone(220,140,0.5,'sine',0.16,0.28);
+  }
+  function playSniffle(){
+    const ctx = ac();
+    const t0 = ctx.currentTime;
+    const bufferSize = Math.floor(ctx.sampleRate*0.15);
+    const buffer = ctx.createBuffer(1,bufferSize,ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1)*(1-i/bufferSize)*0.4; }
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const filt = ctx.createBiquadFilter();
+    filt.type='bandpass'; filt.frequency.value=2200; filt.Q.value=1.4;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.25,t0);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+0.15);
+    src.connect(filt).connect(g).connect(ctx.destination);
+    src.start(t0);
+  }
+
+  // ---------------- Speech (text-to-speech) ----------------
+  let chosenVoice = null;
+  function loadVoices(){
+    if(!window.speechSynthesis) return;
+    const voices = window.speechSynthesis.getVoices();
+    if(voices.length){
+      chosenVoice =
+        voices.find(v=>/en/i.test(v.lang) && /child|kid/i.test(v.name)) ||
+        voices.find(v=>/en/i.test(v.lang) && /female|samantha|zira|google us english|victoria/i.test(v.name)) ||
+        voices.find(v=>/en/i.test(v.lang)) ||
+        voices[0];
+    }
+  }
+  if(window.speechSynthesis){
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+  }
+  function speak(text){
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    if(chosenVoice) utter.voice = chosenVoice;
+    utter.rate = 0.92;
+    utter.pitch = 1.2;
+    utter.volume = 1;
+    window.speechSynthesis.speak(utter);
+  }
+
+  // ---------------- DOM refs ----------------
+  const sayEl = document.getElementById('say');
+  const stage = document.getElementById('scene');
+  const lettersWrap = document.getElementById('letters');
+  const eyesHappy = document.getElementById('eyesHappy');
+  const eyesSad = document.getElementById('eyesSad');
+  const browSad = document.getElementById('browSad');
+  const mouthHappy = document.getElementById('mouthHappy');
+  const mouthSad = document.getElementById('mouthSad');
+  const tears = document.getElementById('tears');
+  const dino = document.getElementById('dino');
+  const dinoWobble = document.getElementById('dinoWobble');
+  const head = document.getElementById('head');
+  const sparkles = document.getElementById('sparkles');
+  const starsEls = document.querySelectorAll('#stars span');
+  const scoreNumEl = document.getElementById('scoreNum');
+  const startOverlay = document.getElementById('startOverlay');
+  const startBtn = document.getElementById('startBtn');
+  const repeatBtn = document.getElementById('repeatBtn');
+
+  let currentPrompt = '';
+
+  const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  let score = 0;
+  let streak = 0;
+  let busy = false;
+  let targetLetter = null;
+
+  function sayText(text, duration){
+    sayEl.textContent = text;
+    sayEl.style.left = '54%';
+    sayEl.style.top = '26%';
+    sayEl.classList.add('show');
+    clearTimeout(sayText._t);
+    if(duration){ sayText._t = setTimeout(()=> sayEl.classList.remove('show'), duration); }
+  }
+
+  function pickThreeLetters(){
+    const pool = ALPHABET.slice();
+    const chosen = [];
+    while(chosen.length < 3){
+      const idx = Math.floor(Math.random()*pool.length);
+      chosen.push(pool.splice(idx,1)[0]);
+    }
+    return chosen;
+  }
+
+  function renderRound(){
+    const letters = pickThreeLetters();
+    targetLetter = letters[Math.floor(Math.random()*letters.length)];
+    // shuffle display order
+    for(let i=letters.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [letters[i],letters[j]] = [letters[j],letters[i]];
+    }
+    lettersWrap.innerHTML = '';
+    letters.forEach(L=>{
+      const btn = document.createElement('button');
+      btn.className = 'letter-btn';
+      btn.textContent = L;
+      btn.addEventListener('click', ()=> handleAnswer(L, btn));
+      lettersWrap.appendChild(btn);
+    });
+    setEmotion('happy');
+    currentPrompt = `Can you find the letter ${targetLetter}?`;
+    sayText(currentPrompt, 0);
+    speak(currentPrompt);
+  }
+
+  function setButtonsDisabled(d){
+    lettersWrap.querySelectorAll('.letter-btn').forEach(b=> b.disabled = d);
+  }
+
+  function setEmotion(mode){
+    if(mode === 'happy'){
+      eyesHappy.style.display = '';
+      eyesSad.style.display = 'none';
+      browSad.style.display = 'none';
+      mouthHappy.style.display = '';
+      mouthSad.style.display = 'none';
+      tears.style.opacity = 0;
+    } else {
+      eyesHappy.style.display = 'none';
+      eyesSad.style.display = '';
+      browSad.style.display = '';
+      mouthHappy.style.display = 'none';
+      mouthSad.style.display = '';
+      tears.style.opacity = 1;
+    }
+  }
+
+  function setScore(delta){
+    score = Math.max(0, score+delta);
+    scoreNumEl.textContent = score;
+    streak = delta>0 ? streak+1 : 0;
+    const lit = Math.min(5, streak);
+    starsEls.forEach((el,i)=> el.classList.toggle('on', i<lit));
+  }
+
+  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+  function burstSparkles(){
+    let s = '';
+    const cx = 400, cy = 300;
+    for(let i=0;i<10;i++){
+      const ang = Math.random()*Math.PI*2;
+      const dist = 40+Math.random()*70;
+      const x = cx + Math.cos(ang)*dist;
+      const y = cy + Math.sin(ang)*dist*0.6;
+      const size = 6+Math.random()*8;
+      const delay = (Math.random()*0.2).toFixed(2);
+      s += `<text x="${x}" y="${y}" font-size="${size}" fill="#ffd95c" style="animation:sparklePop 0.7s ease ${delay}s;">✦</text>`;
+    }
+    sparkles.innerHTML = s;
+    sparkles.style.opacity = 1;
+    setTimeout(()=>{ sparkles.style.opacity = 0; sparkles.innerHTML=''; }, 900);
+  }
+
+  async function doTrick(){
+    dino.classList.remove('trick'); void dino.offsetWidth;
+    dino.classList.add('trick');
+    playCorrect();
+    burstSparkles();
+    await wait(750);
+    dino.classList.remove('trick');
+  }
+
+  async function doCry(){
+    dinoWobble.classList.remove('cry'); void dinoWobble.offsetWidth;
+    setEmotion('sad');
+    dinoWobble.classList.add('cry');
+    playWrong();
+    await wait(250);
+    playSniffle();
+    await wait(900);
+    dinoWobble.classList.remove('cry');
+  }
+
+  async function handleAnswer(letter, btn){
+    if(busy) return;
+    busy = true;
+    setButtonsDisabled(true);
+    playClick();
+    const isCorrect = letter === targetLetter;
+    if(isCorrect){
+      btn.classList.add('correct-flash');
+      sayText("Yes! Great job!", 1400);
+      speak("Yes! Great job!");
+      setScore(1);
+      await doTrick();
+    } else {
+      btn.classList.add('wrong-flash');
+      const msg = `Aw, that was ${letter}. I wanted ${targetLetter}.`;
+      sayText(msg, 1600);
+      speak(msg);
+      setScore(-1);
+      streak = 0;
+      starsEls.forEach(el=> el.classList.remove('on'));
+      await doCry();
+      setEmotion('happy');
+    }
+    await wait(500);
+    busy = false;
+    renderRound();
+  }
+
+  // idle blink
+  setInterval(()=>{
+    if(!busy && eyesHappy.style.display !== 'none'){
+      eyesHappy.style.transform = 'scaleY(0.15)';
+      eyesHappy.style.transformOrigin = 'center';
+      setTimeout(()=>{ eyesHappy.style.transform=''; }, 140);
+    }
+  }, 3600);
+
+  startBtn.addEventListener('click', ()=>{
+    ac(); // unlock Web Audio
+    if(window.speechSynthesis){
+      // a tiny silent-ish nudge helps some browsers unlock speech synthesis on first gesture
+      const unlock = new SpeechSynthesisUtterance(' ');
+      unlock.volume = 0;
+      window.speechSynthesis.speak(unlock);
+    }
+    startOverlay.style.display = 'none';
+    renderRound();
+  });
+
+  repeatBtn.addEventListener('click', ()=>{
+    if(!currentPrompt) return;
+    sayText(currentPrompt, 1800);
+    speak(currentPrompt);
+  });
+})();
+</script>
+
+<style>
+  #dinoWobble{ animation: idleSway 3s ease-in-out infinite; transform-origin: 0px 10px; }
+  @keyframes idleSway{
+    0%,100%{ transform: rotate(0deg) translateY(0); }
+    50%{ transform: rotate(0.6deg) translateY(-3px); }
+  }
+  #tail{ animation: tailSway 2.4s ease-in-out infinite; }
+  @keyframes tailSway{
+    0%,100%{ transform: rotate(0deg); }
+    50%{ transform: rotate(6deg); }
+  }
+  #dino.trick{ animation: dinoTrick 0.75s ease-in-out; }
+  @keyframes dinoTrick{
+    0%{ transform: translate(400px,352px) translateY(0) rotate(0deg); }
+    30%{ transform: translate(400px,352px) translateY(-40px) rotate(150deg); }
+    60%{ transform: translate(400px,352px) translateY(-46px) rotate(330deg); }
+    85%{ transform: translate(400px,352px) translateY(-4px) rotate(370deg); }
+    100%{ transform: translate(400px,352px) translateY(0) rotate(360deg); }
+  }
+  #dinoWobble.cry{ animation: dinoCry 0.5s ease-in-out 3; }
+  @keyframes dinoCry{
+    0%,100%{ transform: rotate(0deg) translateX(0); }
+    25%{ transform: rotate(-2deg) translateX(-3px) translateY(2px); }
+    75%{ transform: rotate(2deg) translateX(3px) translateY(2px); }
+  }
+  #tears ellipse{ animation: tearFall 0.9s ease-in infinite; }
+  @keyframes tearFall{
+    0%{ opacity:0; transform: translateY(0); }
+    20%{ opacity:1; }
+    100%{ opacity:0; transform: translateY(14px); }
+  }
+  @keyframes sparklePop{
+    0%{ opacity:0; transform: scale(0.3); }
+    40%{ opacity:1; transform: scale(1.2); }
+    100%{ opacity:0; transform: scale(0.6) translateY(-10px); }
+  }
+</style>
+</body>
+</html>
