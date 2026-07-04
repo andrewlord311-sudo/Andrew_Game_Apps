@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tiny Games Arcade</title>
+<style>
+  :root{
+    --bg-top:#ffe9c7;
+    --bg-bot:#ffd3e0;
+    --ink:#4a3728;
+    --card-shadow:rgba(90,60,30,0.22);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; min-height:100%;
+    font-family:'Trebuchet MS','Segoe UI',sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 10%, #fff6d8 0%, transparent 45%),
+      radial-gradient(circle at 85% 15%, #ffe0ec 0%, transparent 45%),
+      linear-gradient(180deg, var(--bg-top), var(--bg-bot) 70%);
+    min-height:100vh;
+  }
+  .wrap{ max-width:1100px; margin:0 auto; padding:36px 20px 60px; }
+
+  header{ text-align:center; margin-bottom:8px; }
+  header h1{
+    font-size:38px; margin:0 0 6px;
+    color:#7a3f5a;
+    text-shadow:0 2px 0 rgba(255,255,255,0.6);
+  }
+  header p{ margin:0; font-size:15px; color:#8a5c6f; opacity:0.9; }
+
+  .bunting{
+    display:flex; justify-content:center; gap:6px; margin:18px 0 34px;
+  }
+  .bunting span{
+    width:0; height:0;
+    border-left:14px solid transparent;
+    border-right:14px solid transparent;
+    border-top:22px solid;
+  }
+  .bunting span:nth-child(1){ border-top-color:#ef6f8e; }
+  .bunting span:nth-child(2){ border-top-color:#f4c542; }
+  .bunting span:nth-child(3){ border-top-color:#4a9d5f; }
+  .bunting span:nth-child(4){ border-top-color:#3fa7d6; }
+  .bunting span:nth-child(5){ border-top-color:#9b6fd6; }
+  .bunting span:nth-child(6){ border-top-color:#ef6f8e; }
+  .bunting span:nth-child(7){ border-top-color:#f4c542; }
+  .bunting span:nth-child(8){ border-top-color:#4a9d5f; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:22px;
+  }
+  @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
+  @media (max-width:520px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    position:relative;
+    border-radius:22px;
+    padding:22px 18px 20px;
+    background:#fffdf6;
+    box-shadow:0 10px 0 var(--card-shadow), 0 18px 30px rgba(90,60,30,0.15);
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    transition:transform .15s ease, box-shadow .15s ease;
+    border:3px solid rgba(255,255,255,0.7);
+  }
+  .card:hover{
+    transform:translateY(-6px) rotate(-0.5deg);
+    box-shadow:0 14px 0 var(--card-shadow), 0 22px 36px rgba(90,60,30,0.2);
+  }
+  .card .icon-badge{
+    width:78px; height:78px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:38px;
+    margin-bottom:12px;
+    box-shadow:inset 0 -6px 10px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.12);
+  }
+  .card h2{
+    font-size:18px; margin:2px 0 8px;
+    color:#4a3728;
+  }
+  .card p{
+    font-size:13px; line-height:1.45;
+    color:#6b5745;
+    margin:0 0 16px;
+    min-height:56px;
+  }
+  .play-btn{
+    appearance:none; border:none; cursor:pointer;
+    text-decoration:none;
+    font-family:inherit; font-size:14px; font-weight:800; color:#fff;
+    padding:10px 22px; border-radius:14px;
+    box-shadow:0 5px 0 rgba(0,0,0,0.18), 0 8px 14px rgba(0,0,0,0.15);
+    transition:transform .08s ease, box-shadow .08s ease, filter .15s ease;
+    display:inline-block;
+  }
+  .play-btn:active{ transform:translateY(4px); box-shadow:0 1px 0 rgba(0,0,0,0.18), 0 3px 6px rgba(0,0,0,0.15); }
+  .play-btn.disabled{
+    filter:grayscale(0.5) brightness(0.95);
+    cursor:not-allowed;
+    pointer-events:none;
+  }
+  .badge-soon{
+    position:absolute; top:14px; right:14px;
+    background:#f4c542; color:#5a4308;
+    font-size:10px; font-weight:800; letter-spacing:0.5px;
+    padding:4px 8px; border-radius:8px;
+    text-transform:uppercase;
+  }
+
+  footer{
+    text-align:center; margin-top:40px;
+    font-size:11px; color:#8a5c6f; opacity:0.8;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🎪 Tiny Games Arcade</h1>
+    <p>Pick a game below to play!</p>
+  </header>
+
+  <div class="bunting">
+    <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>Made with ❤️ — edit the GAMES list in the page source to add your own games.</footer>
+</div>
+
+<script>
+/* ======================================================================
+   EDIT THIS LIST TO ADD / CHANGE YOUR GAMES
+   ----------------------------------------------------------------------
+   Each entry needs:
+     title       - the game's name, shown on the card
+     description - a short one or two sentence blurb
+     emoji       - a single emoji shown in the round icon badge
+     color       - hex color used for the icon badge + play button
+     file        - the filename (or full path/URL) of the game's HTML file
+                   Put the actual game .html file in the SAME FOLDER as
+                   this hub page (or change the path if it lives elsewhere).
+     comingSoon  - set to true to grey out the "Play" button and show a
+                   "Coming soon" ribbon instead of linking anywhere yet.
+
+   To add a 9th, 10th... game, just copy one of the {...} blocks below,
+   paste it into the array, and fill in your own details.
+   ====================================================================== */
+  const GAMES = [
+    {
+      title: "Biscuit's Playroom",
+      description: "Play ball, run the tunnel, tuck Biscuit into bed, or serve up dinner.",
+      emoji: "🐹",
+      color: "#e8834a",
+      file: "guinea_pig_game.html",
+      comingSoon: false
+    },
+    {
+      title: "Rex's Letter Adventure",
+      description: "Rex the dino calls out a letter — click the right one to make him do a trick!",
+      emoji: "🦕",
+      color: "#4a9d5f",
+      file: "dino_letters_game.html",
+      comingSoon: false
+    },
+    {
+      title: "Placeholder Game 3",
+      description: "Replace this text with a short description of your third game.",
+      emoji: "🎲",
+      color: "#3fa7d6",
+      file: "game3.html",
+      comingSoon: true
+    },
+    {
+      title: "Placeholder Game 4",
+      description: "Replace this text with a short description of your fourth game.",
+      emoji: "🎨",
+      color: "#9b6fd6",
+      file: "game4.html",
+      comingSoon: true
+    },
+    {
+      title: "Placeholder Game 5",
+      description: "Replace this text with a short description of your fifth game.",
+      emoji: "🚀",
+      color: "#ef6f8e",
+      file: "game5.html",
+      comingSoon: true
+    },
+    {
+      title: "Placeholder Game 6",
+      description: "Replace this text with a short description of your sixth game.",
+      emoji: "🧩",
+      color: "#f4a83f",
+      file: "game6.html",
+      comingSoon: true
+    },
+    {
+      title: "Placeholder Game 7",
+      description: "Replace this text with a short description of your seventh game.",
+      emoji: "🎵",
+      color: "#5cbf8a",
+      file: "game7.html",
+      comingSoon: true
+    },
+    {
+      title: "Placeholder Game 8",
+      description: "Replace this text with a short description of your eighth game.",
+      emoji: "🐸",
+      color: "#4ab0a0",
+      file: "game8.html",
+      comingSoon: true
+    }
+  ];
+/* ==================================================================== */
+
+  function hexToRgba(hex, alpha){
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16);
+    const g = parseInt(h.substring(2,4),16);
+    const b = parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  const grid = document.getElementById('grid');
+  GAMES.forEach(game=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    if(game.comingSoon){
+      const ribbon = document.createElement('div');
+      ribbon.className = 'badge-soon';
+      ribbon.textContent = 'Coming soon';
+      card.appendChild(ribbon);
+    }
+
+    const icon = document.createElement('div');
+    icon.className = 'icon-badge';
+    icon.style.background = `linear-gradient(180deg, ${hexToRgba(game.color,0.35)}, ${hexToRgba(game.color,0.7)})`;
+    icon.textContent = game.emoji;
+    card.appendChild(icon);
+
+    const h2 = document.createElement('h2');
+    h2.textContent = game.title;
+    card.appendChild(h2);
+
+    const p = document.createElement('p');
+    p.textContent = game.description;
+    card.appendChild(p);
+
+    const btn = document.createElement('a');
+    btn.textContent = game.comingSoon ? 'Coming soon' : 'Play ▶';
+    btn.className = 'play-btn' + (game.comingSoon ? ' disabled' : '');
+    btn.style.background = `linear-gradient(180deg, ${game.color}, ${hexToRgba(game.color,0.85)})`;
+    if(!game.comingSoon){
+      btn.href = game.file;
+      btn.target = '_blank';
+      btn.rel = 'noopener';
+    } else {
+      btn.href = '#';
+      btn.addEventListener('click', e=> e.preventDefault());
+    }
+    card.appendChild(btn);
+
+    grid.appendChild(card);
+  });
+</script>
+</body>
+</html>
