@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biscuit's Playroom</title>
+<style>
+  :root{
+    --wall-top:#e7ddf0;
+    --wall-bot:#cbb9dd;
+    --floor-1:#c99a5b;
+    --floor-2:#b8854a;
+    --wood-dark:#8a5c30;
+    --cream:#faf3e6;
+    --ink:#4a3728;
+    --accent:#e8834a;
+    --accent-dark:#c96a34;
+    --heart:#e8607a;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Trebuchet MS', 'Segoe UI', sans-serif;
+    background: radial-gradient(ellipse at top, #efe6f7 0%, #d9c8e8 60%, #c3aed8 100%);
+    color: var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh;
+  }
+  .app{
+    width:100%;
+    max-width:900px;
+    padding:18px;
+  }
+  h1{
+    text-align:center;
+    margin: 4px 0 2px;
+    font-size:28px;
+    letter-spacing:0.5px;
+    color:#6b3f2a;
+    text-shadow: 0 2px 0 rgba(255,255,255,0.5);
+  }
+  .subtitle{
+    text-align:center;
+    margin:0 0 14px;
+    font-size:13px;
+    color:#7a5c47;
+    opacity:0.85;
+  }
+  .stage-wrap{
+    position:relative;
+    isolation:isolate;
+    border-radius:26px;
+    padding:10px;
+    background:linear-gradient(180deg,#fff8ef,#efe0c9);
+    box-shadow: 0 18px 40px rgba(90,60,30,0.28), inset 0 0 0 6px #fffaf0;
+  }
+  svg#scene{
+    width:100%;
+    height:auto;
+    display:block;
+    border-radius:18px;
+    overflow:hidden;
+    cursor:default;
+    background: var(--wall-top);
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:center;
+    margin-top:16px;
+  }
+  button.action{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    font-family:inherit;
+    font-size:15px;
+    font-weight:700;
+    color:#fff;
+    padding:12px 18px;
+    border-radius:16px;
+    background:linear-gradient(180deg, var(--accent), var(--accent-dark));
+    box-shadow:0 5px 0 #a1552a, 0 8px 14px rgba(0,0,0,0.18);
+    display:flex; align-items:center; gap:8px;
+    transition: transform .08s ease, box-shadow .08s ease, filter .15s ease;
+  }
+  button.action .emoji{ font-size:19px; }
+  button.action:active{
+    transform: translateY(4px);
+    box-shadow:0 1px 0 #a1552a, 0 3px 8px rgba(0,0,0,0.18);
+  }
+  button.action:disabled{
+    filter:grayscale(0.4) brightness(0.9);
+    cursor:not-allowed;
+    opacity:0.6;
+    box-shadow:0 5px 0 #999, 0 8px 14px rgba(0,0,0,0.1);
+  }
+  .hud{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:14px;
+    margin-top:12px;
+    font-size:13px;
+    color:#6b4a34;
+  }
+  .hearts{ display:flex; gap:3px; }
+  .hearts span{ font-size:15px; filter:grayscale(1); opacity:0.35; transition:all .3s ease; }
+  .hearts span.on{ filter:grayscale(0); opacity:1; transform:scale(1.1); }
+  .say{
+    position:absolute;
+    pointer-events:none;
+    font-size:13px;
+    font-weight:700;
+    color:#6b3f2a;
+    background:#fffdf6;
+    border:2px solid #e9c98a;
+    padding:3px 10px;
+    border-radius:12px;
+    opacity:0;
+    transform: translate(-50%, -10px);
+    transition: opacity .25s ease, transform .25s ease;
+    white-space:nowrap;
+  }
+  .say.show{ opacity:1; transform: translate(-50%, -26px); }
+  footer{
+    text-align:center;
+    font-size:11px;
+    color:#8a7460;
+    margin-top:14px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>🐹 Biscuit's Playroom</h1>
+  <p class="subtitle">Play ball, run the tunnel, tuck in for a nap, or serve up dinner.</p>
+
+  <div class="stage-wrap">
+    <div id="say" class="say"></div>
+    <svg id="scene" viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="wallGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#efe4f5"/>
+          <stop offset="100%" stop-color="#d0bfe2"/>
+        </linearGradient>
+        <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#d5a869"/>
+          <stop offset="100%" stop-color="#b07f47"/>
+        </linearGradient>
+        <radialGradient id="pigBody" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#d9a463"/>
+          <stop offset="55%" stop-color="#c48947"/>
+          <stop offset="100%" stop-color="#a8692f"/>
+        </radialGradient>
+        <radialGradient id="pigBodySleep" cx="40%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#d9a463"/>
+          <stop offset="60%" stop-color="#c1863f"/>
+          <stop offset="100%" stop-color="#9c6329"/>
+        </radialGradient>
+        <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(60,35,15,0.38)"/>
+          <stop offset="100%" stop-color="rgba(60,35,15,0)"/>
+        </radialGradient>
+        <linearGradient id="tunnelTube" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8fd6c9"/>
+          <stop offset="45%" stop-color="#5cb3a4"/>
+          <stop offset="100%" stop-color="#3e8f82"/>
+        </linearGradient>
+        <radialGradient id="tunnelHole" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#0d2b26"/>
+          <stop offset="100%" stop-color="#1c4b43"/>
+        </radialGradient>
+        <linearGradient id="bedGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f4b4c6"/>
+          <stop offset="100%" stop-color="#e07f9a"/>
+        </linearGradient>
+        <radialGradient id="ballGrad" cx="35%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#ffe27a"/>
+          <stop offset="60%" stop-color="#ffb638"/>
+          <stop offset="100%" stop-color="#e8891a"/>
+        </radialGradient>
+      </defs>
+
+      <!-- WALL -->
+      <rect x="0" y="0" width="800" height="330" fill="url(#wallGrad)"/>
+      <!-- baseboard -->
+      <rect x="0" y="300" width="800" height="14" fill="#b79fce"/>
+
+      <!-- water bottle (decorative) -->
+      <g transform="translate(700,40)">
+        <rect x="-10" y="0" width="20" height="55" rx="10" fill="#bfe6f5" stroke="#8fbfd6" stroke-width="2"/>
+        <rect x="-4" y="52" width="8" height="14" fill="#9aa5ab"/>
+        <circle cx="0" cy="70" r="3" fill="#7c8b91"/>
+      </g>
+
+      <!-- hay pile -->
+      <g transform="translate(70,270)" stroke="#e0b84a" stroke-width="3" stroke-linecap="round" opacity="0.9">
+        <path d="M0,10 L-6,-28"/>
+        <path d="M8,12 L4,-32"/>
+        <path d="M16,10 L22,-26"/>
+        <path d="M-10,14 L-22,-18"/>
+        <path d="M24,14 L34,-16"/>
+        <path d="M-2,14 L2,-10"/>
+      </g>
+      <ellipse cx="82" cy="288" rx="46" ry="12" fill="#e3b552" opacity="0.55"/>
+
+      <!-- FLOOR -->
+      <rect x="0" y="308" width="800" height="152" fill="url(#floorGrad)"/>
+      <g id="woodchips" opacity="0.35"></g>
+
+      <!-- BED (behind pig layer) -->
+      <g id="bed" transform="translate(130,392)">
+        <ellipse cx="0" cy="18" rx="78" ry="22" fill="#c96a86"/>
+        <ellipse cx="0" cy="10" rx="72" ry="20" fill="url(#bedGrad)"/>
+        <ellipse cx="0" cy="4" rx="52" ry="12" fill="#fbdce6" opacity="0.7"/>
+      </g>
+
+      <!-- BOWL -->
+      <g id="bowl" transform="translate(668,398)">
+        <ellipse cx="0" cy="10" rx="46" ry="14" fill="#8a5c30"/>
+        <ellipse cx="0" cy="4" rx="44" ry="13" fill="#c98a4a"/>
+        <ellipse cx="0" cy="0" rx="36" ry="9" fill="#7a4d24"/>
+        <g id="foodItems">
+          <ellipse cx="-10" cy="-3" rx="9" ry="5" fill="#7fbf4a"/>
+          <ellipse cx="6" cy="-2" rx="8" ry="5" fill="#95d65c"/>
+          <path d="M4,-8 L14,-3 L4,2 Z" fill="#f0923c"/>
+        </g>
+      </g>
+
+      <!-- TUNNEL -->
+      <g id="tunnel" transform="translate(400,392)">
+        <ellipse cx="-100" cy="10" rx="26" ry="16" fill="url(#tunnelHole)"/>
+        <path d="M -100,-24 C -30,-40 30,-40 100,-24 L 100,10 C 30,-6 -30,-6 -100,10 Z" fill="url(#tunnelTube)"/>
+        <ellipse cx="-100" cy="-24" rx="26" ry="15" fill="#a8ecdd"/>
+        <ellipse cx="-100" cy="-24" rx="20" ry="11" fill="url(#tunnelHole)"/>
+        <ellipse cx="100" cy="-24" rx="26" ry="15" fill="#a8ecdd"/>
+        <ellipse cx="100" cy="-24" rx="20" ry="11" fill="url(#tunnelHole)"/>
+        <ellipse cx="100" cy="10" rx="26" ry="16" fill="url(#tunnelHole)"/>
+      </g>
+
+      <!-- BALL (hidden until thrown) -->
+      <g id="ball" transform="translate(600,60)" opacity="0">
+        <circle cx="0" cy="0" r="20" fill="url(#ballGrad)"/>
+        <path d="M-20,0 A20,20 0 0,0 20,0" fill="none" stroke="#c96a15" stroke-width="2" opacity="0.6"/>
+        <path d="M0,-20 A20,20 0 0,0 0,20" fill="none" stroke="#c96a15" stroke-width="2" opacity="0.6"/>
+      </g>
+
+      <!-- SHADOW under pig -->
+      <ellipse id="pigShadow" cx="400" cy="418" rx="62" ry="13" fill="url(#shadowGrad)"/>
+
+      <!-- GUINEA PIG -->
+      <g id="pig" transform="translate(400,398)">
+        <g id="pigAwake">
+          <g id="breather">
+            <!-- far ear -->
+            <ellipse cx="8" cy="-52" rx="7" ry="10" fill="#8a5a2c" transform="rotate(-15 8 -52)"/>
+            <!-- legs (peek) -->
+            <g id="legs">
+              <ellipse class="leg" cx="-36" cy="14" rx="7" ry="5" fill="#96602f"/>
+              <ellipse class="leg" cx="32" cy="15" rx="7" ry="5" fill="#96602f"/>
+              <ellipse class="leg" cx="-8" cy="17" rx="6" ry="4" fill="#8a5828"/>
+              <ellipse class="leg" cx="14" cy="17" rx="6" ry="4" fill="#8a5828"/>
+            </g>
+            <!-- body clip group -->
+            <clipPath id="bodyClip">
+              <path d="M -55,-8 C -60,-22 -50,-40 -28,-48 C -8,-55 18,-55 34,-47 C 50,-40 60,-25 58,-8 C 57,2 50,10 38,12 C 15,17 -20,17 -42,10 C -52,6 -56,0 -55,-8 Z"/>
+            </clipPath>
+            <g clip-path="url(#bodyClip)">
+              <path d="M -55,-8 C -60,-22 -50,-40 -28,-48 C -8,-55 18,-55 34,-47 C 50,-40 60,-25 58,-8 C 57,2 50,10 38,12 C 15,17 -20,17 -42,10 C -52,6 -56,0 -55,-8 Z" fill="url(#pigBody)"/>
+              <!-- white blaze patch -->
+              <path d="M18,-56 C36,-58 56,-48 59,-28 C61,-12 54,0 42,4 C30,8 18,0 15,-16 C13,-30 9,-50 18,-56 Z" fill="#f7ecd9"/>
+              <!-- dark rump patch -->
+              <path d="M-58,-22 C-61,-6 -52,8 -36,11 C-25,13 -19,4 -22,-9 C-25,-22 -37,-32 -47,-30 C-52,-29 -57,-27 -58,-22 Z" fill="#4a3018"/>
+              <!-- fur texture strokes -->
+              <g stroke="#89551f" stroke-width="1.2" fill="none" opacity="0.35" stroke-linecap="round">
+                <path d="M-30,-38 q4,4 8,0"/>
+                <path d="M-16,-44 q4,4 8,0"/>
+                <path d="M0,-46 q4,4 8,0"/>
+                <path d="M-40,-24 q4,4 8,0"/>
+                <path d="M-6,-6 q4,3 8,0"/>
+                <path d="M10,-10 q4,3 8,0"/>
+              </g>
+            </g>
+            <!-- near ear -->
+            <ellipse id="earNear" cx="20" cy="-50" rx="8" ry="11" fill="#b97a3d" transform="rotate(-10 20 -50)"/>
+            <ellipse cx="20" cy="-49" rx="4.5" ry="6.5" fill="#e7b98a" transform="rotate(-10 20 -49)"/>
+            <!-- eye -->
+            <g id="eyeOpen">
+              <circle cx="41" cy="-27" r="4.6" fill="#241408"/>
+              <circle cx="43" cy="-29" r="1.4" fill="#fff"/>
+            </g>
+            <path id="eyeClosed" d="M36,-27 Q41,-23 46,-27" stroke="#241408" stroke-width="2" fill="none" stroke-linecap="round" style="display:none"/>
+            <!-- nose + mouth -->
+            <ellipse cx="59" cy="-11" rx="4" ry="3.2" fill="#e88b8b"/>
+            <path d="M56,-8 Q59,-2 62,-6" stroke="#5a3a20" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+            <path d="M59,-9 Q54,-4 49,-6" stroke="#5a3a20" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <!-- whiskers -->
+            <g stroke="#f4e9da" stroke-width="1" opacity="0.85" stroke-linecap="round">
+              <path d="M58,-13 L76,-20"/>
+              <path d="M59,-10 L78,-10"/>
+              <path d="M58,-7 L76,-2"/>
+            </g>
+          </g>
+        </g>
+
+        <!-- SLEEPING POSE -->
+        <g id="pigAsleep" style="display:none" transform="translate(0,4)">
+          <ellipse cx="0" cy="6" rx="48" ry="30" fill="url(#pigBodySleep)"/>
+          <path d="M22,-16 C34,-19 46,-9 44,4 C42,15 30,20 18,15 C10,12 8,-2 12,-10 C15,-15 18,-15 22,-16 Z" fill="#f7ecd9" opacity="0.9"/>
+          <ellipse cx="-30" cy="10" rx="14" ry="10" fill="#4a3018" opacity="0.85"/>
+          <ellipse cx="16" cy="-24" rx="7" ry="9" fill="#b97a3d" transform="rotate(10 16 -24)"/>
+          <path d="M30,-2 Q35,2 40,-2" stroke="#241408" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="44" cy="4" rx="3.4" ry="2.6" fill="#e88b8b"/>
+          <g id="zzz" opacity="0" font-family="Trebuchet MS, sans-serif" font-weight="700" fill="#6b3f2a">
+            <text x="46" y="-30" font-size="14">Z</text>
+            <text x="56" y="-42" font-size="11">z</text>
+            <text x="64" y="-52" font-size="8">z</text>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="controls">
+    <button class="action" id="btnBall"><span class="emoji">🎾</span>Throw Ball</button>
+    <button class="action" id="btnTunnel"><span class="emoji">🕳️</span>Tunnel</button>
+    <button class="action" id="btnBed"><span class="emoji">🛏️</span>Bed</button>
+    <button class="action" id="btnFeed"><span class="emoji">🥕</span>Feed</button>
+  </div>
+
+  <div class="hud">
+    <span>Happiness:</span>
+    <div class="hearts" id="hearts">
+      <span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span>
+    </div>
+  </div>
+
+  <footer>Click a button and watch Biscuit react — sound on for the full experience 🔊</footer>
+</div>
+
+<style>
+  #legs .leg{ transform-origin: center; }
+  .walking #legs .leg:nth-child(1){ animation: legSwing 0.35s ease-in-out infinite; }
+  .walking #legs .leg:nth-child(2){ animation: legSwing 0.35s ease-in-out infinite reverse; }
+  .walking #legs .leg:nth-child(3){ animation: legSwing 0.35s ease-in-out infinite reverse; }
+  .walking #legs .leg:nth-child(4){ animation: legSwing 0.35s ease-in-out infinite; }
+  @keyframes legSwing{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(-2.5px); }
+  }
+  #breather{ animation: breathe 2.6s ease-in-out infinite; transform-origin: -10px 0px; }
+  @keyframes breathe{
+    0%,100%{ transform: scaleY(1); }
+    50%{ transform: scaleY(1.025); }
+  }
+  #earNear.twitch{ animation: earTwitch 0.5s ease-in-out; }
+  @keyframes earTwitch{
+    0%,100%{ transform: rotate(-10deg); }
+    50%{ transform: rotate(14deg); }
+  }
+  #pig.popcorn{ animation: popcornJump 0.55s ease-out; }
+  @keyframes popcornJump{
+    0%{ transform: translate(var(--px),var(--py)) translateY(0) rotate(0deg); }
+    35%{ transform: translate(var(--px),var(--py)) translateY(-34px) rotate(-8deg); }
+    60%{ transform: translate(var(--px),var(--py)) translateY(-38px) rotate(6deg); }
+    100%{ transform: translate(var(--px),var(--py)) translateY(0) rotate(0deg); }
+  }
+  #pig.eating #breather{ animation: headBob 0.4s ease-in-out infinite; }
+  @keyframes headBob{
+    0%,100%{ transform: translateY(0) scaleY(1); }
+    50%{ transform: translateY(6px) scaleY(0.97); }
+  }
+  #zzz.float{ animation: zzzFloat 2.2s ease-in-out infinite; }
+  @keyframes zzzFloat{
+    0%{ opacity:0; transform: translateY(0); }
+    15%{ opacity:1; }
+    85%{ opacity:0.9; }
+    100%{ opacity:0; transform: translateY(-18px); }
+  }
+  #ball.squash{ animation: ballSquash 0.28s ease-out; }
+  @keyframes ballSquash{
+    0%{ transform: translate(var(--bx),var(--by)) scale(1,1); }
+    40%{ transform: translate(var(--bx),var(--by)) scale(1.3,0.7); }
+    100%{ transform: translate(var(--bx),var(--by)) scale(1,1); }
+  }
+  #pig{ transition: transform 0.02s linear; }
+</style>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Audio ----------
+  let actx = null;
+  function ac(){
+    if(!actx){ actx = new (window.AudioContext||window.webkitAudioContext)(); }
+    if(actx.state === 'suspended'){ actx.resume(); }
+    return actx;
+  }
+  function envGain(ctx, t0, peak, dur){
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.exponentialRampToValueAtTime(peak, t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    return g;
+  }
+  function tone(freqStart, freqEnd, dur, type, peak){
+    const ctx = ac();
+    const t0 = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = type || 'sine';
+    osc.frequency.setValueAtTime(freqStart, t0);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(freqEnd,20), t0+dur);
+    const g = envGain(ctx, t0, peak||0.25, dur);
+    osc.connect(g).connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0+dur+0.02);
+  }
+  function noiseBurst(dur, freq, q, peak){
+    const ctx = ac();
+    const t0 = ctx.currentTime;
+    const bufferSize = Math.floor(ctx.sampleRate*dur);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for(let i=0;i<bufferSize;i++){ data[i] = (Math.random()*2-1) * (1 - i/bufferSize); }
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const filt = ctx.createBiquadFilter();
+    filt.type = 'bandpass';
+    filt.frequency.value = freq;
+    filt.Q.value = q;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(peak, t0);
+    g.gain.exponentialRampToValueAtTime(0.0001, t0+dur);
+    src.connect(filt).connect(g).connect(ctx.destination);
+    src.start(t0);
+  }
+  function playBoing(){ tone(320,140,0.22,'sine',0.3); }
+  function playPop(){ tone(700,1500,0.09,'triangle',0.2); setTimeout(()=>tone(1200,500,0.12,'triangle',0.15),70); }
+  function playWheek(){
+    const ctx = ac();
+    const t0 = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(600,t0);
+    osc.frequency.linearRampToValueAtTime(1900,t0+0.12);
+    osc.frequency.linearRampToValueAtTime(700,t0+0.28);
+    osc.frequency.linearRampToValueAtTime(1700,t0+0.4);
+    osc.frequency.linearRampToValueAtTime(500,t0+0.52);
+    const g = envGain(ctx,t0,0.22,0.55);
+    const filt = ctx.createBiquadFilter();
+    filt.type='bandpass'; filt.frequency.value=1200; filt.Q.value=1.2;
+    osc.connect(filt).connect(g).connect(ctx.destination);
+    osc.start(t0); osc.stop(t0+0.58);
+  }
+  function playCrunch(){
+    noiseBurst(0.09, 1800, 2.2, 0.35);
+    setTimeout(()=>noiseBurst(0.08, 1400, 2.5, 0.3), 130);
+  }
+  function playRustle(dur){
+    noiseBurst(dur||0.6, 700, 0.7, 0.12);
+  }
+  function playSigh(){
+    tone(300,120,0.9,'sine',0.14);
+  }
+
+  // ---------- DOM refs ----------
+  const pig = document.getElementById('pig');
+  const pigAwake = document.getElementById('pigAwake');
+  const pigAsleep = document.getElementById('pigAsleep');
+  const eyeOpen = document.getElementById('eyeOpen');
+  const eyeClosed = document.getElementById('eyeClosed');
+  const earNear = document.getElementById('earNear');
+  const zzz = document.getElementById('zzz');
+  const ball = document.getElementById('ball');
+  const pigShadow = document.getElementById('pigShadow');
+  const sayEl = document.getElementById('say');
+  const stage = document.getElementById('scene');
+  const btns = {
+    ball: document.getElementById('btnBall'),
+    tunnel: document.getElementById('btnTunnel'),
+    bed: document.getElementById('btnBed'),
+    feed: document.getElementById('btnFeed')
+  };
+  const heartsEls = document.querySelectorAll('#hearts span');
+
+  const HOME = {x:400, y:398};
+  let pos = {x:HOME.x, y:HOME.y};
+  let facing = 1; // 1 right, -1 left
+  let busy = false;
+  let happiness = 2;
+
+  function setHappiness(v){
+    happiness = Math.max(0, Math.min(5, v));
+    heartsEls.forEach((el,i)=>{ el.classList.toggle('on', i<happiness); });
+  }
+  setHappiness(happiness);
+
+  function setPigTransform(){
+    pig.style.setProperty('--px', pos.x+'px');
+    pig.style.setProperty('--py', pos.y+'px');
+    pig.style.transform = `translate(${pos.x}px, ${pos.y}px) scale(${facing},1)`;
+    pigShadow.setAttribute('cx', pos.x);
+  }
+  setPigTransform();
+
+  function setButtonsDisabled(d){
+    Object.values(btns).forEach(b=>b.disabled = d);
+  }
+
+  function say(text, duration){
+    const wrapRect = stage.parentElement.getBoundingClientRect();
+    const rect = stage.getBoundingClientRect();
+    const scale = rect.width / 800;
+    const sx = (rect.left - wrapRect.left) + pos.x*scale;
+    const sy = (rect.top - wrapRect.top) + (pos.y-70)*scale;
+    sayEl.style.left = sx+'px';
+    sayEl.style.top = sy+'px';
+    sayEl.textContent = text;
+    sayEl.classList.add('show');
+    clearTimeout(say._t);
+    say._t = setTimeout(()=> sayEl.classList.remove('show'), duration||1200);
+  }
+
+  // ease helper
+  function easeInOutQuad(t){ return t<0.5 ? 2*t*t : 1-Math.pow(-2*t+2,2)/2; }
+
+  function walkTo(targetX, targetY, duration){
+    return new Promise(resolve=>{
+      const startX = pos.x, startY = pos.y;
+      const dir = targetX < startX ? -1 : 1;
+      facing = dir;
+      pig.classList.add('walking');
+      const t0 = performance.now();
+      function frame(now){
+        const t = Math.min(1,(now-t0)/duration);
+        const e = easeInOutQuad(t);
+        pos.x = startX + (targetX-startX)*e;
+        pos.y = startY + (targetY-startY)*e;
+        setPigTransform();
+        if(t<1){ requestAnimationFrame(frame); }
+        else{
+          pig.classList.remove('walking');
+          resolve();
+        }
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+
+  function popcornJump(){
+    return new Promise(resolve=>{
+      pig.classList.remove('popcorn'); void pig.offsetWidth;
+      pig.classList.add('popcorn');
+      playPop();
+      setTimeout(()=>{ pig.classList.remove('popcorn'); resolve(); }, 560);
+    });
+  }
+
+  function twitchEar(){
+    earNear.classList.remove('twitch'); void earNear.offsetWidth;
+    earNear.classList.add('twitch');
+    setTimeout(()=>earNear.classList.remove('twitch'), 520);
+  }
+
+  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+  // ---------- Actions ----------
+  async function throwBall(){
+    if(busy) return; busy = true; setButtonsDisabled(true);
+    ac();
+    const startBX = 640, startBY = -40;
+    const landX = pos.x - 55, landY = 402;
+    ball.style.opacity = 1;
+    const t0 = performance.now();
+    const dur = 620;
+    function frame(now){
+      const t = Math.min(1,(now-t0)/dur);
+      const bx = startBX + (landX-startBX)*t;
+      const by = startBY + (landY-startBY)*(t*t) ; // accelerate downward (gravity feel)
+      ball.setAttribute('transform', `translate(${bx},${by})`);
+      ball.style.setProperty('--bx', bx+'px');
+      ball.style.setProperty('--by', by+'px');
+      if(t<1){ requestAnimationFrame(frame); }
+      else{
+        ball.setAttribute('transform', `translate(${landX},${landY})`);
+        ball.style.setProperty('--bx', landX+'px');
+        ball.style.setProperty('--by', landY+'px');
+        playBoing();
+        ball.classList.add('squash');
+        setTimeout(()=>ball.classList.remove('squash'), 300);
+        onLand();
+      }
+    }
+    requestAnimationFrame(frame);
+
+    async function onLand(){
+      twitchEar();
+      say("Ooh!", 700);
+      await wait(280);
+      await popcornJump();
+      await popcornJump();
+      say("wheek wheek!", 900);
+      playWheek();
+      await wait(150);
+      await walkTo(landX+20, HOME.y, 500);
+      // nudge the ball
+      const bx2 = landX-18;
+      ball.setAttribute('transform', `translate(${bx2},${landY})`);
+      playBoing();
+      await wait(300);
+      await walkTo(HOME.x, HOME.y, 500);
+      ball.style.opacity = 0;
+      setHappiness(happiness+1);
+      busy = false; setButtonsDisabled(false);
+    }
+  }
+
+  async function sendThroughTunnel(){
+    if(busy) return; busy = true; setButtonsDisabled(true);
+    ac();
+    const leftX = 300, rightX = 500, midY = 396;
+    say("here we go!", 700);
+    await walkTo(leftX, midY, 650);
+    playRustle(1.1);
+    // shrink into tunnel
+    pigAwake.style.transition = 'opacity .25s ease, transform .25s ease';
+    pigAwake.style.opacity = '0';
+    pigAwake.style.transform = 'scale(0.5,0.7)';
+    pos.x = rightX; // teleport while hidden
+    setPigTransform();
+    await wait(650);
+    pigAwake.style.transform = 'scale(1,1)';
+    pigAwake.style.opacity = '1';
+    await wait(80);
+    facing = 1;
+    say("wheek!", 700);
+    playWheek();
+    await popcornJump();
+    await wait(150);
+    await walkTo(HOME.x, HOME.y, 600);
+    setHappiness(happiness+1);
+    pigAwake.style.transition = '';
+    busy = false; setButtonsDisabled(false);
+  }
+
+  async function goToBed(){
+    if(busy) return; busy = true; setButtonsDisabled(true);
+    ac();
+    const bedX = 150, bedY = 400;
+    say("getting sleepy...", 900);
+    await walkTo(bedX, bedY, 750);
+    playSigh();
+    await wait(250);
+    pigAwake.style.display = 'none';
+    pigAsleep.style.display = '';
+    zzz.classList.add('float');
+    await wait(2600);
+    busy = false; // allow other actions to wake pig
+    setButtonsDisabled(false);
+  }
+
+  async function wakeUpIfAsleep(){
+    const isAsleep = pigAsleep.style.display !== 'none';
+    if(!isAsleep) return;
+    zzz.classList.remove('float');
+    pigAsleep.style.display = 'none';
+    pigAwake.style.display = '';
+    await wait(80);
+  }
+
+  async function feedPig(){
+    if(busy) return; busy = true; setButtonsDisabled(true);
+    ac();
+    await wakeUpIfAsleep();
+    const bowlX = 640, bowlY = 400;
+    say("dinner time!", 800);
+    await walkTo(bowlX, bowlY, 750);
+    pig.classList.add('eating');
+    for(let i=0;i<4;i++){
+      playCrunch();
+      await wait(420);
+    }
+    pig.classList.remove('eating');
+    playWheek();
+    say("wheek wheek!! 🥕", 1000);
+    await popcornJump();
+    await wait(150);
+    await walkTo(HOME.x, HOME.y, 650);
+    setHappiness(happiness+1);
+    busy = false; setButtonsDisabled(false);
+  }
+
+  btns.ball.addEventListener('click', async ()=>{
+    await wakeUpIfAsleep();
+    if(!busy) throwBall();
+  });
+  btns.tunnel.addEventListener('click', async ()=>{
+    await wakeUpIfAsleep();
+    if(!busy) sendThroughTunnel();
+  });
+  btns.bed.addEventListener('click', ()=>{ if(!busy) goToBed(); });
+  btns.feed.addEventListener('click', ()=>{ if(!busy) feedPig(); });
+
+  // idle random ear twitch + blink
+  setInterval(()=>{
+    if(!busy && getComputedStyle(pigAwake).display !== 'none'){
+      if(Math.random()<0.5) twitchEar();
+    }
+  }, 3200);
+  setInterval(()=>{
+    if(getComputedStyle(pigAwake).display !== 'none'){
+      eyeOpen.style.display='none'; eyeClosed.style.display='';
+      setTimeout(()=>{ eyeOpen.style.display=''; eyeClosed.style.display='none'; }, 140);
+    }
+  }, 4200);
+
+  // scatter wood chips
+  (function(){
+    const g = document.getElementById('woodchips');
+    let s = '';
+    for(let i=0;i<70;i++){
+      const x = Math.random()*800;
+      const y = 320+Math.random()*130;
+      const r = 2+Math.random()*3;
+      const rot = Math.random()*360;
+      s += `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*0.4}" fill="#8a5c30" transform="rotate(${rot} ${x} ${y})"/>`;
+    }
+    g.innerHTML = s;
+  })();
+
+})();
+</script>
+</body>
+</html>
