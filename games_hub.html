@@ -261,7 +261,7 @@
     btn.style.background = `linear-gradient(180deg, ${game.color}, ${hexToRgba(game.color,0.85)})`;
     if(!game.comingSoon){
       btn.href = game.file;
-      btn.target = '_blank';
+     // btn.target = '_blank'; // avoids a new page opening
       btn.rel = 'noopener';
     } else {
       btn.href = '#';
