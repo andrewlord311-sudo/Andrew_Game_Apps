@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Melody & Barnaby's Music Arcade</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
+        
+        :root {
+            --ink: #1e293b;
+            --card-shadow: rgba(30, 41, 59, 0.15);
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            color: var(--ink);
+            background: radial-gradient(circle, #fef08a 0%, #bbf7d0 100%);
+            min-height: 100vh;
+        }
+
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+            text-shadow: 3px 3px 0px #15803d;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 0 var(--card-shadow), 0 18px 30px rgba(21, 128, 61, 0.1);
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            border: 4px solid #bbf7d0;
+        }
+
+        .card:hover {
+            transform: translateY(-6px) rotate(-0.5deg);
+            box-shadow: 0 14px 0 var(--card-shadow), 0 22px 36px rgba(21, 128, 61, 0.15);
+        }
+
+        /* Mascot idle animations */
+        .mascot-bounce {
+            animation: idle-bounce 2.5s ease-in-out infinite alternate;
+        }
+        @keyframes idle-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .play-btn {
+            box-shadow: 0 4px 0 rgba(0,0,0,0.15), 0 6px 10px rgba(0,0,0,0.1);
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
+        }
+        .play-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="py-10 px-4">
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header Section with Melody and Barnaby flanking the title -->
+        <header class="flex flex-col md:flex-row items-center justify-center gap-6 mb-10 text-center">
+            
+            <!-- Melody (Left) -->
+            <div class="mascot-bounce hidden md:block" style="animation-delay: 0.2s;">
+                <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-lg">
+                    <!-- Body -->
+                    <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
+                    <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
+                    <!-- Belly (light patch) -->
+                    <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
+                    <!-- Eyes -->
+                    <circle cx="65" cy="40" r="7" fill="#ffffff" />
+                    <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
+                    <circle cx="69" cy="38" r="1.5" fill="#ffffff" /> <!-- Glint -->
+                    <!-- Beak -->
+                    <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
+                    <!-- Wing -->
+                    <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
+                    <!-- Head Tuft / Feather -->
+                    <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
+                </svg>
+            </div>
+
+            <div class="max-w-xl">
+                <h1 class="kids-title text-4xl md:text-5xl text-emerald-600 mb-2">Music Arcade</h1>
+                <p class="text-emerald-800 text-lg font-bold">With Melody & Barnaby!</p>
+                <p class="text-slate-600 text-sm font-semibold mt-2">Help your child master the stave, rhythms, and ear-training concepts with interactive guided adventures!</p>
+            </div>
+
+            <!-- Barnaby (Right) -->
+            <div class="mascot-bounce hidden md:block" style="animation-delay: 0.8s;">
+                <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-lg">
+                    <!-- Ears -->
+                    <circle cx="25" cy="25" r="12" fill="#818cf8" />
+                    <circle cx="25" cy="25" r="7" fill="#c7d2fe" />
+                    <circle cx="75" cy="25" r="12" fill="#818cf8" />
+                    <circle cx="75" cy="25" r="7" fill="#c7d2fe" />
+                    <!-- Head -->
+                    <circle cx="50" cy="55" r="32" fill="#6366f1" />
+                    <!-- Cheeks (Blush) -->
+                    <circle cx="30" cy="62" r="5" fill="#f472b6" opacity="0.6" />
+                    <circle cx="70" cy="62" r="5" fill="#f472b6" opacity="0.6" />
+                    <!-- Muzzle -->
+                    <ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff" />
+                    <!-- Nose -->
+                    <polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round" />
+                    <!-- Eyes (Happy Arcs) -->
+                    <path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
+                    <path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
+                </svg>
+            </div>
+
+        </header>
+
+        <!-- Decorative Bunting -->
+        <div class="flex justify-center gap-2 mb-12">
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-pink-400"></span>
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-yellow-400"></span>
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-teal-400"></span>
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-indigo-400"></span>
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-orange-400"></span>
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-purple-400"></span>
+            <span class="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[18px] border-l-transparent border-r-transparent border-t-green-400"></span>
+        </div>
+
+        <!-- Games Grid -->
+        <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="games-grid">
+            <!-- Dynamic Game Cards will inject here via JavaScript -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 text-sm text-emerald-800 font-bold opacity-80">
+            🎹 Music Arcade Studio — Expand or customize this catalog inside the source code array! 🎶
+        </footer>
+
+    </div>
+
+    <script>
+        /* ======================================================================
+           ACTIVE MUSIC GAME REGISTRY
+           ----------------------------------------------------------------------
+           Add, modify, or update game listings below. Make sure paths match 
+           exactly.
+           ====================================================================== */
+        const GAMES = [
+            {
+                title: "Line & Space Safari",
+                description: "Help Melody and Barnaby sort notes! Perfect for visual training on whether notes sit on a line or cozy in a space.",
+                emoji: "🦒",
+                color: "#f97316", // Orange accent
+                file: "line_space_safari.html",
+                comingSoon: false
+            },
+            {
+                title: "Stave Explorer",
+                description: "Learn notes step-by-step from Middle C onwards. Featuring progressive levels, health hearts, and treble vs bass staves.",
+                emoji: "🎼",
+                color: "#10b981", // Green accent
+                file: "stave_explorer.html",
+                comingSoon: false
+            },
+            {
+                title: "Rhythm Rumbles",
+                description: "Tap along with fun rhythmic patterns to learn note durations (quarter notes, half notes, and whole notes!).",
+                emoji: "🥁",
+                color: "#ec4899", // Pink accent
+                file: "rhythm_rumbles.html",
+                comingSoon: true
+            },
+            {
+                title: "Ear Training Island",
+                description: "Listen closely to beautiful melodic intervals played by our guides and try to match the correct sequence.",
+                emoji: "👂",
+                color: "#3b82f6", // Blue accent
+                file: "ear_island.html",
+                comingSoon: true
+            },
+            {
+                title: "Circle of Fifths Spin",
+                description: "Spin the magic wheel to discover chord matching families, relative key minors, and sharp/flat patterns.",
+                emoji: "🎡",
+                color: "#eab308", // Yellow accent
+                file: "circle_fifths.html",
+                comingSoon: true
+            },
+            {
+                title: "Mascots' Sandbox Piano",
+                description: "Play your favorite songs on a digital interactive mini-keyboard with feedback from Melody and Barnaby.",
+                emoji: "🎹",
+                color: "#8b5cf6", // Purple accent
+                file: "sandbox_piano.html",
+                comingSoon: true
+            }
+        ];
+
+        function hexToRgba(hex, alpha) {
+            const h = hex.replace('#','');
+            const r = parseInt(h.substring(0,2),16);
+            const g = parseInt(h.substring(2,4),16);
+            const b = parseInt(h.substring(4,6),16);
+            return `rgba(${r},${g},${b},${alpha})`;
+        }
+
+        const grid = document.getElementById('games-grid');
+
+        GAMES.forEach(game => {
+            // Build the card
+            const card = document.createElement('div');
+            card.className = 'card relative p-6 flex flex-col items-center text-center';
+
+            // "Coming Soon" badge
+            if (game.comingSoon) {
+                const ribbon = document.createElement('div');
+                ribbon.className = 'absolute top-4 right-4 bg-yellow-400 text-yellow-950 font-black text-xs px-3 py-1 rounded-full shadow-sm uppercase tracking-wide';
+                ribbon.textContent = 'Coming soon';
+                card.appendChild(ribbon);
+            }
+
+            // Game Emoji Icon Badge with styled background gradient
+            const badge = document.createElement('div');
+            badge.className = 'w-20 h-20 rounded-full flex items-center justify-center text-4xl mb-4 shadow-md';
+            badge.style.background = `linear-gradient(180deg, ${hexToRgba(game.color, 0.2)}, ${hexToRgba(game.color, 0.55)})`;
+            badge.style.border = `3px solid ${game.color}`;
+            badge.textContent = game.emoji;
+            card.appendChild(badge);
+
+            // Title
+            const title = document.createElement('h2');
+            title.className = 'text-xl font-bold text-slate-800 mb-2';
+            title.textContent = game.title;
+            card.appendChild(title);
+
+            // Description
+            const p = document.createElement('p');
+            p.className = 'text-slate-500 text-sm font-semibold mb-6 flex-grow leading-relaxed';
+            p.textContent = game.description;
+            card.appendChild(p);
+
+            // Play button link
+            const btn = document.createElement('a');
+            btn.className = 'play-btn w-full py-3 px-6 rounded-2xl font-extrabold text-white text-md border-b-4 hover:brightness-105 active:scale-95 transition-all' + (game.comingSoon ? ' opacity-50 cursor-not-allowed pointer-events-none' : '');
+            btn.textContent = game.comingSoon ? 'Locked' : 'Play Adventure ▶';
+            
+            // Set dynamic button gradient coloring
+            btn.style.background = `linear-gradient(180deg, ${game.color}, ${hexToRgba(game.color, 0.85)})`;
+            btn.style.borderColor = hexToRgba(game.color, 0.9);
+
+            if (!game.comingSoon) {
+                btn.href = game.file;
+                btn.target = '_blank';
+                btn.rel = 'noopener';
+            } else {
+                btn.href = '#';
+                btn.addEventListener('click', e => e.preventDefault());
+            }
+            card.appendChild(btn);
+
+            grid.appendChild(card);
+        });
+    </script>
+</body>
+</html>
