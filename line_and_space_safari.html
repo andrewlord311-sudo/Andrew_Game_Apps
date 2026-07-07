@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Line & Space Safari!</title>
+    <!-- Tailwind CSS for playful styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #ffedd5 0%, #fed7aa 100%);
+            min-height: 100vh;
+        }
+
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+            text-shadow: 3px 3px 0px #c2410c;
+        }
+
+        /* Fun Mascot Animations */
+        .mascot-bounce {
+            animation: idle-bounce 2s ease-in-out infinite alternate;
+        }
+        @keyframes idle-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .mascot-spin {
+            animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1;
+        }
+        @keyframes happy-spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.3); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .mascot-sad {
+            animation: sad-shake 0.5s ease-in-out 1;
+        }
+        @keyframes sad-shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px) rotate(-5deg); }
+            40%, 80% { transform: translateX(10px) rotate(5deg); }
+        }
+
+        /* Particle explosion styling */
+        .confetti {
+            position: absolute;
+            pointer-events: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: blow-up 1s ease-out forwards;
+        }
+        @keyframes blow-up {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--dx), var(--dy)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        button {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="py-6 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-orange-400 p-6 relative overflow-hidden">
+        
+        <!-- Top Board / Hearts & Score -->
+        <div class="flex justify-between items-center mb-4">
+            <div class="flex gap-2">
+                <span class="bg-amber-100 text-amber-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <!-- Heart Indicators -->
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">
+                ❤️❤️❤️
+            </div>
+        </div>
+
+        <!-- Title -->
+        <h1 class="kids-title text-4xl text-orange-600 text-center mb-2">Line & Space Safari</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-4">Help our animal friends sort the musical notes!</p>
+
+        <!-- Clef Toggles (With Characters Inside) -->
+        <div class="grid grid-cols-2 gap-3 mb-3">
+            <!-- Treble Selector (Melody) -->
+            <button id="btn-treble" onclick="setClef('treble')" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 bg-orange-500 text-white shadow-md border-b-4 border-orange-700 scale-105">
+                <span class="text-lg">🎼</span> Treble Clef (Melody)
+            </button>
+            <!-- Bass Selector (Barnaby) -->
+            <button id="btn-bass" onclick="setClef('bass')" class="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 bg-slate-100 text-slate-700 border-b-4 border-slate-300 hover:bg-slate-200">
+                <span class="text-lg">𝄢</span> Bass Clef (Barnaby)
+            </button>
+        </div>
+
+        <!-- Stage/Level Selector (Sunny Trail vs Deep Jungle) -->
+        <div class="grid grid-cols-2 gap-2 bg-amber-50 p-2 rounded-2xl mb-4 border border-amber-200">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-2 px-3 rounded-xl font-bold text-xs transition-all duration-200 bg-amber-400 text-slate-900 border-b-2 border-amber-600 shadow">
+                ☀️ Stage 1: Sunny Trail
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-2 px-3 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-200 text-slate-600 hover:bg-slate-300">
+                🌴 Stage 2: Deep Jungle
+            </button>
+        </div>
+
+        <!-- Mascot Dialog Speech Bubble -->
+        <div class="flex items-center gap-3 bg-amber-50 p-4 rounded-2xl border border-amber-200 mb-6 transition-all duration-300">
+            <!-- Active Mascot Render Slot -->
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform">
+                <!-- SVG injected dynamically -->
+            </div>
+            <!-- Dialogue -->
+            <div class="relative bg-white border border-amber-100 p-3 rounded-xl shadow-sm w-full">
+                <!-- Dialogue Pointer -->
+                <div class="absolute top-1/2 -left-2 w-4 height-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-amber-100"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-relaxed">
+                    Hi! I'm Melody! Let's find out if this note is sitting on a LINE or hiding in a SPACE!
+                </p>
+            </div>
+        </div>
+
+        <!-- The Big Musical Staff Display Area -->
+        <div class="relative bg-slate-50 rounded-2xl p-4 border-2 border-slate-200 mb-6 flex justify-center items-center">
+            <canvas id="canvas" width="400" height="200" class="max-w-full rounded-xl bg-white shadow-inner"></canvas>
+            
+            <!-- Confetti Container Overlay -->
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
+
+            <!-- Stage Master Overlay -->
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-orange-600 mb-2">Wow, Safari Champion!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">You solved 10 notes in a row!</p>
+                <button onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Keep Exploring!
+                </button>
+            </div>
+        </div>
+
+        <!-- Big Visual Hint Text -->
+        <div id="feedback" class="text-center text-xl font-bold min-h-[36px] text-slate-700 mb-6 transition-all duration-150">
+            Is the blue note on a Line or a Space?
+        </div>
+
+        <!-- Giant LINE vs SPACE Choice Buttons -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <!-- LINE button -->
+            <button onclick="makeGuess('LINE')" class="bg-emerald-400 hover:bg-emerald-500 text-white text-3xl font-black py-4 rounded-2xl border-b-8 border-emerald-600 shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
+                <!-- Expanded Line Graphic with Note passing through -->
+                <svg viewBox="0 0 100 40" class="w-24 h-12 mb-1" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Long line -->
+                    <line x1="5" y1="20" x2="95" y2="20" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" />
+                    <!-- Centered blue note head -->
+                    <ellipse cx="50" cy="20" rx="11" ry="8" fill="#1e3a8a" transform="rotate(-15 50 20)" />
+                    <!-- Note highlight glint -->
+                    <ellipse cx="47" cy="17" rx="4" ry="2" fill="#93c5fd" transform="rotate(-15 47 17)" />
+                </svg>
+                LINE
+                <span class="text-xs font-bold tracking-wider opacity-90">(On the stick!)</span>
+            </button>
+            <!-- SPACE button -->
+            <button onclick="makeGuess('SPACE')" class="bg-sky-400 hover:bg-sky-500 text-white text-3xl font-black py-4 rounded-2xl border-b-8 border-sky-600 shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
+                <!-- Space Graphic: Two parallel lines with note nestled snugly in the middle -->
+                <svg viewBox="0 0 100 40" class="w-24 h-12 mb-1" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Top line -->
+                    <line x1="5" y1="8" x2="95" y2="8" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" />
+                    <!-- Bottom line -->
+                    <line x1="5" y1="32" x2="95" y2="32" stroke="#ffffff" stroke-width="4.5" stroke-linecap="round" />
+                    <!-- Snug blue note head centered in space (y=20) -->
+                    <ellipse cx="50" cy="20" rx="11" ry="8" fill="#1e3a8a" transform="rotate(-15 50 20)" />
+                    <!-- Note highlight glint -->
+                    <ellipse cx="47" cy="17" rx="4" ry="2" fill="#93c5fd" transform="rotate(-15 47 17)" />
+                </svg>
+                SPACE
+                <span class="text-xs font-bold tracking-wider opacity-90">(In between!)</span>
+            </button>
+        </div>
+
+        <!-- Bottom Controls -->
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2.5 rounded-xl hover:bg-purple-200 active:translate-y-0.5">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2.5 rounded-xl hover:bg-rose-200 active:translate-y-0.5">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // State tracking
+        let currentClef = 'treble'; // 'treble' | 'bass'
+        let currentStage = 1;       // 1 (Sunny Trail) | 2 (Deep Jungle)
+        let currentNote = null;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+
+        // Sound Synthesis Utility (Web Audio API)
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+
+        function playSound(freq, type = 'triangle', duration = 0.4) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function playSuccessChime() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                // Soft ascending pentatonic arpeggio
+                [392.00, 523.25, 659.25, 783.99].forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.2);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.2);
+                });
+            } catch(e) {}
+        }
+
+        function playFailBuzz() {
+            playSound(130, 'sawtooth', 0.35);
+        }
+
+        // Mascot Inline SVGs
+        const SVG_MELODY = `
+        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
+            <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
+            <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
+            <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
+            <circle cx="65" cy="40" r="7" fill="#ffffff" />
+            <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
+            <circle cx="69" cy="38" r="1.5" fill="#ffffff" />
+            <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
+            <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
+        </svg>`;
+
+        const SVG_BARNABY = `
+        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
+            <circle cx="25" cy="25" r="12" fill="#818cf8" />
+            <circle cx="25" cy="25" r="7" fill="#c7d2fe" />
+            <circle cx="75" cy="25" r="12" fill="#818cf8" />
+            <circle cx="75" cy="25" r="7" fill="#c7d2fe" />
+            <circle cx="50" cy="55" r="32" fill="#6366f1" />
+            <circle cx="30" cy="62" r="5" fill="#f472b6" opacity="0.6" />
+            <circle cx="70" cy="62" r="5" fill="#f472b6" opacity="0.6" />
+            <ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff" />
+            <polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round" />
+            <path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
+            <path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
+        </svg>`;
+
+        // Interactive Speech Databank
+        const dialogs = {
+            treble: {
+                start: "Hi! I'm Melody! Let's find out if this note is sitting on a LINE or hiding in a SPACE!",
+                correct: "Whoosh! That was amazing! High-five! 🖐️",
+                incorrect: "Don't worry, little explorer! Take a deep breath and let's check again together.",
+                hint_line: "Hint: Look! The black line cuts right through the middle of the note like a stick!",
+                hint_space: "Hint: Look! The note is sitting cozy inside the space, with lines above and below it!"
+            },
+            bass: {
+                start: "Hello there, explorer! I'm Barnaby! Can you help me sort out this beautiful deep note?",
+                correct: "Rumble-tumble! Brilliant job! You have ears and eyes of a tiger! 🐯",
+                incorrect: "It is okay! Making mistakes is how we grow! Let us try again with a fresh eye.",
+                hint_line: "Hint: See the line running right through the heart of our blue note?",
+                hint_space: "Hint: Look at how the note sits perfectly nestled between those two lines!"
+            }
+        };
+
+        // Note pools categorised by Clef and Stage
+        const TREBLE_STAGE1 = [
+            { note: "E4", lineStep: 0, freq: 329.63 },
+            { note: "F4", lineStep: 1, freq: 349.23 },
+            { note: "G4", lineStep: 2, freq: 392.00 },
+            { note: "A4", lineStep: 3, freq: 440.00 },
+            { note: "B4", lineStep: 4, freq: 493.88 },
+            { note: "C5", lineStep: 5, freq: 523.25 },
+            { note: "D5", lineStep: 6, freq: 587.33 },
+            { note: "E5", lineStep: 7, freq: 659.25 },
+            { note: "F5", lineStep: 8, freq: 698.46 }
+        ];
+
+        const TREBLE_STAGE2 = [
+            ...TREBLE_STAGE1,
+            { note: "C4", lineStep: -2, freq: 261.63, isLedger: true }, // Middle C (Ledger line below)
+            { note: "D4", lineStep: -1, freq: 293.66 },                 // D4 (Space below)
+            { note: "G5", lineStep: 9, freq: 783.99 }                  // G5 (Space above)
+        ];
+
+        const BASS_STAGE1 = [
+            { note: "G2", lineStep: 0, freq: 98.00 },
+            { note: "A2", lineStep: 1, freq: 110.00 },
+            { note: "B2", lineStep: 2, freq: 123.47 },
+            { note: "C3", lineStep: 3, freq: 130.81 },
+            { note: "D3", lineStep: 4, freq: 146.83 },
+            { note: "E3", lineStep: 5, freq: 164.81 },
+            { note: "F3", lineStep: 6, freq: 174.61 },
+            { note: "G3", lineStep: 7, freq: 196.00 },
+            { note: "A3", lineStep: 8, freq: 220.00 }
+        ];
+
+        const BASS_STAGE2 = [
+            ...BASS_STAGE1,
+            { note: "F2", lineStep: -1, freq: 87.31 },                 // F2 (Space below)
+            { note: "B3", lineStep: 9, freq: 246.94 },                 // B3 (Space above)
+            { note: "C4", lineStep: 10, freq: 261.63, isLedger: true } // Middle C (Ledger line above)
+        ];
+
+        function setClef(clef) {
+            currentClef = clef;
+            const btnTreble = document.getElementById('btn-treble');
+            const btnBass = document.getElementById('btn-bass');
+            
+            if (clef === 'treble') {
+                btnTreble.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 bg-orange-500 text-white shadow-md border-b-4 border-orange-700 scale-105";
+                btnBass.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 bg-slate-100 text-slate-700 border-b-4 border-slate-300 hover:bg-slate-200";
+            } else {
+                btnBass.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 bg-orange-500 text-white shadow-md border-b-4 border-orange-700 scale-105";
+                btnTreble.className = "flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-bold text-sm transition-all duration-300 bg-slate-100 text-slate-700 border-b-4 border-slate-300 hover:bg-slate-200";
+            }
+
+            setMascotAvatar();
+            updateDialog('start');
+            resetStats();
+            newRound();
+        }
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            const btn1 = document.getElementById('btn-stage-1');
+            const btn2 = document.getElementById('btn-stage-2');
+
+            if (stageNum === 1) {
+                btn1.className = "py-2 px-3 rounded-xl font-bold text-xs transition-all duration-200 bg-amber-400 text-slate-900 border-b-2 border-amber-600 shadow";
+                btn2.className = "py-2 px-3 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-200 text-slate-600 hover:bg-slate-300";
+            } else {
+                btn2.className = "py-2 px-3 rounded-xl font-bold text-xs transition-all duration-200 bg-amber-400 text-slate-900 border-b-2 border-amber-600 shadow";
+                btn1.className = "py-2 px-3 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-200 text-slate-600 hover:bg-slate-300";
+            }
+
+            resetStats();
+            newRound();
+        }
+
+        function setMascotAvatar() {
+            const container = document.getElementById('mascot-avatar');
+            container.innerHTML = currentClef === 'treble' ? SVG_MELODY : SVG_BARNABY;
+        }
+
+        function updateDialog(key) {
+            const text = dialogs[currentClef][key];
+            document.getElementById('mascot-dialog').innerText = text;
+        }
+
+        function drawStaff() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const startY = 50;
+            const lineGap = 20; // wide spacing for toddlers
+            const width = 340;
+            const startX = 30;
+
+            const isNoteLine = Math.abs(currentNote.lineStep) % 2 === 0;
+
+            // Draw staff lines
+            for (let i = 0; i < 5; i++) {
+                let y = startY + i * lineGap;
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = 3;
+
+                // Hint highlight: Glow the line if hints are enabled and it matches the note's line
+                if (hintsEnabled && isNoteLine && (8 - currentNote.lineStep === i * 2)) {
+                    ctx.strokeStyle = '#10b981'; // vibrant green glow
+                    ctx.lineWidth = 6;
+                }
+
+                ctx.beginPath();
+                ctx.moveTo(startX, y);
+                ctx.lineTo(startX + width, y);
+                ctx.stroke();
+            }
+
+            // Highlight the space if hints are enabled and note is in a space
+            if (hintsEnabled && !isNoteLine) {
+                const spaceIndex = (7 - currentNote.lineStep) / 2; // maps to space block
+                const spaceY = startY + (spaceIndex * lineGap) + (lineGap / 2);
+                ctx.fillStyle = 'rgba(56, 189, 248, 0.25)'; // soft sky blue highlighter
+                ctx.fillRect(startX, spaceY - (lineGap / 2) + 2, width, lineGap - 4);
+            }
+
+            // Draw Clef icon
+            if (currentClef === 'treble') {
+                ctx.font = "bold 66px serif";
+                ctx.fillStyle = '#1e293b';
+                ctx.fillText("𝄞", startX + 15, startY + 4.1 * lineGap);
+            } else {
+                ctx.font = "bold 60px serif";
+                ctx.fillStyle = '#1e293b';
+                ctx.fillText("𝄢", startX + 15, startY + 3.1 * lineGap);
+            }
+
+            // Draw Note Position
+            const noteX = canvas.width / 2 + 40;
+            const noteY = startY + (8 - currentNote.lineStep) * (lineGap / 2);
+
+            // Draw Ledger lines if necessary
+            // 1. Below staff (Treble Middle C is at step -2)
+            if (currentNote.lineStep <= -2) {
+                for (let i = -2; i >= currentNote.lineStep; i -= 2) {
+                    let ledgerY = startY + (8 - i) * (lineGap / 2);
+                    ctx.strokeStyle = '#475569';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(noteX - 18, ledgerY);
+                    ctx.lineTo(noteX + 18, ledgerY);
+                    ctx.stroke();
+                }
+            }
+            // 2. Above staff (Bass Middle C is at step 10)
+            if (currentNote.lineStep >= 10) {
+                for (let i = 10; i <= currentNote.lineStep; i += 2) {
+                    let ledgerY = startY + (8 - i) * (lineGap / 2);
+                    ctx.strokeStyle = '#475569';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(noteX - 18, ledgerY);
+                    ctx.lineTo(noteX + 18, ledgerY);
+                    ctx.stroke();
+                }
+            }
+
+            // Draw Note Shadow (playful look)
+            ctx.fillStyle = 'rgba(30, 41, 59, 0.1)';
+            ctx.beginPath();
+            ctx.ellipse(noteX + 2, noteY + 3, 13, 9, -0.25, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Note Head (Big beautiful bright blue)
+            ctx.save();
+            ctx.translate(noteX, noteY);
+            ctx.rotate(-0.25);
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 13, 9, 0, 0, 2 * Math.PI);
+            ctx.fill();
+
+            // Note Highlight
+            ctx.fillStyle = '#93c5fd';
+            ctx.beginPath();
+            ctx.ellipse(-4, -3, 5, 2.5, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            // Draw Stem
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            if (currentNote.lineStep >= 4) {
+                ctx.moveTo(noteX - 12, noteY);
+                ctx.lineTo(noteX - 12, noteY + 50);
+            } else {
+                ctx.moveTo(noteX + 12, noteY);
+                ctx.lineTo(noteX + 12, noteY - 50);
+            }
+            ctx.stroke();
+        }
+
+        function newRound() {
+            let pool;
+            if (currentClef === 'treble') {
+                pool = currentStage === 1 ? TREBLE_STAGE1 : TREBLE_STAGE2;
+            } else {
+                pool = currentStage === 1 ? BASS_STAGE1 : BASS_STAGE2;
+            }
+            
+            let picked;
+            do {
+                picked = pool[Math.floor(Math.random() * pool.length)];
+            } while (pool.length > 1 && currentNote && picked.note === currentNote.note);
+
+            currentNote = picked;
+            controlLock = false;
+
+            drawStaff();
+            
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-xl font-bold text-slate-700 mb-6";
+            feedback.innerText = "Is the blue note on a Line or a Space?";
+
+            if (hintsEnabled) {
+                const isNoteLine = Math.abs(currentNote.lineStep) % 2 === 0;
+                updateDialog(isNoteLine ? 'hint_line' : 'hint_space');
+            }
+        }
+
+        function makeGuess(guess) {
+            if (controlLock) return;
+
+            const isNoteLine = Math.abs(currentNote.lineStep) % 2 === 0;
+            const correctType = isNoteLine ? 'LINE' : 'SPACE';
+            const feedback = document.getElementById('feedback');
+            const avatar = document.getElementById('mascot-avatar');
+
+            if (guess === correctType) {
+                score += 10;
+                streak++;
+                document.getElementById('score').innerText = score;
+                document.getElementById('streak').innerText = streak;
+
+                feedback.className = "text-center text-2xl font-bold text-emerald-600 mb-6 bouncy";
+                feedback.innerText = `⭐ Yes! It's on a ${correctType}! ⭐`;
+
+                playSuccessChime();
+                triggerConfetti();
+                updateDialog('correct');
+                
+                avatar.className = "mascot-spin shrink-0";
+                controlLock = true;
+
+                setTimeout(() => {
+                    avatar.className = "mascot-bounce shrink-0";
+                }, 600);
+
+                if (streak > 0 && streak % 10 === 0) {
+                    setTimeout(triggerStageComplete, 1000);
+                } else {
+                    setTimeout(newRound, 1500);
+                }
+            } else {
+                streak = 0;
+                lives--;
+                document.getElementById('streak').innerText = streak;
+                updateHearts();
+                
+                feedback.className = "text-center text-xl font-bold text-rose-500 mb-6";
+                feedback.innerText = "Oops! Look closely! Let's try again.";
+                
+                playFailBuzz();
+                updateDialog('incorrect');
+
+                avatar.className = "mascot-sad shrink-0";
+                controlLock = true;
+
+                setTimeout(() => {
+                    avatar.className = "mascot-bounce shrink-0";
+                    controlLock = false;
+                }, 600);
+
+                if (lives <= 0) {
+                    setTimeout(triggerGameOver, 1000);
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                const dx = Math.cos(angle) * distance;
+                const dy = Math.sin(angle) * distance;
+                
+                particle.style.setProperty('--dx', `${dx}px`);
+                particle.style.setProperty('--dy', `${dy}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                
+                holder.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                container.innerHTML += i < lives ? '❤️' : '🖤';
+            }
+        }
+
+        function triggerStageComplete() {
+            const overlay = document.getElementById('overlay');
+            const oMascot = document.getElementById('overlay-mascot');
+            const oTitle = document.getElementById('overlay-title');
+            const oMsg = document.getElementById('overlay-msg');
+            
+            oMascot.innerHTML = currentClef === 'treble' ? SVG_MELODY : SVG_BARNABY;
+            oTitle.innerText = "⭐ Golden Badge! ⭐";
+            
+            if (currentStage === 1) {
+                oMsg.innerText = `Amazing! You solved 10 notes on Stage 1! Ready to explore the Deep Jungle (Stage 2)?`;
+                const oBtn = document.querySelector("#overlay button");
+                oBtn.onclick = () => {
+                    dismissOverlay();
+                    setStage(2);
+                };
+            } else {
+                oMsg.innerText = `Sensational! You are an expert at navigating the lines and spaces of the entire musical staff!`;
+                const oBtn = document.querySelector("#overlay button");
+                oBtn.onclick = () => {
+                    dismissOverlay();
+                    resetGame();
+                };
+            }
+            
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            const oMascot = document.getElementById('overlay-mascot');
+            const oTitle = document.getElementById('overlay-title');
+            const oMsg = document.getElementById('overlay-msg');
+            
+            oMascot.innerHTML = SVG_BARNABY; // Barnaby helps comfort
+            oTitle.innerText = "Keep Going!";
+            oMsg.innerText = "Let's refill your hearts and find some more notes!";
+            
+            const oBtn = document.querySelector("#overlay button");
+            oBtn.onclick = () => {
+                dismissOverlay();
+            };
+
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+            lives = 3;
+            streak = 0;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+            newRound();
+        }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            resetStats();
+            newRound();
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            const btnText = document.getElementById('hint-btn-text');
+            btnText.innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            
+            drawStaff();
+            
+            if (hintsEnabled) {
+                const isNoteLine = Math.abs(currentNote.lineStep) % 2 === 0;
+                updateDialog(isNoteLine ? 'hint_line' : 'hint_space');
+            } else {
+                updateDialog('start');
+            }
+        }
+
+        // Initialize App on load
+        window.onload = () => {
+            setClef('treble');
+        };
+    </script>
+</body>
+</html>
