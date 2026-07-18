@@ -552,14 +552,14 @@
                 const isCorrectNote = (key.id === (currentNote.name + currentNote.octave));
                 const isMiddleC = (key.id === "C4"); // Middle C is exactly C4
                 
-                keyDiv.className = `white-key flex-1 bg-white border-r-2 border-slate-200 rounded-b-xl flex flex-col justify-end items-center pb-3 text-xs font-black text-slate-500 cursor-pointer h-full relative select-none`;
+                keyDiv.className = `white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl flex flex-col justify-end items-center pb-3 text-xs font-black text-slate-500 cursor-pointer h-full relative select-none`;
                 keyDiv.dataset.note = key.id;
                 
                 // Show simple "Middle C" label only on C4 key
                 if (isMiddleC) {
                     const label = document.createElement('span');
                     label.innerText = "Middle C";
-                    label.className = "text-[10px] text-emerald-600 font-extrabold uppercase bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200 text-center leading-none mb-1";
+                    label.className = "absolute bottom-3 left-1/2 -translate-x-1/2 text-[10px] text-emerald-600 font-extrabold uppercase bg-emerald-50 px-1 py-0.5 rounded border border-emerald-200 text-center leading-none whitespace-nowrap z-10";
                     keyDiv.appendChild(label);
                 }
 
