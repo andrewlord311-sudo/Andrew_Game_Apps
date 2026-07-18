@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Step or Skip?</title>
+    <title>White Note Step or Skip</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap');
@@ -61,8 +61,8 @@
             <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
         </div>
 
-        <h1 class="kids-title text-3xl text-purple-600 text-center mb-1">Step or Skip?</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Two keys are glowing — is it a step or a skip?</p>
+        <h1 class="kids-title text-3xl text-purple-600 text-center mb-1">White Note Step or Skip</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Using only the WHITE keys — is it a step or a skip?</p>
 
         <div class="grid grid-cols-3 gap-2 bg-purple-50 p-2 rounded-2xl mb-2 border border-purple-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-purple-400 text-white border-b-2 border-purple-600 shadow">
@@ -171,10 +171,13 @@
             });
         }
 
+        // Only ever compare WHITE keys — this nugget is specifically about
+        // spotting steps/skips among the white notes (black keys are a
+        // separate landmark-finding nugget).
         const STAGE_CONFIGS = {
             1: { whiteOnly: true, minDiff: 1, maxDiff: 2 },
-            2: { whiteOnly: false, minDiff: 1, maxDiff: 3 },
-            3: { whiteOnly: false, minDiff: 1, maxDiff: 12 }
+            2: { whiteOnly: true, minDiff: 1, maxDiff: 4 },
+            3: { whiteOnly: true, minDiff: 1, maxDiff: 12 }
         };
 
         let keyA = null, keyB = null, correctAnswer = null;
@@ -284,6 +287,11 @@
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
             feedback.innerText = "Is it a step or a skip?";
+
+            // Play both keys right away so the child can hear the interval,
+            // not just see it highlighted.
+            setTimeout(() => playTone(freqForSemitone(keyA.semitone), 'triangle', 0.35), 300);
+            setTimeout(() => playTone(freqForSemitone(keyB.semitone), 'triangle', 0.35), 800);
         }
 
         function renderPiano() {
