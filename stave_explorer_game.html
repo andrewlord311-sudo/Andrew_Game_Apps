@@ -7,7 +7,7 @@
     <!-- Tailwind CSS for modern responsive aesthetics -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&family=Noto+Music&display=swap');
         
         body {
             font-family: 'Quicksand', sans-serif;
@@ -267,6 +267,7 @@
         function init() {
             createButtons();
             setClef('treble');
+            document.fonts.load(`${16 * 4}px "Noto Music"`).then(drawStave);
         }
 
         // Render keyboard guess inputs (A through G)
@@ -381,14 +382,16 @@
             }
 
             // 2. Draw Clef Symbol (Using styled text rendering inside canvas for native accuracy)
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'left';
             if (currentClef === 'treble') {
-                ctx.font = "bold 64px serif";
+                ctx.font = `${lineGap * 4}px "Noto Music", serif`;
                 ctx.fillStyle = '#1e293b';
-                ctx.fillText("𝄞", startX + 15, staffTop + 4.2 * lineGap);
+                ctx.fillText("\u{1D11E}", startX + 6, staffTop + 4 * lineGap);
             } else {
-                ctx.font = "bold 58px serif";
+                ctx.font = `${lineGap * 4}px "Noto Music", serif`;
                 ctx.fillStyle = '#1e293b';
-                ctx.fillText("𝄢", startX + 15, staffTop + 3.1 * lineGap);
+                ctx.fillText("\u{1D122}", startX + 6, staffTop + 3.625 * lineGap);
             }
 
             // 3. Render note details
