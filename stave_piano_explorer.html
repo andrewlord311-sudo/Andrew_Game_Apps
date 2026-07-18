@@ -7,7 +7,7 @@
     <!-- Tailwind CSS for rich modern spacing and responsive utility styles -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&family=Noto+Music&display=swap');
         
         body {
             font-family: 'Quicksand', sans-serif;
@@ -421,15 +421,17 @@
                 ctx.stroke();
             }
 
-            // 2. Draw Oversized Clef icon guides (large & visible)
+            // 2. Draw Clef icon (Noto Music web font for correct, consistent glyph shapes)
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'left';
             if (currentClef === 'treble') {
-                ctx.font = "bold 90px serif";
+                ctx.font = `${lineGap * 4}px "Noto Music", serif`;
                 ctx.fillStyle = '#1e293b';
-                ctx.fillText("𝄞", startX + 15, startY + 3.8 * lineGap);
+                ctx.fillText("\u{1D11E}", startX + 6, startY + 4 * lineGap);
             } else {
-                ctx.font = "bold 80px serif";
+                ctx.font = `${lineGap * 4}px "Noto Music", serif`;
                 ctx.fillStyle = '#1e293b';
-                ctx.fillText("𝄢", startX + 15, startY + 2.8 * lineGap);
+                ctx.fillText("\u{1D122}", startX + 6, startY + 3.625 * lineGap);
             }
 
             // Translate note step coordinate
@@ -811,6 +813,7 @@
 
         window.onload = () => {
             setClef('treble');
+            document.fonts.load('80px "Noto Music"').then(drawStaff);
         };
     </script>
 </body>
