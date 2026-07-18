@@ -7,7 +7,7 @@
     <!-- Tailwind CSS for modern responsive aesthetics -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&family=Noto+Music&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
         
         body {
             font-family: 'Quicksand', sans-serif;
@@ -264,10 +264,23 @@
         };
 
         // Initialize App
-        function init() {
+        async function init() {
             createButtons();
+            // Load the music-glyph font explicitly via the FontFace API rather than
+            // relying on @import + fonts.load(string) — that combination doesn't
+            // reliably register the font before Canvas fillText/measureText need it,
+            // causing an intermittent fallback to a generic (mis-sized) serif glyph.
+            try {
+                const notoMusicFont = new FontFace(
+                    'Noto Music',
+                    'url(https://fonts.gstatic.com/s/notomusic/v21/pe0rMIiSN5pO63htf1sxEkW7I9tAcVwob5A.woff2)'
+                );
+                document.fonts.add(notoMusicFont);
+                await notoMusicFont.load();
+            } catch (e) {
+                console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
+            }
             setClef('treble');
-            document.fonts.load(`${16 * 4}px "Noto Music"`).then(drawStave);
         }
 
         // Render keyboard guess inputs (A through G)
