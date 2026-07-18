@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name That Part</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap');
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #ffe4e6 0%, #fed7aa 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+            text-shadow: 3px 3px 0px #be123c;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+        .chip {
+            touch-action: none;
+            user-select: none;
+            cursor: grab;
+        }
+        .chip.dragging {
+            cursor: grabbing;
+            z-index: 1000;
+            position: fixed;
+            pointer-events: none;
+        }
+        .chip.solved {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .hotspot {
+            position: absolute;
+            border-radius: 8px;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+        .hotspot.hover-target {
+            background-color: rgba(251, 191, 36, 0.35);
+            box-shadow: 0 0 0 3px #fbbf24;
+        }
+        .hotspot.solved-target {
+            background-color: rgba(34, 197, 94, 0.25);
+        }
+        .placed-label {
+            position: absolute;
+            background: #16a34a;
+            color: white;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            white-space: nowrap;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        button { touch-action: manipulation; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-rose-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-rose-600 text-center mb-1">Name That Part</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Drag each label onto the matching part!</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
+                ☀️ Stage 1: Easy
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🌴 Stage 2: Medium
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🚀 Stage 3: Hard
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-rose-50 p-2 rounded-2xl border border-rose-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-rose-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-rose-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
+                    Hi, I'm Melody! Drag each label chip onto the part of the stave it names!
+                </p>
+            </div>
+        </div>
+
+        <div id="diagram-wrap" class="relative bg-slate-50 rounded-2xl border-2 border-slate-200 mb-3 overflow-auto" style="height: 220px;">
+            <div id="diagram-inner" class="relative" style="width: 400px; height: 220px;">
+                <canvas id="canvas" width="400" height="220" class="absolute top-0 left-0"></canvas>
+                <div id="hotspot-layer" class="absolute top-0 left-0" style="width: 400px; height: 220px;"></div>
+            </div>
+        </div>
+
+        <div id="feedback" class="text-center text-lg font-bold min-h-[24px] text-slate-700 mb-2">
+            Drag a label to begin!
+        </div>
+
+        <div id="chip-tray" class="flex flex-wrap gap-2 justify-center mb-3 min-h-[48px]">
+            <!-- chips injected here -->
+        </div>
+
+        <div class="relative">
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-rose-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStage = 1;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+        let roundsWonThisStage = 0;
+        let currentClef = 'treble';
+
+        // Fixed layout geometry (canvas is NOT scaled: 1 CSS px = 1 canvas px)
+        const staffTop = 70, lineGap = 16, startX = 30, staffWidth = 340;
+
+        // Named hotspot rectangles (relative to canvas top-left)
+        function getHotspots() {
+            return {
+                'clef':        { x: 18,  y: 4,   w: 74,  h: 168, label: 'Clef' },
+                'staff':       { x: 100, y: 65,  w: 42,  h: 75,  label: 'Staff' },
+                'note-on-line':{ x: 135, y: 88,  w: 30,  h: 26,  label: 'Note Head' },
+                'note-in-space':{x: 205, y: 78,  w: 30,  h: 26,  label: 'Space Note' },
+                'ledger-note': { x: 275, y: 136, w: 30,  h: 26,  label: 'Ledger Note' },
+                'stem':        { x: 146, y: 58,  w: 12,  h: 32,  label: 'Stem' },
+                'barline':     { x: 360, y: 65,  w: 16,  h: 75,  label: 'Barline' }
+            };
+        }
+
+        // Chip sets per stage: {targetId, label}
+        const STAGE_CHIPS = {
+            1: [
+                { targetId: 'clef', label: 'Clef' },
+                { targetId: 'staff', label: 'Staff' },
+                { targetId: 'note-on-line', label: 'Note Head' }
+            ],
+            2: [
+                { targetId: 'clef', label: 'Clef' },
+                { targetId: 'note-on-line', label: 'Line' },
+                { targetId: 'note-in-space', label: 'Space' },
+                { targetId: 'ledger-note', label: 'Ledger Line' }
+            ],
+            3: [
+                { targetId: 'clef', label: 'Clef' },
+                { targetId: 'staff', label: 'Staff' },
+                { targetId: 'note-on-line', label: 'Line' },
+                { targetId: 'note-in-space', label: 'Space' },
+                { targetId: 'ledger-note', label: 'Ledger Line' },
+                { targetId: 'stem', label: 'Stem' },
+                { targetId: 'barline', label: 'Barline' }
+            ]
+        };
+
+        let solvedIds = new Set();
+        let totalChips = 0;
+
+        const dialogs = {
+            start: "Hi, I'm Melody! Drag each label chip onto the part of the stave it names!",
+            correct: "Perfect match! 🎯",
+            incorrect: "Not quite — try a different spot!",
+            allSolved: "You named every part! Fantastic! 🌟"
+        };
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.25);
+                });
+            } catch (e) {}
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        const SVG_MELODY = `
+        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
+            <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
+            <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
+            <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
+            <circle cx="65" cy="40" r="7" fill="#ffffff" />
+            <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
+            <circle cx="69" cy="38" r="1.5" fill="#ffffff" />
+            <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
+            <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
+        </svg>`;
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`btn-stage-${i}`);
+                if (i === stageNum) {
+                    btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow";
+                } else {
+                    btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
+                }
+            }
+            resetStats();
+            roundsWonThisStage = 0;
+            newRound();
+        }
+
+        function newRound() {
+            currentClef = currentStage === 3 && Math.random() < 0.5 ? 'bass' : 'treble';
+            solvedIds = new Set();
+            controlLock = false;
+
+            const chips = STAGE_CHIPS[currentStage];
+            totalChips = chips.length;
+
+            drawDiagram();
+            renderHotspots();
+            renderChips(chips);
+
+            document.getElementById('mascot-dialog').innerText = dialogs.start;
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-lg font-bold text-slate-700 mb-2";
+            feedback.innerText = "Drag a label to begin!";
+        }
+
+        function drawDiagram() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 5 staff lines
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < 5; i++) {
+                const y = staffTop + i * lineGap;
+                ctx.beginPath();
+                ctx.moveTo(startX, y);
+                ctx.lineTo(startX + staffWidth, y);
+                ctx.stroke();
+            }
+
+            // Clef
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#1e293b';
+            ctx.font = `${lineGap * 4}px "Noto Music", serif`;
+            if (currentClef === 'treble') {
+                ctx.fillText("\u{1D11E}", startX + 6, staffTop + 4 * lineGap);
+            } else {
+                ctx.fillText("\u{1D122}", startX + 6, staffTop + 3.625 * lineGap);
+            }
+
+            // Note on line (middle line, y=102)
+            drawNote(150, 102, true, false);
+            // Note in space (2nd space from top, y=94... use space between line0(70) and line1(86) => y=78)
+            drawNote(220, 78, false, false);
+            // Ledger note below staff (ledger at y=150, note at y=150)
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.moveTo(275, 150);
+            ctx.lineTo(305, 150);
+            ctx.stroke();
+            drawNote(290, 150, false, true);
+
+            // Barline
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(368, staffTop);
+            ctx.lineTo(368, staffTop + 4 * lineGap);
+            ctx.stroke();
+        }
+
+        function drawNote(x, y, withStem, isLedger) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(-0.2);
+            ctx.fillStyle = '#2563eb';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, 10, 7, 0, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.restore();
+
+            if (withStem) {
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(x + 9, y);
+                ctx.lineTo(x + 9, y - 40);
+                ctx.stroke();
+            }
+        }
+
+        function renderHotspots() {
+            const layer = document.getElementById('hotspot-layer');
+            layer.innerHTML = '';
+            const hotspots = getHotspots();
+            const chipTargets = new Set(STAGE_CHIPS[currentStage].map(c => c.targetId));
+
+            Object.keys(hotspots).forEach(id => {
+                if (!chipTargets.has(id)) return;
+                const h = hotspots[id];
+                const div = document.createElement('div');
+                div.className = 'hotspot';
+                div.dataset.targetId = id;
+                div.style.left = `${h.x}px`;
+                div.style.top = `${h.y}px`;
+                div.style.width = `${h.w}px`;
+                div.style.height = `${h.h}px`;
+                layer.appendChild(div);
+            });
+
+            if (hintsEnabled) {
+                Object.keys(hotspots).forEach(id => {
+                    if (!chipTargets.has(id) || solvedIds.has(id)) return;
+                    const h = hotspots[id];
+                    const div = document.createElement('div');
+                    div.className = 'hotspot';
+                    div.style.left = `${h.x}px`;
+                    div.style.top = `${h.y}px`;
+                    div.style.width = `${h.w}px`;
+                    div.style.height = `${h.h}px`;
+                    div.style.background = 'rgba(251, 191, 36, 0.25)';
+                    div.style.boxShadow = '0 0 0 2px #fbbf24';
+                    div.style.pointerEvents = 'none';
+                    layer.appendChild(div);
+                });
+            }
+        }
+
+        function renderChips(chips) {
+            const tray = document.getElementById('chip-tray');
+            tray.innerHTML = '';
+            // Shuffle chip order
+            const shuffled = [...chips];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            shuffled.forEach(chipDef => {
+                const chip = document.createElement('div');
+                chip.className = 'chip bg-gradient-to-b from-amber-400 to-amber-500 text-white font-black text-sm px-4 py-2.5 rounded-full shadow-md border-b-4 border-amber-600';
+                chip.innerText = chipDef.label;
+                chip.dataset.targetId = chipDef.targetId;
+                attachDrag(chip);
+                tray.appendChild(chip);
+            });
+        }
+
+        function attachDrag(chip) {
+            let startX, startY, origLeft, origTop, origParent;
+
+            chip.addEventListener('pointerdown', (e) => {
+                if (controlLock) return;
+                e.preventDefault();
+                const rect = chip.getBoundingClientRect();
+                origParent = chip.parentElement;
+                origLeft = rect.left;
+                origTop = rect.top;
+                startX = e.clientX;
+                startY = e.clientY;
+
+                document.body.appendChild(chip);
+                chip.style.left = `${origLeft}px`;
+                chip.style.top = `${origTop}px`;
+                chip.classList.add('dragging');
+                chip.setPointerCapture(e.pointerId);
+
+                function onMove(ev) {
+                    const dx = ev.clientX - startX;
+                    const dy = ev.clientY - startY;
+                    chip.style.left = `${origLeft + dx}px`;
+                    chip.style.top = `${origTop + dy}px`;
+
+                    // Highlight hotspot under pointer
+                    document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('hover-target'));
+                    const layer = document.getElementById('hotspot-layer');
+                    const layerRect = layer.getBoundingClientRect();
+                    const px = ev.clientX - layerRect.left;
+                    const py = ev.clientY - layerRect.top;
+                    document.querySelectorAll('.hotspot').forEach(h => {
+                        const hx = parseFloat(h.style.left), hy = parseFloat(h.style.top);
+                        const hw = parseFloat(h.style.width), hh = parseFloat(h.style.height);
+                        if (px >= hx && px <= hx + hw && py >= hy && py <= hy + hh) {
+                            h.classList.add('hover-target');
+                        }
+                    });
+                }
+
+                function onUp(ev) {
+                    chip.removeEventListener('pointermove', onMove);
+                    chip.removeEventListener('pointerup', onUp);
+                    document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('hover-target'));
+
+                    const layer = document.getElementById('hotspot-layer');
+                    const layerRect = layer.getBoundingClientRect();
+                    const px = ev.clientX - layerRect.left;
+                    const py = ev.clientY - layerRect.top;
+
+                    let droppedOn = null;
+                    document.querySelectorAll('.hotspot').forEach(h => {
+                        const hx = parseFloat(h.style.left), hy = parseFloat(h.style.top);
+                        const hw = parseFloat(h.style.width), hh = parseFloat(h.style.height);
+                        if (px >= hx && px <= hx + hw && py >= hy && py <= hy + hh) {
+                            droppedOn = h;
+                        }
+                    });
+
+                    chip.classList.remove('dragging');
+
+                    if (droppedOn && droppedOn.dataset.targetId === chip.dataset.targetId && !solvedIds.has(chip.dataset.targetId)) {
+                        handleCorrectDrop(chip, droppedOn);
+                    } else {
+                        // snap back to tray
+                        chip.style.position = '';
+                        chip.style.left = '';
+                        chip.style.top = '';
+                        origParent.appendChild(chip);
+                        if (droppedOn) {
+                            handleWrongDrop();
+                        }
+                    }
+                }
+
+                chip.addEventListener('pointermove', onMove);
+                chip.addEventListener('pointerup', onUp);
+            });
+        }
+
+        function handleCorrectDrop(chip, hotspotEl) {
+            const hotspots = getHotspots();
+            const id = chip.dataset.targetId;
+            const h = hotspots[id];
+            solvedIds.add(id);
+
+            chip.remove();
+            hotspotEl.classList.add('solved-target');
+
+            const layer = document.getElementById('hotspot-layer');
+            const label = document.createElement('div');
+            label.className = 'placed-label';
+            label.style.left = `${h.x + h.w / 2}px`;
+            label.style.top = `${h.y + h.h + 12}px`;
+            label.innerText = h.label;
+            layer.appendChild(label);
+
+            playTone(523.25, 'triangle', 0.3);
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-lg font-bold text-green-600 mb-2";
+            feedback.innerText = "⭐ Perfect match! ⭐";
+            document.getElementById('mascot-dialog').innerText = dialogs.correct;
+
+            if (solvedIds.size >= totalChips) {
+                setTimeout(onRoundComplete, 700);
+            }
+        }
+
+        function handleWrongDrop() {
+            streak = 0;
+            lives--;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-lg font-bold text-rose-500 mb-2";
+            feedback.innerText = "Not quite — try a different spot!";
+            playFailBuzz();
+            document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+
+            if (lives <= 0) {
+                controlLock = true;
+                setTimeout(triggerGameOver, 700);
+            }
+        }
+
+        function onRoundComplete() {
+            score += 10 * totalChips;
+            streak++;
+            roundsWonThisStage++;
+            document.getElementById('score').innerText = score;
+            document.getElementById('streak').innerText = streak;
+
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-lg font-bold text-green-600 mb-2";
+            feedback.innerText = "⭐ You named every part! ⭐";
+
+            triggerConfetti();
+            document.getElementById('mascot-dialog').innerText = dialogs.allSolved;
+
+            const avatar = document.getElementById('mascot-avatar');
+            avatar.className = "mascot-spin shrink-0";
+            controlLock = true;
+            setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
+
+            if (roundsWonThisStage >= 3) {
+                setTimeout(triggerStageComplete, 1000);
+            } else {
+                setTimeout(newRound, 1400);
+            }
+        }
+
+        function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                holder.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) container.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+
+        function triggerStageComplete() {
+            playSuccessArpeggio();
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
+            const oMsg = document.getElementById('overlay-msg');
+            const oBtn = document.getElementById('overlay-btn');
+
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = "Go to Next Stage!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = `Amazing! You know every part of the stave!`;
+                oBtn.innerText = "Play Again!";
+                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "No More Hearts!";
+            document.getElementById('overlay-msg').innerText = "Let's take another look and try this stage again!";
+            const oBtn = document.getElementById('overlay-btn');
+            oBtn.innerText = "Restart Stage";
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); roundsWonThisStage = 0; newRound(); };
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+            controlLock = false;
+        }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            setStage(1);
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            renderHotspots();
+        }
+
+        window.onload = async () => {
+            try {
+                const notoMusicFont = new FontFace(
+                    'Noto Music',
+                    'url(https://fonts.gstatic.com/s/notomusic/v21/pe0rMIiSN5pO63htf1sxEkW7I9tAcVwob5A.woff2)'
+                );
+                document.fonts.add(notoMusicFont);
+                await notoMusicFont.load();
+            } catch (e) {
+                console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
+            }
+            document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
+            setStage(1);
+        };
+    </script>
+</body>
+</html>

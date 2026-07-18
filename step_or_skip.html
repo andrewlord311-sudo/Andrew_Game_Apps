@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Step or Skip?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap');
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fce7f3 0%, #ddd6fe 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+            text-shadow: 3px 3px 0px #7e22ce;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+        .white-key {
+            box-shadow: inset 0 -8px 0 #e2e8f0, 0 4px 6px rgba(0,0,0,0.05);
+            transition: background-color 0.1s, transform 0.05s, box-shadow 0.05s;
+        }
+        .white-key.highlight {
+            background-color: #fde68a !important;
+            box-shadow: inset 0 -8px 0 #f59e0b, 0 0 0 3px #f59e0b;
+        }
+        .black-key {
+            box-shadow: inset 0 -6px 0 #000000, 0 3px 5px rgba(0,0,0,0.3);
+            transition: background-color 0.1s, transform 0.05s, box-shadow 0.05s;
+        }
+        .black-key.highlight {
+            background-color: #a855f7 !important;
+            box-shadow: inset 0 -6px 0 #6b21a8, 0 0 0 3px #f59e0b;
+        }
+        button { touch-action: manipulation; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-purple-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-purple-600 text-center mb-1">Step or Skip?</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Two keys are glowing — is it a step or a skip?</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-purple-50 p-2 rounded-2xl mb-2 border border-purple-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-purple-400 text-white border-b-2 border-purple-600 shadow">
+                ☀️ Stage 1: Easy
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🌴 Stage 2: Medium
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🚀 Stage 3: Hard
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-purple-50 p-2 rounded-2xl border border-purple-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-purple-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-purple-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
+                    Hi, I'm Melody! Are these two glowing keys a step apart, or a skip apart?
+                </p>
+            </div>
+        </div>
+
+        <div class="relative">
+            <div class="bg-slate-100 p-1 rounded-t-2xl border-t-2 border-x-2 border-slate-200 text-xs font-bold text-slate-600 text-center tracking-wide">
+                Watch the two glowing keys
+            </div>
+            <div id="piano-container" class="relative flex select-none bg-slate-800 p-2 rounded-b-2xl border-x-2 border-b-4 border-slate-300 h-32 w-full overflow-hidden">
+            </div>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-purple-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700 my-3">
+            Is it a step or a skip?
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-3">
+            <button onclick="makeGuess('step')" class="bg-gradient-to-b from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-white font-black py-5 rounded-2xl border-b-4 border-teal-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
+                <span class="text-2xl">👣</span>
+                <span class="text-lg">STEP</span>
+                <span class="text-[10px] font-semibold opacity-90">the very next key</span>
+            </button>
+            <button onclick="makeGuess('skip')" class="bg-gradient-to-b from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-black py-5 rounded-2xl border-b-4 border-orange-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
+                <span class="text-2xl">🤸</span>
+                <span class="text-lg">SKIP</span>
+                <span class="text-[10px] font-semibold opacity-90">jumps over a key</span>
+            </button>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        let currentStage = 1;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+
+        const START_OCTAVE = 3;
+        const WHITE_SEMITONE = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+        const BLACK_AFTER = [
+            { afterName: 'C', name: 'C#', semitone: 1 },
+            { afterName: 'D', name: 'D#', semitone: 3 },
+            { afterName: 'F', name: 'F#', semitone: 6 },
+            { afterName: 'G', name: 'G#', semitone: 8 },
+            { afterName: 'A', name: 'A#', semitone: 10 }
+        ];
+
+        // Build 2 octaves + final C of white keys, with absolute semitone index
+        let allKeys = []; // {id, name, octave, isBlack, semitone, whiteIndex}
+        function buildKeys() {
+            allKeys = [];
+            const whiteNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
+            for (let i = 0; i < 15; i++) {
+                const noteName = whiteNotes[i];
+                const octaveOffset = Math.floor(i / 7);
+                const oct = START_OCTAVE + octaveOffset;
+                const absSemitone = octaveOffset * 12 + WHITE_SEMITONE[noteName];
+                allKeys.push({ id: `${noteName}${oct}`, name: noteName, octave: oct, isBlack: false, semitone: absSemitone, whiteIndex: i });
+            }
+            // Black keys, two sets (one per octave, skip second set's trailing C)
+            [0, 1].forEach(octaveOffset => {
+                BLACK_AFTER.forEach(b => {
+                    const oct = START_OCTAVE + octaveOffset;
+                    const absSemitone = octaveOffset * 12 + b.semitone;
+                    allKeys.push({ id: `${b.name}${oct}`, name: b.name, octave: oct, isBlack: true, semitone: absSemitone, afterWhiteIndex: octaveOffset * 7 + ['C','D','E','F','G','A','B'].indexOf(b.afterName) });
+                });
+            });
+        }
+
+        const STAGE_CONFIGS = {
+            1: { whiteOnly: true, minDiff: 1, maxDiff: 2 },
+            2: { whiteOnly: false, minDiff: 1, maxDiff: 3 },
+            3: { whiteOnly: false, minDiff: 1, maxDiff: 12 }
+        };
+
+        let keyA = null, keyB = null, correctAnswer = null;
+
+        const dialogs = {
+            start: "Hi, I'm Melody! Are these two glowing keys a step apart, or a skip apart?",
+            correct: "Yes! Your ear (and eyes) found it! 🎹",
+            incorrect: "Close! Count the keys between the two glowing ones."
+        };
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5) {
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                gain.gain.setValueAtTime(0, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                    gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * 0.08);
+                    osc.stop(now + idx * 0.08 + 0.25);
+                });
+            } catch (e) {}
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // Semitone -> frequency (A3 = 220Hz baseline reference at semitone for A within C3 octave: A3 offset=9 -> absSemitone (octaveOffset0)=9)
+        function freqForSemitone(absSemitone) {
+            // C3 = MIDI 48. absSemitone 0 = C3.
+            const midi = 48 + absSemitone;
+            return 440 * Math.pow(2, (midi - 69) / 12);
+        }
+
+        const SVG_MELODY = `
+        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
+            <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
+            <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
+            <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
+            <circle cx="65" cy="40" r="7" fill="#ffffff" />
+            <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
+            <circle cx="69" cy="38" r="1.5" fill="#ffffff" />
+            <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
+            <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
+            <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
+        </svg>`;
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`btn-stage-${i}`);
+                if (i === stageNum) {
+                    btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-purple-400 text-white border-b-2 border-purple-600 shadow";
+                } else {
+                    btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
+                }
+            }
+            resetStats();
+            newRound();
+        }
+
+        function newRound() {
+            const config = STAGE_CONFIGS[currentStage];
+            const pool = config.whiteOnly ? allKeys.filter(k => !k.isBlack) : allKeys;
+
+            let a, b, diff;
+            let attempts = 0;
+            do {
+                a = pool[Math.floor(Math.random() * pool.length)];
+                b = pool[Math.floor(Math.random() * pool.length)];
+                diff = Math.abs(a.semitone - b.semitone);
+                attempts++;
+            } while ((a.id === b.id || diff < config.minDiff || diff > config.maxDiff) && attempts < 300);
+
+            keyA = a;
+            keyB = b;
+            correctAnswer = diff === 1 ? 'step' : 'skip';
+            controlLock = false;
+
+            renderPiano();
+
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
+            feedback.innerText = "Is it a step or a skip?";
+        }
+
+        function renderPiano() {
+            const container = document.getElementById('piano-container');
+            container.innerHTML = '';
+
+            const whiteKeys = allKeys.filter(k => !k.isBlack);
+
+            whiteKeys.forEach((key) => {
+                const keyDiv = document.createElement('div');
+                const isHighlighted = key.id === keyA.id || key.id === keyB.id;
+                keyDiv.className = `white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none ${isHighlighted ? 'highlight' : ''}`;
+                keyDiv.dataset.note = key.id;
+                container.appendChild(keyDiv);
+            });
+
+            const containerWidth = container.clientWidth - 16;
+            const whiteKeyWidth = containerWidth / whiteKeys.length;
+
+            const blackKeys = allKeys.filter(k => k.isBlack);
+            blackKeys.forEach((key) => {
+                const blackDiv = document.createElement('div');
+                const isHighlighted = key.id === keyA.id || key.id === keyB.id;
+                blackDiv.className = `black-key absolute rounded-b-lg z-30 select-none ${isHighlighted ? 'highlight' : 'bg-slate-950'}`;
+                blackDiv.style.height = '3.5rem';
+                blackDiv.style.width = `${whiteKeyWidth * 0.65}px`;
+                const leftPos = (key.afterWhiteIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2);
+                blackDiv.style.left = `${leftPos}px`;
+                blackDiv.dataset.note = key.id;
+                container.appendChild(blackDiv);
+            });
+
+            if (hintsEnabled) {
+                const hint = document.createElement('div');
+                hint.className = "absolute top-1 left-1/2 -translate-x-1/2 bg-white/90 text-purple-700 font-bold text-[10px] px-2 py-0.5 rounded-full z-40";
+                hint.innerText = `${keyA.name}${keyA.octave} → ${keyB.name}${keyB.octave}: ${Math.abs(keyA.semitone - keyB.semitone)} key(s) apart (${correctAnswer.toUpperCase()})`;
+                container.appendChild(hint);
+            }
+        }
+
+        function makeGuess(answer) {
+            if (controlLock) return;
+            const feedback = document.getElementById('feedback');
+
+            playTone(freqForSemitone(keyA.semitone), 'triangle', 0.3);
+            setTimeout(() => playTone(freqForSemitone(keyB.semitone), 'triangle', 0.3), 200);
+
+            if (answer === correctAnswer) {
+                score += 10;
+                streak++;
+                document.getElementById('score').innerText = score;
+                document.getElementById('streak').innerText = streak;
+
+                feedback.className = "text-center text-lg font-bold text-green-600 mb-3 my-3";
+                feedback.innerText = `⭐ Yes! That's a ${correctAnswer.toUpperCase()}! ⭐`;
+
+                setTimeout(triggerConfetti, 250);
+                document.getElementById('mascot-dialog').innerText = dialogs.correct;
+
+                const avatar = document.getElementById('mascot-avatar');
+                avatar.className = "mascot-spin shrink-0";
+                controlLock = true;
+                setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
+
+                if (streak > 0 && streak % 10 === 0) {
+                    setTimeout(triggerStageComplete, 1200);
+                } else {
+                    setTimeout(newRound, 1400);
+                }
+            } else {
+                streak = 0;
+                lives--;
+                document.getElementById('streak').innerText = streak;
+                updateHearts();
+
+                feedback.className = "text-center text-lg font-bold text-rose-500 my-3";
+                feedback.innerText = "Close! Count the keys between them again.";
+
+                setTimeout(playFailBuzz, 450);
+                document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+
+                const avatar = document.getElementById('mascot-avatar');
+                avatar.className = "mascot-sad shrink-0";
+                controlLock = true;
+                setTimeout(() => {
+                    avatar.className = "mascot-bounce shrink-0";
+                    controlLock = false;
+                }, 600);
+
+                if (lives <= 0) {
+                    setTimeout(triggerGameOver, 1200);
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                holder.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) container.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+
+        function triggerStageComplete() {
+            playSuccessArpeggio();
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
+            const oMsg = document.getElementById('overlay-msg');
+            const oBtn = document.getElementById('overlay-btn');
+
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = "Go to Next Stage!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = `Outstanding! You can spot steps and skips anywhere on the keyboard!`;
+                oBtn.innerText = "Play Again!";
+                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "No More Hearts!";
+            document.getElementById('overlay-msg').innerText = "Let's replenish your hearts and try this stage again!";
+            const oBtn = document.getElementById('overlay-btn');
+            oBtn.innerText = "Restart Stage";
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() { document.getElementById('overlay').classList.add('hidden'); }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            setStage(1);
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            renderPiano();
+        }
+
+        window.addEventListener('resize', () => { renderPiano(); });
+
+        window.onload = () => {
+            buildKeys();
+            document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
+            setStage(1);
+        };
+    </script>
+</body>
+</html>
