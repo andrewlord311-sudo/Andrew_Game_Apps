@@ -78,32 +78,9 @@
         </div>
 
         <!-- Hand diagram -->
-        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex justify-center items-center">
-            <svg id="hand-svg" viewBox="0 0 300 180" class="w-full max-w-xs">
-                <!-- Palm -->
-                <ellipse cx="150" cy="140" rx="90" ry="45" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />
-                <!-- Fingers 1-5, left to right = thumb to pinky -->
-                <g id="finger-1" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
-                    <ellipse cx="55" cy="120" rx="16" ry="30" transform="rotate(-35 55 120)" />
-                    <text x="55" y="95" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">1</text>
-                </g>
-                <g id="finger-2" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
-                    <ellipse cx="95" cy="80" rx="15" ry="42" />
-                    <text x="95" y="42" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">2</text>
-                </g>
-                <g id="finger-3" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
-                    <ellipse cx="140" cy="70" rx="15" ry="48" />
-                    <text x="140" y="26" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">3</text>
-                </g>
-                <g id="finger-4" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
-                    <ellipse cx="185" cy="76" rx="15" ry="44" />
-                    <text x="185" y="36" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">4</text>
-                </g>
-                <g id="finger-5" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
-                    <ellipse cx="225" cy="95" rx="14" ry="36" transform="rotate(8 225 95)" />
-                    <text x="228" y="65" text-anchor="middle" font-size="18" font-weight="900" fill="#7c2d12">5</text>
-                </g>
-            </svg>
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex flex-col justify-center items-center">
+            <div id="hand-label" class="font-black text-sm px-3 py-1 rounded-full mb-1"></div>
+            <div id="hand-svg-wrap" class="w-full max-w-xs"></div>
         </div>
 
         <div id="question-text" class="text-center text-xl font-black text-slate-800 mb-2">
@@ -147,12 +124,26 @@
         let hintsEnabled = false;
         let controlLock = false;
 
-        const FINGER_NOTES = { 1: 'C4', 2: 'D4', 3: 'E4', 4: 'F4', 5: 'G4' };
-        const NOTE_FREQS = { C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00 };
+        // Standard 5-finger C position for each hand: the thumb always sits
+        // nearest Middle C, so RIGHT hand ascends thumb->pinky (C4->G4) while
+        // LEFT hand descends thumb->pinky (G3->C3) — mirrored, like real hands.
+        const FINGER_NOTES = {
+            right: { 1: 'C4', 2: 'D4', 3: 'E4', 4: 'F4', 5: 'G4' },
+            left:  { 1: 'G3', 2: 'F3', 3: 'E3', 4: 'D3', 5: 'C3' }
+        };
+        const HAND_KEYS = {
+            right: ['C4', 'D4', 'E4', 'F4', 'G4'],
+            left:  ['C3', 'D3', 'E3', 'F3', 'G3']
+        };
+        const NOTE_FREQS = {
+            C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00,
+            C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00
+        };
 
         let sequence = [];
         let sequenceIndex = 0;
         let lastAscendFinger = 0;
+        let currentHand = 'right';
 
         const dialogs = {
             start: "Hi, I'm Melody! Rest your hand in the C position: thumb on C, pinky on G!",
@@ -215,6 +206,62 @@
             <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
         </svg>`;
 
+        // Renders the hand as if looking down at the BACK of your own hand
+        // resting on the keyboard (fingers pointing down toward the keys,
+        // palm/wrist at the top) — not a palm-up handprint. The thumb is
+        // drawn short, wide and offset to one side so it reads as a thumb
+        // at a glance, never mistaken for a fifth finger.
+        function handSvgMarkup(hand) {
+            // Four straight fingers (index, middle, ring, pinky), positioned
+            // left-to-right on screen. For the right hand the thumb is on the
+            // left (nearest Middle C, which is to the right of it); for the
+            // left hand everything mirrors so the thumb is on the right.
+            const straight = hand === 'right'
+                ? [ { finger: 2, cx: 100, top: 58, bot: 150, rx: 16 },
+                    { finger: 3, cx: 145, top: 53, bot: 165, rx: 16 },
+                    { finger: 4, cx: 190, top: 58, bot: 155, rx: 16 },
+                    { finger: 5, cx: 230, top: 65, bot: 133, rx: 13 } ]
+                : [ { finger: 5, cx: 70,  top: 65, bot: 133, rx: 13 },
+                    { finger: 4, cx: 110, top: 58, bot: 155, rx: 16 },
+                    { finger: 3, cx: 155, top: 53, bot: 165, rx: 16 },
+                    { finger: 2, cx: 200, top: 58, bot: 150, rx: 16 } ];
+            const thumbCx = hand === 'right' ? 50 : 250;
+
+            let svg = `<svg id="hand-svg" viewBox="0 0 300 200" class="w-full">
+                <ellipse cx="150" cy="48" rx="102" ry="46" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
+
+            straight.forEach(f => {
+                const cy = (f.top + f.bot) / 2;
+                const ry = (f.bot - f.top) / 2;
+                svg += `<g id="finger-${f.finger}" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
+                    <ellipse cx="${f.cx}" cy="${cy}" rx="${f.rx}" ry="${ry}" />
+                    <text x="${f.cx}" y="${cy + 7}" text-anchor="middle" font-size="20" font-weight="900" fill="#7c2d12">${f.finger}</text>
+                </g>`;
+            });
+
+            // Thumb: short, wide, and set lower/to the side — deliberately NOT
+            // shaped like the other fingers so it's unmistakable.
+            svg += `<g id="finger-1" class="finger" fill="#f5c99b" stroke="#b45309" stroke-width="3">
+                <ellipse cx="${thumbCx}" cy="118" rx="26" ry="34" />
+                <text x="${thumbCx}" y="125" text-anchor="middle" font-size="22" font-weight="900" fill="#7c2d12">1</text>
+            </g>`;
+
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function renderHand(hand) {
+            document.getElementById('hand-svg-wrap').innerHTML = handSvgMarkup(hand);
+            const label = document.getElementById('hand-label');
+            if (hand === 'right') {
+                label.innerText = '👉 RIGHT HAND';
+                label.className = 'font-black text-sm px-3 py-1 rounded-full mb-1 bg-blue-100 text-blue-700';
+            } else {
+                label.innerText = '👈 LEFT HAND';
+                label.className = 'font-black text-sm px-3 py-1 rounded-full mb-1 bg-orange-100 text-orange-700';
+            }
+        }
+
         function setStage(stageNum) {
             currentStage = stageNum;
             for (let i = 1; i <= 3; i++) {
@@ -227,13 +274,21 @@
             }
             lastAscendFinger = 0;
             resetStats();
-            renderPiano();
             newRound();
         }
 
         function newRound() {
             controlLock = false;
             sequenceIndex = 0;
+
+            // Stage 1 = right hand only, Stage 2 = left hand only,
+            // Stage 3 = both hands, alternating each round.
+            if (currentStage === 1) currentHand = 'right';
+            else if (currentStage === 2) currentHand = 'left';
+            else currentHand = Math.random() < 0.5 ? 'right' : 'left';
+
+            renderHand(currentHand);
+            renderPiano();
 
             if (currentStage === 1) {
                 lastAscendFinger = (lastAscendFinger % 5) + 1;
@@ -255,11 +310,12 @@
         }
 
         function updateQuestionText() {
+            const handWord = currentHand === 'right' ? 'right' : 'left';
             if (sequence.length === 1) {
-                document.getElementById('question-text').innerText = `Play finger ${sequence[0]}!`;
+                document.getElementById('question-text').innerText = `Play finger ${sequence[0]} (${handWord} hand)!`;
             } else {
                 const parts = sequence.map((f, i) => i === sequenceIndex ? `[${f}]` : f).join(' - ');
-                document.getElementById('question-text').innerText = `Play in order: ${parts}`;
+                document.getElementById('question-text').innerText = `Play in order (${handWord} hand): ${parts}`;
             }
         }
 
@@ -273,12 +329,12 @@
         function renderPiano() {
             const container = document.getElementById('piano-container');
             container.innerHTML = '';
-            const notes = ['C4', 'D4', 'E4', 'F4', 'G4'];
+            const notes = HAND_KEYS[currentHand];
             notes.forEach(note => {
                 const keyDiv = document.createElement('div');
                 keyDiv.className = 'white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none cursor-pointer flex items-end justify-center pb-2 text-xs font-black text-slate-400';
                 keyDiv.dataset.note = note;
-                keyDiv.innerText = hintsEnabled ? note.replace('4', '') : '';
+                keyDiv.innerText = hintsEnabled ? note.replace(/[0-9]/, '') : '';
                 keyDiv.addEventListener('mousedown', () => handleKeyClick(note, keyDiv));
                 container.appendChild(keyDiv);
             });
@@ -287,7 +343,7 @@
         function handleKeyClick(note, keyElement) {
             if (controlLock) return;
             const expectedFinger = sequence[sequenceIndex];
-            const expectedNote = FINGER_NOTES[expectedFinger];
+            const expectedNote = FINGER_NOTES[currentHand][expectedFinger];
 
             if (note === expectedNote) {
                 keyElement.classList.add('correct-flash');
