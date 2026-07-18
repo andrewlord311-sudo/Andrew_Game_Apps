@@ -7,7 +7,7 @@
     <!-- Tailwind CSS for playful styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght=500;700&family=Noto+Music&display=swap');
         
         body {
             font-family: 'Quicksand', sans-serif;
@@ -436,15 +436,17 @@
                 ctx.fillRect(startX, spaceY - (lineGap / 2) + 2, width, lineGap - 4);
             }
 
-            // Draw Clef icon
+            // Draw Clef icon (Noto Music web font for correct, consistent glyph shapes)
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'left';
             if (currentClef === 'treble') {
-                ctx.font = "bold 66px serif";
+                ctx.font = `${lineGap * 4}px "Noto Music", serif`;
                 ctx.fillStyle = '#1e293b';
-                ctx.fillText("𝄞", startX + 15, startY + 4.1 * lineGap);
+                ctx.fillText("\u{1D11E}", startX + 6, startY + 4 * lineGap);
             } else {
-                ctx.font = "bold 60px serif";
+                ctx.font = `${lineGap * 4}px "Noto Music", serif`;
                 ctx.fillStyle = '#1e293b';
-                ctx.fillText("𝄢", startX + 15, startY + 3.1 * lineGap);
+                ctx.fillText("\u{1D122}", startX + 6, startY + 3.625 * lineGap);
             }
 
             // Draw Note Position
@@ -722,6 +724,7 @@
         // Initialize App on load
         window.onload = () => {
             setClef('treble');
+            document.fonts.load('80px "Noto Music"').then(drawStaff);
         };
     </script>
 </body>
