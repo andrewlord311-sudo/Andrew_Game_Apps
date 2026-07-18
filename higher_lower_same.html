@@ -134,7 +134,7 @@
         <div class="grid grid-cols-3 gap-3 mb-3">
             <button onclick="makeGuess('up')" class="bg-gradient-to-b from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-black py-5 rounded-2xl border-b-4 border-green-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
                 <span class="text-3xl">⬆️</span>
-                <span class="text-lg">UP</span>
+                <span class="text-lg">HIGHER</span>
             </button>
             <button onclick="makeGuess('same')" class="bg-gradient-to-b from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-black py-5 rounded-2xl border-b-4 border-amber-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
                 <span class="text-3xl">➡️</span>
@@ -142,7 +142,7 @@
             </button>
             <button onclick="makeGuess('down')" class="bg-gradient-to-b from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-black py-5 rounded-2xl border-b-4 border-rose-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
                 <span class="text-3xl">⬇️</span>
-                <span class="text-lg">DOWN</span>
+                <span class="text-lg">LOWER</span>
             </button>
         </div>
 
@@ -199,9 +199,9 @@
         ];
 
         const STAGE_CONFIGS = {
-            1: { minDiff: 3, maxDiff: 99, desc: "Stage 1: Big jumps — easy to spot!" },
-            2: { minDiff: 1, maxDiff: 1, desc: "Stage 2: Neighbouring steps — look closely!" },
-            3: { minDiff: 0, maxDiff: 99, desc: "Stage 3: Anything goes — steps, skips, or the same note!" }
+            1: { minDiff: 3, maxDiff: 99, outcomes: ['up', 'down'], desc: "Stage 1: Big jumps — easy to spot!" },
+            2: { minDiff: 1, maxDiff: 1, outcomes: ['up', 'down'], desc: "Stage 2: Neighbouring steps — look closely!" },
+            3: { minDiff: 1, maxDiff: 99, outcomes: ['up', 'down', 'same'], desc: "Stage 3: Anything goes — steps, skips, or the same note!" }
         };
 
         const dialogs = {
@@ -325,14 +325,32 @@
             const pool = currentClef === 'treble' ? TREBLE_NOTES : BASS_NOTES;
             const config = STAGE_CONFIGS[currentStage];
 
+            // Pick the outcome FIRST (equal chance across whichever outcomes this
+            // stage supports), then find a note pair that produces it — this
+            // guarantees up/down/same are represented evenly instead of leaving
+            // it to chance (which under-represents "same" since it's a single
+            // exact match out of many possible pairs).
+            const outcome = config.outcomes[Math.floor(Math.random() * config.outcomes.length)];
+
             let a, b, diff;
             let attempts = 0;
             do {
                 a = pool[Math.floor(Math.random() * pool.length)];
-                b = pool[Math.floor(Math.random() * pool.length)];
-                diff = Math.abs(a.lineStep - b.lineStep);
+                if (outcome === 'same') {
+                    b = a;
+                    diff = 0;
+                } else {
+                    b = pool[Math.floor(Math.random() * pool.length)];
+                    diff = Math.abs(a.lineStep - b.lineStep);
+                }
                 attempts++;
-            } while ((diff < config.minDiff || diff > config.maxDiff) && attempts < 200);
+            } while (
+                attempts < 300 && (
+                    diff < config.minDiff || diff > config.maxDiff ||
+                    (outcome === 'up' && b.lineStep <= a.lineStep) ||
+                    (outcome === 'down' && b.lineStep >= a.lineStep)
+                )
+            );
 
             refNote = a;
             targetNote = b;
@@ -344,6 +362,11 @@
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 mb-3";
             feedback.innerText = "Is the second note higher, lower, or the same?";
+
+            // Play both notes in sequence so the child can HEAR the difference,
+            // not just see it.
+            setTimeout(() => playTone(refNote.freq, 'triangle', 0.45), 300);
+            setTimeout(() => playTone(targetNote.freq, 'triangle', 0.45), 900);
         }
 
         function drawNoteAt(noteX, note, staffTop, lineGap, color, alpha) {
@@ -439,12 +462,12 @@
             drawNoteAt(targetX, targetNote, staffTop, lineGap, '#2563eb', 1);
 
             // Labels
-            ctx.font = 'bold 11px Quicksand, sans-serif';
+            ctx.font = 'bold 20px Quicksand, sans-serif';
             ctx.fillStyle = '#64748b';
             ctx.textAlign = 'center';
-            ctx.fillText('1st', refX, staffTop + 5 * lineGap + 14);
+            ctx.fillText('1st', refX, staffTop + 5 * lineGap + 24);
             ctx.fillStyle = '#2563eb';
-            ctx.fillText('2nd', targetX, staffTop + 5 * lineGap + 14);
+            ctx.fillText('2nd', targetX, staffTop + 5 * lineGap + 24);
 
             if (hintsEnabled) {
                 ctx.fillStyle = '#7c3aed';
