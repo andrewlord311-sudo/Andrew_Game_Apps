@@ -51,10 +51,16 @@
   .bunting span:nth-child(7){ border-top-color:#f4c542; }
   .bunting span:nth-child(8){ border-top-color:#4a9d5f; }
 
+  h2.section-heading{
+    text-align:center; font-size:22px; margin:8px 0 18px;
+    color:#7a3f5a; text-shadow:0 2px 0 rgba(255,255,255,0.6);
+  }
+
   .grid{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
     gap:22px;
+    margin-bottom:36px;
   }
   @media (max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
   @media (max-width:520px){ .grid{ grid-template-columns:1fr; } }
@@ -131,9 +137,13 @@
     <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
-  <div class="grid" id="grid"></div>
+  <h2 class="section-heading">🎵 Music Games</h2>
+  <div class="grid" id="grid-music"></div>
 
-  <footer>Made with ❤️ — edit the GAMES list in the page source to add your own games.</footer>
+  <h2 class="section-heading">🎲 Fun &amp; Pretend Play</h2>
+  <div class="grid" id="grid-fun"></div>
+
+  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES lists in the page source to add your own games.</footer>
 </div>
 
 <script>
@@ -154,71 +164,25 @@
    To add a 9th, 10th... game, just copy one of the {...} blocks below,
    paste it into the array, and fill in your own details.
    ====================================================================== */
-  const GAMES = [
-    {
-      title: "Biscuit's Playroom",
-      description: "Play ball, run the tunnel, tuck Biscuit into bed, or serve up dinner.",
-      emoji: "🐹",
-      color: "#e8834a",
-      file: "fun/Fun6.html",
-      comingSoon: false
-    },
-    {
-      title: "Rex's Letter Adventure",
-      description: "Rex the dino calls out a letter — click the right one to make him do a trick!",
-      emoji: "🦕",
-      color: "#4a9d5f",
-      file: "fun/Fun7.html",
-      comingSoon: false
-    },
-    {
-      title: "Guinea pig playground",
-      description: "Look after your guinea pig.",
-      emoji: "💓",
-      color: "#3fa7d6",
-      file: "fun/Fun4.html",
-      comingSoon: false
-    },
-    {
-      title: "Dino playground",
-      description: "Look after your dino.",
-      emoji: "🦖",
-      color: "#9b6fd6",
-      file: "fun/Fun5.html",
-      comingSoon: false
-    },
-    {
-      title: "Stave explorer game",
-      description: "Can you find the notes on the stave?",
-      emoji: "🎼",
-      color: "#ef6f8e",
-      file: "music/stave_explorer_game.html",
-      comingSoon: false
-    },
-    {
-      title: "Placeholder Game 6",
-      description: "Replace this text with a short description of your sixth game.",
-      emoji: "🧩",
-      color: "#f4a83f",
-      file: "game6.html",
-      comingSoon: true
-    },
-    {
-      title: "Placeholder Game 7",
-      description: "Replace this text with a short description of your seventh game.",
-      emoji: "🎵",
-      color: "#5cbf8a",
-      file: "game7.html",
-      comingSoon: true
-    },
-    {
-      title: "Placeholder Game 8",
-      description: "Replace this text with a short description of your eighth game.",
-      emoji: "🐸",
-      color: "#4ab0a0",
-      file: "game8.html",
-      comingSoon: true
-    }
+  const MUSIC_GAMES = [
+    { title: "Alphabet Elevator", description: "The music alphabet only has 7 letters — A to G! Ride the elevator to the right one.", emoji: "🛗", color: "#f0a63f", file: "music/alphabet_elevator.html", comingSoon: false },
+    { title: "Black Key Patterns", description: "Spot the groups of 2 and 3 black keys — they're your landmarks on the keyboard.", emoji: "⚫", color: "#2fb6c4", file: "music/black_key_patterns.html", comingSoon: false },
+    { title: "C Hunt", description: "Find every C hiding on the piano keyboard!", emoji: "🔍", color: "#3fbf7a", file: "music/c_hunt.html", comingSoon: false },
+    { title: "Clef Detective", description: "Crack the case — can you name that clef?", emoji: "🕵️", color: "#8a6fd6", file: "music/clef_detective.html", comingSoon: false },
+    { title: "Finger Number Fun", description: "Thumb is 1, pinky is 5 — find the right key for each finger.", emoji: "✋", color: "#d64fae", file: "music/finger_numbers.html", comingSoon: false },
+    { title: "Higher, Lower or Same?", description: "Compare two notes on the stave — which one's higher?", emoji: "📊", color: "#3f8fd6", file: "music/higher_lower_same.html", comingSoon: false },
+    { title: "Line & Space Safari", description: "Help the animal friends sort musical notes onto lines and spaces.", emoji: "🦁", color: "#e0793f", file: "music/line_and_space_safari.html", comingSoon: false },
+    { title: "Name That Part", description: "Drag each label onto the matching part of the stave.", emoji: "🏷️", color: "#e8567e", file: "music/name_that_part.html", comingSoon: false },
+    { title: "Stave Explorer", description: "Can you find the notes on the stave?", emoji: "🎼", color: "#ef6f8e", file: "music/stave_explorer_game.html", comingSoon: false },
+    { title: "Stave Piano Explorer", description: "Press the correct key on the piano keyboard to match the note.", emoji: "🎹", color: "#3fa860", file: "music/stave_piano_explorer.html", comingSoon: false },
+    { title: "White Note Step or Skip", description: "Using only the white keys — is it a step or a skip?", emoji: "🪜", color: "#9d5cd6", file: "music/step_or_skip.html", comingSoon: false }
+  ];
+
+  const FUN_GAMES = [
+    { title: "Biscuit's Playroom", description: "Play ball, run the tunnel, tuck Biscuit into bed, or serve up dinner.", emoji: "🐹", color: "#e8834a", file: "fun/Fun6.html", comingSoon: false },
+    { title: "Rex's Letter Adventure", description: "Rex the dino calls out a letter — click the right one to make him do a trick!", emoji: "🦕", color: "#4a9d5f", file: "fun/Fun7.html", comingSoon: false },
+    { title: "Guinea pig playground", description: "Look after your guinea pig.", emoji: "💓", color: "#3fa7d6", file: "fun/Fun4.html", comingSoon: false },
+    { title: "Dino playground", description: "Look after your dino.", emoji: "🦖", color: "#9b6fd6", file: "fun/Fun5.html", comingSoon: false }
   ];
 /* ==================================================================== */
 
@@ -230,48 +194,51 @@
     return `rgba(${r},${g},${b},${alpha})`;
   }
 
-  const grid = document.getElementById('grid');
-  GAMES.forEach(game=>{
-    const card = document.createElement('div');
-    card.className = 'card';
+  function renderGrid(games, gridEl){
+    games.forEach(game=>{
+      const card = document.createElement('div');
+      card.className = 'card';
 
-    if(game.comingSoon){
-      const ribbon = document.createElement('div');
-      ribbon.className = 'badge-soon';
-      ribbon.textContent = 'Coming soon';
-      card.appendChild(ribbon);
-    }
+      if(game.comingSoon){
+        const ribbon = document.createElement('div');
+        ribbon.className = 'badge-soon';
+        ribbon.textContent = 'Coming soon';
+        card.appendChild(ribbon);
+      }
 
-    const icon = document.createElement('div');
-    icon.className = 'icon-badge';
-    icon.style.background = `linear-gradient(180deg, ${hexToRgba(game.color,0.35)}, ${hexToRgba(game.color,0.7)})`;
-    icon.textContent = game.emoji;
-    card.appendChild(icon);
+      const icon = document.createElement('div');
+      icon.className = 'icon-badge';
+      icon.style.background = `linear-gradient(180deg, ${hexToRgba(game.color,0.35)}, ${hexToRgba(game.color,0.7)})`;
+      icon.textContent = game.emoji;
+      card.appendChild(icon);
 
-    const h2 = document.createElement('h2');
-    h2.textContent = game.title;
-    card.appendChild(h2);
+      const h2 = document.createElement('h2');
+      h2.textContent = game.title;
+      card.appendChild(h2);
 
-    const p = document.createElement('p');
-    p.textContent = game.description;
-    card.appendChild(p);
+      const p = document.createElement('p');
+      p.textContent = game.description;
+      card.appendChild(p);
 
-    const btn = document.createElement('a');
-    btn.textContent = game.comingSoon ? 'Coming soon' : 'Play ▶';
-    btn.className = 'play-btn' + (game.comingSoon ? ' disabled' : '');
-    btn.style.background = `linear-gradient(180deg, ${game.color}, ${hexToRgba(game.color,0.85)})`;
-    if(!game.comingSoon){
-      btn.href = game.file;
-     // btn.target = '_blank'; // avoids a new page opening
-      btn.rel = 'noopener';
-    } else {
-      btn.href = '#';
-      btn.addEventListener('click', e=> e.preventDefault());
-    }
-    card.appendChild(btn);
+      const btn = document.createElement('a');
+      btn.textContent = game.comingSoon ? 'Coming soon' : 'Play ▶';
+      btn.className = 'play-btn' + (game.comingSoon ? ' disabled' : '');
+      btn.style.background = `linear-gradient(180deg, ${game.color}, ${hexToRgba(game.color,0.85)})`;
+      if(!game.comingSoon){
+        btn.href = game.file;
+        btn.rel = 'noopener';
+      } else {
+        btn.href = '#';
+        btn.addEventListener('click', e=> e.preventDefault());
+      }
+      card.appendChild(btn);
 
-    grid.appendChild(card);
-  });
+      gridEl.appendChild(card);
+    });
+  }
+
+  renderGrid(MUSIC_GAMES, document.getElementById('grid-music'));
+  renderGrid(FUN_GAMES, document.getElementById('grid-fun'));
 </script>
 </body>
 </html>
