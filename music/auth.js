@@ -20,9 +20,9 @@
   // ---- Firebase config — replace with your project's values ----
   // Firebase console → Project settings → General → Your apps → SDK setup and configuration.
   const FIREBASE_CONFIG = {
-    apiKey: "PASTE_YOUR_API_KEY",
-    authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-    projectId: "PASTE_YOUR_PROJECT_ID",
+    apiKey: "AIzaSyA0s3yaWHQyNDkTcCG8RrmuO3v61BMeKZQ",
+    authDomain: "nuggets-tracking.firebaseapp.com",
+    projectId: "nuggets-tracking",
   };
 
   const STORAGE_SESSION = "tga_pupil_session";
@@ -230,7 +230,10 @@
     db.collection("pupils")
       .get()
       .then((snap) => {
-        const pupils = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const pupils = snap.docs.map((d) => {
+          const data = d.data();
+          return { id: d.id, ...data, firstName: data.firstName || data.firstname };
+        });
         renderNamePicker(pupils, onDone);
       })
       .catch(() => showConnectionError(onDone));
