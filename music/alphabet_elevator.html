@@ -81,8 +81,9 @@
         </div>
 
         <div class="flex gap-4 items-stretch mb-3">
-            <!-- Elevator shaft -->
-            <div class="bg-slate-700 rounded-2xl p-2 flex flex-col gap-1 relative" style="width: 90px;">
+            <!-- Elevator shaft — ghost floors above G and below A show the alphabet looping -->
+            <div id="ladder-shaft" class="bg-slate-700 rounded-2xl p-2 flex flex-col gap-1 relative" style="width: 90px;">
+                <div id="floor-ghost-top" class="text-slate-400 font-black text-center rounded-lg py-1 text-sm opacity-60 border border-dashed border-slate-500">A</div>
                 <div id="floor-G" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">G</div>
                 <div id="floor-F" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">F</div>
                 <div id="floor-E" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">E</div>
@@ -90,15 +91,18 @@
                 <div id="floor-C" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">C</div>
                 <div id="floor-B" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">B</div>
                 <div id="floor-A" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">A</div>
+                <div id="floor-ghost-bottom" class="text-slate-400 font-black text-center rounded-lg py-1 text-sm opacity-60 border border-dashed border-slate-500">G</div>
             </div>
 
             <!-- Question panel -->
             <div class="flex-1 bg-slate-50 rounded-2xl border-2 border-slate-200 p-4 flex flex-col items-center justify-center text-center">
                 <p class="text-slate-600 font-bold text-lg mb-1">We are on floor</p>
                 <p id="current-letter" class="kids-title text-6xl text-amber-600 mb-2">A</p>
-                <p id="direction-prompt" class="text-slate-700 font-black text-lg flex items-center gap-2">
-                    <span id="direction-arrow">⬆️</span> Going UP, what's next?
-                </p>
+                <div class="flex flex-col items-center gap-0.5">
+                    <span id="direction-arrow" class="text-6xl leading-none">⬆️</span>
+                    <p id="direction-prompt" class="text-slate-700 font-black text-lg">Going UP, what's next?</p>
+                </div>
+                <p id="no-ladder-note" class="text-amber-600 font-bold text-xs mt-2 hidden">🚀 Hard mode — no ladder, you know this by heart!</p>
             </div>
         </div>
 
@@ -133,6 +137,10 @@
 
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="auth.js"></script>
+    <script src="reward-system.js"></script>
     <script>
         const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
@@ -224,8 +232,16 @@
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
                 }
             }
+            updateLadderVisibility();
             resetStats();
             newRound();
+        }
+
+        function updateLadderVisibility() {
+            // Hard mode hides the ladder entirely — no visual counting, just recall.
+            const hideLadder = currentStage === 3;
+            document.getElementById('ladder-shaft').classList.toggle('hidden', hideLadder);
+            document.getElementById('no-ladder-note').classList.toggle('hidden', !hideLadder);
         }
 
         function newRound() {
@@ -247,7 +263,7 @@
 
             document.getElementById('current-letter').innerText = LETTERS[currentIndex];
             document.getElementById('direction-arrow').innerText = direction === 'up' ? '⬆️' : '⬇️';
-            document.getElementById('direction-prompt').innerHTML = `<span id="direction-arrow">${direction === 'up' ? '⬆️' : '⬇️'}</span> Going ${direction.toUpperCase()}, what's next?`;
+            document.getElementById('direction-prompt').innerText = `Going ${direction.toUpperCase()}, what's next?`;
 
             highlightFloor(LETTERS[currentIndex]);
             renderAnswers(nextIndex);
@@ -302,6 +318,8 @@
             if (letter === correctAnswer) {
                 score += 10;
                 streak++;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
+                RewardSystem.correct();
                 document.getElementById('score').innerText = score;
                 document.getElementById('streak').innerText = streak;
 
@@ -326,6 +344,7 @@
             } else {
                 streak = 0;
                 lives--;
+                Tracking.logAnswer({ correct: false, stage: currentStage });
                 document.getElementById('streak').innerText = streak;
                 updateHearts();
 

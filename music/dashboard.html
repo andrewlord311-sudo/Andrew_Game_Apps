@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nuggets — Teacher Dashboard</title>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;700;800&display=swap');
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; font-family: 'Quicksand', sans-serif;
+    background: radial-gradient(circle, #fef9e7 0%, #eaf3fb 100%);
+    color: #2b2b2b; padding: 24px;
+  }
+  h1 { font-size: 26px; margin: 0 0 4px; }
+  .sub { color: #6b5745; margin: 0 0 24px; font-size: 14px; }
+  .card {
+    background: #fff; border-radius: 20px; padding: 24px;
+    box-shadow: 0 8px 0 rgba(30,41,59,0.06), 0 10px 24px rgba(30,41,59,0.08);
+    max-width: 720px; margin: 0 auto 20px;
+  }
+  #gate input {
+    font-family: inherit; font-size: 18px; padding: 10px 14px;
+    border: 2px solid #e5ddc8; border-radius: 12px; width: 140px; text-align: center;
+  }
+  #gate button, .pupil-list button, .back-btn {
+    font-family: inherit; font-weight: 800; font-size: 14px; cursor: pointer;
+    border: none; border-radius: 12px; padding: 10px 18px;
+    background: #4a9d5f; color: #fff; margin-left: 8px;
+  }
+  #gate-error { color: #c0392b; font-size: 13px; margin-top: 10px; }
+  .pupil-list { display: flex; flex-wrap: wrap; gap: 10px; }
+  .pupil-list button {
+    background: #f6f2e8; color: #4a3728; margin-left: 0;
+    min-width: 100px; padding: 14px 18px; font-size: 15px;
+  }
+  .back-btn { background: #f6f2e8; color: #4a3728; margin: 0 0 16px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eee2cf; }
+  th { color: #8a7660; font-size: 12px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .acc-bad { color: #c0392b; font-weight: 800; }
+  .acc-mid { color: #b8860b; font-weight: 800; }
+  .acc-good { color: #2f8f4f; font-weight: 800; }
+  .empty { color: #8a7660; font-size: 14px; padding: 20px 0; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="card" id="gate">
+  <h1>🎓 Teacher Dashboard</h1>
+  <p class="sub">Enter the teacher PIN to continue.</p>
+  <input type="password" id="gate-pin" inputmode="numeric" maxlength="8" placeholder="PIN">
+  <button id="gate-submit">Enter</button>
+  <div id="gate-error"></div>
+</div>
+
+<div class="card" id="app" style="display:none;">
+  <h1>🎓 Teacher Dashboard</h1>
+  <p class="sub" id="subline">Pick a pupil to see how they're getting on.</p>
+  <div id="pupil-list" class="pupil-list"></div>
+  <div id="pupil-detail" style="display:none;">
+    <button class="back-btn" id="back-btn">← All pupils</button>
+    <h2 id="detail-name" style="margin:0 0 4px;"></h2>
+    <p class="sub" id="detail-sub"></p>
+    <table id="detail-table">
+      <thead>
+        <tr><th>Game</th><th>Stage</th><th>Accuracy</th><th>Attempts</th><th>Last played</th></tr>
+      </thead>
+      <tbody id="detail-tbody"></tbody>
+    </table>
+    <div class="empty" id="detail-empty" style="display:none;">No practice logged yet.</div>
+  </div>
+</div>
+
+<script>
+  // Change this before sharing the dashboard URL with anyone.
+  const TEACHER_PIN = "1234";
+
+  // Same config as auth.js — keep the two in sync.
+  const FIREBASE_CONFIG = {
+    apiKey: "PASTE_YOUR_API_KEY",
+    authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+    projectId: "PASTE_YOUR_PROJECT_ID",
+  };
+
+  const GAME_TITLES = {
+    alphabet_elevator: "Alphabet Elevator",
+    black_key_patterns: "Black Key Patterns",
+    c_hunt: "C Hunt",
+    clef_detective: "Clef Detective",
+    finger_numbers: "Finger Number Fun",
+    higher_lower_same: "Higher, Lower or Same?",
+    line_and_space_safari: "Line & Space Safari",
+    name_that_part: "Name That Part",
+    stave_explorer_game: "Stave Explorer",
+    stave_piano_explorer: "Stave Piano Explorer",
+    step_or_skip: "White Note Step or Skip",
+  };
+
+  let db = null;
+  if (FIREBASE_CONFIG.apiKey !== "PASTE_YOUR_API_KEY") {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    db = firebase.firestore();
+  }
+
+  document.getElementById("gate-submit").addEventListener("click", checkGate);
+  document.getElementById("gate-pin").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") checkGate();
+  });
+
+  function checkGate() {
+    const val = document.getElementById("gate-pin").value;
+    if (val === TEACHER_PIN) {
+      document.getElementById("gate").style.display = "none";
+      document.getElementById("app").style.display = "block";
+      loadPupils();
+    } else {
+      document.getElementById("gate-error").textContent = "Wrong PIN.";
+    }
+  }
+
+  function loadPupils() {
+    if (!db) {
+      document.getElementById("subline").textContent =
+        "Firebase isn't configured yet — paste your project config into dashboard.html and auth.js.";
+      return;
+    }
+    db.collection("pupils")
+      .get()
+      .then((snap) => {
+        const pupils = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const list = document.getElementById("pupil-list");
+        if (pupils.length === 0) {
+          list.innerHTML = `<div class="empty">No pupils yet — add some in the Firebase console under the "pupils" collection.</div>`;
+          return;
+        }
+        list.innerHTML = pupils
+          .map((p) => `<button data-id="${p.id}" data-name="${p.firstName}">${p.firstName}</button>`)
+          .join("");
+        list.querySelectorAll("button").forEach((btn) => {
+          btn.addEventListener("click", () =>
+            showPupil(btn.getAttribute("data-id"), btn.getAttribute("data-name"))
+          );
+        });
+      })
+      .catch(() => {
+        document.getElementById("subline").textContent = "Couldn't reach Firestore — check your connection.";
+      });
+  }
+
+  function accuracyClass(pct) {
+    if (pct < 60) return "acc-bad";
+    if (pct < 85) return "acc-mid";
+    return "acc-good";
+  }
+
+  function showPupil(pupilId, firstName) {
+    document.getElementById("pupil-list").style.display = "none";
+    document.getElementById("pupil-detail").style.display = "block";
+    document.getElementById("detail-name").textContent = firstName;
+    document.getElementById("detail-sub").textContent = "Loading…";
+    document.getElementById("detail-tbody").innerHTML = "";
+    document.getElementById("detail-empty").style.display = "none";
+
+    db.collection("pupils")
+      .doc(pupilId)
+      .collection("events")
+      .get()
+      .then((snap) => {
+        const events = snap.docs.map((d) => d.data());
+        document.getElementById("detail-sub").textContent = `${events.length} answers logged`;
+        renderTable(events);
+      })
+      .catch(() => {
+        document.getElementById("detail-sub").textContent = "Couldn't load this pupil's data.";
+      });
+  }
+
+  function renderTable(events) {
+    const groups = {};
+    events.forEach((e) => {
+      const key = `${e.game || "unknown"}|${e.stage ?? "-"}`;
+      if (!groups[key]) {
+        groups[key] = { game: e.game, stage: e.stage, correct: 0, attempts: 0, lastPlayed: null };
+      }
+      const g = groups[key];
+      g.attempts++;
+      if (e.correct) g.correct++;
+      const ts = e.timestamp && e.timestamp.toDate ? e.timestamp.toDate() : null;
+      if (ts && (!g.lastPlayed || ts > g.lastPlayed)) g.lastPlayed = ts;
+    });
+
+    const rows = Object.values(groups).map((g) => ({
+      ...g,
+      accuracy: g.attempts ? Math.round((g.correct / g.attempts) * 100) : 0,
+    }));
+    rows.sort((a, b) => a.accuracy - b.accuracy || b.attempts - a.attempts);
+
+    const tbody = document.getElementById("detail-tbody");
+    if (rows.length === 0) {
+      document.getElementById("detail-empty").style.display = "block";
+      return;
+    }
+    tbody.innerHTML = rows
+      .map(
+        (r) => `
+        <tr>
+          <td>${GAME_TITLES[r.game] || r.game}</td>
+          <td>${r.stage ?? "—"}</td>
+          <td class="${accuracyClass(r.accuracy)}">${r.accuracy}%</td>
+          <td>${r.attempts}</td>
+          <td>${r.lastPlayed ? r.lastPlayed.toLocaleDateString() : "—"}</td>
+        </tr>`
+      )
+      .join("");
+  }
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    document.getElementById("pupil-detail").style.display = "none";
+    document.getElementById("pupil-list").style.display = "flex";
+    document.getElementById("subline").textContent = "Pick a pupil to see how they're getting on.";
+  });
+</script>
+</body>
+</html>
