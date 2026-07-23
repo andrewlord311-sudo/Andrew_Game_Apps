@@ -1,0 +1,35 @@
+// Firestore security rules for the Nuggets pupil tracking feature.
+//
+// This is a low-security-by-design ruleset, appropriate for the data
+// involved: first names and practice accuracy only, no other PII, on a
+// fully public static site (GitHub Pages) with no server to sit behind.
+// PIN entry in the app is a "make sure it's really you" speed bump for
+// kids, not a real access boundary — anyone with the Firestore project ID
+// could technically read this data directly. Don't put anything more
+// sensitive than first-name-level info into `pupils` or `events`.
+//
+// Paste this into: Firebase console → Firestore Database → Rules.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /pupils/{pupilId} {
+      // Needed so the in-game "Who's playing?" picker can list names.
+      allow read: if true;
+      // Roster (pupils + PINs) is managed by hand in the Firebase console,
+      // never written to by the app itself.
+      allow write: if false;
+
+      match /events/{eventId} {
+        // Needed so the (unlisted, PIN-gated) dashboard can read practice
+        // history straight from the client — there's no server to proxy this.
+        allow read: if true;
+        // Append-only: a game may log a new answer, never edit or remove one.
+        allow create: if request.resource.data.keys().hasAll(['game', 'correct', 'timestamp'])
+                      && request.resource.data.game is string
+                      && request.resource.data.correct is bool;
+        allow update, delete: if false;
+      }
+    }
+  }
+}

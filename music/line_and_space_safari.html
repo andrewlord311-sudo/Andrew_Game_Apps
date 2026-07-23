@@ -203,6 +203,9 @@
 
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="auth.js"></script>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -554,6 +557,7 @@
             if (guess === correctType) {
                 score += 10;
                 streak++;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
                 document.getElementById('score').innerText = score;
                 document.getElementById('streak').innerText = streak;
 
@@ -579,6 +583,7 @@
             } else {
                 streak = 0;
                 lives--;
+                Tracking.logAnswer({ correct: false, stage: currentStage });
                 document.getElementById('streak').innerText = streak;
                 updateHearts();
                 
