@@ -6,14 +6,15 @@
  * injects its own widget/modal DOM, tracks progress in localStorage, and
  * auto-detects which game called it from the page URL.
  *
- * Mechanic: the child picks an animal once (persists across every game).
- * Correct answers build it up, one part at a time; on the 5th part the
- * animal is complete and celebrates. Per game, the first three times an
- * animal completes get progressively smaller fanfare (Reward system.md's
- * "three times max"); after that it still completes, just quietly.
+ * Mechanic: the child picks an animal fresh at the start of every game
+ * (shared devices mean the same browser sees different pupils game to
+ * game, so the choice is never persisted). Correct answers build it up,
+ * one part at a time; on the 5th part the animal is complete and
+ * celebrates. Per game, the first three times an animal completes get
+ * progressively smaller fanfare (Reward system.md's "three times max");
+ * after that it still completes, just quietly.
  */
 (function () {
-  const STORAGE_ANIMAL = "tga_reward_animal";
   const STORAGE_COMPLETIONS = "tga_reward_completions";
   const PARTS_PER_ANIMAL = 5;
   const PART_ORDER = ["body", "legs", "ears", "tail", "face"];
@@ -50,14 +51,14 @@
     style.textContent = `
       #reward-widget {
         position: fixed; right: 16px; bottom: 16px; z-index: 9998;
-        width: 96px; height: 96px; border-radius: 20px;
+        width: 140px; height: 140px; border-radius: 28px;
         background: rgba(255,255,255,0.92);
-        box-shadow: 0 6px 0 rgba(90,60,30,0.15), 0 10px 18px rgba(90,60,30,0.14);
-        border: 3px solid rgba(255,255,255,0.8);
+        box-shadow: 0 8px 0 rgba(90,60,30,0.15), 0 12px 24px rgba(90,60,30,0.14);
+        border: 4px solid rgba(255,255,255,0.8);
         display: flex; align-items: center; justify-content: center;
         pointer-events: none;
       }
-      #reward-widget svg { width: 76px; height: 76px; }
+      #reward-widget svg { width: 112px; height: 112px; }
       .rw-part { opacity: 0; transform: scale(0.4); transform-origin: center;
         animation: rw-pop 0.45s cubic-bezier(.34,1.56,.64,1) forwards; }
       @keyframes rw-pop { to { opacity: 1; transform: scale(1); } }
@@ -178,9 +179,16 @@
     setTimeout(() => holder.remove(), 950);
   }
 
+  let chimeCtx = null;
+  function getChimeContext() {
+    if (!chimeCtx) chimeCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (chimeCtx.state === 'suspended') chimeCtx.resume();
+    return chimeCtx;
+  }
+
   function chime(tier) {
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = getChimeContext();
       const notes = tier === 2 ? [523.25, 659.25, 783.99] : tier === 1 ? [523.25, 659.25] : [659.25];
       notes.forEach((freq, i) => {
         const osc = ctx.createOscillator();
@@ -247,7 +255,6 @@
     backdrop.querySelectorAll("button[data-key]").forEach((btn) => {
       btn.onclick = () => {
         const key = btn.getAttribute("data-key");
-        localStorage.setItem(STORAGE_ANIMAL, key);
         backdrop.remove();
         onChosen(key);
       };
@@ -261,12 +268,6 @@
 
   function withAnimal(cb) {
     if (chosenAnimal) return cb(chosenAnimal);
-    const saved = localStorage.getItem(STORAGE_ANIMAL);
-    if (saved && ANIMALS[saved]) {
-      chosenAnimal = saved;
-      ready = true;
-      return cb(chosenAnimal);
-    }
     if (ready) return; // picker already open, awaiting a choice
     ready = true;
     pickAnimal((key) => {

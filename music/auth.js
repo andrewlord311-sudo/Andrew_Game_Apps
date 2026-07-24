@@ -105,6 +105,30 @@
         font-family: inherit; font-size: 13px; font-weight: 700; color: #6b5745;
         background: none; text-decoration: underline;
       }
+      #auth-badge {
+        position: fixed; top: 16px; right: 16px; z-index: 9997;
+        background: #fffdf6; border-radius: 999px; padding: 8px 14px;
+        box-shadow: 0 4px 0 rgba(90,60,30,0.12), 0 6px 12px rgba(90,60,30,0.1);
+        font-family: 'Trebuchet MS','Segoe UI',sans-serif;
+        font-weight: 800; font-size: 14px; color: #4a3728;
+        cursor: pointer; display: flex; align-items: center; gap: 6px;
+        border: none; appearance: none;
+      }
+      #auth-badge:active { transform: translateY(1px); }
+      #auth-logout-confirm {
+        position: fixed; top: 16px; right: 16px; z-index: 9997;
+        background: #fffdf6; border-radius: 20px; padding: 14px 16px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        font-family: 'Trebuchet MS','Segoe UI',sans-serif; text-align: center;
+      }
+      #auth-logout-confirm p { margin: 0 0 10px; font-size: 13px; font-weight: 700; color: #4a3728; }
+      #auth-logout-buttons { display: flex; gap: 8px; justify-content: center; }
+      #auth-logout-buttons button {
+        appearance: none; border: none; cursor: pointer; font-family: inherit;
+        font-weight: 800; font-size: 13px; padding: 8px 14px; border-radius: 12px;
+      }
+      #auth-logout-yes { background: #c0392b; color: #fff; }
+      #auth-logout-no { background: #f6f2e8; color: #4a3728; }
     `;
     document.head.appendChild(style);
   }
@@ -239,16 +263,64 @@
       .catch(() => showConnectionError(onDone));
   }
 
+  function removeBadge() {
+    const badge = document.getElementById("auth-badge");
+    if (badge) badge.remove();
+    const confirm = document.getElementById("auth-logout-confirm");
+    if (confirm) confirm.remove();
+  }
+
+  function showBadge() {
+    ensureStyles();
+    const session = loadSession();
+    removeBadge();
+    if (!session) return; // guest — nothing to show/log out of
+    const badge = document.createElement("button");
+    badge.id = "auth-badge";
+    badge.innerHTML = `👤 ${session.firstName}`;
+    badge.addEventListener("click", showLogoutConfirm);
+    document.body.appendChild(badge);
+  }
+
+  function showLogoutConfirm() {
+    const session = loadSession();
+    if (!session) return;
+    const badge = document.getElementById("auth-badge");
+    if (badge) badge.remove();
+    const box = document.createElement("div");
+    box.id = "auth-logout-confirm";
+    box.innerHTML = `
+      <p>Log out ${session.firstName}?</p>
+      <div id="auth-logout-buttons">
+        <button id="auth-logout-yes">Log out</button>
+        <button id="auth-logout-no">Cancel</button>
+      </div>
+    `;
+    document.body.appendChild(box);
+    box.querySelector("#auth-logout-yes").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_SESSION);
+      location.reload();
+    });
+    box.querySelector("#auth-logout-no").addEventListener("click", () => {
+      box.remove();
+      showBadge();
+    });
+  }
+
   function ensureLogin(onReady) {
     if (!configured || !db) {
       onReady();
       return;
     }
     if (loadSession()) {
+      showBadge();
       onReady();
       return;
     }
-    showPicker(onReady);
+    showPicker(() => {
+      showBadge();
+      onReady();
+    });
   }
 
   window.Tracking = {

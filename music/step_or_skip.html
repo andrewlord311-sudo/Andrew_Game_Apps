@@ -15,7 +15,6 @@
         }
         .kids-title {
             font-family: 'Fredoka One', cursive;
-            text-shadow: 3px 3px 0px #7e22ce;
         }
         .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
         @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
@@ -177,11 +176,13 @@
 
         // Only ever compare WHITE keys — this nugget is specifically about
         // spotting steps/skips among the white notes (black keys are a
-        // separate landmark-finding nugget).
+        // separate landmark-finding nugget). Distances below are in white-key
+        // steps (whiteIndex), not chromatic semitones — a black key sitting
+        // between two white keys doesn't make them any less "a step apart".
         const STAGE_CONFIGS = {
             1: { whiteOnly: true, minDiff: 1, maxDiff: 2 },
             2: { whiteOnly: true, minDiff: 1, maxDiff: 4 },
-            3: { whiteOnly: true, minDiff: 1, maxDiff: 12 }
+            3: { whiteOnly: true, minDiff: 1, maxDiff: 7 }
         };
 
         let keyA = null, keyB = null, correctAnswer = null;
@@ -277,7 +278,7 @@
             do {
                 a = pool[Math.floor(Math.random() * pool.length)];
                 b = pool[Math.floor(Math.random() * pool.length)];
-                diff = Math.abs(a.semitone - b.semitone);
+                diff = Math.abs(a.whiteIndex - b.whiteIndex);
                 attempts++;
             } while ((a.id === b.id || diff < config.minDiff || diff > config.maxDiff) && attempts < 300);
 

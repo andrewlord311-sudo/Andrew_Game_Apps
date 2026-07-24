@@ -15,7 +15,6 @@
         }
         .kids-title {
             font-family: 'Fredoka One', cursive;
-            text-shadow: 3px 3px 0px #a21caf;
         }
         .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
         @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
@@ -77,12 +76,6 @@
             </div>
         </div>
 
-        <!-- Hand diagram -->
-        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex flex-col justify-center items-center">
-            <div id="hand-label" class="font-black text-sm px-3 py-1 rounded-full mb-1"></div>
-            <div id="hand-svg-wrap" class="w-full max-w-xs"></div>
-        </div>
-
         <div id="question-text" class="text-center text-xl font-black text-slate-800 mb-2">
             Play finger 1!
         </div>
@@ -99,6 +92,12 @@
                     Next Challenge!
                 </button>
             </div>
+        </div>
+
+        <!-- Hand + arm, reaching up into the piano above as if actually playing -->
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mt-2 mb-2 flex flex-col justify-center items-center">
+            <div id="hand-label" class="font-black text-sm px-3 py-1 rounded-full mb-1"></div>
+            <div id="hand-svg-wrap" class="w-full max-w-[180px]"></div>
         </div>
 
         <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700 my-3">
@@ -231,26 +230,45 @@
                     { finger: 2, cx: 200, top: 58, bot: 150, rx: 16 } ];
             const thumbCx = hand === 'right' ? 50 : 250;
 
-            let svg = `<svg id="hand-svg" viewBox="0 0 300 200" class="w-full">
-                <ellipse cx="150" cy="48" rx="102" ry="46" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
+            // The hand geometry below (palm + fingers + thumb) is unchanged
+            // from before — it's flipped and shifted via the outer <g>
+            // transform so it sits at the BOTTOM of a taller viewBox with a
+            // forearm added beneath it, instead of redoing every coordinate.
+            // Net effect: fingers now point UP into the piano (rendered
+            // directly above this in the page), wrist/forearm reaches down
+            // off the bottom of the screen, like a child's own hand seen
+            // from above while actually playing.
+            let handParts = `<ellipse cx="150" cy="48" rx="102" ry="46" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
+
+            // Text inside a scale(1,-1) group renders upside down, so each
+            // label gets its own local counter-flip (translate(0,2Y) scale(1,-1))
+            // around its own y — the two flips cancel for orientation while
+            // still landing the label in the right (flipped) spot.
+            const uprightText = (x, y, size, fill, char) =>
+                `<g transform="translate(0,${2 * y}) scale(1,-1)"><text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="900" fill="${fill}">${char}</text></g>`;
 
             straight.forEach(f => {
                 const cy = (f.top + f.bot) / 2;
                 const ry = (f.bot - f.top) / 2;
-                svg += `<g id="finger-${f.finger}" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
+                handParts += `<g id="finger-${f.finger}" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
                     <ellipse cx="${f.cx}" cy="${cy}" rx="${f.rx}" ry="${ry}" />
-                    <text x="${f.cx}" y="${cy + 7}" text-anchor="middle" font-size="20" font-weight="900" fill="#7c2d12">${f.finger}</text>
+                    ${uprightText(f.cx, cy + 7, 20, '#7c2d12', f.finger)}
                 </g>`;
             });
 
             // Thumb: short, wide, and set lower/to the side — deliberately NOT
             // shaped like the other fingers so it's unmistakable.
-            svg += `<g id="finger-1" class="finger" fill="#f5c99b" stroke="#b45309" stroke-width="3">
+            handParts += `<g id="finger-1" class="finger" fill="#f5c99b" stroke="#b45309" stroke-width="3">
                 <ellipse cx="${thumbCx}" cy="118" rx="26" ry="34" />
-                <text x="${thumbCx}" y="125" text-anchor="middle" font-size="22" font-weight="900" fill="#7c2d12">1</text>
+                ${uprightText(thumbCx, 125, 22, '#7c2d12', 1)}
             </g>`;
 
-            svg += `</svg>`;
+            const forearm = `<rect x="115" y="185" width="70" height="115" rx="32" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
+
+            let svg = `<svg id="hand-svg" viewBox="0 0 300 280" class="w-full">
+                ${forearm}
+                <g transform="translate(0,200) scale(1,-1)">${handParts}</g>
+            </svg>`;
             return svg;
         }
 
