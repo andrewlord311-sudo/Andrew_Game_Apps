@@ -15,7 +15,6 @@
         }
         .kids-title {
             font-family: 'Fredoka One', cursive;
-            text-shadow: 3px 3px 0px #be123c;
         }
         .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
         @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
@@ -25,46 +24,6 @@
         @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
         .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
         @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
-
-        .chip {
-            touch-action: none;
-            user-select: none;
-            cursor: grab;
-        }
-        .chip.dragging {
-            cursor: grabbing;
-            z-index: 1000;
-            position: fixed;
-            pointer-events: none;
-        }
-        .chip.solved {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .hotspot {
-            position: absolute;
-            border-radius: 8px;
-            transition: background-color 0.2s, box-shadow 0.2s;
-        }
-        .hotspot.hover-target {
-            background-color: rgba(251, 191, 36, 0.35);
-            box-shadow: 0 0 0 3px #fbbf24;
-        }
-        .hotspot.solved-target {
-            background-color: rgba(34, 197, 94, 0.25);
-        }
-        .placed-label {
-            position: absolute;
-            background: #16a34a;
-            color: white;
-            font-weight: 800;
-            font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 999px;
-            white-space: nowrap;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
         button { touch-action: manipulation; }
     </style>
 </head>
@@ -85,7 +44,7 @@
         </div>
 
         <h1 class="kids-title text-3xl text-rose-600 text-center mb-1">Name That Part</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Drag each label onto the matching part!</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">What kind of note is this?</p>
 
         <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
@@ -104,28 +63,15 @@
             <div class="relative bg-white border border-rose-100 p-2 rounded-xl shadow-sm w-full">
                 <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-rose-50"></div>
                 <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
-                    Hi, I'm Melody! Drag each label chip onto the part of the stave it names!
+                    Hi, I'm Melody! Can you name how long this note lasts?
                 </p>
             </div>
         </div>
 
-        <div id="diagram-wrap" class="relative bg-slate-50 rounded-2xl border-2 border-slate-200 mb-3 overflow-auto" style="height: 220px;">
-            <div id="diagram-inner" class="relative" style="width: 400px; height: 220px;">
-                <canvas id="canvas" width="400" height="220" class="absolute top-0 left-0"></canvas>
-                <div id="hotspot-layer" class="absolute top-0 left-0" style="width: 400px; height: 220px;"></div>
-            </div>
-        </div>
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex justify-center items-center">
+            <canvas id="canvas" width="300" height="170" class="max-h-40 w-auto rounded-xl bg-white shadow-inner"></canvas>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
 
-        <div id="feedback" class="text-center text-lg font-bold min-h-[24px] text-slate-700 mb-2">
-            Drag a label to begin!
-        </div>
-
-        <div id="chip-tray" class="flex flex-wrap gap-2 justify-center mb-3 min-h-[48px]">
-            <!-- chips injected here -->
-        </div>
-
-        <div class="relative">
-            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
             <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
                 <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
                 <h3 id="overlay-title" class="kids-title text-3xl text-rose-600 mb-2">Stage Passed!</h3>
@@ -134,6 +80,18 @@
                     Next Challenge!
                 </button>
             </div>
+        </div>
+
+        <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2">
+            What note is this?
+        </div>
+
+        <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-2">
+            &nbsp;
+        </div>
+
+        <div class="grid grid-cols-1 gap-2 mb-3" id="answer-buttons">
+            <!-- injected -->
         </div>
 
         <div class="flex justify-between items-center text-xs">
@@ -161,57 +119,27 @@
         let lives = 3;
         let hintsEnabled = false;
         let controlLock = false;
-        let roundsWonThisStage = 0;
-        let currentClef = 'treble';
 
-        // Fixed layout geometry (canvas is NOT scaled: 1 CSS px = 1 canvas px)
-        const staffTop = 70, lineGap = 16, startX = 30, staffWidth = 340;
-
-        // Named hotspot rectangles (relative to canvas top-left)
-        function getHotspots() {
-            return {
-                'clef':        { x: 18,  y: 4,   w: 74,  h: 168, label: 'Clef' },
-                'staff':       { x: 100, y: 65,  w: 42,  h: 75,  label: 'Staff' },
-                'note-on-line':{ x: 135, y: 88,  w: 30,  h: 26,  label: 'Note Head' },
-                'note-in-space':{x: 205, y: 78,  w: 30,  h: 26,  label: 'Space Note' },
-                'ledger-note': { x: 275, y: 136, w: 30,  h: 26,  label: 'Ledger Note' },
-                'stem':        { x: 146, y: 58,  w: 12,  h: 32,  label: 'Stem' },
-                'barline':     { x: 360, y: 65,  w: 16,  h: 75,  label: 'Barline' }
-            };
-        }
-
-        // Chip sets per stage: {targetId, label}
-        const STAGE_CHIPS = {
-            1: [
-                { targetId: 'clef', label: 'Clef' },
-                { targetId: 'staff', label: 'Staff' },
-                { targetId: 'note-on-line', label: 'Note Head' }
-            ],
-            2: [
-                { targetId: 'clef', label: 'Clef' },
-                { targetId: 'note-on-line', label: 'Line' },
-                { targetId: 'note-in-space', label: 'Space' },
-                { targetId: 'ledger-note', label: 'Ledger Line' }
-            ],
-            3: [
-                { targetId: 'clef', label: 'Clef' },
-                { targetId: 'staff', label: 'Staff' },
-                { targetId: 'note-on-line', label: 'Line' },
-                { targetId: 'note-in-space', label: 'Space' },
-                { targetId: 'ledger-note', label: 'Ledger Line' },
-                { targetId: 'stem', label: 'Stem' },
-                { targetId: 'barline', label: 'Barline' }
-            ]
+        // Note duration types this nugget teaches, with both naming systems
+        // shown together (Andrew wants both taught, not one or the other).
+        const NOTE_TYPES = {
+            crotchet: { label: 'Crotchet', altLabel: 'Quarter Note', filled: true, stem: true },
+            minim: { label: 'Minim', altLabel: 'Half Note', filled: false, stem: true },
+            semibreve: { label: 'Semibreve', altLabel: 'Whole Note', filled: false, stem: false }
+        };
+        const STAGE_TYPES = {
+            1: ['crotchet', 'minim'],
+            2: ['crotchet', 'minim', 'semibreve'],
+            3: ['crotchet', 'minim', 'semibreve']
         };
 
-        let solvedIds = new Set();
-        let totalChips = 0;
+        let currentType = null;
+        let correctAnswer = null;
 
         const dialogs = {
-            start: "Hi, I'm Melody! Drag each label chip onto the part of the stave it names!",
-            correct: "Perfect match! 🎯",
-            incorrect: "Not quite — try a different spot!",
-            allSolved: "You named every part! Fantastic! 🌟"
+            start: "Hi, I'm Melody! Can you name how long this note lasts?",
+            correct: "Spot on! 🎯",
+            incorrect: "Not quite — look at the note head and stem again."
         };
 
         let audioCtx = null;
@@ -280,303 +208,150 @@
                 }
             }
             resetStats();
-            roundsWonThisStage = 0;
             newRound();
         }
 
         function newRound() {
-            currentClef = currentStage === 3 && Math.random() < 0.5 ? 'bass' : 'treble';
-            solvedIds = new Set();
+            const types = STAGE_TYPES[currentStage];
+            currentType = types[Math.floor(Math.random() * types.length)];
+            correctAnswer = currentType;
             controlLock = false;
 
-            const chips = STAGE_CHIPS[currentStage];
-            totalChips = chips.length;
-
-            drawDiagram();
-            renderHotspots();
-            renderChips(chips);
+            drawNoteQuestion(currentType);
+            renderAnswers();
 
             document.getElementById('mascot-dialog').innerText = dialogs.start;
             const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-slate-700 mb-2";
-            feedback.innerText = "Drag a label to begin!";
+            feedback.className = "text-center text-base font-bold min-h-[24px] text-slate-700 mb-2";
+            feedback.innerHTML = "&nbsp;";
         }
 
-        function drawDiagram() {
+        function drawNoteQuestion(type) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const staffTop = 50, lineGap = 16, width = 220, startX = 40;
 
-            // 5 staff lines
             ctx.strokeStyle = '#334155';
             ctx.lineWidth = 2.5;
             for (let i = 0; i < 5; i++) {
                 const y = staffTop + i * lineGap;
                 ctx.beginPath();
                 ctx.moveTo(startX, y);
-                ctx.lineTo(startX + staffWidth, y);
+                ctx.lineTo(startX + width, y);
                 ctx.stroke();
             }
 
-            // Clef
             ctx.textBaseline = 'alphabetic';
             ctx.textAlign = 'left';
             ctx.fillStyle = '#1e293b';
             ctx.font = `${lineGap * 4}px "Noto Music", serif`;
-            if (currentClef === 'treble') {
-                ctx.fillText("\u{1D11E}", startX + 6, staffTop + 4 * lineGap);
-            } else {
-                ctx.fillText("\u{1D122}", startX + 6, staffTop + 3.625 * lineGap);
-            }
+            ctx.fillText("\u{1D11E}", startX + 10, staffTop + 4 * lineGap);
 
-            // Note on line (middle line, y=102)
-            drawNote(150, 102, true, false);
-            // Note in space (2nd space from top, y=94... use space between line0(70) and line1(86) => y=78)
-            drawNote(220, 78, false, false);
-            // Ledger note below staff (ledger at y=150, note at y=150)
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 2.5;
-            ctx.beginPath();
-            ctx.moveTo(275, 150);
-            ctx.lineTo(305, 150);
-            ctx.stroke();
-            drawNote(290, 150, false, true);
-
-            // Barline
-            ctx.strokeStyle = '#334155';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(368, staffTop);
-            ctx.lineTo(368, staffTop + 4 * lineGap);
-            ctx.stroke();
+            // Fixed on the middle line every round — pitch never changes here,
+            // only duration, so that's the only thing being tested.
+            drawDurationNote(startX + width / 2 + 20, staffTop + 2 * lineGap, type);
         }
 
-        function drawNote(x, y, withStem, isLedger) {
+        function drawDurationNote(x, y, type) {
+            const def = NOTE_TYPES[type];
             ctx.save();
             ctx.translate(x, y);
             ctx.rotate(-0.2);
-            ctx.fillStyle = '#2563eb';
             ctx.beginPath();
-            ctx.ellipse(0, 0, 10, 7, 0, 0, 2 * Math.PI);
-            ctx.fill();
+            ctx.ellipse(0, 0, 11, 8, 0, 0, 2 * Math.PI);
+            if (def.filled) {
+                ctx.fillStyle = '#2563eb';
+                ctx.fill();
+            } else {
+                ctx.fillStyle = '#ffffff';
+                ctx.fill();
+                ctx.strokeStyle = '#2563eb';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
             ctx.restore();
 
-            if (withStem) {
+            if (def.stem) {
                 ctx.strokeStyle = '#2563eb';
                 ctx.lineWidth = 2.5;
                 ctx.beginPath();
-                ctx.moveTo(x + 9, y);
-                ctx.lineTo(x + 9, y - 40);
+                ctx.moveTo(x + 10, y);
+                ctx.lineTo(x + 10, y - 40);
                 ctx.stroke();
             }
         }
 
-        function renderHotspots() {
-            const layer = document.getElementById('hotspot-layer');
-            layer.innerHTML = '';
-            const hotspots = getHotspots();
-            const chipTargets = new Set(STAGE_CHIPS[currentStage].map(c => c.targetId));
+        function renderAnswers() {
+            const container = document.getElementById('answer-buttons');
+            container.innerHTML = '';
 
-            Object.keys(hotspots).forEach(id => {
-                if (!chipTargets.has(id)) return;
-                const h = hotspots[id];
-                const div = document.createElement('div');
-                div.className = 'hotspot';
-                div.dataset.targetId = id;
-                div.style.left = `${h.x}px`;
-                div.style.top = `${h.y}px`;
-                div.style.width = `${h.w}px`;
-                div.style.height = `${h.h}px`;
-                layer.appendChild(div);
+            const keys = [...STAGE_TYPES[currentStage]];
+            for (let i = keys.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [keys[i], keys[j]] = [keys[j], keys[i]];
+            }
+
+            keys.forEach(key => {
+                const def = NOTE_TYPES[key];
+                const btn = document.createElement('button');
+                btn.innerText = `${def.label} (${def.altLabel})`;
+                btn.className = "bg-gradient-to-b from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-base py-4 rounded-2xl border-b-4 border-rose-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md";
+                btn.onclick = () => makeGuess(key);
+                container.appendChild(btn);
             });
 
             if (hintsEnabled) {
-                Object.keys(hotspots).forEach(id => {
-                    if (!chipTargets.has(id) || solvedIds.has(id)) return;
-                    const h = hotspots[id];
-                    const div = document.createElement('div');
-                    div.className = 'hotspot';
-                    div.style.left = `${h.x}px`;
-                    div.style.top = `${h.y}px`;
-                    div.style.width = `${h.w}px`;
-                    div.style.height = `${h.h}px`;
-                    div.style.background = 'rgba(251, 191, 36, 0.25)';
-                    div.style.boxShadow = '0 0 0 2px #fbbf24';
-                    div.style.pointerEvents = 'none';
-                    layer.appendChild(div);
-                });
+                const hint = document.createElement('div');
+                hint.className = "text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1 mt-1";
+                const def = NOTE_TYPES[correctAnswer];
+                hint.innerText = `Answer: ${def.label} (${def.altLabel})`;
+                container.appendChild(hint);
             }
         }
 
-        function renderChips(chips) {
-            const tray = document.getElementById('chip-tray');
-            tray.innerHTML = '';
-            // Shuffle chip order
-            const shuffled = [...chips];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            shuffled.forEach(chipDef => {
-                const chip = document.createElement('div');
-                chip.className = 'chip bg-gradient-to-b from-amber-400 to-amber-500 text-white font-black text-sm px-4 py-2.5 rounded-full shadow-md border-b-4 border-amber-600';
-                chip.innerText = chipDef.label;
-                chip.dataset.targetId = chipDef.targetId;
-                attachDrag(chip);
-                tray.appendChild(chip);
-            });
-        }
-
-        function attachDrag(chip) {
-            let startX, startY, origLeft, origTop, origParent;
-
-            chip.addEventListener('pointerdown', (e) => {
-                if (controlLock) return;
-                e.preventDefault();
-                const rect = chip.getBoundingClientRect();
-                origParent = chip.parentElement;
-                origLeft = rect.left;
-                origTop = rect.top;
-                startX = e.clientX;
-                startY = e.clientY;
-
-                document.body.appendChild(chip);
-                chip.style.left = `${origLeft}px`;
-                chip.style.top = `${origTop}px`;
-                chip.classList.add('dragging');
-                chip.setPointerCapture(e.pointerId);
-
-                function onMove(ev) {
-                    const dx = ev.clientX - startX;
-                    const dy = ev.clientY - startY;
-                    chip.style.left = `${origLeft + dx}px`;
-                    chip.style.top = `${origTop + dy}px`;
-
-                    // Highlight hotspot under pointer
-                    document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('hover-target'));
-                    const layer = document.getElementById('hotspot-layer');
-                    const layerRect = layer.getBoundingClientRect();
-                    const px = ev.clientX - layerRect.left;
-                    const py = ev.clientY - layerRect.top;
-                    document.querySelectorAll('.hotspot').forEach(h => {
-                        const hx = parseFloat(h.style.left), hy = parseFloat(h.style.top);
-                        const hw = parseFloat(h.style.width), hh = parseFloat(h.style.height);
-                        if (px >= hx && px <= hx + hw && py >= hy && py <= hy + hh) {
-                            h.classList.add('hover-target');
-                        }
-                    });
-                }
-
-                function onUp(ev) {
-                    chip.removeEventListener('pointermove', onMove);
-                    chip.removeEventListener('pointerup', onUp);
-                    document.querySelectorAll('.hotspot').forEach(h => h.classList.remove('hover-target'));
-
-                    const layer = document.getElementById('hotspot-layer');
-                    const layerRect = layer.getBoundingClientRect();
-                    const px = ev.clientX - layerRect.left;
-                    const py = ev.clientY - layerRect.top;
-
-                    let droppedOn = null;
-                    document.querySelectorAll('.hotspot').forEach(h => {
-                        const hx = parseFloat(h.style.left), hy = parseFloat(h.style.top);
-                        const hw = parseFloat(h.style.width), hh = parseFloat(h.style.height);
-                        if (px >= hx && px <= hx + hw && py >= hy && py <= hy + hh) {
-                            droppedOn = h;
-                        }
-                    });
-
-                    chip.classList.remove('dragging');
-
-                    if (droppedOn && droppedOn.dataset.targetId === chip.dataset.targetId && !solvedIds.has(chip.dataset.targetId)) {
-                        handleCorrectDrop(chip, droppedOn);
-                    } else {
-                        // snap back to tray
-                        chip.style.position = '';
-                        chip.style.left = '';
-                        chip.style.top = '';
-                        origParent.appendChild(chip);
-                        if (droppedOn) {
-                            handleWrongDrop();
-                        }
-                    }
-                }
-
-                chip.addEventListener('pointermove', onMove);
-                chip.addEventListener('pointerup', onUp);
-            });
-        }
-
-        function handleCorrectDrop(chip, hotspotEl) {
-            const hotspots = getHotspots();
-            const id = chip.dataset.targetId;
-            const h = hotspots[id];
-            solvedIds.add(id);
-
-            chip.remove();
-            hotspotEl.classList.add('solved-target');
-
-            const layer = document.getElementById('hotspot-layer');
-            const label = document.createElement('div');
-            label.className = 'placed-label';
-            label.style.left = `${h.x + h.w / 2}px`;
-            label.style.top = `${h.y + h.h + 12}px`;
-            label.innerText = h.label;
-            layer.appendChild(label);
-
-            playTone(523.25, 'triangle', 0.3);
+        function makeGuess(answer) {
+            if (controlLock) return;
             const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-green-600 mb-2";
-            feedback.innerText = "⭐ Perfect match! ⭐";
-            document.getElementById('mascot-dialog').innerText = dialogs.correct;
 
-            if (solvedIds.size >= totalChips) {
-                setTimeout(onRoundComplete, 700);
-            }
-        }
+            if (answer === correctAnswer) {
+                score += 10;
+                streak++;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
+                RewardSystem.correct();
+                document.getElementById('score').innerText = score;
+                document.getElementById('streak').innerText = streak;
 
-        function handleWrongDrop() {
-            streak = 0;
-            lives--;
-            Tracking.logAnswer({ correct: false, stage: currentStage });
-            document.getElementById('streak').innerText = streak;
-            updateHearts();
+                feedback.className = "text-center text-base font-bold text-green-600 mb-2";
+                feedback.innerText = "⭐ Spot on! ⭐";
 
-            const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-rose-500 mb-2";
-            feedback.innerText = "Not quite — try a different spot!";
-            playFailBuzz();
-            document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
-
-            if (lives <= 0) {
+                playTone(523.25, 'triangle', 0.4);
+                triggerConfetti();
+                document.getElementById('mascot-dialog').innerText = dialogs.correct;
                 controlLock = true;
-                setTimeout(triggerGameOver, 700);
-            }
-        }
 
-        function onRoundComplete() {
-            score += 10 * totalChips;
-            streak++;
-            Tracking.logAnswer({ correct: true, stage: currentStage });
-            RewardSystem.correct();
-            roundsWonThisStage++;
-            document.getElementById('score').innerText = score;
-            document.getElementById('streak').innerText = streak;
-
-            const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-green-600 mb-2";
-            feedback.innerText = "⭐ You named every part! ⭐";
-
-            triggerConfetti();
-            document.getElementById('mascot-dialog').innerText = dialogs.allSolved;
-
-            const avatar = document.getElementById('mascot-avatar');
-            avatar.className = "mascot-spin shrink-0";
-            controlLock = true;
-            setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
-
-            if (roundsWonThisStage >= 3) {
-                setTimeout(triggerStageComplete, 1000);
+                if (streak > 0 && streak % 10 === 0) {
+                    setTimeout(triggerStageComplete, 900);
+                } else {
+                    setTimeout(newRound, 1100);
+                }
             } else {
-                setTimeout(newRound, 1400);
+                streak = 0;
+                lives--;
+                Tracking.logAnswer({ correct: false, stage: currentStage });
+                document.getElementById('streak').innerText = streak;
+                updateHearts();
+
+                feedback.className = "text-center text-base font-bold text-rose-500 mb-2";
+                feedback.innerText = "Not quite — look at the note head and stem again.";
+
+                playFailBuzz();
+                document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+
+                controlLock = true;
+                setTimeout(() => { controlLock = false; }, 700);
+
+                if (lives <= 0) {
+                    setTimeout(triggerGameOver, 900);
+                }
             }
         }
 
@@ -617,7 +392,7 @@
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
-                oMsg.innerText = `Amazing! You know every part of the stave!`;
+                oMsg.innerText = `Amazing! You know your note values!`;
                 oBtn.innerText = "Play Again!";
                 oBtn.onclick = () => { dismissOverlay(); resetGame(); };
             }
@@ -631,7 +406,7 @@
             document.getElementById('overlay-msg').innerText = "Let's take another look and try this stage again!";
             const oBtn = document.getElementById('overlay-btn');
             oBtn.innerText = "Restart Stage";
-            oBtn.onclick = () => { dismissOverlay(); resetStats(); roundsWonThisStage = 0; newRound(); };
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
             overlay.classList.remove('hidden');
         }
 
@@ -656,7 +431,7 @@
         function toggleHints() {
             hintsEnabled = !hintsEnabled;
             document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
-            renderHotspots();
+            renderAnswers();
         }
 
         window.onload = async () => {

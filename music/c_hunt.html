@@ -15,7 +15,6 @@
         }
         .kids-title {
             font-family: 'Fredoka One', cursive;
-            text-shadow: 3px 3px 0px #047857;
         }
         .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
         @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
@@ -137,8 +136,8 @@
         let allKeys = [];
         function buildKeys() {
             allKeys = [];
-            const whiteNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
-            for (let i = 0; i < 15; i++) {
+            const whiteNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F'];
+            for (let i = 0; i < 18; i++) {
                 const noteName = whiteNotes[i];
                 const octaveOffset = Math.floor(i / 7);
                 const oct = START_OCTAVE + octaveOffset;
@@ -148,7 +147,7 @@
                 { afterName: 'C', name: 'C#' }, { afterName: 'D', name: 'D#' },
                 { afterName: 'F', name: 'F#' }, { afterName: 'G', name: 'G#' }, { afterName: 'A', name: 'A#' }
             ];
-            [0, 1].forEach(octaveOffset => {
+            [0, 1, 2].forEach(octaveOffset => {
                 blackSpec.forEach(b => {
                     const oct = START_OCTAVE + octaveOffset;
                     allKeys.push({ id: `${b.name}${oct}`, name: b.name, octave: oct, isBlack: true, afterWhiteIndex: octaveOffset * 7 + ['C','D','E','F','G','A','B'].indexOf(b.afterName) });
@@ -159,8 +158,8 @@
         // Stage ranges: which white-key indices are visible/active
         const STAGE_CONFIGS = {
             1: { startIndex: 7, endIndex: 14, timed: false },  // C4 to C5 (one octave)
-            2: { startIndex: 0, endIndex: 14, timed: false },  // C3 to C5 (two octaves)
-            3: { startIndex: 0, endIndex: 14, timed: true, seconds: 15 }
+            2: { startIndex: 0, endIndex: 17, timed: false },  // C3 to F5 (extended)
+            3: { startIndex: 0, endIndex: 17, timed: true, seconds: 15 }
         };
 
         const dialogs = {
