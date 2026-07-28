@@ -109,6 +109,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="auth.js"></script>
     <script src="reward-system.js"></script>
+    <script src="game-progress.js"></script>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
@@ -380,6 +381,7 @@
         }
 
         function triggerStageComplete() {
+            GameProgress.stageCleared(currentStage);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
