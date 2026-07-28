@@ -52,7 +52,7 @@ const notationCheck = await page.evaluate(async () => {
   // s6 stages a second note in ("space") partway through, via a second
   // renderNotation call rather than a sub-element animation - check that
   // render directly instead of waiting out its real (many-second) delay.
-  renderNotation(document.getElementById('s6-notation'), STORYBOARD.s6_lineAndSpace.spec);
+  renderNotation(document.getElementById('s6-notation'), Object.assign({}, STORYBOARD.s6_lineAndSpace.spec, { width: 340, height: 300, scale: 1.5 }));
   out.push({ label: 's6-notation (after space note added)', ...svgInfo(document.getElementById('s6-notation')) });
 
   document.querySelectorAll('.scene').forEach((s) => s.classList.remove('active'));
