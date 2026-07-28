@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Storyboard preview - every notation in this video</title>
+<script src="vendor/vexflow.js"></script>
+<script src="notation.js"></script>
+<script src="storyboard_data.js"></script>
+<style>
+  body { font-family: -apple-system, sans-serif; background: #f8fafc; margin: 0; padding: 32px; }
+  h1 { font-size: 1.3rem; color: #1e1b4b; margin: 0 0 6px; }
+  p.sub { color: #64748b; margin: 0 0 28px; font-size: .95rem; }
+  .grid { display: flex; flex-wrap: wrap; gap: 20px; }
+  .card { background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 14px; min-width: 200px; }
+  .card .icon-box { display: flex; align-items: center; justify-content: center; min-height: 160px; }
+  .card .label { margin-top: 8px; font-size: .85rem; color: #334155; text-align: center; font-weight: 600; }
+  .card .key { font-size: .75rem; color: #94a3b8; text-align: center; font-family: monospace; }
+</style>
+</head>
+<body>
+  <h1>Storyboard preview - every piece of notation in this video</h1>
+  <p class="sub">Look through this BEFORE spending any tokens on narration audio or video rendering. If a note looks wrong, fix its pitch in storyboard_data.js and reload this page - no re-render needed.</p>
+  <div class="grid" id="grid"></div>
+  <script>
+    const grid = document.getElementById('grid');
+    Object.entries(STORYBOARD).forEach(([key, entry]) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const iconBox = document.createElement('div');
+      iconBox.className = 'icon-box';
+      card.appendChild(iconBox);
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = entry.label;
+      card.appendChild(label);
+      const keyEl = document.createElement('div');
+      keyEl.className = 'key';
+      keyEl.textContent = key;
+      card.appendChild(keyEl);
+      grid.appendChild(card);
+      renderNotation(iconBox, Object.assign({ width: 220, height: 240 }, entry.spec));
+    });
+  </script>
+</body>
+</html>
