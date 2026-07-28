@@ -1,23 +1,33 @@
 /*
  * Shared reward layer for every Tiny Games Arcade music nugget.
  *
- * Integration is a single line: after the existing `streak++;` on a correct
- * answer, add `RewardSystem.correct();` — nothing else to wire up. The module
- * injects its own widget/modal DOM, tracks progress in localStorage, and
- * auto-detects which game called it from the page URL.
+ * Integration:
+ *   - After the existing `streak++;` on a correct answer, add
+ *     `RewardSystem.correct();` — nothing else to wire up for the base
+ *     reward loop.
+ *   - Optionally, once at game setup, register
+ *     `RewardSystem.onAnimalComplete(() => { if (currentStage < 3) setStage(currentStage + 1); });`
+ *     so completing an animal automatically advances the difficulty stage
+ *     (separate from - and in addition to - each game's own streak-based
+ *     stage-complete overlay, which is unchanged).
+ *
+ * The module shows its own animal-picker modal as soon as the page loads
+ * (before the first question is answered, not lazily on the first correct
+ * answer), injects its own widget/modal DOM, tracks completion tiers in
+ * localStorage, and auto-detects which game called it from the page URL.
  *
  * Mechanic: the child picks an animal fresh at the start of every game
  * (shared devices mean the same browser sees different pupils game to
  * game, so the choice is never persisted). Correct answers build it up,
- * one part at a time; on the 5th part the animal is complete and
+ * one part at a time; on the 8th part the animal is complete and
  * celebrates. Per game, the first three times an animal completes get
  * progressively smaller fanfare (Reward system.md's "three times max");
  * after that it still completes, just quietly.
  */
 (function () {
   const STORAGE_COMPLETIONS = "tga_reward_completions";
-  const PARTS_PER_ANIMAL = 5;
-  const PART_ORDER = ["body", "legs", "ears", "tail", "face"];
+  const PARTS_PER_ANIMAL = 8;
+  const PART_ORDER = ["body", "legs", "arms", "ears", "tail", "eyes", "nose", "mouth"];
 
   const ANIMALS = {
     cat: { name: "Cat", body: "#f4a83f", accent: "#fff4e0", ear: "pointed" },
@@ -51,14 +61,15 @@
     style.textContent = `
       #reward-widget {
         position: fixed; right: 16px; bottom: 16px; z-index: 9998;
-        width: 140px; height: 140px; border-radius: 28px;
+        width: clamp(120px, 26vw, 260px); height: clamp(120px, 26vw, 260px);
+        border-radius: 15%;
         background: rgba(255,255,255,0.92);
-        box-shadow: 0 8px 0 rgba(90,60,30,0.15), 0 12px 24px rgba(90,60,30,0.14);
-        border: 4px solid rgba(255,255,255,0.8);
+        box-shadow: 0 10px 0 rgba(90,60,30,0.15), 0 16px 32px rgba(90,60,30,0.14);
+        border: 5px solid rgba(255,255,255,0.8);
         display: flex; align-items: center; justify-content: center;
         pointer-events: none;
       }
-      #reward-widget svg { width: 112px; height: 112px; }
+      #reward-widget svg { width: 85%; height: 85%; }
       .rw-part { opacity: 0; transform: scale(0.4); transform-origin: center;
         animation: rw-pop 0.45s cubic-bezier(.34,1.56,.64,1) forwards; }
       @keyframes rw-pop { to { opacity: 1; transform: scale(1); } }
@@ -134,9 +145,12 @@
     return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       ${has("tail") ? `<g class="rw-part"><ellipse cx="88" cy="66" rx="12" ry="7" fill="${a.body}" transform="rotate(-25 88 66)"/></g>` : ""}
       ${has("legs") ? `<g class="rw-part"><rect x="34" y="78" width="10" height="16" rx="4" fill="${a.body}"/><rect x="56" y="78" width="10" height="16" rx="4" fill="${a.body}"/></g>` : ""}
+      ${has("arms") ? `<g class="rw-part"><ellipse cx="19" cy="62" rx="9" ry="6" fill="${a.body}" transform="rotate(20 19 62)"/><ellipse cx="81" cy="62" rx="9" ry="6" fill="${a.body}" transform="rotate(-20 81 62)"/></g>` : ""}
       ${has("ears") ? `<g class="rw-part">${ears}</g>` : ""}
       ${has("body") ? `<g class="rw-part"><ellipse cx="50" cy="58" rx="34" ry="30" fill="${a.body}"/><ellipse cx="50" cy="66" rx="18" ry="14" fill="${a.accent}"/></g>` : ""}
-      ${has("face") ? `<g class="rw-part"><circle cx="38" cy="48" r="6" fill="#fff"/><circle cx="62" cy="48" r="6" fill="#fff"/><circle cx="39" cy="49" r="3" fill="#1e1b17"/><circle cx="63" cy="49" r="3" fill="#1e1b17"/><ellipse cx="50" cy="58" rx="4" ry="3" fill="#1e1b17"/></g>` : ""}
+      ${has("eyes") ? `<g class="rw-part"><circle cx="38" cy="48" r="6" fill="#fff"/><circle cx="62" cy="48" r="6" fill="#fff"/><circle cx="39" cy="49" r="3" fill="#1e1b17"/><circle cx="63" cy="49" r="3" fill="#1e1b17"/></g>` : ""}
+      ${has("nose") ? `<g class="rw-part"><ellipse cx="50" cy="58" rx="4" ry="3" fill="#1e1b17"/></g>` : ""}
+      ${has("mouth") ? `<g class="rw-part"><path d="M42 64 Q50 70 58 64" stroke="#1e1b17" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>` : ""}
     </svg>`;
   }
 
@@ -206,7 +220,10 @@
     }
   }
 
-  function showCelebration(key, tier) {
+  // onDone fires exactly once, however the modal closes (auto-timeout, the
+  // "Keep going!" button, or a backdrop click) - this is what drives the
+  // auto-advance-to-next-stage hook, so it can't only live on the timeout.
+  function showCelebration(key, tier, onDone) {
     ensureStyles();
     const a = ANIMALS[key];
     const messages = [
@@ -227,16 +244,23 @@
         <button id="reward-modal-btn">Keep going!</button>
       </div>`;
       document.body.appendChild(backdrop);
-      backdrop.querySelector("#reward-modal-btn").onclick = () => backdrop.classList.remove("show");
-      backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.classList.remove("show"); };
     }
+    let dismissed = false;
+    const dismiss = () => {
+      if (dismissed) return;
+      dismissed = true;
+      backdrop.classList.remove("show");
+      if (onDone) onDone();
+    };
+    backdrop.querySelector("#reward-modal-btn").onclick = dismiss;
+    backdrop.onclick = (e) => { if (e.target === backdrop) dismiss(); };
     backdrop.querySelector("#reward-modal-animal").innerHTML = animalSvg(key, PART_ORDER);
     backdrop.querySelector("#reward-modal-title").textContent = msg.title;
     backdrop.querySelector("#reward-modal-body").textContent = msg.body;
     backdrop.classList.add("show");
     confettiBurst(Math.min(tier, 2) === 2 ? 0 : Math.min(tier, 2) === 1 ? 1 : 2); // tier 0 = biggest burst
     chime(2 - Math.min(tier, 2));
-    setTimeout(() => backdrop.classList.remove("show"), tier === 0 ? 2600 : tier === 1 ? 1800 : 1200);
+    setTimeout(dismiss, tier === 0 ? 2600 : tier === 1 ? 1800 : 1200);
   }
 
   function pickAnimal(onChosen) {
@@ -265,6 +289,7 @@
   let chosenAnimal = null;
   let ready = false;
   let pendingCorrect = 0;
+  let animalCompleteCallback = null;
 
   function withAnimal(cb) {
     if (chosenAnimal) return cb(chosenAnimal);
@@ -286,12 +311,20 @@
       const gameId = currentGameId();
       const completions = loadCompletions();
       const tier = completions[gameId] || 0;
-      showCelebration(key, tier);
+      showCelebration(key, tier, animalCompleteCallback || undefined);
       completions[gameId] = Math.min(tier + 1, 3);
       saveCompletions(completions);
       sessionParts = 0;
     }
   }
+
+  // Ask which animal before the first question is answered, not lazily on
+  // the first correct() call - withAnimal() itself is a no-op once a choice
+  // has already been made or the picker is already open, so this is safe
+  // to call unconditionally. Called directly (not deferred to
+  // DOMContentLoaded) because this script tag is always placed after the
+  // game's own markup, so document.body already exists by this point.
+  withAnimal(() => {});
 
   window.RewardSystem = {
     correct() {
@@ -301,6 +334,13 @@
         return;
       }
       applyCorrect(chosenAnimal);
+    },
+    // Register a callback that fires once an animal completes (after its
+    // celebration modal closes, however it closes). Intended use: advance
+    // the game's own difficulty stage, e.g.
+    //   RewardSystem.onAnimalComplete(() => { if (currentStage < 3) setStage(currentStage + 1); });
+    onAnimalComplete(callback) {
+      animalCompleteCallback = callback;
     },
   };
 })();

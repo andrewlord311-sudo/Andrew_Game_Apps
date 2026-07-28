@@ -325,6 +325,12 @@
             newRound();
         }
 
+        // Completing an animal (see reward-system.js) auto-advances the
+        // difficulty stage too, separate from the existing streak-based trigger.
+        if (typeof RewardSystem !== 'undefined') {
+            RewardSystem.onAnimalComplete(() => { if (currentStage < 3) setStage(currentStage + 1); });
+        }
+
         function newRound() {
             const pool = currentClef === 'treble' ? TREBLE_NOTES : BASS_NOTES;
             const config = STAGE_CONFIGS[currentStage];
