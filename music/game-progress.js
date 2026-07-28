@@ -6,17 +6,24 @@
  * stage" overlay every game already has), add
  * `GameProgress.stageCleared(currentStage);` — nothing else to wire up.
  *
- * Mechanic: a game is "complete" once all 3 stages have been cleared at
- * least once (reusing each game's own existing stage-complete trigger as
- * the checkpoint, not a new difficulty gate — stages stay freely selectable
- * same as today). Unlike the reward animal, this progress is real and
- * persists per game in localStorage, so a child can see how much further
- * there is to go across separate sessions. music_arcade.html reads the same
- * storage to show a completion badge on each game's tile.
+ * Mechanic: a game is "complete" once every one of its stages has been
+ * cleared at least once (reusing each game's own existing stage-complete
+ * trigger as the checkpoint, not a new difficulty gate — stages stay freely
+ * selectable same as today). Unlike the reward animal, this progress is
+ * real and persists per game in localStorage, so a child can see how much
+ * further there is to go across separate sessions. music_arcade.html reads
+ * the same storage to show a completion badge on each game's tile.
+ *
+ * Almost every game has 3 stages, so that's the default - but it's not
+ * assumed: pass the real count as a second argument for any game that
+ * differs, e.g. `GameProgress.stageCleared(currentStage, 2);` for a
+ * 2-stage game. Get this wrong and the game can simply never show as
+ * "complete", since the stage count it never reaches stays uncleared
+ * forever - there's no way to detect that from stageCleared() calls alone.
  */
 (function () {
   const STORAGE_KEY = "tga_game_progress";
-  const STAGES = [1, 2, 3];
+  const DEFAULT_TOTAL_STAGES = 3;
 
   function currentGameId() {
     const file = location.pathname.split("/").pop() || "game";
@@ -36,7 +43,7 @@
   }
 
   function entryFor(progress, gameId) {
-    return progress[gameId] || { stagesCleared: [], completed: false, completedAt: null };
+    return progress[gameId] || { stagesCleared: [], totalStages: DEFAULT_TOTAL_STAGES, completed: false, completedAt: null };
   }
 
   function ensureStyles() {
@@ -101,14 +108,15 @@
     return widget;
   }
 
-  function renderWidget(stagesCleared) {
+  function renderWidget(stagesCleared, totalStages) {
     ensureStyles();
     const widget = ensureWidget();
-    const pips = STAGES.map((s) => {
+    const pips = [];
+    for (let s = 1; s <= totalStages; s++) {
       const filled = stagesCleared.includes(s);
-      return `<span class="gp-pip${filled ? " gp-filled" : ""}">${filled ? "⭐" : "☆"}</span>`;
-    }).join("");
-    widget.innerHTML = `${pips}<span class="gp-label">${stagesCleared.length}/3 stages</span>`;
+      pips.push(`<span class="gp-pip${filled ? " gp-filled" : ""}">${filled ? "⭐" : "☆"}</span>`);
+    }
+    widget.innerHTML = `${pips.join("")}<span class="gp-label">${stagesCleared.length}/${totalStages} stages</span>`;
   }
 
   function confettiBurst() {
@@ -154,7 +162,7 @@
     }
   }
 
-  function showGameCompleteModal() {
+  function showGameCompleteModal(totalStages) {
     ensureStyles();
     let backdrop = document.getElementById("game-complete-backdrop");
     if (!backdrop) {
@@ -163,32 +171,35 @@
       backdrop.innerHTML = `<div id="game-complete-modal">
         <div class="gp-trophy">🏆</div>
         <h2>Game Complete!</h2>
-        <p>You've cleared all 3 stages. Amazing work!</p>
+        <p id="game-complete-msg"></p>
         <button id="game-complete-btn">Keep playing</button>
       </div>`;
       document.body.appendChild(backdrop);
       backdrop.querySelector("#game-complete-btn").onclick = () => backdrop.classList.remove("show");
       backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.classList.remove("show"); };
     }
+    backdrop.querySelector("#game-complete-msg").textContent =
+      `You've cleared all ${totalStages} stage${totalStages === 1 ? "" : "s"}. Amazing work!`;
     backdrop.classList.add("show");
     confettiBurst();
     chime();
   }
 
-  function stageCleared(stageNum) {
-    if (!STAGES.includes(stageNum)) return;
+  function stageCleared(stageNum, totalStages = DEFAULT_TOTAL_STAGES) {
+    if (stageNum < 1 || stageNum > totalStages) return;
     const progress = loadProgress();
     const gameId = currentGameId();
     const entry = entryFor(progress, gameId);
+    entry.totalStages = totalStages;
     if (!entry.stagesCleared.includes(stageNum)) {
       entry.stagesCleared = [...entry.stagesCleared, stageNum].sort();
     }
-    renderWidget(entry.stagesCleared);
-    const nowComplete = STAGES.every((s) => entry.stagesCleared.includes(s));
+    renderWidget(entry.stagesCleared, totalStages);
+    const nowComplete = entry.stagesCleared.length >= totalStages;
     if (nowComplete && !entry.completed) {
       entry.completed = true;
       entry.completedAt = new Date().toISOString();
-      showGameCompleteModal();
+      showGameCompleteModal(totalStages);
     }
     progress[gameId] = entry;
     saveProgress(progress);
@@ -197,7 +208,7 @@
   function init() {
     const progress = loadProgress();
     const entry = entryFor(progress, currentGameId());
-    renderWidget(entry.stagesCleared);
+    renderWidget(entry.stagesCleared, entry.totalStages || DEFAULT_TOTAL_STAGES);
   }
 
   if (document.readyState === "loading") {
