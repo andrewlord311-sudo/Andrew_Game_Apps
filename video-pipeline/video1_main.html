@@ -44,8 +44,22 @@
 
   /* Stave/clef/note/ledger graphics for scenes 3-7 are rendered by VexFlow
      (notation.js) into this one container per scene - not hand-coded CSS. */
-  .notation-slot { position: absolute; left: 100px; right: 100px; top: 220px; height: 340px; opacity: 0; transition: opacity .5s ease; }
+  /* CSS box is sized to the SCALED (final on-screen) footprint - renderNotation
+     is called with the smaller unscaled width/height + a scale factor (see
+     notation.js), so this box must match width*scale / height*scale for the
+     centering transform below to centre the actual visible content, not just
+     the pre-scale coordinate box. */
+  .notation-slot { position: absolute; left: 50%; top: 200px; width: 520px; height: 480px; transform: translateX(-50%); opacity: 0; transition: opacity .5s ease; }
   .notation-slot.show { opacity: 1; }
+
+  /* Scene 2 only ("count the 5 lines with me") - a hand-drawn stave that
+     reveals one line at a time in sync with the counting narration. This is
+     a one-off teaching moment for THIS scene specifically, not the general
+     notation renderer (which is VexFlow, see .notation-slot above) - keeping
+     it hand-coded here is deliberate, not an oversight. */
+  .stave { position: absolute; left: 160px; right: 160px; top: 300px; height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+  .stave-line { position: relative; height: 4px; background: var(--barnaby-deep); opacity: 0; transform: scaleX(0); transform-origin: left; }
+  .stave-line.show { opacity: .85; transform: scaleX(1); transition: opacity .3s ease, transform .5s var(--ease-out); }
 
   .num-tag { position: absolute; left: -46px; width: 34px; text-align: center; font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--accent); opacity: 0; transform: translateY(-50%) scale(.5); }
   .num-tag.show { opacity: 1; transform: translateY(-50%) scale(1); transition: opacity .3s ease, transform .35s var(--ease-pop); }
@@ -84,13 +98,13 @@
 
   <div class="scene" id="s3">
     <div class="notation-slot" id="s3-notation"></div>
-    <div class="mascot" id="s3-melody" style="left:330px; top:330px; width:130px;"><span class="inner"></span></div>
+    <div class="mascot" id="s3-melody" style="left:90px; top:330px; width:130px;"><span class="inner"></span></div>
     <div class="caption" id="s3-caption">TREBLE CLEF</div>
   </div>
 
   <div class="scene" id="s4">
     <div class="notation-slot" id="s4-notation"></div>
-    <div class="mascot" id="s4-barnaby" style="right:395px; top:330px; width:150px;"><span class="inner"></span></div>
+    <div class="mascot" id="s4-barnaby" style="right:70px; top:330px; width:150px;"><span class="inner"></span></div>
     <div class="caption" id="s4-caption">BASS CLEF</div>
   </div>
 
@@ -106,7 +120,7 @@
 
   <div class="scene" id="s7">
     <div class="notation-slot" id="s7-notation"></div>
-    <div class="mascot" id="s7-barnaby" style="right:200px; top:330px; width:150px;"><span class="inner"></span></div>
+    <div class="mascot" id="s7-barnaby" style="right:70px; top:330px; width:150px;"><span class="inner"></span></div>
     <div class="caption" id="s7-caption">LEDGER LINE</div>
   </div>
 
@@ -237,7 +251,7 @@
       at('s2', 0.90, () => document.getElementById('s2-caption').classList.add('show'));
     }
     if (id === 's3') {
-      renderNotation(document.getElementById('s3-notation'), STORYBOARD.s3.spec);
+      renderNotation(document.getElementById('s3-notation'), Object.assign({}, STORYBOARD.s3.spec, { width: 280, height: 300, scale: 1.6 }));
       at('s3', 0.08, () => document.getElementById('s3-notation').classList.add('show'));
       at('s3', 0.30, () => {
         document.getElementById('s3-melody').classList.add('show');
@@ -246,7 +260,7 @@
       at('s3', 0.85, () => document.getElementById('s3-caption').classList.add('show'));
     }
     if (id === 's4') {
-      renderNotation(document.getElementById('s4-notation'), STORYBOARD.s4.spec);
+      renderNotation(document.getElementById('s4-notation'), Object.assign({}, STORYBOARD.s4.spec, { width: 280, height: 300, scale: 1.6 }));
       at('s4', 0.08, () => document.getElementById('s4-notation').classList.add('show'));
       at('s4', 0.30, () => {
         document.getElementById('s4-barnaby').classList.add('show');
@@ -255,7 +269,7 @@
       at('s4', 0.85, () => document.getElementById('s4-caption').classList.add('show'));
     }
     if (id === 's5') {
-      renderNotation(document.getElementById('s5-notation'), STORYBOARD.s5.spec);
+      renderNotation(document.getElementById('s5-notation'), Object.assign({}, STORYBOARD.s5.spec, { width: 280, height: 300, scale: 1.6 }));
       at('s5', 0.35, () => document.getElementById('s5-notation').classList.add('show'));
       at('s5', 0.60, () => document.getElementById('s5-caption').classList.add('show'));
     }
@@ -263,7 +277,7 @@
       // Re-render with one more note when "space" is introduced, rather than
       // animating sub-elements inside the VexFlow SVG.
       const s6el = document.getElementById('s6-notation');
-      renderNotation(s6el, STORYBOARD.s6_line.spec);
+      renderNotation(s6el, Object.assign({}, STORYBOARD.s6_line.spec, { width: 340, height: 300, scale: 1.5 }));
       document.getElementById('s6-caption').textContent = 'LINE';
       at('s6', 0.10, () => {
         s6el.classList.add('show');
@@ -273,13 +287,13 @@
         document.getElementById('s6-caption').classList.remove('show');
       });
       at('s6', 0.62, () => {
-        renderNotation(s6el, STORYBOARD.s6_lineAndSpace.spec);
+        renderNotation(s6el, Object.assign({}, STORYBOARD.s6_lineAndSpace.spec, { width: 340, height: 300, scale: 1.5 }));
         document.getElementById('s6-caption').textContent = 'SPACE';
         document.getElementById('s6-caption').classList.add('show');
       });
     }
     if (id === 's7') {
-      renderNotation(document.getElementById('s7-notation'), STORYBOARD.s7.spec);
+      renderNotation(document.getElementById('s7-notation'), Object.assign({}, STORYBOARD.s7.spec, { width: 280, height: 300, scale: 1.6 }));
       at('s7', 0.30, () => document.getElementById('s7-notation').classList.add('show'));
       at('s7', 0.55, () => {
         document.getElementById('s7-barnaby').classList.add('show');

@@ -14,12 +14,18 @@
 //   showClef  default true - set false for icons that only need the note+stave
 //   hideStave default false - set true for small icons that want just a clef
 //             and/or note floating with no stave lines/barlines visible
+//   scale     default 1 - VexFlow's line spacing and clef/note glyph sizes are
+//             fixed pixel values that don't grow with width/height, so to make
+//             a notation graphic bigger (not just wider), render it at the same
+//             internal size and then stretch the SVG's display size vs its
+//             viewBox by this factor - stretches width AND height together,
+//             everything scales proportionally including stroke widths
 function renderNotation(containerEl, spec) {
   const {
     clef, notes,
     width = containerEl.clientWidth || 260,
     height = containerEl.clientHeight || 200,
-    color, showClef = true, hideStave = false,
+    color, showClef = true, hideStave = false, scale = 1,
   } = spec;
   containerEl.innerHTML = '';
   if (!containerEl.id) containerEl.id = 'vf-' + Math.random().toString(36).slice(2);
@@ -52,6 +58,12 @@ function renderNotation(containerEl, spec) {
     const stave = system.addStave({ voices: [voice] });
     if (showClef) stave.addClef(clef);
     factory.draw();
+  }
+
+  if (scale !== 1) {
+    const svg = containerEl.querySelector('svg');
+    svg.style.width = `${width * scale}px`;
+    svg.style.height = `${height * scale}px`;
   }
 
   if (hideStave) {
