@@ -139,6 +139,7 @@
 
     </div>
 
+    <script src="game-progress.js"></script>
     <script>
         /* ======================================================================
            ACTIVE MUSIC GAME REGISTRY
@@ -218,6 +219,23 @@
                 ribbon.className = 'absolute top-4 right-4 bg-yellow-400 text-yellow-950 font-black text-xs px-3 py-1 rounded-full shadow-sm uppercase tracking-wide';
                 ribbon.textContent = 'Coming soon';
                 card.appendChild(ribbon);
+            } else if (typeof GameProgress !== 'undefined') {
+                // Completion / progress-toward-completion badge, read from the
+                // same localStorage each game itself writes to via
+                // GameProgress.stageCleared() - see game-progress.js.
+                const gameId = game.file.replace(/\.html?$/i, '');
+                const entry = GameProgress.getSummary()[gameId];
+                if (entry && entry.completed) {
+                    const ribbon = document.createElement('div');
+                    ribbon.className = 'absolute top-4 right-4 bg-emerald-500 text-white font-black text-xs px-3 py-1 rounded-full shadow-sm uppercase tracking-wide';
+                    ribbon.textContent = '✓ Complete';
+                    card.appendChild(ribbon);
+                } else if (entry && entry.stagesCleared.length > 0) {
+                    const ribbon = document.createElement('div');
+                    ribbon.className = 'absolute top-4 right-4 bg-white text-slate-700 font-black text-xs px-3 py-1 rounded-full shadow-sm uppercase tracking-wide border-2 border-slate-200';
+                    ribbon.textContent = `Stage ${entry.stagesCleared.length}/3`;
+                    card.appendChild(ribbon);
+                }
             }
 
             // Game Emoji Icon Badge with styled background gradient
