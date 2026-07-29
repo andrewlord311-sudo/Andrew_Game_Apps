@@ -58,17 +58,14 @@
         </div>
 
         <h1 class="kids-title text-3xl text-emerald-600 text-center mb-1">C Hunt</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Find every C hiding on the keyboard!</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Spot the Cs hiding on the keyboard!</p>
 
-        <div class="grid grid-cols-3 gap-2 bg-emerald-50 p-2 rounded-2xl mb-2 border border-emerald-100">
+        <div class="grid grid-cols-2 gap-2 bg-emerald-50 p-2 rounded-2xl mb-2 border border-emerald-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-emerald-400 text-white border-b-2 border-emerald-600 shadow">
-                ☀️ Stage 1: Easy
+                ☀️ Stage 1: Find 1 C
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Medium
-            </button>
-            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
+                🌴 Stage 2: Find 2 Cs
             </button>
         </div>
 
@@ -83,8 +80,7 @@
         </div>
 
         <div class="flex items-center justify-between mb-2">
-            <div id="progress-text" class="font-bold text-slate-700 text-sm">Found 0 / 2 C's</div>
-            <div id="timer-text" class="font-black text-rose-500 text-sm hidden">⏱️ 12s</div>
+            <div id="progress-text" class="font-bold text-slate-700 text-sm">Found 0 / 1 C's</div>
         </div>
 
         <div class="relative">
@@ -121,6 +117,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
+    <script>window.GP_TOTAL_STAGES = 2;</script> <!-- this game only has 2 stages, not the usual 3 -->
     <script src="game-progress.js"></script>
     <script>
         let currentStage = 1;
@@ -130,44 +127,47 @@
         let hintsEnabled = false;
         let controlLock = false;
         let foundSet = new Set();
-        let totalCs = 0;
-        let timerInterval = null;
-        let timeLeft = 0;
+        let requiredCs = 1;
 
-        const START_OCTAVE = 3;
+        // Every round shows exactly two octaves of white+black keys, starting
+        // from a random white note - never the same 12 keys twice in a row.
+        // Any 14 consecutive white notes (2 full A-G cycles) always contain
+        // exactly 2 Cs, wherever they start, so totalCs is always 2; what
+        // changes per stage is how many of those 2 a pupil must actually find.
+        const WHITE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
         let allKeys = [];
         function buildKeys() {
             allKeys = [];
-            const whiteNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F'];
-            for (let i = 0; i < 18; i++) {
-                const noteName = whiteNotes[i];
-                const octaveOffset = Math.floor(i / 7);
-                const oct = START_OCTAVE + octaveOffset;
-                allKeys.push({ id: `${noteName}${oct}`, name: noteName, octave: oct, isBlack: false, whiteIndex: i });
+            let letterIdx = Math.floor(Math.random() * 7);
+            let octave = 3 + Math.floor(Math.random() * 2);
+            const whites = [];
+            for (let i = 0; i < 14; i++) {
+                const w = { id: `${WHITE_LETTERS[letterIdx]}${octave}`, name: WHITE_LETTERS[letterIdx], octave, isBlack: false, whiteIndex: i };
+                whites.push(w);
+                allKeys.push(w);
+                letterIdx = (letterIdx + 1) % 7;
+                if (letterIdx === 0) octave++;
             }
-            const blackSpec = [
-                { afterName: 'C', name: 'C#' }, { afterName: 'D', name: 'D#' },
-                { afterName: 'F', name: 'F#' }, { afterName: 'G', name: 'G#' }, { afterName: 'A', name: 'A#' }
-            ];
-            [0, 1, 2].forEach(octaveOffset => {
-                blackSpec.forEach(b => {
-                    const oct = START_OCTAVE + octaveOffset;
-                    allKeys.push({ id: `${b.name}${oct}`, name: b.name, octave: oct, isBlack: true, afterWhiteIndex: octaveOffset * 7 + ['C','D','E','F','G','A','B'].indexOf(b.afterName) });
-                });
-            });
+            for (let i = 0; i < whites.length - 1; i++) {
+                const cur = whites[i], next = whites[i + 1];
+                const noBlackBetween = (cur.name === 'E' && next.name === 'F') || (cur.name === 'B' && next.name === 'C');
+                if (!noBlackBetween) {
+                    allKeys.push({ id: `${cur.name}#${cur.octave}`, name: `${cur.name}#`, octave: cur.octave, isBlack: true, afterWhiteIndex: i });
+                }
+            }
         }
 
-        // Stage ranges: which white-key indices are visible/active
         const STAGE_CONFIGS = {
-            1: { startIndex: 7, endIndex: 14, timed: false },  // C4 to C5 (one octave)
-            2: { startIndex: 0, endIndex: 17, timed: false },  // C3 to F5 (extended)
-            3: { startIndex: 0, endIndex: 17, timed: true, seconds: 15 }
+            1: { requiredCs: 1 },
+            2: { requiredCs: 2 },
         };
 
         const dialogs = {
-            start: "Hi, I'm Melody! Tap every C you can find on the keyboard!",
+            start1: "Hi, I'm Melody! Find just ONE of the Cs hiding on the keyboard!",
+            start2: "Hi, I'm Melody! This time find BOTH Cs hiding on the keyboard!",
             correct: "Great find! Keep going! 🎹",
-            allFound: "You found them all! Amazing C hunting! 🌟",
+            allFound1: "You found a C! Nice work! 🌟",
+            allFound2: "You found them both! Amazing C hunting! 🌟",
             incorrect: "That's not a C — look for the white key just left of a group of 2 black keys!"
         };
 
@@ -228,7 +228,7 @@
 
         function setStage(stageNum) {
             currentStage = stageNum;
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`btn-stage-${i}`);
                 if (i === stageNum) {
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-emerald-400 text-white border-b-2 border-emerald-600 shadow";
@@ -248,46 +248,27 @@
         }
 
         function newRound() {
-            clearInterval(timerInterval);
             const config = STAGE_CONFIGS[currentStage];
+            requiredCs = config.requiredCs;
             foundSet = new Set();
             controlLock = false;
 
-            const visibleWhites = allKeys.filter(k => !k.isBlack && k.whiteIndex >= config.startIndex && k.whiteIndex <= config.endIndex);
-            totalCs = visibleWhites.filter(k => k.name === 'C').length;
+            buildKeys();
 
-            document.getElementById('progress-text').innerText = `Found 0 / ${totalCs} C's`;
-            document.getElementById('mascot-dialog').innerText = dialogs.start;
+            document.getElementById('progress-text').innerText = `Found 0 / ${requiredCs} C's`;
+            document.getElementById('mascot-dialog').innerText = requiredCs === 1 ? dialogs.start1 : dialogs.start2;
 
             renderPiano();
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
             feedback.innerText = "Tap a C to begin!";
-
-            const timerEl = document.getElementById('timer-text');
-            if (config.timed) {
-                timerEl.classList.remove('hidden');
-                timeLeft = config.seconds;
-                timerEl.innerText = `⏱️ ${timeLeft}s`;
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerEl.innerText = `⏱️ ${timeLeft}s`;
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        onTimeUp();
-                    }
-                }, 1000);
-            } else {
-                timerEl.classList.add('hidden');
-            }
         }
 
         function renderPiano() {
             const container = document.getElementById('piano-container');
             container.innerHTML = '';
-            const config = STAGE_CONFIGS[currentStage];
-            const whiteKeys = allKeys.filter(k => !k.isBlack && k.whiteIndex >= config.startIndex && k.whiteIndex <= config.endIndex);
+            const whiteKeys = allKeys.filter(k => !k.isBlack);
 
             whiteKeys.forEach((key) => {
                 const keyDiv = document.createElement('div');
@@ -301,14 +282,13 @@
             const containerWidth = container.clientWidth - 16;
             const whiteKeyWidth = containerWidth / whiteKeys.length;
 
-            const blackKeys = allKeys.filter(k => k.isBlack && k.afterWhiteIndex >= config.startIndex && k.afterWhiteIndex < config.endIndex);
+            const blackKeys = allKeys.filter(k => k.isBlack);
             blackKeys.forEach((key) => {
                 const blackDiv = document.createElement('div');
                 blackDiv.className = `black-key absolute bg-slate-950 rounded-b-lg z-30 select-none cursor-pointer`;
                 blackDiv.style.height = '3.5rem';
                 blackDiv.style.width = `${whiteKeyWidth * 0.65}px`;
-                const relIndex = key.afterWhiteIndex - config.startIndex;
-                const leftPos = (relIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2);
+                const leftPos = (key.afterWhiteIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2);
                 blackDiv.style.left = `${leftPos}px`;
                 blackDiv.dataset.note = key.id;
                 blackDiv.addEventListener('mousedown', (e) => {
@@ -333,11 +313,11 @@
                 if (foundSet.has(key.id)) return; // already found
                 foundSet.add(key.id);
                 keyElement.classList.add('found');
-                document.getElementById('progress-text').innerText = `Found ${foundSet.size} / ${totalCs} C's`;
+                document.getElementById('progress-text').innerText = `Found ${foundSet.size} / ${requiredCs} C's`;
 
                 playTone(261.63 * Math.pow(2, key.octave - 4), 'triangle', 0.4);
 
-                if (foundSet.size >= totalCs) {
+                if (foundSet.size >= requiredCs) {
                     onAllFound();
                 } else {
                     document.getElementById('mascot-dialog').innerText = dialogs.correct;
@@ -360,7 +340,6 @@
                 document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
 
                 if (lives <= 0) {
-                    clearInterval(timerInterval);
                     controlLock = true;
                     setTimeout(triggerGameOver, 800);
                 }
@@ -368,8 +347,7 @@
         }
 
         function onAllFound() {
-            clearInterval(timerInterval);
-            score += 10 * totalCs;
+            score += 10 * requiredCs;
             streak++;
             Tracking.logAnswer({ correct: true, stage: currentStage });
             RewardSystem.correct();
@@ -378,10 +356,10 @@
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-green-600 my-3";
-            feedback.innerText = `⭐ You found all the C's! ⭐`;
+            feedback.innerText = requiredCs === 1 ? `⭐ You found a C! ⭐` : `⭐ You found them both! ⭐`;
 
             triggerConfetti();
-            document.getElementById('mascot-dialog').innerText = dialogs.allFound;
+            document.getElementById('mascot-dialog').innerText = requiredCs === 1 ? dialogs.allFound1 : dialogs.allFound2;
 
             const avatar = document.getElementById('mascot-avatar');
             avatar.className = "mascot-spin shrink-0";
@@ -389,28 +367,6 @@
             setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
             setTimeout(newRound, 1400);
-        }
-
-        function onTimeUp() {
-            streak = 0;
-            lives--;
-            Tracking.logAnswer({ correct: false, stage: currentStage });
-            document.getElementById('streak').innerText = streak;
-            updateHearts();
-
-            const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-rose-500 my-3";
-            feedback.innerText = "Time's up! Let's try again.";
-
-            playFailBuzz();
-            document.getElementById('mascot-dialog').innerText = "Time ran out! Quick, let's try another round!";
-
-            if (lives <= 0) {
-                controlLock = true;
-                setTimeout(triggerGameOver, 800);
-            } else {
-                setTimeout(newRound, 1200);
-            }
         }
 
         function triggerConfetti() {
@@ -438,7 +394,7 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage);
+            GameProgress.stageCleared(currentStage, 2);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
@@ -446,7 +402,7 @@
             const oMsg = document.getElementById('overlay-msg');
             const oBtn = document.getElementById('overlay-btn');
 
-            if (currentStage < 3) {
+            if (currentStage < 2) {
                 oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
@@ -496,7 +452,6 @@
         window.addEventListener('resize', () => { renderPiano(); });
 
         window.onload = () => {
-            buildKeys();
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             setStage(1);
         };
