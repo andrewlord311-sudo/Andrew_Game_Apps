@@ -301,10 +301,11 @@
             newRound();
         }
 
-        // Completing an animal (see reward-system.js) auto-advances the
-        // difficulty stage too, separate from the existing streak-based trigger.
+        // Completing an animal (8 correct answers, see reward-system.js) is
+        // what actually completes a stage here - not the streak counter,
+        // which is just a fun "in a row" display.
         if (typeof RewardSystem !== 'undefined') {
-            RewardSystem.onAnimalComplete(() => { if (currentStage < 3) setStage(currentStage + 1); });
+            RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
         }
 
         function newRound() {
@@ -414,11 +415,7 @@
             controlLock = true;
             setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
-            if (streak > 0 && streak % 8 === 0) {
-                setTimeout(triggerStageComplete, 1000);
-            } else {
-                setTimeout(newRound, 1200);
-            }
+            setTimeout(newRound, 1200);
         }
 
         function onIncorrect() {
