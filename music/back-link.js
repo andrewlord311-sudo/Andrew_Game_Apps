@@ -15,7 +15,7 @@
     style.id = "back-link-styles";
     style.textContent = `
       #back-link-badge {
-        position: fixed; top: 16px; left: 16px; z-index: 9997;
+        position: fixed; top: 16px; left: 16px; z-index: 10010;
         background: #fffdf6; border-radius: 999px; padding: 8px 14px;
         box-shadow: 0 4px 0 rgba(90,60,30,0.12), 0 6px 12px rgba(90,60,30,0.1);
         font-family: 'Trebuchet MS','Segoe UI',sans-serif;
