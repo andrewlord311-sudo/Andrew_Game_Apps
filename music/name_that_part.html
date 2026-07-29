@@ -399,8 +399,8 @@
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
                 oMsg.innerText = `Amazing! You know your note values!`;
-                oBtn.innerText = "Play Again!";
-                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
             }
             overlay.classList.remove('hidden');
         }

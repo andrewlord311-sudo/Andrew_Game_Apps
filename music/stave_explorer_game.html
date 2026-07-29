@@ -575,10 +575,10 @@
                 };
             } else {
                 oMsg.innerText = "Incredible! You have mastered the entire clef!";
-                oBtn.innerText = "Play Again!";
+                oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => {
                     dismissOverlay();
-                    resetGame();
+                    location.href = "music_arcade.html";
                 };
             }
 

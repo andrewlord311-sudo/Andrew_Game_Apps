@@ -452,8 +452,8 @@
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
                 oMsg.innerText = `Incredible! You can hunt down every C on the keyboard!`;
-                oBtn.innerText = "Play Again!";
-                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
             }
             overlay.classList.remove('hidden');
         }

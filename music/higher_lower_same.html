@@ -581,8 +581,8 @@
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
                 oMsg.innerText = `Outstanding! You mastered comparing notes on the ${currentClef === 'treble' ? 'Treble' : 'Bass'} clef!`;
-                oBtn.innerText = "Play Again!";
-                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
             }
             overlay.classList.remove('hidden');
         }
