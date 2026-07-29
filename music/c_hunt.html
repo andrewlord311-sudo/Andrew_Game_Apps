@@ -140,9 +140,12 @@
         // 2 - stage 1/2 still just require finding 1 or 2 of whichever Cs
         // are visible, not "all of them".
         const WHITE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-        // Which black-key group (if any) sits after this white letter, and
-        // this letter's position within that group.
-        const GROUP_INFO = { C: { size: 2, pos: 0 }, D: { size: 2, pos: 1 }, F: { size: 3, pos: 0 }, G: { size: 3, pos: 1 }, A: { size: 3, pos: 2 } };
+        // A black key sits between every pair of adjacent white keys except
+        // E-F and B-C - those two gaps are what actually separate the
+        // groups of 2 and 3.
+        function isGapPair(a, b) {
+            return (a === 'E' && b === 'F') || (a === 'B' && b === 'C');
+        }
         function prevWhiteStep(letterIdx, octave) {
             const newIdx = (letterIdx + 6) % 7;
             if (letterIdx === 0) octave--; // stepping back from C to B drops the octave
@@ -159,33 +162,42 @@
             const startLetterIdx = Math.floor(Math.random() * 7);
             const startOctave = 3 + Math.floor(Math.random() * 2);
 
-            // Extend left just enough to include the start of any group the
-            // random start point lands in the middle or end of.
-            const startInfo = GROUP_INFO[WHITE_LETTERS[startLetterIdx]];
-            const leftExt = startInfo ? startInfo.pos : 0;
+            // Walk left while the pair entering the current first note isn't
+            // a natural gap - otherwise a black key back there would be
+            // orphaned with its anchor white key outside the window.
             let first = { letterIdx: startLetterIdx, octave: startOctave };
-            for (let i = 0; i < leftExt; i++) first = prevWhiteStep(first.letterIdx, first.octave);
+            while (true) {
+                const prev = prevWhiteStep(first.letterIdx, first.octave);
+                if (isGapPair(WHITE_LETTERS[prev.letterIdx], WHITE_LETTERS[first.letterIdx])) break;
+                first = prev;
+            }
 
-            // Extend right just enough to include the end of any group the
-            // un-extended 14th note would have landed in the middle of.
+            // From the un-extended 14th note, walk right while the pair
+            // leaving the current last note isn't a natural gap - a black
+            // key anchored at the last note or two needs its partner white
+            // key in view too, or it silently never gets generated at all.
             let end = { letterIdx: startLetterIdx, octave: startOctave };
             for (let i = 0; i < 13; i++) end = nextWhiteStep(end.letterIdx, end.octave);
-            const endInfo = GROUP_INFO[WHITE_LETTERS[end.letterIdx]];
-            const rightExt = endInfo ? (endInfo.size - 1 - endInfo.pos) : 0;
+            while (true) {
+                const next = nextWhiteStep(end.letterIdx, end.octave);
+                if (isGapPair(WHITE_LETTERS[end.letterIdx], WHITE_LETTERS[next.letterIdx])) break;
+                end = next;
+            }
 
-            const totalWhites = 14 + leftExt + rightExt;
             const whites = [];
             let cur = first;
-            for (let i = 0; i < totalWhites; i++) {
+            let i = 0;
+            while (true) {
                 const w = { id: `${WHITE_LETTERS[cur.letterIdx]}${cur.octave}`, name: WHITE_LETTERS[cur.letterIdx], octave: cur.octave, isBlack: false, whiteIndex: i };
                 whites.push(w);
                 allKeys.push(w);
+                if (cur.letterIdx === end.letterIdx && cur.octave === end.octave) break;
                 cur = nextWhiteStep(cur.letterIdx, cur.octave);
+                i++;
             }
             for (let i = 0; i < whites.length - 1; i++) {
                 const curW = whites[i], next = whites[i + 1];
-                const noBlackBetween = (curW.name === 'E' && next.name === 'F') || (curW.name === 'B' && next.name === 'C');
-                if (!noBlackBetween) {
+                if (!isGapPair(curW.name, next.name)) {
                     allKeys.push({ id: `${curW.name}#${curW.octave}`, name: `${curW.name}#`, octave: curW.octave, isBlack: true, afterWhiteIndex: i });
                 }
             }
