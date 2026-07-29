@@ -206,6 +206,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="auth.js"></script>
     <script src="reward-system.js"></script>
+    <script>window.GP_TOTAL_STAGES = 2;</script> <!-- this game only has 2 stages, not the usual 3 -->
     <script src="game-progress.js"></script>
     <script>
         const canvas = document.getElementById('canvas');
@@ -394,10 +395,11 @@
             newRound();
         }
 
-        // Completing an animal (see reward-system.js) auto-advances the
-        // difficulty stage too, separate from the existing streak-based trigger.
+        // Completing an animal (8 correct answers, see reward-system.js) is
+        // what actually completes a stage here - not the streak counter,
+        // which is just a fun "in a row" display.
         if (typeof RewardSystem !== 'undefined') {
-            RewardSystem.onAnimalComplete(() => { if (currentStage < 2) setStage(currentStage + 1); }); // this game only has 2 stages, not 3
+            RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
         }
 
         function setMascotAvatar() {
@@ -583,11 +585,7 @@
                     avatar.className = "mascot-bounce shrink-0";
                 }, 600);
 
-                if (streak > 0 && streak % 10 === 0) {
-                    setTimeout(triggerStageComplete, 1000);
-                } else {
-                    setTimeout(newRound, 1500);
-                }
+                setTimeout(newRound, 1500);
             } else {
                 streak = 0;
                 lives--;
@@ -661,7 +659,7 @@
             oTitle.innerText = "⭐ Golden Badge! ⭐";
             
             if (currentStage === 1) {
-                oMsg.innerText = `Amazing! You solved 10 notes on Stage 1! Ready to explore the Deep Jungle (Stage 2)?`;
+                oMsg.innerText = `Amazing! You built your animal friend on Stage 1! Ready to explore the Deep Jungle (Stage 2)?`;
                 const oBtn = document.querySelector("#overlay button");
                 oBtn.onclick = () => {
                     dismissOverlay();

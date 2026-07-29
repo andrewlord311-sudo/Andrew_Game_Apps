@@ -20,6 +20,13 @@
  * 2-stage game. Get this wrong and the game can simply never show as
  * "complete", since the stage count it never reaches stays uncleared
  * forever - there's no way to detect that from stageCleared() calls alone.
+ *
+ * That second argument only takes effect once a stage has actually been
+ * cleared once, which is too late for the very first load's widget (a
+ * brand-new pupil would see "0/3" flash briefly on a 2-stage game). For
+ * games that differ from the default, also set
+ * `window.GP_TOTAL_STAGES = 2;` in an inline <script> before this file's
+ * <script> tag, so the very first render already knows the true count.
  */
 (function () {
   const STORAGE_KEY = "tga_game_progress";
@@ -43,7 +50,14 @@
   }
 
   function entryFor(progress, gameId) {
-    return progress[gameId] || { stagesCleared: [], totalStages: DEFAULT_TOTAL_STAGES, completed: false, completedAt: null };
+    return (
+      progress[gameId] || {
+        stagesCleared: [],
+        totalStages: window.GP_TOTAL_STAGES || DEFAULT_TOTAL_STAGES,
+        completed: false,
+        completedAt: null,
+      }
+    );
   }
 
   function ensureStyles() {
