@@ -215,6 +215,40 @@
         }
         function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
 
+        const NOTE_SEMITONES = { C: 0, 'C#': 1, D: 2, 'D#': 3, E: 4, F: 5, 'F#': 6, G: 7, 'G#': 8, A: 9, 'A#': 10, B: 11 };
+        function noteFrequency(noteId) {
+            const match = noteId.match(/^([A-G]#?)(\d+)$/);
+            if (!match) return 440;
+            const [, name, octStr] = match;
+            const midi = (parseInt(octStr, 10) + 1) * 12 + NOTE_SEMITONES[name];
+            return 440 * Math.pow(2, (midi - 69) / 12);
+        }
+        // Plays the real notes behind a correct answer, one at a time and
+        // quickly - so a "group of 3" answer is actually heard as 3 notes,
+        // and a group in the higher octave sounds higher than the same
+        // pattern shape in the lower octave.
+        function playNoteSequence(noteIds) {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const gap = 0.16;
+                noteIds.forEach((id, idx) => {
+                    const freq = noteFrequency(id);
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, now + idx * gap);
+                    gain.gain.setValueAtTime(0, now + idx * gap);
+                    gain.gain.linearRampToValueAtTime(0.3, now + idx * gap + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * gap + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now + idx * gap);
+                    osc.stop(now + idx * gap + 0.3);
+                });
+            } catch (e) {}
+        }
+
         const SVG_MELODY = `
         <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
             <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
@@ -345,7 +379,7 @@
 
             if (correct) {
                 keyElement.classList.add('correct-flash');
-                onCorrect();
+                onCorrect(key.id);
             } else {
                 keyElement.classList.add('wrong-flash');
                 setTimeout(() => keyElement.classList.remove('wrong-flash'), 400);
@@ -362,7 +396,7 @@
             }
         }
 
-        function onCorrect() {
+        function onCorrect(playedNote) {
             score += 10;
             streak++;
             Tracking.logAnswer({ correct: true, stage: currentStage });
@@ -374,7 +408,13 @@
             feedback.className = "text-center text-lg font-bold text-green-600 my-3";
             feedback.innerText = `⭐ Yes! ⭐`;
 
-            playTone(440, 'triangle', 0.4);
+            if (mode === 'identify' && currentGroup) {
+                playNoteSequence(currentGroup.keys);
+            } else if (playedNote) {
+                playTone(noteFrequency(playedNote), 'triangle', 0.4);
+            } else {
+                playTone(440, 'triangle', 0.4);
+            }
             triggerConfetti();
             document.getElementById('mascot-dialog').innerText = dialogs.correct;
 
