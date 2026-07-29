@@ -37,10 +37,30 @@
  * `window.GP_USES_CLEFS = true;` alongside GP_TOTAL_STAGES (same reason:
  * the very first widget render, before any stageCleared() call, needs to
  * already know to show two clef rows instead of one flat row).
+ *
+ * Storage is scoped per logged-in pupil (reads the same tga_pupil_session
+ * auth.js writes), so two children sharing one device never see or
+ * overwrite each other's progress. A pupil with no session (guest / "play
+ * without saving progress") gets a single shared "guest" bucket, kept
+ * separate from every named pupil's own data.
  */
 (function () {
-  const STORAGE_KEY = "tga_game_progress";
+  const STORAGE_PREFIX = "tga_game_progress";
+  const SESSION_KEY = "tga_pupil_session"; // must match auth.js's STORAGE_SESSION
   const DEFAULT_TOTAL_STAGES = 3;
+
+  function currentPupilKey() {
+    try {
+      const session = JSON.parse(localStorage.getItem(SESSION_KEY));
+      return (session && session.id) || "guest";
+    } catch {
+      return "guest";
+    }
+  }
+
+  function storageKey() {
+    return `${STORAGE_PREFIX}::${currentPupilKey()}`;
+  }
 
   function currentGameId() {
     const file = location.pathname.split("/").pop() || "game";
@@ -49,14 +69,14 @@
 
   function loadProgress() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+      return JSON.parse(localStorage.getItem(storageKey())) || {};
     } catch {
       return {};
     }
   }
 
   function saveProgress(obj) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    localStorage.setItem(storageKey(), JSON.stringify(obj));
   }
 
   function entryFor(progress, gameId) {
