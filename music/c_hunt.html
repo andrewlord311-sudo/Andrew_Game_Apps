@@ -129,30 +129,64 @@
         let foundSet = new Set();
         let requiredCs = 1;
 
-        // Every round shows exactly two octaves of white+black keys, starting
-        // from a random white note - never the same 12 keys twice in a row.
-        // Any 14 consecutive white notes (2 full A-G cycles) always contain
-        // exactly 2 Cs, wherever they start, so totalCs is always 2; what
-        // changes per stage is how many of those 2 a pupil must actually find.
+        // Every round shows roughly two octaves of white+black keys, starting
+        // from a random white note - never the same keys twice in a row. A
+        // random start can land mid-group though (e.g. starting on G would
+        // show the black keys after G and A but cut off the one after F,
+        // making a real group of 3 look like a group of 2), so the window
+        // is extended by 1-2 white keys on either side whenever needed so
+        // every visible black-key group is always shown whole. This means
+        // the total number of visible Cs can occasionally be 3, not always
+        // 2 - stage 1/2 still just require finding 1 or 2 of whichever Cs
+        // are visible, not "all of them".
         const WHITE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        // Which black-key group (if any) sits after this white letter, and
+        // this letter's position within that group.
+        const GROUP_INFO = { C: { size: 2, pos: 0 }, D: { size: 2, pos: 1 }, F: { size: 3, pos: 0 }, G: { size: 3, pos: 1 }, A: { size: 3, pos: 2 } };
+        function prevWhiteStep(letterIdx, octave) {
+            const newIdx = (letterIdx + 6) % 7;
+            if (letterIdx === 0) octave--; // stepping back from C to B drops the octave
+            return { letterIdx: newIdx, octave };
+        }
+        function nextWhiteStep(letterIdx, octave) {
+            const newIdx = (letterIdx + 1) % 7;
+            if (newIdx === 0) octave++; // stepping forward from B to C raises the octave
+            return { letterIdx: newIdx, octave };
+        }
         let allKeys = [];
         function buildKeys() {
             allKeys = [];
-            let letterIdx = Math.floor(Math.random() * 7);
-            let octave = 3 + Math.floor(Math.random() * 2);
+            const startLetterIdx = Math.floor(Math.random() * 7);
+            const startOctave = 3 + Math.floor(Math.random() * 2);
+
+            // Extend left just enough to include the start of any group the
+            // random start point lands in the middle or end of.
+            const startInfo = GROUP_INFO[WHITE_LETTERS[startLetterIdx]];
+            const leftExt = startInfo ? startInfo.pos : 0;
+            let first = { letterIdx: startLetterIdx, octave: startOctave };
+            for (let i = 0; i < leftExt; i++) first = prevWhiteStep(first.letterIdx, first.octave);
+
+            // Extend right just enough to include the end of any group the
+            // un-extended 14th note would have landed in the middle of.
+            let end = { letterIdx: startLetterIdx, octave: startOctave };
+            for (let i = 0; i < 13; i++) end = nextWhiteStep(end.letterIdx, end.octave);
+            const endInfo = GROUP_INFO[WHITE_LETTERS[end.letterIdx]];
+            const rightExt = endInfo ? (endInfo.size - 1 - endInfo.pos) : 0;
+
+            const totalWhites = 14 + leftExt + rightExt;
             const whites = [];
-            for (let i = 0; i < 14; i++) {
-                const w = { id: `${WHITE_LETTERS[letterIdx]}${octave}`, name: WHITE_LETTERS[letterIdx], octave, isBlack: false, whiteIndex: i };
+            let cur = first;
+            for (let i = 0; i < totalWhites; i++) {
+                const w = { id: `${WHITE_LETTERS[cur.letterIdx]}${cur.octave}`, name: WHITE_LETTERS[cur.letterIdx], octave: cur.octave, isBlack: false, whiteIndex: i };
                 whites.push(w);
                 allKeys.push(w);
-                letterIdx = (letterIdx + 1) % 7;
-                if (letterIdx === 0) octave++;
+                cur = nextWhiteStep(cur.letterIdx, cur.octave);
             }
             for (let i = 0; i < whites.length - 1; i++) {
-                const cur = whites[i], next = whites[i + 1];
-                const noBlackBetween = (cur.name === 'E' && next.name === 'F') || (cur.name === 'B' && next.name === 'C');
+                const curW = whites[i], next = whites[i + 1];
+                const noBlackBetween = (curW.name === 'E' && next.name === 'F') || (curW.name === 'B' && next.name === 'C');
                 if (!noBlackBetween) {
-                    allKeys.push({ id: `${cur.name}#${cur.octave}`, name: `${cur.name}#`, octave: cur.octave, isBlack: true, afterWhiteIndex: i });
+                    allKeys.push({ id: `${curW.name}#${curW.octave}`, name: `${curW.name}#`, octave: curW.octave, isBlack: true, afterWhiteIndex: i });
                 }
             }
         }
@@ -164,10 +198,10 @@
 
         const dialogs = {
             start1: "Hi, I'm Melody! Find just ONE of the Cs hiding on the keyboard!",
-            start2: "Hi, I'm Melody! This time find BOTH Cs hiding on the keyboard!",
+            start2: "Hi, I'm Melody! This time find TWO of the Cs hiding on the keyboard!",
             correct: "Great find! Keep going! 🎹",
             allFound1: "You found a C! Nice work! 🌟",
-            allFound2: "You found them both! Amazing C hunting! 🌟",
+            allFound2: "You found 2 Cs! Amazing C hunting! 🌟",
             incorrect: "That's not a C — look for the white key just left of a group of 2 black keys!"
         };
 
@@ -356,7 +390,7 @@
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-green-600 my-3";
-            feedback.innerText = requiredCs === 1 ? `⭐ You found a C! ⭐` : `⭐ You found them both! ⭐`;
+            feedback.innerText = requiredCs === 1 ? `⭐ You found a C! ⭐` : `⭐ You found 2 Cs! ⭐`;
 
             triggerConfetti();
             document.getElementById('mascot-dialog').innerText = requiredCs === 1 ? dialogs.allFound1 : dialogs.allFound2;
