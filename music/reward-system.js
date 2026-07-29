@@ -23,9 +23,16 @@
  * celebrates. Per game, the first three times an animal completes get
  * progressively smaller fanfare (Reward system.md's "three times max");
  * after that it still completes, just quietly.
+ *
+ * The completion tally that drives that fanfare tier is scoped per
+ * logged-in pupil (reads the same tga_pupil_session auth.js writes), so
+ * one child's tally doesn't affect another's on a shared device. A pupil
+ * with no session (guest) shares a single "guest" bucket, separate from
+ * every named pupil.
  */
 (function () {
-  const STORAGE_COMPLETIONS = "tga_reward_completions";
+  const STORAGE_PREFIX = "tga_reward_completions";
+  const SESSION_KEY = "tga_pupil_session"; // must match auth.js's STORAGE_SESSION
   const PARTS_PER_ANIMAL = 8;
   const PART_ORDER = ["body", "legs", "arms", "ears", "tail", "eyes", "nose", "mouth"];
 
@@ -37,6 +44,19 @@
     owl: { name: "Owl", body: "#6b4c8a", accent: "#ece4f5", ear: "tuft" },
   };
 
+  function currentPupilKey() {
+    try {
+      const session = JSON.parse(localStorage.getItem(SESSION_KEY));
+      return (session && session.id) || "guest";
+    } catch {
+      return "guest";
+    }
+  }
+
+  function storageKey() {
+    return `${STORAGE_PREFIX}::${currentPupilKey()}`;
+  }
+
   function currentGameId() {
     const file = location.pathname.split("/").pop() || "game";
     return file.replace(/\.html?$/i, "");
@@ -44,14 +64,14 @@
 
   function loadCompletions() {
     try {
-      return JSON.parse(localStorage.getItem(STORAGE_COMPLETIONS)) || {};
+      return JSON.parse(localStorage.getItem(storageKey())) || {};
     } catch {
       return {};
     }
   }
 
   function saveCompletions(obj) {
-    localStorage.setItem(STORAGE_COMPLETIONS, JSON.stringify(obj));
+    localStorage.setItem(storageKey(), JSON.stringify(obj));
   }
 
   function ensureStyles() {
