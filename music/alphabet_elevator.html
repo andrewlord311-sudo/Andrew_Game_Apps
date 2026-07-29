@@ -144,6 +144,9 @@
     <script src="game-progress.js"></script>
     <script>
         const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+        // True pitch order matches alphabet order here (A up through G),
+        // so "going up" in the elevator also means rising in pitch.
+        const LETTER_FREQ = { A: 440.00, B: 493.88, C: 523.25, D: 587.33, E: 659.25, F: 698.46, G: 783.99 };
 
         let currentStage = 1;
         let score = 0;
@@ -335,7 +338,7 @@
                 feedback.innerText = `⭐ Yes! ${correctAnswer} is correct! ⭐`;
 
                 highlightFloor(correctAnswer);
-                playTone(440, 'triangle', 0.4);
+                playTone(LETTER_FREQ[correctAnswer], 'triangle', 0.4);
                 triggerConfetti();
                 document.getElementById('mascot-dialog').innerText = dialogs.correct;
 
