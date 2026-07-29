@@ -208,6 +208,7 @@
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
     <script>window.GP_TOTAL_STAGES = 2;</script> <!-- this game only has 2 stages, not the usual 3 -->
+    <script>window.GP_USES_CLEFS = true;</script> <!-- tracks treble/bass separately -->
     <script src="game-progress.js"></script>
     <script>
         const canvas = document.getElementById('canvas');
@@ -650,7 +651,7 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage, 2); // this game only has 2 stages, not 3
+            GameProgress.stageCleared(currentStage, 2, currentClef); // this game only has 2 stages, not 3
             const overlay = document.getElementById('overlay');
             const oMascot = document.getElementById('overlay-mascot');
             const oTitle = document.getElementById('overlay-title');

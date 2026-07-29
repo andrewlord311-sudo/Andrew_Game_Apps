@@ -27,6 +27,16 @@
  * games that differ from the default, also set
  * `window.GP_TOTAL_STAGES = 2;` in an inline <script> before this file's
  * <script> tag, so the very first render already knows the true count.
+ *
+ * For the games that teach both treble and bass, pass the active clef as
+ * a third argument, e.g. `GameProgress.stageCleared(currentStage, 3, currentClef);`
+ * with currentClef as 'treble' or 'bass'. Stage clearing is then tracked
+ * separately per clef, and the game only counts as "complete" once every
+ * stage is cleared on BOTH — half the job on one clef isn't the game
+ * being finished. Games that never pass a clef are unaffected. Also set
+ * `window.GP_USES_CLEFS = true;` alongside GP_TOTAL_STAGES (same reason:
+ * the very first widget render, before any stageCleared() call, needs to
+ * already know to show two clef rows instead of one flat row).
  */
 (function () {
   const STORAGE_KEY = "tga_game_progress";
@@ -50,14 +60,15 @@
   }
 
   function entryFor(progress, gameId) {
-    return (
-      progress[gameId] || {
-        stagesCleared: [],
-        totalStages: window.GP_TOTAL_STAGES || DEFAULT_TOTAL_STAGES,
-        completed: false,
-        completedAt: null,
-      }
-    );
+    if (progress[gameId]) return progress[gameId];
+    const entry = {
+      stagesCleared: [],
+      totalStages: window.GP_TOTAL_STAGES || DEFAULT_TOTAL_STAGES,
+      completed: false,
+      completedAt: null,
+    };
+    if (window.GP_USES_CLEFS) entry.clefs = { treble: { stagesCleared: [] }, bass: { stagesCleared: [] } };
+    return entry;
   }
 
   function ensureStyles() {
@@ -78,6 +89,10 @@
       #game-progress-widget .gp-pip.gp-filled { animation: gp-pop .4s cubic-bezier(.34,1.56,.64,1); }
       @keyframes gp-pop { from { transform: scale(0.3); } to { transform: scale(1); } }
       #game-progress-widget .gp-label { font-size: 11px; font-weight: 800; color: #4a3728; }
+      #game-progress-widget.gp-two-clef { flex-direction: column; align-items: flex-start; gap: 2px; padding: 6px 14px; }
+      #game-progress-widget.gp-two-clef .gp-clef-row { display: flex; align-items: center; gap: 4px; }
+      #game-progress-widget.gp-two-clef .gp-pip { font-size: 15px; }
+      #game-progress-widget.gp-two-clef .gp-label { font-size: 10px; }
 
       #game-complete-backdrop {
         position: fixed; inset: 0; background: rgba(40,30,20,0.4);
@@ -122,15 +137,31 @@
     return widget;
   }
 
-  function renderWidget(stagesCleared, totalStages) {
-    ensureStyles();
-    const widget = ensureWidget();
+  function pipsFor(stagesCleared, totalStages) {
     const pips = [];
     for (let s = 1; s <= totalStages; s++) {
       const filled = stagesCleared.includes(s);
       pips.push(`<span class="gp-pip${filled ? " gp-filled" : ""}">${filled ? "⭐" : "☆"}</span>`);
     }
-    widget.innerHTML = `${pips.join("")}<span class="gp-label">${stagesCleared.length}/${totalStages} stages</span>`;
+    return pips.join("");
+  }
+
+  function renderWidget(entry, totalStages) {
+    ensureStyles();
+    const widget = ensureWidget();
+    if (entry.clefs) {
+      widget.classList.add("gp-two-clef");
+      const treble = entry.clefs.treble.stagesCleared;
+      const bass = entry.clefs.bass.stagesCleared;
+      widget.innerHTML = `
+        <div class="gp-clef-row">🎼${pipsFor(treble, totalStages)}<span class="gp-label">${treble.length}/${totalStages}</span></div>
+        <div class="gp-clef-row">𝄢${pipsFor(bass, totalStages)}<span class="gp-label">${bass.length}/${totalStages}</span></div>
+      `;
+    } else {
+      widget.classList.remove("gp-two-clef");
+      const stagesCleared = entry.stagesCleared;
+      widget.innerHTML = `${pipsFor(stagesCleared, totalStages)}<span class="gp-label">${stagesCleared.length}/${totalStages} stages</span>`;
+    }
   }
 
   function confettiBurst() {
@@ -176,7 +207,7 @@
     }
   }
 
-  function showGameCompleteModal(totalStages) {
+  function showGameCompleteModal(totalStages, bothClefs) {
     ensureStyles();
     let backdrop = document.getElementById("game-complete-backdrop");
     if (!backdrop) {
@@ -192,28 +223,44 @@
       backdrop.querySelector("#game-complete-btn").onclick = () => backdrop.classList.remove("show");
       backdrop.onclick = (e) => { if (e.target === backdrop) backdrop.classList.remove("show"); };
     }
-    backdrop.querySelector("#game-complete-msg").textContent =
-      `You've cleared all ${totalStages} stage${totalStages === 1 ? "" : "s"}. Amazing work!`;
+    backdrop.querySelector("#game-complete-msg").textContent = bothClefs
+      ? `You've cleared all ${totalStages} stage${totalStages === 1 ? "" : "s"} on BOTH treble and bass. Amazing work!`
+      : `You've cleared all ${totalStages} stage${totalStages === 1 ? "" : "s"}. Amazing work!`;
     backdrop.classList.add("show");
     confettiBurst();
     chime();
   }
 
-  function stageCleared(stageNum, totalStages = DEFAULT_TOTAL_STAGES) {
+  function stageCleared(stageNum, totalStages = DEFAULT_TOTAL_STAGES, clef = null) {
     if (stageNum < 1 || stageNum > totalStages) return;
     const progress = loadProgress();
     const gameId = currentGameId();
     const entry = entryFor(progress, gameId);
     entry.totalStages = totalStages;
-    if (!entry.stagesCleared.includes(stageNum)) {
-      entry.stagesCleared = [...entry.stagesCleared, stageNum].sort();
+
+    let nowComplete;
+    if (clef) {
+      if (!entry.clefs) entry.clefs = { treble: { stagesCleared: [] }, bass: { stagesCleared: [] } };
+      const clefStages = entry.clefs[clef].stagesCleared;
+      if (!clefStages.includes(stageNum)) {
+        entry.clefs[clef].stagesCleared = [...clefStages, stageNum].sort();
+      }
+      // Flat stagesCleared tracks "cleared on at least one clef" - kept for
+      // any code that only cares whether a stage's been touched at all.
+      entry.stagesCleared = [...new Set([...entry.clefs.treble.stagesCleared, ...entry.clefs.bass.stagesCleared])].sort();
+      nowComplete = entry.clefs.treble.stagesCleared.length >= totalStages && entry.clefs.bass.stagesCleared.length >= totalStages;
+    } else {
+      if (!entry.stagesCleared.includes(stageNum)) {
+        entry.stagesCleared = [...entry.stagesCleared, stageNum].sort();
+      }
+      nowComplete = entry.stagesCleared.length >= totalStages;
     }
-    renderWidget(entry.stagesCleared, totalStages);
-    const nowComplete = entry.stagesCleared.length >= totalStages;
+
+    renderWidget(entry, totalStages);
     if (nowComplete && !entry.completed) {
       entry.completed = true;
       entry.completedAt = new Date().toISOString();
-      showGameCompleteModal(totalStages);
+      showGameCompleteModal(totalStages, !!clef);
     }
     progress[gameId] = entry;
     saveProgress(progress);
@@ -222,7 +269,7 @@
   function init() {
     const progress = loadProgress();
     const entry = entryFor(progress, currentGameId());
-    renderWidget(entry.stagesCleared, entry.totalStages || DEFAULT_TOTAL_STAGES);
+    renderWidget(entry, entry.totalStages || DEFAULT_TOTAL_STAGES);
   }
 
   if (document.readyState === "loading") {
