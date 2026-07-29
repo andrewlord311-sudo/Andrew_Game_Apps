@@ -335,9 +335,9 @@
             btn.style.borderColor = hexToRgba(game.color, 0.9);
 
             if (!game.comingSoon) {
+                // Same tab, not target="_blank" - the game replaces this
+                // screen, and back-link.js (in every game) is the way back.
                 btn.href = game.file;
-                btn.target = '_blank';
-                btn.rel = 'noopener';
             } else {
                 btn.href = '#';
                 btn.addEventListener('click', e => e.preventDefault());
