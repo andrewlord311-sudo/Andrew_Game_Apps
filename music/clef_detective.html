@@ -367,8 +367,8 @@
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
                 oMsg.innerText = `Case closed for good! You're a true Clef Detective!`;
-                oBtn.innerText = "Play Again!";
-                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
             }
             overlay.classList.remove('hidden');
         }

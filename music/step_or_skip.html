@@ -439,8 +439,8 @@
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
                 oMsg.innerText = `Outstanding! You can spot steps and skips anywhere on the keyboard!`;
-                oBtn.innerText = "Play Again!";
-                oBtn.onclick = () => { dismissOverlay(); resetGame(); };
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
             }
             overlay.classList.remove('hidden');
         }
