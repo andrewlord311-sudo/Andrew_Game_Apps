@@ -210,9 +210,9 @@
         ];
 
         const STAGE_CONFIGS = {
-            1: { minDiff: 3, maxDiff: 99, outcomes: ['up', 'down'], desc: "Stage 1: Big jumps — easy to spot!" },
-            2: { minDiff: 1, maxDiff: 1, outcomes: ['up', 'down'], desc: "Stage 2: Neighbouring steps — look closely!" },
-            3: { minDiff: 1, maxDiff: 99, outcomes: ['up', 'down', 'same'], desc: "Stage 3: Anything goes — steps, skips, or the same note!" }
+            1: { minDiff: 3, maxDiff: 99, outcomes: ['up', 'down', 'same'], desc: "Stage 1: Big jumps — easy to spot!" },
+            2: { minDiff: 1, maxDiff: 1, outcomes: ['up', 'down', 'same'], desc: "Stage 2: Neighbouring steps — look closely!" },
+            3: { minDiff: 1, maxDiff: 99, outcomes: ['up', 'down', 'same'], desc: "Stage 3: Any distance — steps or big skips!" }
         };
 
         const dialogs = {
@@ -364,7 +364,11 @@
                 attempts++;
             } while (
                 attempts < 300 && (
-                    diff < config.minDiff || diff > config.maxDiff ||
+                    // "same" is always diff 0 by construction - it isn't
+                    // subject to the stage's step-size range at all, so
+                    // skip that check rather than spinning until attempts
+                    // runs out every single time it's the chosen outcome.
+                    (outcome !== 'same' && (diff < config.minDiff || diff > config.maxDiff)) ||
                     (outcome === 'up' && b.lineStep <= a.lineStep) ||
                     (outcome === 'down' && b.lineStep >= a.lineStep)
                 )
