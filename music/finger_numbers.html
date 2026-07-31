@@ -235,17 +235,17 @@
                     { finger: 4, cx: 110, top: 58, bot: 155, rx: 16 },
                     { finger: 3, cx: 155, top: 53, bot: 165, rx: 16 },
                     { finger: 2, cx: 200, top: 58, bot: 150, rx: 16 } ];
-            const thumbCx = hand === 'right' ? 50 : 250;
+            const thumbCx = hand === 'right' ? 55 : 245;
 
-            // The hand geometry below (palm + fingers + thumb) is unchanged
-            // from before — it's flipped and shifted via the outer <g>
-            // transform so it sits at the BOTTOM of a taller viewBox with a
-            // forearm added beneath it, instead of redoing every coordinate.
-            // Net effect: fingers now point UP into the piano (rendered
-            // directly above this in the page), wrist/forearm reaches down
-            // off the bottom of the screen, like a child's own hand seen
-            // from above while actually playing.
-            let handParts = `<ellipse cx="150" cy="48" rx="102" ry="46" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
+            // Fingers and thumb are drawn FIRST, then the palm is drawn on
+            // TOP of them last — so the palm visually covers each digit's
+            // base/root, and only the part extending below the palm's edge
+            // is visible, like a real hand (fingers emerging from under the
+            // palm) instead of each fingertip poking out through it. The
+            // thumb sits with a deep overlap into the palm (not just a
+            // sliver) so it reads as properly attached, not a separate blob
+            // floating near the edge.
+            let handParts = '';
 
             // Text inside a scale(1,-1) group renders upside down, so each
             // label gets its own local counter-flip (translate(0,2Y) scale(1,-1))
@@ -264,11 +264,17 @@
             });
 
             // Thumb: short, wide, and set lower/to the side — deliberately NOT
-            // shaped like the other fingers so it's unmistakable.
+            // shaped like the other fingers so it's unmistakable. cy is much
+            // closer to the palm than the straight fingers so it overlaps
+            // the palm's edge by a solid margin rather than barely touching.
             handParts += `<g id="finger-1" class="finger" fill="#f5c99b" stroke="#b45309" stroke-width="3">
-                <ellipse cx="${thumbCx}" cy="118" rx="26" ry="34" />
-                ${uprightText(thumbCx, 125, 22, '#7c2d12', 1)}
+                <ellipse cx="${thumbCx}" cy="100" rx="28" ry="38" />
+                ${uprightText(thumbCx, 112, 22, '#7c2d12', 1)}
             </g>`;
+
+            // Palm drawn last, on top of the fingers/thumb it was built
+            // after above.
+            handParts += `<ellipse cx="150" cy="48" rx="102" ry="46" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
 
             const forearm = `<rect x="115" y="185" width="70" height="115" rx="32" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
 
