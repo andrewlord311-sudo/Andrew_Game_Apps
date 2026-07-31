@@ -276,8 +276,10 @@
                 ctx.fillStyle = '#2563eb';
                 ctx.fill();
             } else {
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
+                // Deliberately not filled at all (not even white) - minims
+                // and semibreves are hollow noteheads, so a stave line
+                // passing through should stay visible inside the outline,
+                // not get painted over.
                 ctx.strokeStyle = '#2563eb';
                 ctx.lineWidth = 3;
                 ctx.stroke();
