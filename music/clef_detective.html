@@ -51,18 +51,6 @@
         <h1 class="kids-title text-3xl text-violet-600 text-center mb-1">Clef Detective</h1>
         <p class="text-slate-500 text-center text-sm font-semibold mb-3">Crack the case — name that clef!</p>
 
-        <div class="grid grid-cols-3 gap-2 bg-violet-50 p-2 rounded-2xl mb-2 border border-violet-100">
-            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-violet-400 text-white border-b-2 border-violet-600 shadow">
-                ☀️ Stage 1: Easy
-            </button>
-            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Medium
-            </button>
-            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
-            </button>
-        </div>
-
         <div class="flex items-center gap-3 bg-violet-50 p-2 rounded-2xl border border-violet-100 mb-2">
             <div class="mascot-bounce shrink-0 text-4xl w-16 h-16 flex items-center justify-center">🔍</div>
             <div class="relative bg-white border border-violet-100 p-2 rounded-xl shadow-sm w-full">
@@ -116,12 +104,16 @@
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
     <script>window.GP_USES_CLEFS = true;</script> <!-- tracks treble/bass separately -->
+    <script>window.GP_TOTAL_STAGES = 1;</script> <!-- this game only has 1 stage, not the usual 3 -->
     <script src="game-progress.js"></script>
     <script>
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
 
-        let currentStage = 1;
+        // Only one stage - previously 3 stages gated which question types
+        // were in play (name-only up to name+mascot+job); now every round
+        // draws from the full set, matching the old hard Stage 3.
+        const currentStage = 1;
         let score = 0;
         let streak = 0;
         let lives = 3;
@@ -132,11 +124,7 @@
         let questionType = 'name'; // 'name' | 'mascot' | 'job'
         let correctAnswer = null;
 
-        const STAGE_CONFIGS = {
-            1: { questionTypes: ['name'] },
-            2: { questionTypes: ['name', 'mascot'] },
-            3: { questionTypes: ['name', 'mascot', 'job'] }
-        };
+        const QUESTION_TYPES = ['name', 'mascot', 'job'];
 
         const QUESTIONS = {
             name: {
@@ -201,16 +189,7 @@
         }
         function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
 
-        function setStage(stageNum) {
-            currentStage = stageNum;
-            for (let i = 1; i <= 3; i++) {
-                const btn = document.getElementById(`btn-stage-${i}`);
-                if (i === stageNum) {
-                    btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-violet-400 text-white border-b-2 border-violet-600 shadow";
-                } else {
-                    btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
-                }
-            }
+        function startGame() {
             resetStats();
             newRound();
         }
@@ -223,9 +202,8 @@
         }
 
         function newRound() {
-            const config = STAGE_CONFIGS[currentStage];
             currentClef = Math.random() < 0.5 ? 'treble' : 'bass';
-            questionType = config.questionTypes[Math.floor(Math.random() * config.questionTypes.length)];
+            questionType = QUESTION_TYPES[Math.floor(Math.random() * QUESTION_TYPES.length)];
             correctAnswer = currentClef;
             controlLock = false;
 
@@ -272,9 +250,9 @@
             container.innerHTML = '';
 
             const opts = QUESTIONS[questionType].options;
+            // Fixed order every round - treble always left, bass always
+            // right - so the buttons don't jump around between questions.
             const keys = ['treble', 'bass'];
-            // shuffle order
-            if (Math.random() < 0.5) keys.reverse();
 
             keys.forEach(clefKey => {
                 const btn = document.createElement('button');
@@ -360,22 +338,16 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage, 3, currentClef);
+            GameProgress.stageCleared(currentStage, 1, currentClef);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
             const oMsg = document.getElementById('overlay-msg');
             const oBtn = document.getElementById('overlay-btn');
 
-            if (currentStage < 3) {
-                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
-                oBtn.innerText = "Go to Next Stage!";
-                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
-            } else {
-                oMsg.innerText = `Case closed for good! You're a true Clef Detective!`;
-                oBtn.innerText = "Back to Arcade!";
-                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
-            }
+            oMsg.innerText = `Case closed for good! You're a true Clef Detective!`;
+            oBtn.innerText = "Back to Arcade!";
+            oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
             overlay.classList.remove('hidden');
         }
 
@@ -401,7 +373,7 @@
         function resetGame() {
             score = 0;
             document.getElementById('score').innerText = score;
-            setStage(1);
+            startGame();
         }
 
         function toggleHints() {
@@ -421,7 +393,7 @@
             } catch (e) {
                 console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
             }
-            setStage(1);
+            startGame();
         };
     </script>
 </body>
