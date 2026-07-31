@@ -252,16 +252,20 @@
             "D4": { name: "D", octave: 4, lineStep: 11, freq: 293.66, desc: "D4 (hanging right above Middle C's ledger line!)" }
         };
 
-        // Calibrated Stage Pools (strictly limited to C3 - C5 values, no more than 1 ledger line above/below)
+        // Calibrated Stage Pools (strictly limited to C3 - C5 values, no more than 1 ledger line above/below).
+        // Stages 1 and 2 are two contiguous, non-overlapping halves of the
+        // available range (matching Stave Explorer's stage split), adapted
+        // to fit since this game's keyboard is permanently fixed to C3-C5
+        // and can't reach the A4-E5 / low G2-D3 ranges used over there.
         const STAGE_POOLS = {
             treble: {
                 1: ["C4", "D4", "E4", "F4", "G4"], // Middle C to G4
-                2: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"], // Middle C to C5
+                2: ["A4", "B4", "C5"], // A4 up to the top of the keyboard
                 3: ["B3", "C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"] // Maximum 1 ledger line below (B3 to C5)
             },
             bass: {
                 1: ["C3", "D3", "E3", "F3", "G3"], // C3 to G3 (all inside the staff lines)
-                2: ["C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4"], // C3 to Middle C (1 ledger line above)
+                2: ["A3", "B3", "C4", "D4"], // A3 up to the top of the keyboard
                 3: ["C3", "D3", "E3", "F3", "G3", "A3", "B3", "C4", "D4"] // Maximum 1 ledger line above (C3 to D4)
             }
         };
@@ -352,7 +356,7 @@
                 correct: "Incredible keyboard skills! You hit the perfect key! 🎹🎉",
                 incorrect: "Almost! Check the stave lines and find the correct piano note.",
                 stage1: "Treble Easy Range: Middle C (C4) to G (G4)",
-                stage2: "Treble Medium Range: Middle C (C4) to C (C5)",
+                stage2: "Treble Medium Range: A (A4) to C (C5)",
                 stage3: "Treble Hard Range: B3 to C5 (No more than one ledger line below!)"
             },
             bass: {
@@ -360,7 +364,7 @@
                 correct: "Fantastic! You are reading bass notes like a pro! 🐻🎶",
                 incorrect: "Don't fret! Try counting upward from the bottom line again.",
                 stage1: "Bass Easy Range: C3 to G3",
-                stage2: "Bass Medium Range: C3 up to Middle C (C4)",
+                stage2: "Bass Medium Range: A3 up to D4",
                 stage3: "Bass Hard Range: C3 up to D4 (D4 sits just above Middle C's ledger line!)"
             }
         };
