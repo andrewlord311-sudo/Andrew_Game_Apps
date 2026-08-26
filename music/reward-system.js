@@ -37,11 +37,11 @@
   const PART_ORDER = ["body", "legs", "arms", "ears", "tail", "eyes", "nose", "mouth"];
 
   const ANIMALS = {
-    cat: { name: "Cat", body: "#f4a83f", accent: "#fff4e0", ear: "pointed" },
-    fox: { name: "Fox", body: "#ef6f8e", accent: "#fff0f4", ear: "pointed" },
-    bear: { name: "Bear", body: "#a1662f", accent: "#f3e2cf", ear: "round" },
-    rabbit: { name: "Rabbit", body: "#8ec9e8", accent: "#eef8ff", ear: "long" },
-    owl: { name: "Owl", body: "#6b4c8a", accent: "#ece4f5", ear: "tuft" },
+    cat: { name: "Cat", body: "#f4a83f", accent: "#fff4e0" },
+    fox: { name: "Fox", body: "#ef6f8e", accent: "#fff0f4" },
+    bear: { name: "Bear", body: "#a1662f", accent: "#f3e2cf" },
+    rabbit: { name: "Rabbit", body: "#8ec9e8", accent: "#eef8ff" },
+    owl: { name: "Owl", body: "#6b4c8a", accent: "#ece4f5" },
   };
 
   function currentPupilKey() {
@@ -148,29 +148,74 @@
     document.head.appendChild(style);
   }
 
-  // Simple flat-shape critter, built from basic primitives (not hand-illustrated art) —
-  // deliberately easy to swap for real character sprites later if wanted.
+  // Flat-shape critters, but each species gets its own silhouette and face
+  // rather than one shared blob with a different ear bolted on (the old
+  // version) — a fox needs a pointed muzzle and a bushy tail, a rabbit needs
+  // tall ears and front teeth, an owl needs wings instead of arms and no
+  // real legs at all. Still simple SVG primitives, not hand-illustrated art;
+  // just enough per-species detail that a child can tell them apart at a
+  // glance (Andrew, 27.8.26 — the old ones "all look poor").
+  const INK = "#1e1b17";
+
+  const ANIMAL_PARTS = {
+    cat: (a) => ({
+      body: `<circle cx="50" cy="34" r="19" fill="${a.body}"/><ellipse cx="50" cy="62" rx="28" ry="26" fill="${a.body}"/><ellipse cx="50" cy="70" rx="14" ry="16" fill="${a.accent}"/>`,
+      legs: `<rect x="34" y="86" width="9" height="13" rx="4" fill="${a.body}"/><rect x="57" y="86" width="9" height="13" rx="4" fill="${a.body}"/>`,
+      arms: `<ellipse cx="17" cy="58" rx="8" ry="5.5" fill="${a.body}" transform="rotate(20 17 58)"/><ellipse cx="83" cy="58" rx="8" ry="5.5" fill="${a.body}" transform="rotate(-20 83 58)"/>`,
+      ears: `<polygon points="32,26 25,4 45,22" fill="${a.body}"/><polygon points="33,20 29,9 39,19" fill="${a.accent}"/><polygon points="68,26 75,4 55,22" fill="${a.body}"/><polygon points="67,20 71,9 61,19" fill="${a.accent}"/>`,
+      tail: `<path d="M78,80 Q95,76 93,58 Q91,44 77,48" stroke="${a.body}" stroke-width="9" stroke-linecap="round" fill="none"/>`,
+      eyes: `<path d="M40,32 Q44,28 48,32 Q44,36 40,32 Z" fill="${INK}"/><path d="M52,32 Q56,28 60,32 Q56,36 52,32 Z" fill="${INK}"/>`,
+      nose: `<polygon points="46,40 54,40 50,45" fill="#f0a8bb"/>`,
+      mouth: `<path d="M44,47 Q50,51 56,47" stroke="${INK}" stroke-width="2" fill="none" stroke-linecap="round"/><line x1="38" y1="42" x2="24" y2="38" stroke="${INK}" stroke-width="1"/><line x1="38" y1="45" x2="24" y2="47" stroke="${INK}" stroke-width="1"/><line x1="62" y1="42" x2="76" y2="38" stroke="${INK}" stroke-width="1"/><line x1="62" y1="45" x2="76" y2="47" stroke="${INK}" stroke-width="1"/>`,
+    }),
+    fox: (a) => ({
+      body: `<circle cx="50" cy="34" r="18" fill="${a.body}"/><ellipse cx="50" cy="62" rx="27" ry="25" fill="${a.body}"/><ellipse cx="50" cy="70" rx="13" ry="15" fill="${a.accent}"/>`,
+      legs: `<rect x="35" y="84" width="9" height="13" rx="4" fill="${a.body}"/><rect x="56" y="84" width="9" height="13" rx="4" fill="${a.body}"/><circle cx="39.5" cy="99" r="3.5" fill="${INK}"/><circle cx="60.5" cy="99" r="3.5" fill="${INK}"/>`,
+      arms: `<ellipse cx="18" cy="58" rx="8" ry="5.5" fill="${a.body}" transform="rotate(20 18 58)"/><ellipse cx="82" cy="58" rx="8" ry="5.5" fill="${a.body}" transform="rotate(-20 82 58)"/>`,
+      ears: `<polygon points="30,22 22,0 44,18" fill="${a.body}"/><polygon points="25,5 22,0 30,11" fill="${INK}"/><polygon points="32,18 28,6 38,16" fill="${a.accent}"/><polygon points="70,22 78,0 56,18" fill="${a.body}"/><polygon points="75,5 78,0 70,11" fill="${INK}"/><polygon points="68,18 72,6 62,16" fill="${a.accent}"/>`,
+      tail: `<path d="M76,68 Q96,56 97,78 Q98,96 79,90 Q68,85 72,72 Z" fill="${a.body}" stroke="rgba(0,0,0,0.15)" stroke-width="1.2"/><ellipse cx="87" cy="82" rx="8" ry="6.5" fill="${a.accent}" stroke="rgba(0,0,0,0.1)" stroke-width="1"/>`,
+      eyes: `<ellipse cx="42" cy="30" rx="3" ry="3.8" fill="${INK}"/><ellipse cx="58" cy="30" rx="3" ry="3.8" fill="${INK}"/>`,
+      nose: `<path d="M40,38 Q50,50 60,38 Q56,48 50,50 Q44,48 40,38 Z" fill="${a.accent}"/><polygon points="46,43 54,43 50,47" fill="${INK}"/>`,
+      mouth: `<path d="M44,52 Q50,55 56,52" stroke="${INK}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+    }),
+    bear: (a) => ({
+      body: `<circle cx="50" cy="36" r="19" fill="${a.body}"/><ellipse cx="50" cy="64" rx="29" ry="26" fill="${a.body}"/><ellipse cx="50" cy="72" rx="15" ry="14" fill="${a.accent}"/>`,
+      legs: `<rect x="33" y="88" width="11" height="11" rx="5" fill="${a.body}"/><rect x="56" y="88" width="11" height="11" rx="5" fill="${a.body}"/>`,
+      arms: `<circle cx="16" cy="58" r="8" fill="${a.body}"/><circle cx="84" cy="58" r="8" fill="${a.body}"/>`,
+      ears: `<circle cx="30" cy="18" r="10" fill="${a.body}"/><circle cx="30" cy="18" r="4.5" fill="${a.accent}"/><circle cx="70" cy="18" r="10" fill="${a.body}"/><circle cx="70" cy="18" r="4.5" fill="${a.accent}"/>`,
+      tail: `<circle cx="88" cy="70" r="4" fill="${a.body}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>`,
+      eyes: `<circle cx="43" cy="32" r="2.6" fill="${INK}"/><circle cx="57" cy="32" r="2.6" fill="${INK}"/>`,
+      nose: `<circle cx="50" cy="42" r="11" fill="${a.accent}"/><ellipse cx="50" cy="38" rx="3.5" ry="2.6" fill="${INK}"/>`,
+      mouth: `<path d="M44,46 Q50,50 56,46" stroke="${INK}" stroke-width="1.8" fill="none" stroke-linecap="round"/>`,
+    }),
+    rabbit: (a) => ({
+      body: `<circle cx="50" cy="36" r="17" fill="${a.body}"/><ellipse cx="50" cy="62" rx="25" ry="26" fill="${a.body}"/><ellipse cx="50" cy="70" rx="13" ry="14" fill="${a.accent}"/>`,
+      legs: `<rect x="35" y="86" width="9" height="12" rx="4" fill="${a.body}"/><rect x="56" y="86" width="9" height="12" rx="4" fill="${a.body}"/>`,
+      arms: `<ellipse cx="19" cy="58" rx="7" ry="5" fill="${a.body}" transform="rotate(20 19 58)"/><ellipse cx="81" cy="58" rx="7" ry="5" fill="${a.body}" transform="rotate(-20 81 58)"/>`,
+      ears: `<ellipse cx="38" cy="17" rx="6.5" ry="16" fill="${a.body}"/><ellipse cx="38" cy="18" rx="3" ry="12" fill="${a.accent}"/><ellipse cx="62" cy="17" rx="6.5" ry="16" fill="${a.body}"/><ellipse cx="62" cy="18" rx="3" ry="12" fill="${a.accent}"/>`,
+      tail: `<circle cx="82" cy="66" r="7" fill="${a.accent}"/>`,
+      eyes: `<circle cx="43" cy="34" r="3" fill="${INK}"/><circle cx="57" cy="34" r="3" fill="${INK}"/>`,
+      nose: `<ellipse cx="50" cy="40" rx="2.6" ry="2" fill="#e78ba0"/>`,
+      mouth: `<rect x="46.5" y="42" width="3.2" height="6" fill="#fff" stroke="#d8d8d8" stroke-width="0.5"/><rect x="50.3" y="42" width="3.2" height="6" fill="#fff" stroke="#d8d8d8" stroke-width="0.5"/><line x1="38" y1="39" x2="26" y2="36" stroke="${INK}" stroke-width="1"/><line x1="38" y1="42" x2="26" y2="44" stroke="${INK}" stroke-width="1"/><line x1="62" y1="39" x2="74" y2="36" stroke="${INK}" stroke-width="1"/><line x1="62" y1="42" x2="74" y2="44" stroke="${INK}" stroke-width="1"/>`,
+    }),
+    owl: (a) => ({
+      body: `<ellipse cx="50" cy="64" rx="25" ry="27" fill="${a.body}"/><circle cx="50" cy="35" r="19" fill="${a.accent}"/>`,
+      legs: `<ellipse cx="41" cy="95" rx="4" ry="3" fill="#d9a441"/><ellipse cx="59" cy="95" rx="4" ry="3" fill="#d9a441"/>`,
+      arms: `<path d="M25,50 Q10,64 21,84 Q30,76 28,54 Z" fill="${a.body}"/><path d="M75,50 Q90,64 79,84 Q70,76 72,54 Z" fill="${a.body}"/>`,
+      ears: `<polygon points="34,18 28,2 40,14" fill="${a.body}"/><polygon points="66,18 72,2 60,14" fill="${a.body}"/>`,
+      tail: `<path d="M40,88 L50,100 L60,88 Z" fill="${a.body}" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>`,
+      eyes: `<circle cx="40" cy="34" r="9" fill="#fff"/><circle cx="40" cy="34" r="5" fill="${INK}"/><circle cx="60" cy="34" r="9" fill="#fff"/><circle cx="60" cy="34" r="5" fill="${INK}"/>`,
+      nose: `<polygon points="46,42 54,42 50,49" fill="#d9a441"/>`,
+      mouth: `<path d="M44,50 Q50,54 56,50" stroke="${a.accent}" stroke-width="2" fill="none" stroke-linecap="round"/>`,
+    }),
+  };
+
   function animalSvg(key, partsShown) {
     const a = ANIMALS[key];
+    const parts = ANIMAL_PARTS[key](a);
     const has = (p) => partsShown.includes(p);
-    const ears =
-      a.ear === "pointed"
-        ? `<path d="M28 30 L20 8 L40 26 Z" fill="${a.body}"/><path d="M72 30 L80 8 L60 26 Z" fill="${a.body}"/>`
-        : a.ear === "round"
-          ? `<circle cx="28" cy="20" r="13" fill="${a.body}"/><circle cx="72" cy="20" r="13" fill="${a.body}"/>`
-          : a.ear === "long"
-            ? `<ellipse cx="32" cy="6" rx="8" ry="22" fill="${a.body}"/><ellipse cx="68" cy="6" rx="8" ry="22" fill="${a.body}"/>`
-            : `<path d="M26 26 L18 4 L38 22 Z" fill="${a.body}"/><path d="M74 26 L82 4 L62 22 Z" fill="${a.body}"/>`; // tuft (owl)
-
     return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-      ${has("tail") ? `<g class="rw-part"><ellipse cx="88" cy="66" rx="12" ry="7" fill="${a.body}" transform="rotate(-25 88 66)"/></g>` : ""}
-      ${has("legs") ? `<g class="rw-part"><rect x="34" y="78" width="10" height="16" rx="4" fill="${a.body}"/><rect x="56" y="78" width="10" height="16" rx="4" fill="${a.body}"/></g>` : ""}
-      ${has("arms") ? `<g class="rw-part"><ellipse cx="19" cy="62" rx="9" ry="6" fill="${a.body}" transform="rotate(20 19 62)"/><ellipse cx="81" cy="62" rx="9" ry="6" fill="${a.body}" transform="rotate(-20 81 62)"/></g>` : ""}
-      ${has("ears") ? `<g class="rw-part">${ears}</g>` : ""}
-      ${has("body") ? `<g class="rw-part"><ellipse cx="50" cy="58" rx="34" ry="30" fill="${a.body}"/><ellipse cx="50" cy="66" rx="18" ry="14" fill="${a.accent}"/></g>` : ""}
-      ${has("eyes") ? `<g class="rw-part"><circle cx="38" cy="48" r="6" fill="#fff"/><circle cx="62" cy="48" r="6" fill="#fff"/><circle cx="39" cy="49" r="3" fill="#1e1b17"/><circle cx="63" cy="49" r="3" fill="#1e1b17"/></g>` : ""}
-      ${has("nose") ? `<g class="rw-part"><ellipse cx="50" cy="58" rx="4" ry="3" fill="#1e1b17"/></g>` : ""}
-      ${has("mouth") ? `<g class="rw-part"><path d="M42 64 Q50 70 58 64" stroke="#1e1b17" stroke-width="2.5" fill="none" stroke-linecap="round"/></g>` : ""}
+      ${PART_ORDER.map((p) => (has(p) ? `<g class="rw-part">${parts[p]}</g>` : "")).join("")}
     </svg>`;
   }
 
