@@ -193,7 +193,7 @@
 
   <section class="panel" data-panel="tables">
     <h2 class="section-heading">✖️ Times Tables</h2>
-    <div class="grid single" id="grid-tables"></div>
+    <div class="grid" id="grid-tables"></div>
   </section>
 
   <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES / PHONICS / TIMES_TABLES lists in the page source to add your own games.</footer>
@@ -245,8 +245,13 @@
     { title: "Felix's Phonics", description: "Letter sounds, blending and tricky words — six games, following the school's Essential Letters and Sounds order.", emoji: "🔤", color: "#3fa7d6", file: "https://andrewlord311-sudo.github.io/PhonicsApp/", comingSoon: false }
   ];
 
+  // Three separate games inside one app, reached by deep link (?game=...).
+  // The app's own home screen is still there via its back button, so nobody
+  // arriving this way is stuck in one game.
   const TIMES_TABLES = [
-    { title: "Pip's Times Tables", description: "Feed Pip, the Guinea Pig Jigsaw, and the Guinea Pig Run — type the answer and race Evie to the flag.", emoji: "🐹", color: "#e8834a", file: "https://andrewlord311-sudo.github.io/TimesTables/app/", comingSoon: false }
+    { title: "Feed Pip", description: "Answer eight questions to fill Pip up — clear a stage and a new guinea pig joins the farm.", emoji: "🥕", color: "#e8834a", file: "https://andrewlord311-sudo.github.io/TimesTables/app/?game=feed", comingSoon: false },
+    { title: "Guinea Pig Jigsaw", description: "Every right answer uncovers another piece of a hidden guinea pig photo.", emoji: "🧩", color: "#3fa860", file: "https://andrewlord311-sudo.github.io/TimesTables/app/?game=jigsaw", comingSoon: false },
+    { title: "Guinea Pig Run", description: "Just the 2, 5 and 10 times tables — ten questions to hop Evie over every obstacle to the finish flag.", emoji: "🏃", color: "#3fa7d6", file: "https://andrewlord311-sudo.github.io/TimesTables/app/?game=run", comingSoon: false }
   ];
 /* ==================================================================== */
 
