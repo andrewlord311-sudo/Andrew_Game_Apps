@@ -51,6 +51,38 @@
   .bunting span:nth-child(7){ border-top-color:#f4c542; }
   .bunting span:nth-child(8){ border-top-color:#4a9d5f; }
 
+  /* Tabs. Phonics and Times Tables are separate apps on their own GitHub
+     Pages sites, so those cards link out by full URL rather than to a file
+     sitting next to this page. */
+  .tabs{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:10px;
+    margin:0 0 26px;
+  }
+  .tab{
+    font-family:inherit; font-size:16px; font-weight:bold;
+    color:#7a3f5a;
+    background:rgba(255,255,255,0.75);
+    border:2px solid rgba(255,255,255,0.9);
+    border-radius:999px;
+    padding:10px 20px;
+    cursor:pointer;
+    box-shadow:0 3px 0 var(--card-shadow);
+    transition:transform 0.1s ease, background 0.15s ease;
+  }
+  .tab:hover{ background:#fff; }
+  .tab:active{ transform:translateY(2px); box-shadow:0 1px 0 var(--card-shadow); }
+  .tab.active{
+    background:linear-gradient(180deg,#ef6f8e,#e0567c);
+    color:#fff; border-color:#e0567c;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  /* A tab holding a single app would otherwise leave one lonely card in a
+     three-column grid. */
+  .grid.single{ grid-template-columns:minmax(0,360px); justify-content:center; }
+
   h2.section-heading{
     text-align:center; font-size:22px; margin:8px 0 18px;
     color:#7a3f5a; text-shadow:0 2px 0 rgba(255,255,255,0.6);
@@ -137,13 +169,34 @@
     <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
   </div>
 
-  <h2 class="section-heading">🎵 Music Games</h2>
-  <div class="grid" id="grid-music"></div>
+  <nav class="tabs" id="tabs">
+    <button class="tab" data-tab="music">🎵 Music</button>
+    <button class="tab" data-tab="fun">🎲 Games</button>
+    <button class="tab" data-tab="phonics">🔤 Phonics</button>
+    <button class="tab" data-tab="tables">✖️ Times Tables</button>
+  </nav>
 
-  <h2 class="section-heading">🎲 Fun &amp; Pretend Play</h2>
-  <div class="grid" id="grid-fun"></div>
+  <section class="panel" data-panel="music">
+    <h2 class="section-heading">🎵 Music Games</h2>
+    <div class="grid" id="grid-music"></div>
+  </section>
 
-  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES lists in the page source to add your own games.</footer>
+  <section class="panel" data-panel="fun">
+    <h2 class="section-heading">🎲 Fun &amp; Pretend Play</h2>
+    <div class="grid" id="grid-fun"></div>
+  </section>
+
+  <section class="panel" data-panel="phonics">
+    <h2 class="section-heading">🔤 Phonics</h2>
+    <div class="grid single" id="grid-phonics"></div>
+  </section>
+
+  <section class="panel" data-panel="tables">
+    <h2 class="section-heading">✖️ Times Tables</h2>
+    <div class="grid single" id="grid-tables"></div>
+  </section>
+
+  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES / PHONICS / TIMES_TABLES lists in the page source to add your own games.</footer>
 </div>
 
 <script>
@@ -184,6 +237,16 @@
     { title: "Rex's Letter Adventure", description: "Rex the dino calls out a letter — click the right one to make him do a trick!", emoji: "🦕", color: "#4a9d5f", file: "fun/Fun7.html", comingSoon: false },
     { title: "Guinea pig playground", description: "Look after your guinea pig.", emoji: "💓", color: "#3fa7d6", file: "fun/Fun4.html", comingSoon: false },
     { title: "Dino playground", description: "Look after your dino.", emoji: "🦖", color: "#9b6fd6", file: "fun/Fun5.html", comingSoon: false }
+  ];
+  // These two live in their OWN repos with their own GitHub Pages sites, so
+  // they need full URLs -- a relative path would look for them next to this
+  // page and 404. Each is one app with its own menu inside, hence one card.
+  const PHONICS = [
+    { title: "Felix's Phonics", description: "Letter sounds, blending and tricky words — six games, following the school's Essential Letters and Sounds order.", emoji: "🔤", color: "#3fa7d6", file: "https://andrewlord311-sudo.github.io/PhonicsApp/", comingSoon: false }
+  ];
+
+  const TIMES_TABLES = [
+    { title: "Pip's Times Tables", description: "Feed Pip and the Guinea Pig Jigsaw — type the answer, collect a guinea pig for every stage you clear.", emoji: "🐹", color: "#e8834a", file: "https://andrewlord311-sudo.github.io/TimesTables/app/", comingSoon: false }
   ];
 /* ==================================================================== */
 
@@ -240,6 +303,29 @@
 
   renderGrid(MUSIC_GAMES, document.getElementById('grid-music'));
   renderGrid(FUN_GAMES, document.getElementById('grid-fun'));
+  renderGrid(PHONICS, document.getElementById('grid-phonics'));
+  renderGrid(TIMES_TABLES, document.getElementById('grid-tables'));
+
+  // ---- Tabs ----
+  // The chosen tab is remembered, so a tablet left on Phonics opens on
+  // Phonics next time rather than making her find it again. localStorage can
+  // throw outright in a private window, hence the try/catch.
+  const TAB_KEY = 'arcade_tab';
+  const tabs = [...document.querySelectorAll('.tab')];
+  const panels = [...document.querySelectorAll('.panel')];
+
+  function showTab(name){
+    const known = tabs.some(t => t.dataset.tab === name) ? name : 'music';
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === known));
+    panels.forEach(p => p.classList.toggle('active', p.dataset.panel === known));
+    try { localStorage.setItem(TAB_KEY, known); } catch (e) {}
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => showTab(t.dataset.tab)));
+
+  let saved = 'music';
+  try { saved = localStorage.getItem(TAB_KEY) || 'music'; } catch (e) {}
+  showTab(saved);
 </script>
 </body>
 </html>
