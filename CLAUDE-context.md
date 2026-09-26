@@ -29,7 +29,7 @@ is above. In the cloud, as opposed to on the Mac:
   *edited* here, but it won't run until the Mac pulls the change.
 - **The vault:** `andrew-second-brain` (a separate private repo) is the Second
   Brain vault. Edits pushed there reach iCloud and Obsidian when the Mac next
-  syncs (vault-tools/commit-second-brain.py pulls before it pushes). The Lord
+  syncs (vault-tools/sync-second-brain.py pulls before it pushes). The Lord
   Family vault is the private repo `the-lord-family/obsidian-vault`.
 - **Always commit and push** before the session ends: the Mac and the other
   sessions only see what's on GitHub.
