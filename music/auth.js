@@ -26,6 +26,23 @@
   };
 
   const STORAGE_SESSION = "tga_pupil_session";
+  const STORAGE_MODE = "tga_pupil_mode";
+
+  // Pupil login is PRIVATE-USE ONLY. The public site (YouTube viewers) plays as a guest: no
+  // name picker, no pupil names fetched, nothing tracked. A teacher device turns it on by opening
+  // any game once with ?pupils=on (and off again with ?pupils=off). A device that already has a
+  // saved pupil session keeps working as before, so lessons in progress aren't disturbed.
+  (function applyModeParam() {
+    try {
+      const m = new URLSearchParams(location.search).get("pupils");
+      if (m === "on") localStorage.setItem(STORAGE_MODE, "1");
+      else if (m === "off") { localStorage.removeItem(STORAGE_MODE); localStorage.removeItem(STORAGE_SESSION); }
+    } catch (e) { /* storage blocked: stay in guest mode */ }
+  })();
+  function pupilModeOn() {
+    try { return localStorage.getItem(STORAGE_MODE) === "1" || !!localStorage.getItem(STORAGE_SESSION); }
+    catch (e) { return false; }
+  }
   const configured = FIREBASE_CONFIG.apiKey !== "PASTE_YOUR_API_KEY";
 
   let db = null;
@@ -308,7 +325,7 @@
   }
 
   function ensureLogin(onReady) {
-    if (!configured || !db) {
+    if (!pupilModeOn() || !configured || !db) {
       onReady();
       return;
     }
