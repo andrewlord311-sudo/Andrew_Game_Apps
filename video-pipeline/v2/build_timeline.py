@@ -76,7 +76,7 @@ for cid, c in clips.items(): put(mix, c['start'], c['wave'], 1.0)
 # --- sound effects (synthesised: no licensing) ---
 def env(n, a=0.005, d=0.3):
     x = np.arange(n) / SR; return np.minimum(x / a, 1) * np.exp(-x / d)
-def tone(f, dur=0.9, vol=0.22):
+def tone(f, dur=0.9, vol=0.13):
     n = int(dur * SR); x = np.arange(n) / SR
     s = np.sin(2 * math.pi * f * x) + 0.4 * np.sin(2 * math.pi * 2 * f * x) + 0.15 * np.sin(2 * math.pi * 3 * f * x)
     return (s * env(n, 0.01, 0.35) * vol).astype(np.float32)
@@ -90,7 +90,7 @@ def whoosh(vol=0.12):
     n = int(0.35 * SR); rng = np.random.default_rng(3); z = rng.standard_normal(n)
     k = np.ones(40) / 40; z = np.convolve(z, k, 'same'); w = np.sin(np.linspace(0, math.pi, n)) ** 2
     return (z * w * vol * 3).astype(np.float32)
-def sparkle(vol=0.18):
+def sparkle(vol=0.11):
     out = np.zeros(int(0.9 * SR), dtype=np.float32)
     for i, f in enumerate([1046, 1318, 1568, 2093]): put(out, i * 0.07, tone(f, 0.5, vol), 1)
     return out
@@ -98,15 +98,15 @@ FREQ = {'g4': 392.0, 'b4': 493.9, 'c5': 523.3, 'a5': 880.0}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
 for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
-for k in ['n1', 'n2', 'n3', 'n4', 'n5']: ev('tick', clips[k]['start'])
+for k in ['n1', 'n2', 'n3', 'n4', 'n5']: ev('tick', clips[k]['start'] - 0.14)
 ev('pop', W('clef1','swirly') - 0.05); ev('pop', clips['bass']['start'] + 0.15)
 ev('pop', W('note','blob') - 0.1); ev('tone', W('note','blob'), f='b4')
 ev('pop', clips['line']['start'] + 0.1); ev('tone', clips['line']['start'] + 0.2, f='g4')
 ev('pop', clips['space']['start'] + 0.1); ev('tone', clips['space']['start'] + 0.2, f='c5')
 ev('pop', clips['high']['start'] + 0.3); ev('tone', clips['high']['start'] + 0.4, f='a5')
 ev('pop', W('ledger','extra') - 0.1)
-for k in ['r1', 'r2', 'r3', 'r4', 'r5']: ev('pop', clips[k]['start'] - 0.05)
-ev('sparkle', clips['well']['start'])
+for k in ['r1', 'r2', 'r3', 'r4', 'r5']: ev('pop', clips[k]['start'] - 0.17)
+ev('sparkle', clips['well']['end'] + 0.05)       # after the word, never on top of it
 for e in events:
     k = e['kind']
     sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle}.get(k, lambda: tone(FREQ.get(e.get('f'), 440)))()
