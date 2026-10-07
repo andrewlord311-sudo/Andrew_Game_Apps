@@ -97,6 +97,7 @@ const HOSTS={ // left/bottom/size per mascot
   open:{m:[70,40,260],b:[960,40,270]},
   side:{m:[30,14,195],b:[1050,14,200]},
   low:{m:[16,4,150],b:[1114,4,155]},
+  bye:{m:[300,96,260],b:[720,96,270]},
 };
 function speakerAt(t){for(const id in CL){const c=CL[id];if(t>=c.start-0.05&&t<c.end+0.18)return {id,...c}}return null}
 function level(c,t){const i=Math.floor((t-c.start)*FPS);return (c.env[i]??0)}
@@ -213,11 +214,11 @@ S.recap={ui:{ribbon:1,hosts:'low',bubble:false},build(r){
     k.d.style.boxShadow=cur?`0 0 0 6px ${k.col},0 14px 0 rgba(0,0,0,.12)`:'0 9px 0 rgba(0,0,0,.1)';k.d.style.zIndex=cur?3:1});
    const tw=CL.well.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}};
 
-S.outro={ui:{ribbon:0,hosts:'low',bubble:false},build(r){
+S.outro={ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
   this.t=document.createElement('div');this.t.className='big abs';this.t.style.cssText='left:0;right:0;top:44px;font-size:80px';this.t.textContent='Now play the game!';r.appendChild(this.t);
   this.g=document.createElement('div');this.g.className='abs';this.g.style.cssText='left:50%;top:150px;font-family:Fredoka One;font-size:42px;background:var(--orange);color:#fff;padding:8px 34px 10px;border-radius:999px;box-shadow:0 8px 0 rgba(0,0,0,.18);white-space:nowrap;opacity:0';this.g.textContent='▶  '+TL.game;r.appendChild(this.g);
   this.l=document.createElement('div');this.l.className='abs';this.l.style.cssText='left:0;right:0;top:222px;text-align:center;font-weight:700;font-size:28px;opacity:0';this.l.textContent='Link in the description ↓';r.appendChild(this.l);
-  this.b=document.createElement('div');this.b.className='abs big';this.b.style.cssText='left:0;right:0;bottom:30px;font-size:40px;opacity:0';this.b.innerHTML='See you for the next Nugget! 👋 &nbsp;&nbsp; Subscribe 🔔';r.appendChild(this.b);
+  this.b=document.createElement('div');this.b.className='abs big';this.b.style.cssText='left:0;right:0;bottom:30px;font-size:40px;opacity:0';this.b.innerHTML='See you for the next Nugget! 👋';r.appendChild(this.b);
   },update(t,L,c){pop(this.t,L,0.5,0.55,0.4);this.g.style.opacity=prog(L,1.1,0.3);this.g.style.scale=String(lerp(0.5,1,easeBack(prog(L,1.1,0.5))));this.g.style.translate='-50% 0';
    fade(this.l,L,1.7,0.5);this.b.style.opacity=prog(t,CL.bye.start,0.4)}};
 
