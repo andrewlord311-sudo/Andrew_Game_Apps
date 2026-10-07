@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>Look-dev v2 — key frames</title>
+<script src="vendor/vexflow.js"></script><script src="notation.js"></script>
+<style id="fonts"></style>
+<style>
+:root{--ink:#241f3d;--melody:#2dd4bf;--melody-deep:#0d9488;--barnaby:#6366f1;--pink:#ec4899;--orange:#ea580c;--sun:#fde68a;--sky:#bae6fd}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#222;font-family:'Quicksand',sans-serif}
+.frame{position:relative;width:1280px;height:720px;overflow:hidden;display:none;background:radial-gradient(circle at 50% 40%,#fef3c7 0%,#bae6fd 100%)}
+.frame.on{display:block}
+/* common: header ribbon, lower-third caption, mascot + bubble */
+.ribbon{position:absolute;left:0;right:0;top:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 36px;background:rgba(255,255,255,.55);backdrop-filter:blur(2px)}
+.ribbon .brand{font-family:'Fredoka One';font-size:22px;color:var(--ink)}
+.ribbon .dots{display:flex;gap:10px}.dots i{width:14px;height:14px;border-radius:50%;background:#cbd5e1}.dots i.on{background:var(--orange)}
+.caption{position:absolute;left:50%;transform:translateX(-50%);bottom:34px;background:var(--ink);color:#fff;font-family:'Fredoka One';font-size:54px;letter-spacing:2px;padding:10px 46px;border-radius:22px;box-shadow:0 10px 0 rgba(0,0,0,.18)}
+.caption.line{background:var(--melody-deep)}.caption.space{background:var(--pink)}.caption.ledger{background:var(--orange)}
+.host{position:absolute;bottom:26px;width:200px;filter:drop-shadow(0 10px 14px rgba(0,0,0,.2))}
+.host svg{width:100%;display:block}
+.bubble{position:absolute;background:#fff;border-radius:26px;padding:16px 24px;font-weight:700;font-size:28px;color:var(--ink);max-width:420px;box-shadow:0 8px 0 rgba(0,0,0,.1)}
+.bubble:after{content:"";position:absolute;bottom:-16px;left:40px;border:16px solid transparent;border-top-color:#fff;border-bottom:0}
+.notation{position:absolute;left:50%;transform:translateX(-50%)}
+.big{font-family:'Fredoka One';color:var(--ink)}
+.chip{position:absolute;font-weight:700;font-size:22px;padding:6px 18px;border-radius:999px;background:#fff;color:var(--ink);box-shadow:0 5px 0 rgba(0,0,0,.1)}
+.slot{position:absolute;border:4px dashed rgba(36,31,61,.35);border-radius:22px;color:rgba(36,31,61,.5);font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.35)}
+</style></head><body>
+<div id="f1" class="frame"></div><div id="f2" class="frame"></div><div id="f3" class="frame"></div>
+<div id="f4" class="frame"></div><div id="f5" class="frame"></div><div id="f6" class="frame"></div>
+<script>
+const M=`<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" fill="#2dd4bf"/><path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488"/><ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1"/><circle cx="65" cy="40" r="7" fill="#fff"/><circle cx="67" cy="40" r="3.5" fill="#0f172a"/><circle cx="69" cy="38" r="1.5" fill="#fff"/><polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round"/><path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6"/><path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf"/></svg>`;
+const B=`<svg viewBox="0 0 100 100"><circle cx="25" cy="25" r="12" fill="#818cf8"/><circle cx="25" cy="25" r="7" fill="#c7d2fe"/><circle cx="75" cy="25" r="12" fill="#818cf8"/><circle cx="75" cy="25" r="7" fill="#c7d2fe"/><circle cx="50" cy="55" r="32" fill="#6366f1"/><circle cx="30" cy="62" r="5" fill="#f472b6" opacity=".6"/><circle cx="70" cy="62" r="5" fill="#f472b6" opacity=".6"/><ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff"/><polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round"/><path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round"/><path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round"/></svg>`;
+const ribbon=(n)=>`<div class="ribbon"><div class="brand">🎵 Melody &amp; Barnaby's Music Nuggets</div><div class="dots">${[0,1,2,3,4].map(i=>`<i class="${i==n?'on':''}"></i>`).join('')}</div></div>`;
+function note(el,spec,top,w,h,scale,color){const d=document.createElement('div');d.className='notation';d.style.top=top+'px';d.style.width=(w*scale)+'px';d.style.height=(h*scale)+'px';el.appendChild(d);renderNotation(d,{width:w,height:h,scale,color:color||'#241f3d',...spec});return d}
+(async()=>{
+ const fonts=await Promise.all(['fredoka-one','quicksand-500','quicksand-700'].map(n=>fetch('assets/'+n+'.b64').then(r=>r.text())));
+ document.getElementById('fonts').textContent=
+  `@font-face{font-family:'Fredoka One';src:url(data:font/woff2;base64,${fonts[0].trim()})}
+   @font-face{font-family:'Quicksand';font-weight:500;src:url(data:font/woff2;base64,${fonts[1].trim()})}
+   @font-face{font-family:'Quicksand';font-weight:700;src:url(data:font/woff2;base64,${fonts[2].trim()})}`;
+ await document.fonts.ready;
+ // 1 — the SAME 4-second opener for every video
+ f1.innerHTML=`<div style="position:absolute;left:0;right:0;top:230px;display:flex;flex-direction:column;align-items:center;gap:10px">
+   <div class="big" style="font-size:78px;text-align:center;line-height:1.05">Melody &amp; Barnaby's<br><span style="color:var(--orange)">Music Nuggets</span></div>
+   <div style="font-weight:700;font-size:26px;color:var(--ink);opacity:.75;margin-top:6px;text-align:center">Learn to read music, one little nugget at a time</div></div>
+   <div class="host" style="left:60px;bottom:40px;width:250px">${M}</div><div class="host" style="right:60px;bottom:40px;width:260px">${B}</div>`;
+ note(f1,{clef:'treble',notes:[],width:300,height:130},20,300,130,2.0);
+ // 2 — "Today we're going to learn..."
+ f2.innerHTML=ribbon(0)+`<div style="position:absolute;left:0;right:0;top:120px;text-align:center"><div class="chip" style="position:static;display:inline-block;background:var(--orange);color:#fff">Nugget 1</div>
+   <div style="font-weight:700;font-size:34px;color:var(--ink);margin-top:22px">Today we are going to learn</div>
+   <div class="big" style="font-size:112px;line-height:1.05;margin-top:6px">the names of<br>music's parts</div></div>
+   <div class="host" style="left:70px;width:230px">${M}</div><div class="host" style="right:70px;width:240px">${B}</div>
+   <div class="bubble" style="left:300px;bottom:230px;font-size:26px;display:none"></div>`;
+ // 3 — lesson: the stave, big, clef at the left, Melody speaking
+ f3.innerHTML=ribbon(1)+`<div class="chip" style="left:50%;transform:translateX(-50%);top:92px;background:#fff;font-size:28px">Music is written on…</div>`;
+ note(f3,{clef:'treble',notes:[],width:380,height:170},150,380,170,2.7);
+ f3.insertAdjacentHTML('beforeend',`<div class="caption">STAVE · 5 lines</div><div class="host" style="left:50px;width:190px;bottom:26px">${M}</div>
+  <div class="bubble" style="left:260px;bottom:150px;width:340px">Five lines together are called a stave!</div>`);
+ // 4 — bass clef is at the START (left) of its stave
+ f4.innerHTML=ribbon(2)+`<div class="chip" style="left:50%;transform:translateX(-50%);top:92px;background:#fff;font-size:28px">Barnaby's clef — low sounds</div>`;
+ note(f4,{clef:'bass',notes:[],width:380,height:170},150,380,170,2.7);
+ f4.insertAdjacentHTML('beforeend',`<div class="caption" style="background:var(--barnaby)">BASS CLEF</div><div class="host" style="right:50px;width:200px;bottom:26px">${B}</div>
+  <div class="bubble" style="right:270px;bottom:150px;width:340px">Two dots and a curl: the bass clef!</div>`);
+ // 5 — a note on a line vs space: labelled, colour-coded, nothing overlaps
+ f5.innerHTML=ribbon(3)+`<div class="chip" style="left:50%;transform:translateX(-50%);top:92px;background:#fff;font-size:28px">Where does a note live?</div>`;
+ const n5=note(f5,{clef:'treble',notes:['g/4','c/5'],width:380,height:170},150,380,170,2.7);
+ f5.insertAdjacentHTML('beforeend',`<div class="chip" style="left:200px;top:262px;background:var(--melody-deep);color:#fff;font-size:30px">on a LINE ↓</div><div class="chip" style="left:560px;top:250px;background:var(--pink);color:#fff;font-size:30px">in a SPACE ↓</div>
+  <div class="caption line">LINE</div><div class="host" style="left:50px;width:190px;bottom:26px">${M}</div>`);
+ // 6 — the SAME 6-second outro: call to action + places the YouTube end-screen elements go
+ f6.innerHTML=`<div style="position:absolute;left:0;right:0;top:44px;text-align:center"><div class="big" style="font-size:68px">Now play the game!</div>
+   <div style="font-weight:700;font-size:30px;color:var(--ink);margin-top:8px">Link in the description ↓ &nbsp;·&nbsp; <span style="color:var(--orange)">Name That Part</span></div></div>
+   <div class="slot" style="left:90px;top:230px;width:520px;height:292px">YouTube end-screen: next video</div>
+   <div class="slot" style="right:90px;top:230px;width:520px;height:292px">YouTube end-screen: play the game / playlist</div>
+   <div class="host" style="left:40px;bottom:6px;width:150px">${M}</div><div class="host" style="right:40px;bottom:6px;width:155px">${B}</div>
+   <div style="position:absolute;left:0;right:0;bottom:36px;text-align:center;font-weight:700;font-size:28px;color:var(--ink)">See you next Nugget! 👋 &nbsp; Subscribe 🔔</div>`;
+ const q=new URLSearchParams(location.search).get('f')||'1';document.getElementById('f'+q).classList.add('on');window.READY=true;
+})();
+</script></body></html>
