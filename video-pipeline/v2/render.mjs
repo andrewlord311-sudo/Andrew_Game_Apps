@@ -12,7 +12,7 @@ const b = await chromium.launch(); const p = await b.newPage({ viewport: { width
 await p.goto(`http://localhost:8767/v2/engine.html?v=${name}`); await p.waitForFunction('window.READY===true');
 const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
   '-ss', String(t0), '-t', String(t1 - t0), '-i', `${dir}out/${name}/mix.wav`, '-af', 'loudnorm=I=-15:TP=-1.5:LRA=11',
-  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '192k', '-shortest', out]);
+  '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-ar', '44100', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', '-shortest', out]);
 ff.stderr.on('data', d => process.stderr.write(d));
 const n = Math.round((t1 - t0) * FPS);
 for (let i = 0; i < n; i++) {
