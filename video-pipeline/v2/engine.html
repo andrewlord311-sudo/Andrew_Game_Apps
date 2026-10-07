@@ -92,6 +92,7 @@ const DOT=(c,r)=>`<span style="display:inline-block;width:${r}px;height:${r}px;b
 
 // ---------------------------------------------------------------- state / UI layouts
 let TL,SC=[],CL;
+function wt(id,word,nth=0){const c=CL[id];const h=c.words.filter(w=>w[0].startsWith(word));return c.start+(h[nth]?h[nth][1]:0.4)}
 const HOSTS={ // left/bottom/size per mascot
   open:{m:[70,40,260],b:[960,40,270]},
   side:{m:[30,14,195],b:[1050,14,200]},
@@ -114,12 +115,23 @@ S.opener={ui:{ribbon:0,hosts:'open',bubble:false},build(r){
    this.st.heads.forEach((h,i)=>{const p=prog(L,0.9+i*0.35,0.4);h.sn.style.opacity=p;h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(p))*-30}px)`});
    this.st.box.style.opacity=prog(L,0.2,0.5)}};
 
+S.hook={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.st=makeStave(r,{clef:'treble',notes:[],scale:3.6,w:330,cy:380,showClef:false});
+  this.dots=[[0.07,2.3],[0.16,0.4],[0.24,3.6],[0.33,1.5],[0.41,2.9],[0.5,0.8],[0.58,3.3],[0.66,1.9],[0.74,0.2],[0.83,2.6],[0.9,1.2]].map(([fx,ln],i)=>{
+    const d=document.createElement('div');d.className='abs';d.style.cssText='width:26px;height:20px;border-radius:50%;background:#241f3d;opacity:0';
+    d.style.left=(this.st.x0+fx*(this.st.x1-this.st.x0))+'px';d.style.top=(this.st.lineY[0]+ln*this.st.sp-10)+'px';d.style.transform='rotate(-20deg)';r.appendChild(d);return d});
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:482px;font-size:150px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+  },update(t,L,c){const tq=wt('hook','wondered')-0.25,tf=wt('hook','find')-0.1;
+   this.st.lines.forEach(l=>l.style.opacity=0.9);this.st.barlines.forEach(b=>b.style.opacity=1);
+   this.dots.forEach((d,i)=>{const p=prog(t,CL.hook.start+0.6+i*0.12,0.3);d.style.opacity=clamp(p*2)*(t<tf?1:0);d.style.scale=String(lerp(0.3,1,easeBack(p)))});
+   const p=prog(t,tq,0.4);const f=prog(t,tf,0.3);this.q.style.opacity=String(clamp(p*2)*(1-f));this.q.style.scale=String(lerp(0.4,1,easeBack(p))*(1+0.06*Math.sin(t*7)));this.q.style.rotate=Math.sin(t*5)*5+'deg'}};
+
 S.today={ui:{ribbon:1,hosts:'side',bubble:false},build(r){
   this.chip=chip(r,'Nugget '+TL.nugget,'var(--orange)',640,128);
   this.a=document.createElement('div');this.a.className='big abs';this.a.style.cssText='left:0;right:0;top:200px;font-size:46px;font-family:Quicksand,sans-serif;font-weight:700';this.a.textContent='Today we are going to learn';r.appendChild(this.a);
   this.b=document.createElement('div');this.b.className='big abs';this.b.style.cssText='left:0;right:0;top:290px;font-size:118px';this.b.textContent=TL.title;r.appendChild(this.b);
-  },update(t,L,c){pop(this.chip,L,0.25,0.4);fade(this.a,L,0.45,0.5);this.b.style.opacity=prog(L,1.95,0.3);this.b.style.scale=String(lerp(0.5,1,easeBack(prog(L,1.95,0.55))));
-   const s=this.b.style;s.rotate=(1-prog(L,1.95,0.7))*-4+'deg'}};
+  },update(t,L,c){pop(this.chip,L,0.25,0.4);fade(this.a,L,0.45,0.5);const tm=wt('today','musical')-0.2;this.b.style.opacity=prog(t,tm,0.3);this.b.style.scale=String(lerp(0.5,1,easeBack(prog(t,tm,0.55))));
+   this.b.style.rotate=(1-prog(t,tm,0.7))*-4+'deg'}};
 
 // shared: one stave for a group of scenes so they feel continuous
 function staveScene(sceneDef){return sceneDef}
@@ -134,8 +146,8 @@ S.stave={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
      lineWidth(l,t>=CL.stave.start&&t<CL.stave.end+0.5?(1+0.9*Math.abs(Math.sin((t-CL.stave.start)*5))):1)});
    this.nums.forEach((n,i)=>pop(n,t,T0[i],0.35,0.3));
    this.bars.forEach((b,i)=>{const d=t-T0[i];b.style.opacity=d<0?0:clamp(1-d/0.9)*0.9});
-   if(t>=CL.stave.start-0.1)c.caption('STAVE','#241f3d',CL.stave.start+0.35);
-   pop(this.chip,t,CL.stave.start+1.4,0.4)}};
+   if(t>=wt('stave','stave')-0.1)c.caption('STAVE','#241f3d',wt('stave','stave')-0.1);
+   pop(this.chip,t,wt('stave','lines')-0.1,0.4)}};
 
 function clefScene(kind){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   const bass=kind==='bass';
@@ -144,20 +156,20 @@ function clefScene(kind){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r)
   const cx=this.st.clefX, cy=this.st.lineY[2];
   this.h=halo(r,cx,cy,170,bass?'rgba(99,102,241,.55)':'rgba(45,212,191,.6)');
   this.chip=bass?chip(r,'↓ low sounds','var(--barnaby)',this.st.x1-190,this.st.lineY[4]+60):chip(r,'↑ high sounds','var(--melody-deep)',this.st.x1-200,this.st.lineY[4]+60);
-  },update(t,L,c){const bass=kind==='bass';const k=bass?'bass':'clef1';const t0=CL[k].start+(bass?0.2:0.5);
+  },update(t,L,c){const bass=kind==='bass';const k=bass?'bass':'clef1';const t0=bass?CL.bass.start+0.2:wt('clef1','swirly')-0.1;
    const p=prog(t,t0,0.5);this.clefEl.style.opacity=clamp(p*2);this.clefEl.style.transformBox='fill-box';this.clefEl.style.transformOrigin='50% 50%';this.clefEl.style.transform=`scale(${lerp(1.7,1,easeBack(p))})`;
    this.h.style.opacity=clamp(p*2)*(0.65+0.35*Math.sin(t*5));
-   if(bass){c.caption('BASS CLEF','var(--barnaby)',CL.bass.start+0.8);pop(this.chip,t,CL.bass.start+5.6,0.4)}
-   else{ if(t<CL.clef2.start)c.caption('CLEF','#241f3d',CL.clef1.start+1.9);else c.caption('TREBLE CLEF','var(--melody-deep)',CL.clef2.start+0.2);pop(this.chip,t,CL.clef2.start+2.6,0.4)}}}}
+   if(bass){if(t>=wt('bass','bass')-0.1)c.caption('BASS CLEF','var(--barnaby)',wt('bass','bass')-0.1);pop(this.chip,t,wt('bass','lower')-0.1,0.4)}
+   else{ if(t<wt('clef2','treble')-0.1){if(t>=wt('clef1','clef')-0.15)c.caption('CLEF','#241f3d',wt('clef1','clef')-0.15)}else c.caption('TREBLE CLEF','var(--melody-deep)',wt('clef2','treble')-0.1);pop(this.chip,t,wt('clef2','higher')-0.1,0.4)}}}}
 S.clef=clefScene('treble');S.bass=clefScene('bass');
 
 S.note={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:['b/4'],scale:3.6,w:330,cy:335});
   const h=this.st.heads[0];this.h=halo(r,h.x,h.y,95,'rgba(245,158,11,.6)');h.color('#241f3d');
-  },update(t,L,c){const h=this.st.heads[0],t0=CL.note.start+1.25;const p=prog(t,t0,0.5);
+  },update(t,L,c){const h=this.st.heads[0],t0=wt('note','blob')-0.1;const p=prog(t,t0,0.5);
    h.sn.style.opacity=clamp(p*2);h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 100%';h.sn.style.transform=`translateY(${(1-easeBack(p))*-70}px)`;
    this.h.style.opacity=clamp(p*2)*(0.7+0.3*Math.sin(t*6));
-   if(t>=CL.note.start+3.1)c.caption('NOTE','#b45309',CL.note.start+3.15)}};
+   if(t>=wt('note','note')-0.15)c.caption('NOTE','#b45309',wt('note','note')-0.15)}};
 
 S.linespace={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:['g/4','c/5'],scale:3.6,w:330,cy:335});
@@ -167,28 +179,28 @@ S.linespace={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.bandB=band(r,this.st.x0,this.st.x1,this.st.lineY[1]+8,this.st.lineY[2]-8,'rgba(236,72,153,.35)');
   this.ca=chip(r,'on a LINE','var(--melody-deep)',a.x+150,196);this.cb=chip(r,'in a SPACE','var(--pink)',b.x+160,196);
   },update(t,L,c){const [a,b]=this.st.heads;
-   [[a,CL.line.start+0.1,this.ha,this.ca,this.bandA],[b,CL.space.start+0.1,this.hb,this.cb,this.bandB]].forEach(([h,t0,hl,ch,bd],i)=>{
+   [[a,wt('line','line')-0.1,this.ha,this.ca,this.bandA],[b,wt('space','gap')-0.1,this.hb,this.cb,this.bandB]].forEach(([h,t0,hl,ch,bd],i)=>{
      const p=prog(t,t0,0.45);h.sn.style.opacity=clamp(p*2);h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 100%';h.sn.style.transform=`translateY(${(1-easeBack(p))*-60}px)`;
      const live=i===0?(t<CL.space.start):true;hl.style.opacity=clamp(p*2)*(live?0.75+0.25*Math.sin(t*6):0.0);
      pop(ch,t,t0+0.15,0.4);ch.style.opacity=clamp(p*2)*(live?1:0.0);
      bd.style.opacity=live?clamp(p*2)*(0.55+0.3*Math.sin(t*5)):0});
-   if(t<CL.space.start)c.caption('LINE','var(--melody-deep)',CL.line.start+0.35);else c.caption('SPACE','var(--pink)',CL.space.start+0.35)}};
+   if(t<CL.space.start){if(t>=wt('line','line')-0.1)c.caption('LINE','var(--melody-deep)',wt('line','line')-0.1)}else if(t>=wt('space','space')-0.1)c.caption('SPACE','var(--pink)',wt('space','space')-0.1)}};
 
 S.ledger={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:['a/5'],scale:3.6,w:330,cy:362});
   const h=this.st.heads[0];this.h=halo(r,h.x,h.y,100,'rgba(234,88,12,.55)');h.color('#c2410c');
-  },update(t,L,c){const h=this.st.heads[0];const t0=CL.high.start+0.3;const p=prog(t,t0,0.5);
+  },update(t,L,c){const h=this.st.heads[0];const t0=wt('high','high')-0.2;const p=prog(t,t0,0.5);
    h.sn.style.opacity=clamp(p*2);h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 100%';h.sn.style.transform=`translateY(${(1-easeBack(p))*-70}px)`;
-   const led=h.ledger;const tl=CL.ledger.start+1.7;const q=easeOut(prog(t,tl,0.4));
+   const led=h.ledger;const tl=wt('ledger','extra')-0.1;const q=easeOut(prog(t,tl,0.4));
    led.forEach(l=>{l.style.transformBox='fill-box';l.style.transformOrigin='50% 50%';l.style.transform=`scaleX(${q})`;l.style.opacity=t<tl?0:1;l.style.strokeWidth=t>=tl?String(1.4+1.2*Math.abs(Math.sin((t-tl)*5))*Math.max(0,1-(t-tl)/2.5)):'1'});
    this.h.style.opacity=clamp(p*2)*(0.6+0.35*Math.sin(t*6));
-   if(t<CL.ledger.start)c.caption('TOO HIGH!','#dc2626',CL.high.start+1.6);else c.caption('LEDGER LINE','var(--orange)',CL.ledger.start+1.65)}};
+   if(t<CL.ledger.start){if(t>=wt('high','high')-0.1)c.caption('TOO HIGH!','#dc2626',wt('high','high')-0.1)}else if(t>=wt('ledger','ledger')-0.1)c.caption('LEDGER LINE','var(--orange)',wt('ledger','ledger')-0.1)}};
 
 const RECAP=[['r1','STAVE',{clef:'treble',notes:[],showClef:false},'#241f3d'],['r2','CLEF',{clef:'treble',notes:[],only:'clef'},'#0d9488'],['r3','NOTE',{clef:'treble',notes:['b/4'],only:'note'},'#b45309'],
- ['r4','LINE',{clef:'treble',notes:['g/4'],showClef:false},'#0d9488'],['r5','SPACE',{clef:'treble',notes:['c/5'],showClef:false},'#be185d'],['r6','LEDGER LINE',{clef:'treble',notes:['a/5'],showClef:false},'#c2410c']];
+ ['r4','LINE',{clef:'treble',notes:['g/4'],showClef:false},'#0d9488'],['r4','SPACE',{clef:'treble',notes:['c/5'],showClef:false},'#be185d'],['r5','LEDGER LINE',{clef:'treble',notes:['a/5'],showClef:false},'#c2410c']];
 S.recap={ui:{ribbon:1,hosts:'low',bubble:false},build(r){
   this.cards=RECAP.map(([id,lab,spec,col],i)=>{const d=document.createElement('div');d.className='card';
-    const cx=[250,640,1030][i%3],cy=[200,430][Math.floor(i/3)];d.style.left=(cx-165)+'px';d.style.top=(cy-108)+'px';
+    const cx=[250,640,1030][i%3],cy=[190,414][Math.floor(i/3)];d.style.left=(cx-165)+'px';d.style.top=(cy-108)+'px';
     d.innerHTML=`<div class="ico"></div><div class="lab" style="color:${col}">${lab}</div>`;r.appendChild(d);
     const only=spec.only;const st=makeStave(d.querySelector('.ico'),{clef:spec.clef,notes:spec.notes,showClef:spec.showClef!==false,scale:1.5,cx:150,cy:70,w:190,h:140});
     if(only){st.lines.forEach(l=>l.style.opacity=0);st.barlines.forEach(b=>b.style.opacity=0);if(only==='note'&&st.clefEl)st.clefEl.style.opacity=0;if(only==='clef')st.heads.forEach(h=>h.sn.style.opacity=0);const mid=only==='clef'?st.clefX:st.heads[0].x;st.box.style.left=(st.box.offsetLeft+150-mid)+'px'}
@@ -205,11 +217,9 @@ S.outro={ui:{ribbon:0,hosts:'low',bubble:false},build(r){
   this.t=document.createElement('div');this.t.className='big abs';this.t.style.cssText='left:0;right:0;top:44px;font-size:80px';this.t.textContent='Now play the game!';r.appendChild(this.t);
   this.g=document.createElement('div');this.g.className='abs';this.g.style.cssText='left:50%;top:150px;font-family:Fredoka One;font-size:42px;background:var(--orange);color:#fff;padding:8px 34px 10px;border-radius:999px;box-shadow:0 8px 0 rgba(0,0,0,.18);white-space:nowrap;opacity:0';this.g.textContent='▶  '+TL.game;r.appendChild(this.g);
   this.l=document.createElement('div');this.l.className='abs';this.l.style.cssText='left:0;right:0;top:222px;text-align:center;font-weight:700;font-size:28px;opacity:0';this.l.textContent='Link in the description ↓';r.appendChild(this.l);
-  this.s1=document.createElement('div');this.s1.className='slot';this.s1.style.cssText+='left:95px;top:290px;width:510px;height:287px';r.appendChild(this.s1);
-  this.s2=document.createElement('div');this.s2.className='slot';this.s2.style.cssText+='left:675px;top:290px;width:510px;height:287px';r.appendChild(this.s2);
-  this.b=document.createElement('div');this.b.className='abs big';this.b.style.cssText='left:0;right:0;bottom:30px;font-size:40px;opacity:0';this.b.innerHTML='See you next Nugget! 👋 &nbsp;&nbsp; Subscribe 🔔';r.appendChild(this.b);
+  this.b=document.createElement('div');this.b.className='abs big';this.b.style.cssText='left:0;right:0;bottom:30px;font-size:40px;opacity:0';this.b.innerHTML='See you for the next Nugget! 👋 &nbsp;&nbsp; Subscribe 🔔';r.appendChild(this.b);
   },update(t,L,c){pop(this.t,L,0.5,0.55,0.4);this.g.style.opacity=prog(L,1.1,0.3);this.g.style.scale=String(lerp(0.5,1,easeBack(prog(L,1.1,0.5))));this.g.style.translate='-50% 0';
-   fade(this.l,L,1.7,0.5);fade(this.s1,L,1.9,0.6);fade(this.s2,L,2.1,0.6);this.b.style.opacity=prog(t,CL.outro2.start,0.4)}};
+   fade(this.l,L,1.7,0.5);this.b.style.opacity=prog(t,CL.bye.start,0.4)}};
 
 // ---------------------------------------------------------------- engine
 const ctxHelpers={caption(text,color,t0){C.text=text;C.color=color;C.t0=t0}};

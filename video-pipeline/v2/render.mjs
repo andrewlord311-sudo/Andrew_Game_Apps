@@ -11,7 +11,7 @@ const out = `${dir}out/${name}/${name}_v2${range[0] !== undefined && range.lengt
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1280, height: 720 } });
 await p.goto(`http://localhost:8767/v2/engine.html?v=${name}`); await p.waitForFunction('window.READY===true');
 const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
-  '-ss', String(t0), '-t', String(t1 - t0), '-i', `${dir}out/${name}/mix.wav`, '-af', 'loudnorm=I=-15:TP=-1.5:LRA=11,pan=stereo|c0=c0|c1=c0,aresample=44100',
+  '-ss', String(t0), '-t', String(t1 - t0), '-i', `${dir}out/${name}/mix.wav`, '-af', 'loudnorm=I=-16.5:TP=-1.5:LRA=11,pan=stereo|c0=c0|c1=c0,aresample=44100',
   '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-ar', '44100', '-ac', '2', '-c:a', 'aac', '-b:a', '192k', '-shortest', out]);
 ff.stderr.on('data', d => process.stderr.write(d));
 const n = Math.round((t1 - t0) * FPS);
