@@ -10,11 +10,11 @@ for l in open(HERE.parent.parent / '.env'):
 KEY = env['ELEVENLABS_API_KEY']
 VOICE = {'melody': env['ELEVENLABS_MELODY_VOICE_ID'], 'barnaby': env['ELEVENLABS_BARNABY_VOICE_ID']}
 SPEED = {'melody': 0.95, 'barnaby': 0.9}    # Andrew liked Daniel being slower; kids' audience
-def gen(who, text, out):
-    meta = out.with_suffix('.json'); h = hashlib.sha1(f"{who}|{text}|{SPEED[who]}".encode()).hexdigest()
+def gen(who, text, out, prev=None):
+    meta = out.with_suffix('.json'); h = hashlib.sha1(f"{who}|{text}|{SPEED[who]}|{prev}".encode()).hexdigest()
     if out.exists() and meta.exists() and json.load(open(meta)).get('hash') == h: return 0
     body = json.dumps({"text": text, "model_id": "eleven_multilingual_v2",
-        "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.3, "speed": SPEED[who]}}).encode()
+        "voice_settings": {"stability": 0.5, "similarity_boost": 0.75, "style": 0.3, "speed": SPEED[who]}, **({"previous_text": prev} if prev else {})}).encode()
     req = urllib.request.Request(f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE[who]}?output_format=mp3_44100_128", body,
         {"xi-api-key": KEY, "Content-Type": "application/json"})
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -27,5 +27,5 @@ if __name__ == '__main__':
     for c in script['shared']:
         if only is None or c['id'] in only: spent += gen(c['who'], c['text'], HERE / 'audio' / 'shared' / f"{c['id']}.mp3")
     for c in script['clips']:
-        if only is None or c['id'] in only: spent += gen(c['who'], c['text'], HERE / 'audio' / name / f"{c['id']}.mp3")
+        if only is None or c['id'] in only: spent += gen(c['who'], c['text'], HERE / 'audio' / name / f"{c['id']}.mp3", c.get('prev'))
     print('credits spent this run (characters):', spent)

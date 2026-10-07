@@ -1,38 +1,162 @@
 {
-  "title": "Some musical names",
-  "nugget": 1,
-  "game": "Name That Part",
-  "gameFile": "name_that_part.html",
-  "shared": [
-    {"id": "opener",  "who": "melody",  "text": "Welcome to Melody and Barnaby's Music Nuggets!"},
-    {"id": "outro1",  "who": "melody",  "text": "Now it's your turn! Play the game, with the link in the description."},
-    {"id": "outro2",  "who": "barnaby", "text": "See you next Nugget!"}
-  ],
-  "clips": [
-    {"id": "today",  "who": "barnaby", "text": "Today we are going to learn some musical names."},
-    {"id": "five",   "who": "melody",  "text": "Music is written on five lines."},
-    {"id": "count",  "who": "melody",  "text": "Count them with me!"},
-    {"id": "n1",     "who": "melody",  "text": "One."},
-    {"id": "n2",     "who": "melody",  "text": "Two."},
-    {"id": "n3",     "who": "melody",  "text": "Three."},
-    {"id": "n4",     "who": "melody",  "text": "Four."},
-    {"id": "n5",     "who": "melody",  "text": "Five."},
-    {"id": "stave",  "who": "melody",  "text": "Five lines together are called a stave."},
-    {"id": "clef1",  "who": "melody",  "text": "This swirly symbol at the start is called a clef."},
-    {"id": "clef2",  "who": "melody",  "text": "This is the treble clef. I sit beside it, for high sounds!"},
-    {"id": "bass",   "who": "barnaby", "text": "And this is the bass clef, with two dots and a curl. I sit beside it, for low sounds."},
-    {"id": "note",   "who": "melody",  "text": "This little blob with a stick is called a note. It tells us which sound to play."},
-    {"id": "line",   "who": "melody",  "text": "A note can sit on a line,"},
-    {"id": "space",  "who": "melody",  "text": "or in a space, between two lines."},
-    {"id": "high",   "who": "barnaby", "text": "Sometimes a note is too high to fit on the stave."},
-    {"id": "ledger", "who": "barnaby", "text": "So it gets a tiny extra line to stand on. That is called a ledger line."},
-    {"id": "again",  "who": "melody",  "text": "Let's say them again!"},
-    {"id": "r1",     "who": "barnaby", "text": "Stave."},
-    {"id": "r2",     "who": "melody",  "text": "Clef."},
-    {"id": "r3",     "who": "barnaby", "text": "Note."},
-    {"id": "r4",     "who": "melody",  "text": "Line."},
-    {"id": "r5",     "who": "barnaby", "text": "Space."},
-    {"id": "r6",     "who": "melody",  "text": "Ledger line."},
-    {"id": "well",   "who": "barnaby", "text": "Brilliant!"}
-  ]
+ "title": "Some musical names",
+ "nugget": 1,
+ "game": "Name That Part",
+ "gameFile": "name_that_part.html",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "hook",
+   "who": "melody",
+   "text": "Have you ever looked at music and wondered what all those lines and dots actually mean? Let's find out!"
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today we are going to learn some musical names."
+  },
+  {
+   "id": "five",
+   "who": "melody",
+   "text": "Music is written on five lines like this."
+  },
+  {
+   "id": "count",
+   "who": "melody",
+   "text": "Count them with me!"
+  },
+  {
+   "id": "n1",
+   "who": "melody",
+   "text": "One."
+  },
+  {
+   "id": "n2",
+   "who": "melody",
+   "text": "Two."
+  },
+  {
+   "id": "n3",
+   "who": "melody",
+   "text": "Three."
+  },
+  {
+   "id": "n4",
+   "who": "melody",
+   "text": "Four."
+  },
+  {
+   "id": "n5",
+   "who": "melody",
+   "text": "Five."
+  },
+  {
+   "id": "stave",
+   "who": "melody",
+   "text": "Five lines together are called a stave."
+  },
+  {
+   "id": "clef1",
+   "who": "melody",
+   "text": "This swirly symbol next to me is called a clef. It tells us how high or low to play."
+  },
+  {
+   "id": "clef2",
+   "who": "melody",
+   "text": "This one is called the treble clef, and it is used for higher sounds!"
+  },
+  {
+   "id": "bass",
+   "who": "barnaby",
+   "text": "And this clef looks totally different. Two dots and a curl. That's the bass clef, for lower sounds!"
+  },
+  {
+   "id": "note",
+   "who": "melody",
+   "text": "This little blob with a stick is called a note. It sits on the stave to show us which sound to play."
+  },
+  {
+   "id": "line",
+   "who": "melody",
+   "text": "A note can sit on a line, like this one,"
+  },
+  {
+   "id": "space",
+   "who": "melody",
+   "text": "or in the gap between two lines, which we call a space."
+  },
+  {
+   "id": "high",
+   "who": "barnaby",
+   "text": "Sometimes a note is too high or too low to fit on the stave."
+  },
+  {
+   "id": "ledger",
+   "who": "barnaby",
+   "text": "We give it a tiny extra line to stand on. A ledger line."
+  },
+  {
+   "id": "again",
+   "who": "melody",
+   "text": "Let's say them one more time:",
+   "prev": "Sometimes a note is too high or too low to fit on the stave. We give it a tiny extra line to stand on. A ledger line."
+  },
+  {
+   "id": "r1",
+   "who": "melody",
+   "text": "Stave.",
+   "prev": "Let's say them one more time:"
+  },
+  {
+   "id": "r2",
+   "who": "barnaby",
+   "text": "Cleff.",
+   "prev": "Stave.",
+   "show": "Clef."
+  },
+  {
+   "id": "r3",
+   "who": "melody",
+   "text": "Note.",
+   "prev": "Clef."
+  },
+  {
+   "id": "r4",
+   "who": "barnaby",
+   "text": "Line and space.",
+   "prev": "Note."
+  },
+  {
+   "id": "r5",
+   "who": "melody",
+   "text": "Ledger line.",
+   "prev": "Line and space."
+  },
+  {
+   "id": "well",
+   "who": "barnaby",
+   "text": "Brilliant!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "game2",
+   "who": "barnaby",
+   "text": "Open Name That Part, and show what you've learned!"
+  }
+ ]
 }
