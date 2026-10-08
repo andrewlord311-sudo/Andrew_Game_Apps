@@ -174,6 +174,7 @@
 
         const grid = document.getElementById('games-grid');
 
+        document.querySelectorAll('[data-mascot]').forEach(el => { el.outerHTML = MASCOTS.html(el.dataset.mascot, el.dataset.class); });
         const MODE = window.ARCADE_MODE || 'all';
         const VISIBLE = MODE === 'published' ? GAMES.filter(g => PUBLISHED.includes(g.file) && !g.comingSoon) : GAMES;
         if (MODE === 'published') {

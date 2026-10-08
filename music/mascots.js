@@ -24,6 +24,8 @@
     point: { l: 8,   r: -92 },
     cheer: { l: 140, r: -140 },
     think: { l: 8,   r: -150 },
+    pointL: { l: 92,  r: -8 },
+    waveL:  { l: 138, r: -8 },
   };
 
   // ============================================================ MELODY
@@ -116,5 +118,10 @@
   function svg(inner, bust) {
     return `<svg viewBox="${bust ? "8 -9 84 85" : "0 -9 100 123"}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
   }
-  window.MASCOTS = { melody, barnaby, POSES };
+  // convenience for pages: an inline bust (head and shoulders) with the page's own CSS classes on the <svg>
+  function html(name, cls = "", opts = {}) {
+    const f = name === "barnaby" ? barnaby : melody;
+    return f({ bust: true, ...opts }).replace("<svg ", `<svg class="${cls}" `);
+  }
+  window.MASCOTS = { melody, barnaby, POSES, html };
 })();

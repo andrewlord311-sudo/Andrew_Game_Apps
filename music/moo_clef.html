@@ -104,6 +104,7 @@
         </div>
 
     </div>
+    <script src="mascots.js"></script>
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
@@ -149,20 +150,7 @@
             incorrect: "Not quite — check which space or line it's sitting in.",
         };
 
-        const SVG_BARNABY = `
-        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
-            <circle cx="25" cy="25" r="12" fill="#818cf8" />
-            <circle cx="25" cy="25" r="7" fill="#c7d2fe" />
-            <circle cx="75" cy="25" r="12" fill="#818cf8" />
-            <circle cx="75" cy="25" r="7" fill="#c7d2fe" />
-            <circle cx="50" cy="55" r="32" fill="#6366f1" />
-            <circle cx="30" cy="62" r="5" fill="#f472b6" opacity="0.6" />
-            <circle cx="70" cy="62" r="5" fill="#f472b6" opacity="0.6" />
-            <ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff" />
-            <polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round" />
-            <path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
-            <path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
-        </svg>`;
+        const SVG_BARNABY = MASCOTS.html('barnaby', 'w-16 h-16 drop-shadow-md');
 
         let audioCtx = null;
         function getAudioContext() {

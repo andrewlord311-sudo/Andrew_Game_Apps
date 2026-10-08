@@ -68,23 +68,7 @@
             
             <!-- Melody (Left) -->
             <div class="mascot-bounce hidden md:block" style="animation-delay: 0.2s;">
-                <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-lg">
-                    <!-- Body -->
-                    <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
-                    <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
-                    <!-- Belly (light patch) -->
-                    <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
-                    <!-- Eyes -->
-                    <circle cx="65" cy="40" r="7" fill="#ffffff" />
-                    <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
-                    <circle cx="69" cy="38" r="1.5" fill="#ffffff" /> <!-- Glint -->
-                    <!-- Beak -->
-                    <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
-                    <!-- Wing -->
-                    <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
-                    <!-- Head Tuft / Feather -->
-                    <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
-                </svg>
+                <span data-mascot="melody" data-class="w-24 h-24 drop-shadow-lg"></span>
             </div>
 
             <div class="max-w-xl">
@@ -95,25 +79,7 @@
 
             <!-- Barnaby (Right) -->
             <div class="mascot-bounce hidden md:block" style="animation-delay: 0.8s;">
-                <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-lg">
-                    <!-- Ears -->
-                    <circle cx="25" cy="25" r="12" fill="#818cf8" />
-                    <circle cx="25" cy="25" r="7" fill="#c7d2fe" />
-                    <circle cx="75" cy="25" r="12" fill="#818cf8" />
-                    <circle cx="75" cy="25" r="7" fill="#c7d2fe" />
-                    <!-- Head -->
-                    <circle cx="50" cy="55" r="32" fill="#6366f1" />
-                    <!-- Cheeks (Blush) -->
-                    <circle cx="30" cy="62" r="5" fill="#f472b6" opacity="0.6" />
-                    <circle cx="70" cy="62" r="5" fill="#f472b6" opacity="0.6" />
-                    <!-- Muzzle -->
-                    <ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff" />
-                    <!-- Nose -->
-                    <polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round" />
-                    <!-- Eyes (Happy Arcs) -->
-                    <path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
-                    <path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
-                </svg>
+                <span data-mascot="barnaby" data-class="w-24 h-24 drop-shadow-lg"></span>
             </div>
 
         </header>
@@ -142,6 +108,7 @@
     </div>
     <script src="auth.js"></script>
     <script src="game-progress.js"></script>
+    <script src="mascots.js"></script>
     <script>window.ARCADE_MODE = "all";</script>
     <script src="arcade-core.js"></script>
 </body>

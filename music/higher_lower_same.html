@@ -158,6 +158,7 @@
         </div>
 
     </div>
+    <script src="mascots.js"></script>
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
@@ -264,33 +265,9 @@
         }
         function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
 
-        const SVG_MELODY = `
-        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
-            <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
-            <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
-            <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
-            <circle cx="65" cy="40" r="7" fill="#ffffff" />
-            <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
-            <circle cx="69" cy="38" r="1.5" fill="#ffffff" />
-            <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
-            <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
-            <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
-        </svg>`;
+        const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
 
-        const SVG_BARNABY = `
-        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
-            <circle cx="25" cy="25" r="12" fill="#818cf8" />
-            <circle cx="25" cy="25" r="7" fill="#c7d2fe" />
-            <circle cx="75" cy="25" r="12" fill="#818cf8" />
-            <circle cx="75" cy="25" r="7" fill="#c7d2fe" />
-            <circle cx="50" cy="55" r="32" fill="#6366f1" />
-            <circle cx="30" cy="62" r="5" fill="#f472b6" opacity="0.6" />
-            <circle cx="70" cy="62" r="5" fill="#f472b6" opacity="0.6" />
-            <ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff" />
-            <polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round" />
-            <path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
-            <path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round" />
-        </svg>`;
+        const SVG_BARNABY = MASCOTS.html('barnaby', 'w-16 h-16 drop-shadow-md');
 
         function setMascotAvatar() {
             document.getElementById('mascot-avatar').innerHTML = currentClef === 'treble' ? SVG_MELODY : SVG_BARNABY;
