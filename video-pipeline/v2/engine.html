@@ -133,7 +133,7 @@ S.hook={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
 
 S.today={ui:{ribbon:1,hosts:'side',bubble:false},build(r){
   this.chip=chip(r,'Nugget '+TL.nugget,'var(--orange)',640,128);
-  this.a=document.createElement('div');this.a.className='big abs';this.a.style.cssText='left:0;right:0;top:200px;font-size:46px;font-family:Quicksand,sans-serif;font-weight:700';this.a.textContent='Today we are going to learn';r.appendChild(this.a);
+  this.a=document.createElement('div');this.a.className='big abs';this.a.style.cssText='left:0;right:0;top:200px;font-size:46px;font-family:Quicksand,sans-serif;font-weight:700';this.a.textContent=TL.todayLead||'Today we are going to learn';r.appendChild(this.a);
   this.b=document.createElement('div');this.b.className='big abs';this.b.style.cssText='left:0;right:0;top:290px;font-size:118px';this.b.textContent=TL.title;r.appendChild(this.b);
   },update(t,L,c){pop(this.chip,L,0.25,0.4);fade(this.a,L,0.45,0.5);const tm=(TL.titleAt?wt('today',TL.titleAt):CL.today.start+1.9)-0.2;this.b.style.opacity=prog(t,tm,0.3);this.b.style.scale=String(lerp(0.5,1,easeBack(prog(t,tm,0.55))));
    this.b.style.rotate=(1-prog(t,tm,0.7))*-4+'deg'}};
@@ -247,9 +247,16 @@ function insetCard(r,kind){ // a magnified close-up of how the note meets the li
 
 S.v2recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:[],scale:3.6,w:330,cy:335});
+  const y=this.st.lineY;
+  this.glow=document.createElement('div');this.glow.className='abs';
+  this.glow.style.cssText=`left:${this.st.x0-14}px;top:${y[0]-16}px;width:${this.st.x1-this.st.x0+28}px;height:${y[4]-y[0]+32}px;border-radius:18px;background:rgba(13,148,136,.28);box-shadow:0 0 0 5px rgba(13,148,136,.7),0 0 34px 10px rgba(45,212,191,.55);opacity:0`;
+  r.appendChild(this.glow);
   },update(t,L,c){const tw=wt('recap1','stave');
-   this.st.lines.forEach((l,i)=>{l.style.strokeWidth=t>=tw-0.05&&t<tw+1.2?String(1+1.4*Math.abs(Math.sin((t-tw)*6))):'1'});
-   if(t>=tw-0.3)c.caption('STAVE','#241f3d',tw-0.3)}};
+   // three clear pulses on the word "stave" (and a gentle one just before, as the sentence reaches it)
+   let g=0;for(let k=0;k<3;k++){const d=t-(tw-0.15+0.62*k);if(d>=0&&d<0.55)g=Math.max(g,Math.sin(Math.PI*d/0.55))}
+   this.glow.style.opacity=String(g);
+   this.st.lines.forEach(l=>{l.style.strokeWidth=String(1+1.8*g)});
+   if(t>=tw-0.15)c.caption('STAVE','#241f3d',tw-0.15)}};
 
 S.v2count={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:[],scale:3.6,w:330,cy:335});
