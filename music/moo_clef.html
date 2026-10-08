@@ -440,7 +440,7 @@
             } else {
                 oMsg.innerText = `Amazing! You can name every space and line on the bass clef!`;
                 oBtn.innerText = "Back to Arcade!";
-                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
             overlay.classList.remove('hidden');
         }

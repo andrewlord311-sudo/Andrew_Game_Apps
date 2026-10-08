@@ -225,7 +225,7 @@
             ctx.fillStyle = '#1e293b'; ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
             ctx.font = `${GAP * 4}px "Noto Music", serif`;
             if (round.clef === 'treble') ctx.fillText('\u{1D11E}', X0 + 8, BOTTOM);
-            else ctx.fillText('\u{1D122}', X0 + 8, lineY(3));
+            else ctx.fillText('\u{1D122}', X0 + 8, TOP + 3.625 * GAP);       // same placement as every other game
             // note (if this round has one) and its ledger line
             if (round.note !== null) {
                 const y = stepY(round.note);
@@ -246,7 +246,7 @@
             } else if (round.target === 'stave') {
                 roundRect(X0 - 8, TOP - 12, X1 - X0 + 16, 4 * GAP + 24, 14); ctx.fill();
             } else if (round.target === 'clef') {
-                const top = round.clef === 'treble' ? TOP - 30 : TOP - 10, h = round.clef === 'treble' ? 4 * GAP + 62 : 4 * GAP + 20;
+                const top = round.clef === 'treble' ? TOP - 30 : TOP - 10, h = round.clef === 'treble' ? 4 * GAP + 62 : 3.4 * GAP + 20;
                 roundRect(X0 + 0, top, 62, h, 16); ctx.fill();
             } else if (round.target === 'note') {
                 ctx.beginPath(); ctx.arc(NOTE_X, stepY(round.note), 26, 0, 2 * Math.PI); ctx.fill();
@@ -359,7 +359,7 @@
                 btn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
                 msg.innerText = "Amazing! You know your musical names!"; btn.innerText = "Back to Arcade!";
-                btn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
+                btn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
             document.getElementById('overlay').classList.remove('hidden');
         }

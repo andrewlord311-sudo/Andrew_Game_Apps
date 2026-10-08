@@ -407,7 +407,7 @@
             } else {
                 oMsg.innerText = `Amazing! You know your note values!`;
                 oBtn.innerText = "Back to Arcade!";
-                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
             overlay.classList.remove('hidden');
         }

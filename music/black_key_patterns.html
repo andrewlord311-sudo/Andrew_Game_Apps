@@ -498,7 +498,7 @@
             } else {
                 oMsg.innerText = `Fantastic! You can use black key patterns to find your way anywhere!`;
                 oBtn.innerText = "Back to Arcade!";
-                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
             overlay.classList.remove('hidden');
         }

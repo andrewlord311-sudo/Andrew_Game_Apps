@@ -584,7 +584,7 @@
                 oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => {
                     dismissOverlay();
-                    location.href = "music_arcade.html";
+                    location.href = (window.ARCADE_URL || "music_arcade.html");
                 };
             }
 
