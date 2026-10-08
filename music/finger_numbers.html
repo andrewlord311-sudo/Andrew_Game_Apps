@@ -116,6 +116,7 @@
         </div>
 
     </div>
+    <script src="mascots.js"></script>
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
@@ -197,18 +198,7 @@
         }
         function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
 
-        const SVG_MELODY = `
-        <svg viewBox="0 0 100 100" class="w-16 h-16 drop-shadow-md">
-            <circle cx="50" cy="50" r="35" fill="#2dd4bf" />
-            <path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488" />
-            <ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1" />
-            <circle cx="65" cy="40" r="7" fill="#ffffff" />
-            <circle cx="67" cy="40" r="3.5" fill="#0f172a" />
-            <circle cx="69" cy="38" r="1.5" fill="#ffffff" />
-            <polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round" />
-            <path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6" />
-            <path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf" />
-        </svg>`;
+        const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
 
         // Renders the hand as if looking down at the BACK of your own hand
         // resting on the keyboard (fingers pointing down toward the keys,
