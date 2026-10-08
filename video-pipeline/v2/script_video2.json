@@ -37,7 +37,9 @@
   {
    "id": "count",
    "who": "melody",
-   "text": "The stave has five lines. The gaps between them are spaces. Five lines, and four spaces!"
+   "text": "The stave has five lines. <break time=\"0.55s\" /> The gaps between them are spaces. <break time=\"0.6s\" /> Five lines, <break time=\"0.3s\" /> and four spaces!",
+   "show": "The stave has five lines. The gaps between them are spaces. Five lines, and four spaces!",
+   "speed": 0.88
   },
   {
    "id": "online",
@@ -255,5 +257,6 @@
  "gapOverride": {
   "ql1": 0.8,
   "qwell": 0.7
- }
+ },
+ "todayLead": "Today we are going to find out"
 }
