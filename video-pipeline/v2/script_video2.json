@@ -25,7 +25,9 @@
   {
    "id": "recap1",
    "who": "melody",
-   "text": "Last time, we met the stave."
+   "text": "Last time, <break time=\"0.45s\" /> we met <break time=\"0.35s\" /> the stave.",
+   "show": "Last time, we met the stave.",
+   "speed": 0.88
   },
   {
    "id": "today",
@@ -105,7 +107,7 @@
    ],
    "lead": 0.6,
    "gap": 0.0,
-   "tail": 1.8
+   "tail": 2.6
   },
   {
    "id": "today",

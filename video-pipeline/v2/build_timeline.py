@@ -48,6 +48,10 @@ def est_words(c):
         d = (len(w) + 1.5) / tot * (c['dur'] - 0.2); out.append([w, round(t, 3), round(t + d * 0.85, 3)]); t += d
     return out
 for c in clips.values(): c['words'] = est_words(c) if c['est'] else words_of(c['path'])
+for c in clips.values():
+    if not c['est']:
+        lim = c['dur'] - 0.12
+        for w in c['words']: w[1] = round(min(w[1], lim), 3); w[2] = round(min(w[2], c['dur']), 3)
 def W(cid, word, nth=0):
     """absolute time (s) the nth spoken word starting with `word` begins in clip cid; falls back to just after the clip starts"""
     hits = [w for w in clips[cid]['words'] if w[0].startswith(word)]
