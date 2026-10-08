@@ -1,0 +1,13 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Animals lab</title>
+<style>body{margin:0;padding:18px;font-family:sans-serif;background:#fff7ea}.row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+.big{width:300px;height:300px;background:#fff;border-radius:22px;box-shadow:0 6px 0 rgba(0,0,0,.1);padding:6px}.big svg{width:100%;height:100%}
+.strip{display:flex;gap:6px;align-items:center;margin-bottom:6px}.strip div{width:92px;height:92px;background:#fff;border-radius:14px;box-shadow:0 3px 0 rgba(0,0,0,.08)}.strip svg{width:100%;height:100%}
+.rw-part{opacity:1}</style></head><body>
+<div class="row" id="big"></div><div id="strips"></div>
+<script src="animals.js"></script>
+<script>
+const {SPECIES,PART_ORDER,animalSvg}=ANIMAL_SET;
+for(const k of Object.keys(SPECIES)){document.getElementById('big').insertAdjacentHTML('beforeend',`<div class="big">${animalSvg(k,PART_ORDER)}</div>`);}
+for(const k of Object.keys(SPECIES)){let h='<div class="strip">';for(let n=1;n<=8;n++)h+=`<div>${animalSvg(k,PART_ORDER.slice(0,n))}</div>`;document.getElementById('strips').insertAdjacentHTML('beforeend',h+'</div>');}
+window.READY=true;
+</script></body></html>
