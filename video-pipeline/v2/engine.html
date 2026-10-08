@@ -292,14 +292,14 @@ S.v2quick={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
     return {w,st,h,bd,ch,kind}});
   this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}});
   },update(t,L,c){
-   const ws=[wt('quick','line',0),wt('quick','space',0),wt('quick','space',1),wt('quick','line',1)];
+   const ws=[wt('ql1','line'),wt('qs1','space'),wt('qs2','space'),wt('ql2','line')];
    let cur=-1;ws.forEach((w,i)=>{if(t>=w-0.55)cur=i});
    this.rounds.forEach((R,i)=>{const t0=ws[i]-0.55,end=i<3?ws[i+1]-0.55:ws[3]+1.7;const on=t>=t0&&t<end;const p=prog(t,t0,0.3);R.w.style.opacity=on?String(clamp(p*2)):'0';
      const h=R.h;h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 100%';h.sn.style.transform=`translateY(${(1-easeBack(p))*-60}px)`;
      const shown=t>=ws[i]-0.05;R.bd.style.opacity=shown?String(0.55+0.3*Math.sin(t*6)):'0';R.ch.style.opacity=shown?String(clamp(prog(t,ws[i]-0.05,0.25)*2)):'0';
      R.ch.style.scale=String(shown?lerp(0.5,1,easeBack(prog(t,ws[i]-0.05,0.4))):0.5)});
-   if(cur>=0&&t>=ws[cur]-0.05)c.caption(this.rounds[cur].kind==='line'?'LINE':'SPACE',this.rounds[cur].kind==='line'?'var(--melody-deep)':'var(--pink)',ws[cur]-0.05);
-   const tw=ws[3]+0.7;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}};
+   if(cur>=0&&t>=ws[cur]-0.05&&t<(cur<3?ws[cur+1]-0.5:ws[3]+1.0))c.caption(this.rounds[cur].kind==='line'?'LINE':'SPACE',this.rounds[cur].kind==='line'?'var(--melody-deep)':'var(--pink)',ws[cur]-0.05);
+   const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}};
 
 // the closing game call, with the game's animals hopping in
 S.outro2=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){

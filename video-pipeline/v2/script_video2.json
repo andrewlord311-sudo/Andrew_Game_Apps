@@ -1,45 +1,257 @@
 {
-  "title": "Where notes live",
-  "titleAt": "where",
-  "nugget": 2,
-  "game": "Line & Space Safari",
-  "gameFile": "line_and_space_safari.html",
-  "shared": [
-    {"id": "opener", "who": "melody", "text": "Welcome to Melody and Barnaby's Music Nuggets!"},
-    {"id": "game1",  "who": "melody", "text": "Now it's your turn!"},
-    {"id": "bye",    "who": "melody", "text": "See you for the next Nugget!"}
-  ],
-  "clips": [
-    {"id": "recap1",  "who": "melody",  "text": "Last time, we met the stave."},
-    {"id": "today",   "who": "barnaby", "text": "Today we are going to find out where notes live."},
-    {"id": "count",   "who": "melody",  "text": "The stave has five lines. The gaps between them are spaces. Five lines, and four spaces!"},
-    {"id": "online",  "who": "barnaby", "text": "If the line goes right through the middle of the note, the note is on a line."},
-    {"id": "inspace", "who": "barnaby", "text": "If the note sits snug between two lines, it is in a space."},
-    {"id": "quick",   "who": "melody",  "text": "Let's try. Line... Space... Space... Line! You've got it!"},
-    {"id": "game2",   "who": "barnaby", "text": "Come and help the animals find their homes in Line and Space Safari!"}
-  ],
-  "scenes": [
-    {"id": "opener",  "clips": ["opener"],  "lead": 0.8, "gap": 0.0, "tail": 0.8},
-    {"id": "v2recap", "clips": ["recap1"],  "lead": 0.4, "gap": 0.0, "tail": 1.0},
-    {"id": "today",   "clips": ["today"],   "lead": 0.4, "gap": 0.0, "tail": 0.6},
-    {"id": "v2count", "clips": ["count"],   "lead": 0.4, "gap": 0.0, "tail": 1.2},
-    {"id": "v2line",  "clips": ["online"],  "lead": 0.4, "gap": 0.0, "tail": 1.2},
-    {"id": "v2space", "clips": ["inspace"], "lead": 0.4, "gap": 0.0, "tail": 1.2},
-    {"id": "v2quick", "clips": ["quick"],   "lead": 0.4, "gap": 0.0, "tail": 1.0},
-    {"id": "outro2",  "clips": ["game1", "game2", "bye"], "lead": 0.6, "gap": 0.4, "tail": 3.4}
-  ],
-  "events": [
-    {"kind": "pop", "clip": "count", "word": "five", "nth": 0, "off": -0.05},
-    {"kind": "pop", "clip": "count", "word": "gaps", "off": -0.05},
-    {"kind": "pop", "clip": "online", "word": "middle", "off": -0.1},
-    {"kind": "tone", "f": "g4", "clip": "online", "word": "middle", "off": 0.0},
-    {"kind": "pop", "clip": "inspace", "word": "snug", "off": -0.1},
-    {"kind": "tone", "f": "c5", "clip": "inspace", "word": "snug", "off": 0.0},
-    {"kind": "tone", "f": "g4", "clip": "quick", "word": "line", "nth": 0, "off": -0.5},
-    {"kind": "tone", "f": "c5", "clip": "quick", "word": "space", "nth": 0, "off": -0.5},
-    {"kind": "tone", "f": "a4", "clip": "quick", "word": "space", "nth": 1, "off": -0.5},
-    {"kind": "tone", "f": "d5", "clip": "quick", "word": "line", "nth": 1, "off": -0.5},
-    {"kind": "sparkle", "clip": "quick", "from": "end", "off": 0.05},
-    {"kind": "pop", "clip": "game2", "word": "animals", "off": 0.0}
-  ]
+ "title": "Where notes live",
+ "titleAt": "where",
+ "nugget": 2,
+ "game": "Line & Space Safari",
+ "gameFile": "line_and_space_safari.html",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "recap1",
+   "who": "melody",
+   "text": "Last time, we met the stave."
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today we are going to find out where notes live."
+  },
+  {
+   "id": "count",
+   "who": "melody",
+   "text": "The stave has five lines. The gaps between them are spaces. Five lines, and four spaces!"
+  },
+  {
+   "id": "online",
+   "who": "barnaby",
+   "text": "If the line goes right through the middle of the note, the note is on a line."
+  },
+  {
+   "id": "inspace",
+   "who": "barnaby",
+   "text": "If the note sits snug between two lines, it is in a space."
+  },
+  {
+   "id": "qintro",
+   "who": "melody",
+   "text": "Let's try!"
+  },
+  {
+   "id": "ql1",
+   "who": "barnaby",
+   "text": "Line.",
+   "prev": "Let's try!"
+  },
+  {
+   "id": "qs1",
+   "who": "melody",
+   "text": "Space.",
+   "prev": "Line."
+  },
+  {
+   "id": "qs2",
+   "who": "barnaby",
+   "text": "Space.",
+   "prev": "Space."
+  },
+  {
+   "id": "ql2",
+   "who": "melody",
+   "text": "Line.",
+   "prev": "Space."
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "prev": "Line."
+  },
+  {
+   "id": "game2",
+   "who": "barnaby",
+   "text": "Come and help the animals find their homes in Line and Space Safari!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v2recap",
+   "clips": [
+    "recap1"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 1.0
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 0.6
+  },
+  {
+   "id": "v2count",
+   "clips": [
+    "count"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 1.2
+  },
+  {
+   "id": "v2line",
+   "clips": [
+    "online"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 1.2
+  },
+  {
+   "id": "v2space",
+   "clips": [
+    "inspace"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 1.2
+  },
+  {
+   "id": "v2quick",
+   "clips": [
+    "qintro",
+    "ql1",
+    "qs1",
+    "qs2",
+    "ql2",
+    "qwell"
+   ],
+   "lead": 0.4,
+   "gap": 0.9,
+   "tail": 1.0
+  },
+  {
+   "id": "outro2",
+   "clips": [
+    "game1",
+    "game2",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "pop",
+   "clip": "count",
+   "word": "five",
+   "nth": 0,
+   "off": -0.05
+  },
+  {
+   "kind": "pop",
+   "clip": "count",
+   "word": "gaps",
+   "off": -0.05
+  },
+  {
+   "kind": "pop",
+   "clip": "online",
+   "word": "middle",
+   "off": -0.1
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "online",
+   "word": "middle",
+   "off": 0.0
+  },
+  {
+   "kind": "pop",
+   "clip": "inspace",
+   "word": "snug",
+   "off": -0.1
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "inspace",
+   "word": "snug",
+   "off": 0.0
+  },
+  {
+   "kind": "pop",
+   "clip": "game2",
+   "word": "animals",
+   "off": 0.0
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "ql1",
+   "word": "line",
+   "off": -0.5
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "qs1",
+   "word": "space",
+   "off": -0.5
+  },
+  {
+   "kind": "tone",
+   "f": "a4",
+   "clip": "qs2",
+   "word": "space",
+   "off": -0.5
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "ql2",
+   "word": "line",
+   "off": -0.5
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  }
+ ],
+ "gapOverride": {
+  "ql1": 0.8,
+  "qwell": 0.7
+ }
 }
