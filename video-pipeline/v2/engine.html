@@ -234,11 +234,15 @@ function bandAt(r,st,i,kind,color){ // a coloured band on line i (0 bottom..4 to
   return kind==='line'?band(r,st.x0,st.x1,y[4-i]-9,y[4-i]+9,color):band(r,st.x0,st.x1,y[4-i-1]+7,y[4-i]-7,color)}
 function flash(el,t,t0,hold=0.55,peak=0.9){const d=t-t0;el.style.opacity=d<0?0:d<0.1?String(peak*d/0.1):String(Math.max(0,peak*(1-(d-0.1)/hold)))}
 function insetCard(r,kind){ // a magnified close-up of how the note meets the line(s)
-  const d=document.createElement('div');d.className='abs';d.style.cssText='left:430px;top:452px;width:420px;height:136px;background:#fff;border-radius:26px;box-shadow:0 8px 0 rgba(0,0,0,.12);opacity:0;overflow:hidden';
-  const col=kind==='line'?'#0d9488':'#be185d', bg=kind==='line'?'rgba(13,148,136,.18)':'rgba(236,72,153,.18)';
-  const lines=kind==='line'?`<rect x="0" y="62" width="420" height="12" fill="${col}"/>`:`<rect x="0" y="34" width="420" height="10" fill="#475569"/><rect x="0" y="94" width="420" height="10" fill="#475569"/><rect x="0" y="44" width="420" height="50" fill="${bg}"/>`;
-  const cy=kind==='line'?68:69, rx=kind==='line'?44:40, ry=kind==='line'?30:25;
-  d.innerHTML=`<svg viewBox="0 0 420 136" width="420" height="136">${lines}<ellipse cx="210" cy="${cy}" rx="${rx}" ry="${ry}" fill="${BLUE}" stroke="#1e3a8a" stroke-width="3" transform="rotate(-18 210 ${cy})"/><path d="M${210+rx-6},${cy-6} v-62" stroke="#1e3a8a" stroke-width="5" stroke-linecap="round"/><text x="14" y="128" font-family="Fredoka One" font-size="20" fill="${col}">${kind==='line'?'a line through the middle':'snug between two lines'}</text></svg>`;
+  const d=document.createElement('div');d.className='abs';d.style.cssText='left:430px;top:428px;width:420px;height:150px;background:#fff;border-radius:26px;box-shadow:0 8px 0 rgba(0,0,0,.12);opacity:0;overflow:hidden';
+  const line=kind==='line', col=line?'#0d9488':'#be185d', bg=line?'rgba(13,148,136,.18)':'rgba(236,72,153,.18)';
+  const cx=210, cy=line?104:106, rx=line?42:38, ry=line?29:27, phi=-18*Math.PI/180;
+  const lines=line?`<rect x="0" y="${cy-6}" width="420" height="12" fill="${col}"/>`
+    :`<rect x="0" y="${cy-ry-6}" width="420" height="10" fill="#475569"/><rect x="0" y="${cy+ry-4}" width="420" height="10" fill="#475569"/><rect x="0" y="${cy-ry+4}" width="420" height="${2*ry-8}" fill="${bg}"/>`;
+  // where the stem leaves the rotated head: its rightmost point
+  const ax=rx*Math.cos(phi), bx=-ry*Math.sin(phi), tt=Math.atan2(bx,ax);
+  const sx=cx+ax*Math.cos(tt)+bx*Math.sin(tt)-1.5, sy=cy+rx*Math.sin(phi)*Math.cos(tt)+ry*Math.cos(phi)*Math.sin(tt)+2;
+  d.innerHTML=`<svg viewBox="0 0 420 150" width="420" height="150">${lines}<path d="M${sx},${sy} V${sy-84}" stroke="#1e3a8a" stroke-width="7" stroke-linecap="round"/><ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${BLUE}" stroke="#1e3a8a" stroke-width="3" transform="rotate(-18 ${cx} ${cy})"/></svg>`;
   r.appendChild(d);return d}
 
 S.v2recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
@@ -251,15 +255,23 @@ S.v2count={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:[],scale:3.6,w:330,cy:335});
   this.lb=[0,1,2,3,4].map(i=>bandAt(r,this.st,i,'line','rgba(13,148,136,.6)'));
   this.sb=[0,1,2,3].map(i=>bandAt(r,this.st,i,'space','rgba(236,72,153,.5)'));
+  const y=this.st.lineY;
+  this.ln=[0,1,2,3,4].map(i=>{const n=document.createElement('div');n.className='num';n.textContent=i+1;n.style.background='#0d9488';n.style.left=(this.st.x0-56)+'px';n.style.top=(y[4-i]-17)+'px';r.appendChild(n);return n});
+  this.sn=[0,1,2,3].map(i=>{const n=document.createElement('div');n.className='num';n.textContent=i+1;n.style.background='#db2777';n.style.left=(this.st.x1+14)+'px';n.style.top=((y[4-i]+y[3-i])/2-17)+'px';r.appendChild(n);return n});
   this.c1=chip(r,'5 lines','var(--melody-deep)',this.st.x1-90,this.st.lineY[4]+34);
   this.c2=chip(r,'4 spaces','var(--pink)',this.st.x1-100,this.st.lineY[4]+34);
   },update(t,L,c){
    const f0=wt('count','five',0),g0=wt('count','gaps'),f1=wt('count','five',1),n4=wt('count','four');
-   this.lb.forEach((b,i)=>{let o=0;const a=flash(b,t,f0+i*0.17,0.5,0.85);o=parseFloat(b.style.opacity||0);
-     const p1=t>=f1-0.02&&t<f1+0.9?0.8*Math.abs(Math.sin((t-f1)*5)):0;b.style.opacity=String(Math.max(o,p1))});
-   this.sb.forEach((b,i)=>{flash(b,t,g0+i*0.2,0.5,0.8);const o=parseFloat(b.style.opacity||0);const p2=t>=n4-0.02&&t<n4+0.9?0.75*Math.abs(Math.sin((t-n4)*5)):0;b.style.opacity=String(Math.max(o,p2))});
-   pop(this.c1,t,wt('count','lines',0)-0.1,0.4);this.c1.style.opacity=t<g0-0.2?this.c1.style.opacity:'0';
-   pop(this.c2,t,wt('count','spaces',0)-0.2,0.4);this.c2.style.opacity=t<g0?'0':this.c2.style.opacity;
+   const lv=(a,b)=>clamp((t-a)/0.25), pulse=0.78+0.22*Math.sin(t*6);
+   // the phase decides what is bright: lines (first count) -> spaces -> lines again -> spaces again, each stays lit until the next begins
+   const phase=t<g0-0.1?0:t<f1-0.05?1:t<n4-0.05?2:3;
+   const linesOn=(phase===0||phase===2), spacesOn=(phase===1||phase===3);
+   this.lb.forEach((b,i)=>{const lit=phase===0?lv(f0+i*0.26):phase===2?1:0.0;const op=(linesOn?lit*(phase===2?pulse:0.8):0.12);b.style.opacity=String(t<f0-0.1?0:op);
+     this.ln[i].style.opacity=String(t<f0-0.1?0:linesOn?clamp(lit*2):0.25)});
+   this.sb.forEach((b,i)=>{const lit=phase===1?lv(g0+i*0.3):phase===3?1:(t>=g0?0.9:0);const op=spacesOn?lit*(phase===3?pulse:0.75):(t>=g0?0.12:0);b.style.opacity=String(op);
+     this.sn[i].style.opacity=String(t<g0-0.1?0:spacesOn?clamp(lit*2):0.25)});
+   this.c1.style.opacity=String(t>=wt('count','lines',0)-0.1&&t<g0-0.1?1:0);this.c1.style.scale=String(lerp(0.6,1,easeBack(prog(t,wt('count','lines',0)-0.1,0.4))));
+   this.c2.style.opacity=String(t>=wt('count','spaces',0)-0.2&&t<f1-0.1?1:0);this.c2.style.scale=String(lerp(0.6,1,easeBack(prog(t,wt('count','spaces',0)-0.2,0.4))));
    if(t<g0-0.05){if(t>=f0-0.1)c.caption('5 LINES','var(--melody-deep)',f0-0.1)}
    else if(t<f1-0.05)c.caption('4 SPACES','var(--pink)',g0-0.05);
    else if(t<n4-0.05)c.caption('5 LINES','var(--melody-deep)',f1-0.05);
