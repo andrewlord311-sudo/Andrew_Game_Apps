@@ -63,11 +63,13 @@
       <!-- face -->
       ${eye(39, 38, 5.6, blink)}${eye(61, 38, 5.6, blink)}${cheek(30, 47)}${cheek(70, 47)}
       <path d="M33,28 Q39,24 45,27 M67,28 Q61,24 55,27" stroke="${INK}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".75"/>
-      <!-- beak: top half fixed, bottom half drops as the mouth opens -->
-      ${m > 0.05 ? `<path d="M43,${50} Q50,${50 + beakOpen + 3} 57,50 Z" fill="#7a2a3a" ${noS}/><ellipse cx="50" cy="${50 + beakOpen * 0.55}" rx="3.6" ry="${Math.min(2.4, beakOpen * 0.35)}" fill="#ff8fa0" ${noS}/>
-        <path d="M43.5,${50} Q50,${50 + beakOpen + 4} 56.5,50 Q50,${50 + beakOpen} 43.5,50 Z" fill="${orange}" ${o} stroke-width="1.8"/>` : ""}
-      <path d="M43,45 Q50,40.5 57,45 Q55,51.5 50,52.5 Q45,51.5 43,45 Z" fill="${orange}" ${o} stroke-width="1.9"/>
-      <path d="M46,45 Q50,43.2 54,45" stroke="#ffd29a" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".9"/>`;
+      <!-- beak: the top half stays put; as the mouth opens the lower half drops and a dark inside shows between -->
+      ${m > 0.05 ? (() => { const op = 1.5 + 6.5 * m, y0 = 49.2; return `
+        <ellipse cx="50" cy="${y0 + op * 0.5}" rx="5.6" ry="${op * 0.62 + 0.6}" fill="#6e1f3a" ${noS}/>
+        <ellipse cx="50" cy="${y0 + op * 0.78}" rx="3.2" ry="${Math.max(0.6, op * 0.28)}" fill="#ff8fa0" ${noS}/>
+        <path d="M44.2,${y0 + op} Q50,${y0 + op + 4.6} 55.8,${y0 + op} Q50,${y0 + op - 1.4} 44.2,${y0 + op} Z" fill="${orange}" ${o} stroke-width="1.8"/>`; })() : ""}
+      <path d="M43,45 Q50,40.2 57,45 Q55,50 50,50.8 Q45,50 43,45 Z" fill="${orange}" ${o} stroke-width="1.9"/>
+      <path d="M46,44.6 Q50,42.8 54,44.6" stroke="#ffd29a" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".9"/>`;
     return svg(body, bust);
   }
 

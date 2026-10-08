@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>Nugget video engine v2</title>
-<script src="../vendor/vexflow.js"></script><script src="../notation.js"></script>
+<script src="../vendor/vexflow.js"></script><script src="../notation.js"></script><script src="../../music/mascots.js"></script>
 <style id="fonts"></style>
 <style>
 :root{--ink:#241f3d;--melody:#2dd4bf;--melody-deep:#0d9488;--barnaby:#6366f1;--pink:#ec4899;--orange:#ea580c;--gold:#f59e0b}
@@ -49,9 +49,13 @@ const prog=(t,t0,d)=>clamp((t-t0)/d);
 const lerp=(a,b,p)=>a+(b-a)*p;
 function pop(el,t,t0,d=0.45,from=0.4){const p=prog(t,t0,d);el.style.opacity=clamp(p*2.2);el.style.scale=String(lerp(from,1,easeBack(p)))}
 function fade(el,t,t0,d=0.4){el.style.opacity=String(prog(t,t0,d))}
-const MELODY_SVG=`<svg viewBox="0 0 100 100"><g class="body"><circle cx="50" cy="50" r="35" fill="#2dd4bf"/><path d="M 15,50 A 35,35 0 0,0 50,85 Z" fill="#0d9488"/><ellipse cx="40" cy="62" rx="15" ry="12" fill="#ccfbf1"/><g class="eye"><circle cx="65" cy="40" r="7" fill="#fff"/><circle cx="67" cy="40" r="3.5" fill="#0f172a"/><circle cx="69" cy="38" r="1.5" fill="#fff"/></g><polygon points="75,45 90,48 78,55" fill="#fb923c" stroke="#ea580c" stroke-width="1.5" stroke-linejoin="round"/><path d="M 25,50 C 20,40 35,35 45,50 C 40,60 30,60 25,50 Z" fill="#14b8a6"/><path d="M 40,18 Q 30,8 42,12 Q 54,8 44,18" fill="#2dd4bf"/></g></svg>`;
-const BARNABY_SVG=`<svg viewBox="0 0 100 100"><g class="body"><circle cx="25" cy="25" r="12" fill="#818cf8"/><circle cx="25" cy="25" r="7" fill="#c7d2fe"/><circle cx="75" cy="25" r="12" fill="#818cf8"/><circle cx="75" cy="25" r="7" fill="#c7d2fe"/><circle cx="50" cy="55" r="32" fill="#6366f1"/><circle cx="30" cy="62" r="5" fill="#f472b6" opacity=".6"/><circle cx="70" cy="62" r="5" fill="#f472b6" opacity=".6"/><ellipse cx="50" cy="68" rx="16" ry="11" fill="#e0e7ff"/><polygon points="46,63 54,63 50,68" fill="#1e1b4b" stroke="#1e1b4b" stroke-width="1" stroke-linejoin="round"/><path d="M 32,48 Q 40,40 42,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round"/><path d="M 58,48 Q 60,40 68,48" fill="none" stroke="#1e1b4b" stroke-width="3" stroke-linecap="round"/></g></svg>`;
-$('#hostM').innerHTML=MELODY_SVG;$('#hostB').innerHTML=BARNABY_SVG;
+// Melody and Barnaby come from music/mascots.js (the same drawings as the games). The SVG is rebuilt only when a visible
+// change happens (a new mouth opening, a blink, a pose), so 30 fps rendering stays cheap.
+const hostCache={};
+function setHost(el,who,pose,mouth,blink){
+  const k=who+'|'+pose+'|'+mouth+'|'+blink;
+  if(el.dataset.k!==k){el.dataset.k=k;el.innerHTML=MASCOTS[who]({pose,mouth,blink})}
+}
 
 // ---------------------------------------------------------------- notation with measured geometry
 const STEP={c:0,d:1,e:2,f:3,g:4,a:5,b:6};
@@ -93,11 +97,11 @@ const DOT=(c,r)=>`<span style="display:inline-block;width:${r}px;height:${r}px;b
 // ---------------------------------------------------------------- state / UI layouts
 let TL,SC=[],CL;
 function wt(id,word,nth=0){const c=CL[id];const h=c.words.filter(w=>w[0].startsWith(word));return c.start+(h[nth]?h[nth][1]:0.4)}
-const HOSTS={ // left/bottom/size per mascot
-  open:{m:[70,40,260],b:[960,40,270]},
-  side:{m:[30,14,195],b:[1050,14,200]},
-  low:{m:[16,4,150],b:[1114,4,155]},
-  bye:{m:[300,96,260],b:[720,96,270]},
+const HOSTS={ // left/bottom/width per mascot (the full-body drawings are about 1.23x as tall as wide)
+  open:{m:[70,30,215],b:[995,30,220]},
+  side:{m:[22,8,165],b:[1088,8,170]},
+  low:{m:[10,4,108],b:[1160,4,112]},
+  bye:{m:[330,70,205],b:[745,70,210]},
 };
 function speakerAt(t){for(const id in CL){const c=CL[id];if(t>=c.start-0.05&&t<c.end+0.18)return {id,...c}}return null}
 function level(c,t){const i=Math.floor((t-c.start)*FPS);return (c.env[i]??0)}
@@ -117,7 +121,7 @@ S.opener={ui:{ribbon:0,hosts:'open',bubble:false},build(r){
    this.st.box.style.opacity=prog(L,0.2,0.5)}};
 
 S.hook={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
-  this.st=makeStave(r,{clef:'treble',notes:[],scale:3.6,w:330,cy:380,showClef:false});
+  this.st=makeStave(r,{clef:'treble',notes:[],scale:3.6,w:330,cy:340,showClef:false});
   this.dots=[[0.07,2.3],[0.16,0.4],[0.24,3.6],[0.33,1.5],[0.41,2.9],[0.5,0.8],[0.58,3.3],[0.66,1.9],[0.74,0.2],[0.83,2.6],[0.9,1.2]].map(([fx,ln],i)=>{
     const d=document.createElement('div');d.className='abs';d.style.cssText='width:26px;height:20px;border-radius:50%;background:#241f3d;opacity:0';
     d.style.left=(this.st.x0+fx*(this.st.x1-this.st.x0))+'px';d.style.top=(this.st.lineY[0]+ln*this.st.sp-10)+'px';d.style.transform='rotate(-20deg)';r.appendChild(d);return d});
@@ -201,7 +205,7 @@ const RECAP=[['r1','STAVE',{clef:'treble',notes:[],showClef:false},'#241f3d'],['
  ['r4','LINE',{clef:'treble',notes:['g/4'],showClef:false},'#0d9488'],['r4','SPACE',{clef:'treble',notes:['c/5'],showClef:false},'#be185d'],['r5','LEDGER LINE',{clef:'treble',notes:['a/5'],showClef:false},'#c2410c']];
 S.recap={ui:{ribbon:1,hosts:'low',bubble:false},build(r){
   this.cards=RECAP.map(([id,lab,spec,col],i)=>{const d=document.createElement('div');d.className='card';
-    const cx=[250,640,1030][i%3],cy=[190,414][Math.floor(i/3)];d.style.left=(cx-165)+'px';d.style.top=(cy-108)+'px';
+    const cx=[250,640,1030][i%3],cy=[184,404][Math.floor(i/3)];d.style.left=(cx-165)+'px';d.style.top=(cy-108)+'px';
     d.innerHTML=`<div class="ico"></div><div class="lab" style="color:${col}">${lab}</div>`;r.appendChild(d);
     const only=spec.only;const st=makeStave(d.querySelector('.ico'),{clef:spec.clef,notes:spec.notes,showClef:spec.showClef!==false,scale:1.5,cx:150,cy:70,w:190,h:140});
     if(only){st.lines.forEach(l=>l.style.opacity=0);st.barlines.forEach(b=>b.style.opacity=0);if(only==='note'&&st.clefEl)st.clefEl.style.opacity=0;if(only==='clef')st.heads.forEach(h=>h.sn.style.opacity=0);const mid=only==='clef'?st.clefX:st.heads[0].x;st.box.style.left=(st.box.offsetLeft+150-mid)+'px'}
@@ -248,17 +252,25 @@ function renderAt(t){
   else{bub.style.opacity=String(Math.max(0,parseFloat(bub.style.opacity||0)*0))}
   if(sc.def.ui.bubble&&sp&&/^n\d$/.test(sp.id)){bub.style.opacity=0}
   const hp=easeOut(prog(t,layoutT0,0.6));
-  [['hostM','m'],['hostB','b']].forEach(([id,k],ix)=>{const el=$('#'+id);const a=prevLayout[k],b=curLayout[k];
+  [['hostM','m','melody'],['hostB','b','barnaby']].forEach(([id,k,who],ix)=>{const el=$('#'+id);const a=prevLayout[k],b=curLayout[k];
     const left=lerp(a[0],b[0],hp),bot=lerp(a[1],b[1],hp),size=lerp(a[2],b[2],hp);
-    const isSp=sp&&((k==='m'&&sp.who==='melody')||(k==='b'&&sp.who==='barnaby'));
-    const lv=isSp?level(sp,t):0;const base=isSp?1.0:0.86;
-    const bob=Math.sin(t*2.2+ix*1.7)*6;const sx=base*(1+0.07*lv);
+    const isSp=sp&&sp.who===who;
+    const lv=isSp?level(sp,t):0;const base=isSp?1.08:0.92;
+    const bob=Math.sin(t*2.2+ix*1.7)*3;
     const enter=sc.id==='opener'?easeBack(prog(t,0.15+ix*0.2,0.6)):1;
+    // pose: waving at the start and end, pointing in at the content while explaining, cheering on "Brilliant!"
+    let pose='idle';
+    const side=who==='melody'?'':'L';
+    if(sc.id==='opener'||sc.id==='outro') pose=(Math.sin(t*4+ix)>-0.2)?'wave'+side:'idle';
+    else if(sc.id==='hook'&&isSp) pose='think';
+    else if(sp&&sp.id==='well') pose='cheer';
+    else if(isSp&&['stave','clef','bass','note','linespace','ledger'].includes(sc.id)&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
+    const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
+    setHost(el,who,pose==='waveL'?'waveL':pose,mouth,blink);
     el.style.left=left+'px';el.style.bottom=(bot+(isSp?4:0))+'px';el.style.width=size+'px';
-    el.style.transform=`translateY(${-bob-lv*10}px) rotate(${isSp?Math.sin(t*13)*3*lv:Math.sin(t*1.6+ix)*1.5}deg) scale(${sx*enter},${base*(1-0.05*lv)*enter})`;
+    el.style.transform=`translateY(${-bob-lv*5}px) rotate(${isSp?Math.sin(t*11)*1.6*lv:0}deg) scale(${base*enter*(1+0.025*lv)},${base*enter*(1-0.02*lv)})`;
     el.style.opacity=String(clamp(enter*1.5));
-    // blink (Melody)
-    const eye=el.querySelector('.eye');if(eye){const ph=(t%3.4);const bl=ph>3.25?Math.abs(ph-3.325)/0.075:1;eye.style.transformBox='fill-box';eye.style.transformOrigin='50% 50%';eye.style.transform=`scaleY(${clamp(bl,0.1,1)})`}
   });
   // caption
   const cap=$('#caption');
