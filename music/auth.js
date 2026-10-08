@@ -45,10 +45,24 @@
   }
   const configured = FIREBASE_CONFIG.apiKey !== "PASTE_YOUR_API_KEY";
 
+  // Firebase (about 370 KB of script) is only needed when pupil login is on, so it is loaded on demand rather than
+  // by every game page - a public visitor never downloads it.
   let db = null;
-  if (configured && window.firebase) {
-    firebase.initializeApp(FIREBASE_CONFIG);
-    db = firebase.firestore();
+  const FB_SDK = ["https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js", "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"];
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src; s.onload = resolve; s.onerror = reject; document.head.appendChild(s);
+    });
+  }
+  async function ensureFirebase() {
+    if (db) return true;
+    try {
+      if (!window.firebase) { await loadScript(FB_SDK[0]); await loadScript(FB_SDK[1]); }
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+      db = firebase.firestore();
+      return true;
+    } catch (e) { return false; }
   }
 
   function currentGameId() {
@@ -325,18 +339,21 @@
   }
 
   function ensureLogin(onReady) {
-    if (!pupilModeOn() || !configured || !db) {
+    if (!pupilModeOn() || !configured) {
       onReady();
       return;
     }
-    if (loadSession()) {
-      showBadge();
-      onReady();
-      return;
-    }
-    showPicker(() => {
-      showBadge();
-      onReady();
+    ensureFirebase().then((ok) => {
+      if (!ok) { onReady(); return; }
+      if (loadSession()) {
+        showBadge();
+        onReady();
+        return;
+      }
+      showPicker(() => {
+        showBadge();
+        onReady();
+      });
     });
   }
 
