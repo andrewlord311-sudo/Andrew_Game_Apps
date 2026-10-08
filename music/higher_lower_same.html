@@ -592,7 +592,7 @@
             } else {
                 oMsg.innerText = `Outstanding! You mastered comparing notes on the ${currentClef === 'treble' ? 'Treble' : 'Bass'} clef!`;
                 oBtn.innerText = "Back to Arcade!";
-                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
             overlay.classList.remove('hidden');
         }

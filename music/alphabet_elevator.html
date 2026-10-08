@@ -420,7 +420,7 @@
             } else {
                 oMsg.innerText = `Outstanding! You know the musical alphabet forwards, backwards, and all the way around!`;
                 oBtn.innerText = "Back to Arcade!";
-                oBtn.onclick = () => { dismissOverlay(); location.href = "music_arcade.html"; };
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
             overlay.classList.remove('hidden');
         }
