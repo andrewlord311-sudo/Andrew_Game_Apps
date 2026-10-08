@@ -6,7 +6,7 @@ Writes out/<video>/timeline.json (clip + scene times, mouth-level envelopes) and
 import json, sys, subprocess, wave, pathlib, math
 import numpy as np
 HERE = pathlib.Path(__file__).parent
-name = sys.argv[1]; script = json.load(open(HERE / f'script_{name}.json'))
+name = sys.argv[1]; DRY = '--dry' in sys.argv; script = json.load(open(HERE / f'script_{name}.json'))
 OUT = HERE / 'out' / name; OUT.mkdir(parents=True, exist_ok=True)
 SR = 44100; FPS = 30
 
@@ -17,8 +17,12 @@ def load(path, sr=SR):
 clips = {}
 for c in script['shared']: clips[c['id']] = {**c, 'path': HERE / 'audio' / 'shared' / f"{c['id']}.mp3"}
 for c in script['clips']: clips[c['id']] = {**c, 'path': HERE / 'audio' / name / f"{c['id']}.mp3"}
+missing = [k for k, c in clips.items() if not c['path'].exists()]
+if missing and not DRY: sys.exit('no audio yet for: ' + ', '.join(missing) + '\n(run gen_audio.py when the script is final, or use --dry for a free silent preview)')
 for c in clips.values():
-    c['wave'] = load(c['path']); c['dur'] = len(c['wave']) / SR
+    if c['path'].exists(): c['wave'] = load(c['path']); c['dur'] = len(c['wave']) / SR; c['est'] = False
+    else:   # --dry: no audio spent yet, so estimate how long the line will take
+        c['dur'] = 0.45 + 0.062 * len(c.get('show', c['text'])); c['wave'] = np.zeros(int(c['dur'] * SR), dtype=np.float32); c['est'] = True
 
 
 WHISPER = '/opt/homebrew/bin/whisper-cli'; WMODEL = pathlib.Path.home() / 'Projects/voice-journal/models/ggml-small.en.bin'
@@ -36,27 +40,21 @@ def words_of(path):
         w = re.sub(r'[^a-z]', '', seg['text'].lower())
         if w: out.append([w, round(max(0, seg['offsets']['from'] / 1000 - 0.5), 3), round(max(0, seg['offsets']['to'] / 1000 - 0.5), 3)])
     json.dump(out, open(cache, 'w')); return out
-for c in clips.values(): c['words'] = words_of(c['path'])
+def est_words(c):
+    import re
+    ws = [re.sub(r'[^a-z]', '', w.lower()) for w in c['text'].split()]; ws = [w for w in ws if w]
+    tot = sum(len(w) + 1.5 for w in ws); t = 0.08; out = []
+    for w in ws:
+        d = (len(w) + 1.5) / tot * (c['dur'] - 0.2); out.append([w, round(t, 3), round(t + d * 0.85, 3)]); t += d
+    return out
+for c in clips.values(): c['words'] = est_words(c) if c['est'] else words_of(c['path'])
 def W(cid, word, nth=0):
     """absolute time (s) the nth spoken word starting with `word` begins in clip cid; falls back to just after the clip starts"""
     hits = [w for w in clips[cid]['words'] if w[0].startswith(word)]
     return clips[cid]['start'] + (hits[nth][1] if len(hits) > nth else 0.4)
 
-# scene layout: (scene id, [clip ids], lead-in, gap rules, tail)
-SCENES = [
- ('opener', ['opener'], 0.8, 0.0, 0.8),
- ('hook',   ['hook'], 0.4, 0.0, 0.5),
- ('today',  ['today'], 0.4, 0.0, 0.5),
- ('stave',  ['five', 'count', 'n1', 'n2', 'n3', 'n4', 'n5', 'stave'], 0.4, 0.4, 1.2),
- ('clef',   ['clef1', 'clef2'], 0.4, 0.4, 0.5),
- ('bass',   ['bass'], 0.4, 0.0, 0.5),
- ('note',   ['note'], 0.4, 0.0, 0.6),
- ('linespace', ['line', 'space'], 0.4, 0.35, 1.2),
- ('ledger', ['high', 'ledger'], 0.4, 0.5, 1.3),
- ('recap',  ['again', 'r1', 'r2', 'r3', 'r4', 'r5', 'well'], 0.4, 0.3, 0.7),
- ('outro',  ['game1', 'game2', 'bye'], 0.6, 0.4, 3.4),
-]
-GAP_OVERRIDE = {'n1': 0.35, 'n2': 0.3, 'n3': 0.3, 'n4': 0.3, 'n5': 0.3, 'stave': 0.5}
+GAP_OVERRIDE = script.get('gapOverride', {})
+SCENES = [(sc['id'], sc['clips'], sc.get('lead', 0.4), sc.get('gap', 0.0), sc.get('tail', 0.5)) for sc in script['scenes']]
 t = 0.0; scenes = []
 for sid, ids, lead, gap, tail in SCENES:
     s0 = t; cur = s0 + lead
@@ -94,19 +92,15 @@ def sparkle(vol=0.11):
     out = np.zeros(int(0.9 * SR), dtype=np.float32)
     for i, f in enumerate([1046, 1318, 1568, 2093]): put(out, i * 0.07, tone(f, 0.5, vol), 1)
     return out
-FREQ = {'g4': 392.0, 'b4': 493.9, 'c5': 523.3, 'a5': 880.0}
+FREQ = {'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'a5': 880.0}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
 for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
-for k in ['n1', 'n2', 'n3', 'n4', 'n5']: ev('tick', clips[k]['start'] - 0.14)
-ev('pop', W('clef1','swirly') - 0.05); ev('pop', clips['bass']['start'] + 0.15)
-ev('pop', W('note','blob') - 0.1); ev('tone', W('note','blob'), f='b4')
-ev('pop', clips['line']['start'] + 0.1); ev('tone', clips['line']['start'] + 0.2, f='g4')
-ev('pop', clips['space']['start'] + 0.1); ev('tone', clips['space']['start'] + 0.2, f='c5')
-ev('pop', clips['high']['start'] + 0.3); ev('tone', clips['high']['start'] + 0.4, f='a5')
-ev('pop', W('ledger','extra') - 0.1)
-for k in ['r1', 'r2', 'r3', 'r4', 'r5']: ev('pop', clips[k]['start'] - 0.17)
-ev('sparkle', clips['well']['end'] + 0.05)       # after the word, never on top of it
+for r in script.get('events', []):
+    c = clips[r['clip']]
+    base = W(r['clip'], r['word'], r.get('nth', 0)) if 'word' in r else (c['end'] if r.get('from') == 'end' else c['start'])
+    extra = {k: v for k, v in r.items() if k in ('f',)}
+    ev(r['kind'], base + r.get('off', 0), **extra)
 for e in events:
     k = e['kind']
     sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle}.get(k, lambda: tone(FREQ.get(e.get('f'), 440)))()
@@ -131,7 +125,7 @@ def levels(sig):
     r = np.array([np.sqrt(np.mean(sig[i * h:(i + 1) * h] ** 2)) for i in range(n)])
     r = r / (np.percentile(r, 92) + 1e-9); r = np.clip(r, 0, 1)
     return np.convolve(r, [0.25, 0.5, 0.25], 'same')
-out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
+out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'titleAt': script.get('titleAt'), 'dry': DRY, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
        'clips': {cid: {'who': c['who'], 'text': c.get('show', c['text']), 'words': c['words'], 'start': round(c['start'], 3), 'end': round(c['end'], 3), 'env': [round(float(v), 2) for v in levels(c['wave'])]} for cid, c in clips.items()}}
 json.dump(out, open(OUT / 'timeline.json', 'w'))
 print(f"duration {DURATION:.1f}s; scenes:", ', '.join(f"{s['id']} {s['start']:.1f}-{s['end']:.1f}" for s in scenes))
