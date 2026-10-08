@@ -1,0 +1,4 @@
+/* Self-hosted so a game's first paint never waits on Google Fonts (display=swap: text shows at once in a
+   fallback face, then switches). Quicksand is one variable file covering weights 500-700. */
+@font-face { font-family: 'Fredoka One'; font-style: normal; font-weight: 400; font-display: swap; src: url(fonts/fredoka-one.woff2) format('woff2'); }
+@font-face { font-family: 'Quicksand'; font-style: normal; font-weight: 500 700; font-display: swap; src: url(fonts/quicksand.woff2) format('woff2'); }
