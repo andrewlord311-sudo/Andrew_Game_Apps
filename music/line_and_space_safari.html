@@ -288,14 +288,16 @@
                 correct: "Whoosh! That was amazing! High-five! 🖐️",
                 incorrect: "Don't worry, little explorer! Take a deep breath and let's check again together.",
                 hint_line: "Hint: the line goes right through the middle of the note!",
-                hint_space: "Hint: the note sits snug between two lines!"
+                hint_space: "Hint: the note sits snug between two lines!",
+                stage2: "Welcome to the Deep Jungle! Notes can sit above and below the stave too. A tiny extra line is called a ledger line!"
             },
             bass: {
                 start: "Hello there, explorer! I'm Barnaby! Can you help me sort out this beautiful deep note?",
                 correct: "Rumble-tumble! Brilliant job! You have ears and eyes of a tiger! 🐯",
                 incorrect: "It is okay! Making mistakes is how we grow! Let us try again with a fresh eye.",
                 hint_line: "Hint: the line goes right through the middle of the note!",
-                hint_space: "Hint: the note sits snug between two lines!"
+                hint_space: "Hint: the note sits snug between two lines!",
+                stage2: "The Deep Jungle! Notes can sit above and below the stave too. Look out for the little ledger line!"
             }
         };
 
@@ -372,6 +374,7 @@
 
             resetStats();
             newRound();
+            updateDialog(stageNum === 2 ? 'stage2' : 'start');
         }
 
         // Completing an animal (8 correct answers, see reward-system.js) is
@@ -714,7 +717,10 @@
         }
 
         // Initialize App on load
+        // set to the video's address once it is published, and a "Watch the video" link appears
+        const VIDEO_URL = '';
         document.addEventListener('DOMContentLoaded', async () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Where notes live'; document.getElementById('game-card').appendChild(a); }
             // Load the music-glyph font explicitly via the FontFace API rather than
             // relying on @import + fonts.load(string) — that combination doesn't
             // reliably register the font before Canvas fillText/measureText need it,

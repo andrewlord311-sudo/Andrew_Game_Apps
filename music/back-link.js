@@ -22,6 +22,29 @@
   }
   window.ARCADE_URL = teacherDevice() ? "music_arcade.html" : "arcade.html";
 
+  // Layout lanes. The Arcade pill (top-left) and the reward animal + stars (bottom corners) are fixed on screen, so on
+  // phones and tablets they sat on top of the score chips and the answer buttons. Reserve a lane for them instead.
+  (function reserveLanes() {
+    const st = document.createElement("style");
+    st.id = "layout-lanes";
+    st.textContent = `
+      /* tablets and small laptops: keep a bottom lane clear for the animal and the stars */
+      @media (max-width: 1100px) and (min-width: 701px) { body { padding-bottom: calc(clamp(96px, 20vw, 240px) + 40px) !important; } }
+      /* phones: everything fixed lives in a lane along the TOP (Arcade pill, stars, animal), so nothing covers the answers */
+      @media (max-width: 700px) {
+        body { padding-top: 84px !important; padding-bottom: 16px !important; }
+        #reward-widget { top: 10px !important; bottom: auto !important; right: 10px !important; width: 68px !important; height: 68px !important; border-radius: 20px !important; border-width: 3px !important; }
+        body:has(#auth-badge) #reward-widget { right: 112px !important; }   /* teacher devices: the pupil's name badge keeps the far corner */
+        #game-progress-widget { top: 14px !important; bottom: auto !important; left: 112px !important; padding: 4px 10px !important; }
+        #game-progress-widget .gp-pip { font-size: 13px !important; }
+        #game-progress-widget .gp-label { font-size: 9px !important; }
+      }
+      /* the stage-complete / game-over card used to be squeezed into the small drawing area and spill out of it */
+      #overlay { position: fixed !important; inset: 0 !important; z-index: 10020 !important; border-radius: 0 !important; overflow-y: auto; }
+    `;
+    document.head.appendChild(st);
+  })();
+
   function ensureStyles() {
     if (document.getElementById("back-link-styles")) return;
     const style = document.createElement("style");

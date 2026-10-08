@@ -74,7 +74,7 @@
     style.textContent = `
       #reward-widget {
         position: fixed; right: 16px; bottom: 16px; z-index: 9998;
-        width: clamp(120px, 26vw, 260px); height: clamp(120px, 26vw, 260px);
+        width: clamp(96px, 20vw, 240px); height: clamp(96px, 20vw, 240px);
         border-radius: 15%;
         background: rgba(255,255,255,0.92);
         box-shadow: 0 10px 0 rgba(90,60,30,0.15), 0 16px 32px rgba(90,60,30,0.14);
