@@ -10,6 +10,11 @@
    "text": "Welcome to Melody and Barnaby's Music Nuggets!"
   },
   {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
    "id": "bye",
    "who": "melody",
    "text": "See you for the next Nugget!"
@@ -149,14 +154,257 @@
    "text": "Brilliant!"
   },
   {
-   "id": "game1",
-   "who": "melody",
-   "text": "Now it's your turn!"
-  },
-  {
    "id": "game2",
    "who": "barnaby",
    "text": "Open Name That Part, and show what you've learned!"
+  }
+ ],
+ "titleAt": "musical",
+ "gapOverride": {
+  "n1": 0.35,
+  "n2": 0.3,
+  "n3": 0.3,
+  "n4": 0.3,
+  "n5": 0.3,
+  "stave": 0.5
+ },
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "hook",
+   "clips": [
+    "hook"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 0.5
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 0.5
+  },
+  {
+   "id": "stave",
+   "clips": [
+    "five",
+    "count",
+    "n1",
+    "n2",
+    "n3",
+    "n4",
+    "n5",
+    "stave"
+   ],
+   "lead": 0.4,
+   "gap": 0.4,
+   "tail": 1.2
+  },
+  {
+   "id": "clef",
+   "clips": [
+    "clef1",
+    "clef2"
+   ],
+   "lead": 0.4,
+   "gap": 0.4,
+   "tail": 0.5
+  },
+  {
+   "id": "bass",
+   "clips": [
+    "bass"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 0.5
+  },
+  {
+   "id": "note",
+   "clips": [
+    "note"
+   ],
+   "lead": 0.4,
+   "gap": 0.0,
+   "tail": 0.6
+  },
+  {
+   "id": "linespace",
+   "clips": [
+    "line",
+    "space"
+   ],
+   "lead": 0.4,
+   "gap": 0.35,
+   "tail": 1.2
+  },
+  {
+   "id": "ledger",
+   "clips": [
+    "high",
+    "ledger"
+   ],
+   "lead": 0.4,
+   "gap": 0.5,
+   "tail": 1.3
+  },
+  {
+   "id": "recap",
+   "clips": [
+    "again",
+    "r1",
+    "r2",
+    "r3",
+    "r4",
+    "r5",
+    "well"
+   ],
+   "lead": 0.4,
+   "gap": 0.3,
+   "tail": 0.7
+  },
+  {
+   "id": "outro",
+   "clips": [
+    "game1",
+    "game2",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "tick",
+   "clip": "n1",
+   "off": -0.14
+  },
+  {
+   "kind": "tick",
+   "clip": "n2",
+   "off": -0.14
+  },
+  {
+   "kind": "tick",
+   "clip": "n3",
+   "off": -0.14
+  },
+  {
+   "kind": "tick",
+   "clip": "n4",
+   "off": -0.14
+  },
+  {
+   "kind": "tick",
+   "clip": "n5",
+   "off": -0.14
+  },
+  {
+   "kind": "pop",
+   "clip": "clef1",
+   "word": "swirly",
+   "off": -0.05
+  },
+  {
+   "kind": "pop",
+   "clip": "bass",
+   "off": 0.15
+  },
+  {
+   "kind": "pop",
+   "clip": "note",
+   "word": "blob",
+   "off": -0.1
+  },
+  {
+   "kind": "tone",
+   "f": "b4",
+   "clip": "note",
+   "word": "blob"
+  },
+  {
+   "kind": "pop",
+   "clip": "line",
+   "off": 0.1
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "line",
+   "off": 0.2
+  },
+  {
+   "kind": "pop",
+   "clip": "space",
+   "off": 0.1
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "space",
+   "off": 0.2
+  },
+  {
+   "kind": "pop",
+   "clip": "high",
+   "off": 0.3
+  },
+  {
+   "kind": "tone",
+   "f": "a5",
+   "clip": "high",
+   "off": 0.4
+  },
+  {
+   "kind": "pop",
+   "clip": "ledger",
+   "word": "extra",
+   "off": -0.1
+  },
+  {
+   "kind": "pop",
+   "clip": "r1",
+   "off": -0.17
+  },
+  {
+   "kind": "pop",
+   "clip": "r2",
+   "off": -0.17
+  },
+  {
+   "kind": "pop",
+   "clip": "r3",
+   "off": -0.17
+  },
+  {
+   "kind": "pop",
+   "clip": "r4",
+   "off": -0.17
+  },
+  {
+   "kind": "pop",
+   "clip": "r5",
+   "off": -0.17
+  },
+  {
+   "kind": "sparkle",
+   "clip": "well",
+   "from": "end",
+   "off": 0.05
   }
  ]
 }

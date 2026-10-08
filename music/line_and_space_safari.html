@@ -162,7 +162,7 @@
         <!-- Giant LINE vs SPACE Choice Buttons -->
         <div class="grid grid-cols-2 gap-3 mb-2">
             <!-- LINE button -->
-            <button onclick="makeGuess('LINE')" class="bg-emerald-400 hover:bg-emerald-500 text-white text-2xl font-black py-3 rounded-2xl border-b-4 border-emerald-600 shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
+            <button onclick="makeGuess('LINE')" class="bg-teal-500 hover:bg-teal-600 text-white text-2xl font-black py-3 rounded-2xl border-b-4 border-teal-700 shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
                 <!-- Expanded Line Graphic with Note passing through -->
                 <svg viewBox="0 0 100 40" class="w-20 h-10 mb-1" xmlns="http://www.w3.org/2000/svg">
                     <!-- Long line -->
@@ -176,7 +176,7 @@
                 <span class="text-xs font-bold tracking-wider opacity-90">(On the stick!)</span>
             </button>
             <!-- SPACE button -->
-            <button onclick="makeGuess('SPACE')" class="bg-sky-400 hover:bg-sky-500 text-white text-2xl font-black py-3 rounded-2xl border-b-4 border-sky-600 shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
+            <button onclick="makeGuess('SPACE')" class="bg-pink-500 hover:bg-pink-600 text-white text-2xl font-black py-3 rounded-2xl border-b-4 border-pink-700 shadow-lg hover:-translate-y-1 active:translate-y-1 transition-all flex flex-col items-center justify-center gap-1">
                 <!-- Space Graphic: Two parallel lines with note nestled snugly in the middle -->
                 <svg viewBox="0 0 100 40" class="w-20 h-10 mb-1" xmlns="http://www.w3.org/2000/svg">
                     <!-- Top line -->
@@ -287,15 +287,15 @@
                 start: "Hi! I'm Melody! Let's find out if this note is sitting on a LINE or hiding in a SPACE!",
                 correct: "Whoosh! That was amazing! High-five! 🖐️",
                 incorrect: "Don't worry, little explorer! Take a deep breath and let's check again together.",
-                hint_line: "Hint: Look! The black line cuts right through the middle of the note like a stick!",
-                hint_space: "Hint: Look! The note is sitting cozy inside the space, with lines above and below it!"
+                hint_line: "Hint: the line goes right through the middle of the note!",
+                hint_space: "Hint: the note sits snug between two lines!"
             },
             bass: {
                 start: "Hello there, explorer! I'm Barnaby! Can you help me sort out this beautiful deep note?",
                 correct: "Rumble-tumble! Brilliant job! You have ears and eyes of a tiger! 🐯",
                 incorrect: "It is okay! Making mistakes is how we grow! Let us try again with a fresh eye.",
-                hint_line: "Hint: See the line running right through the heart of our blue note?",
-                hint_space: "Hint: Look at how the note sits perfectly nestled between those two lines!"
+                hint_line: "Hint: the line goes right through the middle of the note!",
+                hint_space: "Hint: the note sits snug between two lines!"
             }
         };
 
@@ -409,7 +409,7 @@
 
                 // Hint highlight: Glow the line if hints are enabled and it matches the note's line
                 if (hintsEnabled && isNoteLine && (8 - currentNote.lineStep === i * 2)) {
-                    ctx.strokeStyle = '#10b981'; // vibrant green glow
+                    ctx.strokeStyle = '#0d9488'; // teal glow (LINE is teal in the video too)
                     ctx.lineWidth = 6;
                 }
 
@@ -423,7 +423,7 @@
             if (hintsEnabled && !isNoteLine) {
                 const spaceIndex = (7 - currentNote.lineStep) / 2; // maps to space block
                 const spaceY = startY + (spaceIndex * lineGap) + (lineGap / 2);
-                ctx.fillStyle = 'rgba(56, 189, 248, 0.25)'; // soft sky blue highlighter
+                ctx.fillStyle = 'rgba(236, 72, 153, 0.30)'; // soft pink highlighter (SPACE is pink in the video too)
                 ctx.fillRect(startX, spaceY - (lineGap / 2) + 2, width, lineGap - 4);
             }
 
