@@ -6,6 +6,7 @@
     <title>Face Finder</title>
     <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/noto-music.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="tailwind.css">
     <style>
@@ -546,7 +547,7 @@
 
         window.addEventListener('resize', () => { renderPiano(); });
 
-        window.onload = async () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             try {
                 const notoMusicFont = new FontFace(
@@ -559,7 +560,7 @@
                 console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
             }
             setStage(1);
-        };
+        });
     </script>
 </body>
 </html>
