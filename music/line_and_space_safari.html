@@ -7,6 +7,7 @@
     <!-- Tailwind CSS for playful styling -->
     <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/noto-music.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="tailwind.css">
     <style>
@@ -713,7 +714,7 @@
         }
 
         // Initialize App on load
-        window.onload = async () => {
+        document.addEventListener('DOMContentLoaded', async () => {
             // Load the music-glyph font explicitly via the FontFace API rather than
             // relying on @import + fonts.load(string) — that combination doesn't
             // reliably register the font before Canvas fillText/measureText need it,
@@ -729,7 +730,7 @@
                 console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
             }
             setClef('treble');
-        };
+        });
     </script>
 </body>
 </html>

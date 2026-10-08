@@ -468,11 +468,11 @@
 
         window.addEventListener('resize', () => { renderPiano(); });
 
-        window.onload = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             buildKeys();
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             setStage(1);
-        };
+        });
     </script>
 </body>
 </html>
