@@ -38,6 +38,32 @@
             transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         button { touch-action: manipulation; }
+        /* Phones: Melody on top, lift + question side by side, answers underneath.
+           Wider screens: the lift runs down the left and everything else sits beside it, so the whole game fits
+           on a laptop screen without scrolling. */
+        #play { display: grid; gap: 8px 14px; grid-template-columns: 90px 1fr;
+                grid-template-areas: "mascot mascot" "shaft question" "feedback feedback" "answers answers"; }
+        #mascot-row { grid-area: mascot; } #ladder-shaft { grid-area: shaft; } #question { grid-area: question; }
+        #feedback { grid-area: feedback; } #answer-buttons { grid-area: answers; }
+        #ladder-shaft.hidden + #question { grid-column: 1 / -1; }
+        /* phones: a slimmer lift, smaller Melody and no subtitle, so the answer buttons stay on screen */
+        @media (max-width: 719px) {
+            #game-card { padding: 10px; }
+            #ladder-shaft .floor-row { padding-top: 2px; padding-bottom: 2px; font-size: 1rem; }
+            #ladder-shaft > div { margin: 0; }
+            #mascot-avatar svg { width: 44px; height: 44px; }
+            #mascot-dialog { font-size: 12px; }
+            #subtitle { display: none; }
+            #current-letter { font-size: 3rem; line-height: 1; }
+            #direction-arrow { font-size: 2.5rem; }
+            #answer-buttons button { padding-top: 10px; padding-bottom: 10px; }
+        }
+        @media (min-width: 720px) {
+            #game-card { max-width: 46rem; }
+            #play { grid-template-columns: 120px 1fr; grid-template-rows: auto 1fr auto auto;
+                    grid-template-areas: "shaft mascot" "shaft question" "shaft feedback" "shaft answers"; }
+            #ladder-shaft { width: 120px !important; }
+        }
     </style>
 </head>
 <body class="py-2 px-4 flex items-center justify-center">
@@ -57,7 +83,7 @@
         </div>
 
         <h1 class="kids-title text-3xl text-amber-600 text-center mb-1">Alphabet Elevator</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">The music alphabet only has 7 letters: A to G!</p>
+        <p id="subtitle" class="text-slate-500 text-center text-sm font-semibold mb-2">The music alphabet only has 7 letters: A to G!</p>
 
         <div class="grid grid-cols-4 gap-2 bg-amber-50 p-2 rounded-2xl mb-2 border border-amber-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-amber-400 text-white border-b-2 border-amber-600 shadow">
@@ -74,7 +100,8 @@
             </button>
         </div>
 
-        <div class="flex items-center gap-3 bg-amber-50 p-2 rounded-2xl border border-amber-100 mb-2">
+        <div id="play" class="mb-3">
+        <div id="mascot-row" class="flex items-center gap-3 bg-amber-50 p-2 rounded-2xl border border-amber-100">
             <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
             <div class="relative bg-white border border-amber-100 p-2 rounded-xl shadow-sm w-full">
                 <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-amber-50"></div>
@@ -84,7 +111,6 @@
             </div>
         </div>
 
-        <div class="flex gap-4 items-stretch mb-3">
             <!-- Elevator shaft — ghost floors above G and below A show the alphabet looping -->
             <div id="ladder-shaft" class="bg-slate-700 rounded-2xl p-2 flex flex-col gap-1 relative" style="width: 90px;">
                 <div id="floor-ghost-top" class="text-slate-400 font-black text-center rounded-lg py-1 text-sm opacity-60 border border-dashed border-slate-500">A</div>
@@ -99,23 +125,23 @@
             </div>
 
             <!-- Question panel -->
-            <div class="flex-1 bg-slate-50 rounded-2xl border-2 border-slate-200 p-4 flex flex-col items-center justify-center text-center">
+            <div id="question" class="bg-slate-50 rounded-2xl border-2 border-slate-200 p-3 flex flex-col items-center justify-center text-center">
                 <p class="text-slate-600 font-bold text-lg mb-1">We are on floor</p>
                 <p id="current-letter" class="kids-title text-6xl text-amber-600 mb-2">A</p>
                 <div class="flex flex-col items-center gap-0.5">
                     <span id="direction-arrow" class="text-6xl leading-none">⬆️</span>
                     <p id="direction-prompt" class="text-slate-700 font-black text-lg">Going UP, what's next?</p>
                 </div>
-                <p id="no-ladder-note" class="text-amber-600 font-bold text-xs mt-2 hidden">🚀 Hard mode — no ladder, you know this by heart!</p>
+                <p id="no-ladder-note" class="text-amber-600 font-bold text-xs mt-2 hidden">🚀 No lift — you know this by heart!</p>
             </div>
-        </div>
 
-        <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700 mb-3">
+        <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700">
             Pick the next letter!
         </div>
 
-        <div class="grid grid-cols-4 gap-2 mb-3" id="answer-buttons">
+        <div class="grid grid-cols-4 gap-2" id="answer-buttons">
             <!-- Answer buttons injected here -->
+        </div>
         </div>
 
         <div class="relative">
@@ -280,7 +306,7 @@
             playTone(LETTER_FREQ[LETTERS[currentIndex]], 'triangle', 0.45);   // the floor you're on, so the answer can be heard going up or down from it
 
             const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-slate-700 mb-3";
+            feedback.className = "text-center text-lg font-bold text-slate-700";
             feedback.innerText = "Pick the next letter!";
         }
 
@@ -342,7 +368,7 @@
                 document.getElementById('score').innerText = score;
                 document.getElementById('streak').innerText = streak;
 
-                feedback.className = "text-center text-lg font-bold text-green-600 mb-3";
+                feedback.className = "text-center text-lg font-bold text-green-600";
                 feedback.innerText = `⭐ Yes! ${correctAnswer} is correct! ⭐`;
 
                 const ghost = wrapped ? (direction === 'up' ? 'top' : 'bottom') : null;
@@ -367,7 +393,7 @@
                 document.getElementById('streak').innerText = streak;
                 updateHearts();
 
-                feedback.className = "text-center text-lg font-bold text-rose-500 mb-3";
+                feedback.className = "text-center text-lg font-bold text-rose-500";
                 feedback.innerText = "Close! Count the letters again.";
 
                 playFailBuzz();
