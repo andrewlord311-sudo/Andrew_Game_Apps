@@ -30,10 +30,10 @@
         .floor-row {
             transition: background-color 0.3s, transform 0.3s;
         }
-        .floor-row.current {
-            background-color: #fbbf24;
-            transform: scale(1.06);
-        }
+        /* each letter has its own colour, the same as in the video (Nugget 3) */
+        .floor-row { opacity: .55; }
+        .floor-row.current { opacity: 1; transform: scale(1.08); box-shadow: 0 0 0 3px #fbbf24, 0 0 14px 4px rgba(251,191,36,.6); }
+        #floor-ghost-top.lit, #floor-ghost-bottom.lit { opacity: 1; border-style: solid; color: #fff; transform: scale(1.08); box-shadow: 0 0 0 3px #fbbf24, 0 0 14px 4px rgba(251,191,36,.6); }
         .car {
             transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -59,15 +59,18 @@
         <h1 class="kids-title text-3xl text-amber-600 text-center mb-1">Alphabet Elevator</h1>
         <p class="text-slate-500 text-center text-sm font-semibold mb-3">The music alphabet only has 7 letters: A to G!</p>
 
-        <div class="grid grid-cols-3 gap-2 bg-amber-50 p-2 rounded-2xl mb-2 border border-amber-100">
+        <div class="grid grid-cols-4 gap-2 bg-amber-50 p-2 rounded-2xl mb-2 border border-amber-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-amber-400 text-white border-b-2 border-amber-600 shadow">
-                ☀️ Stage 1: Easy
+                ⬆️ 1: Going up
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Medium
+                ⬇️ 2: Going down
             </button>
             <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
+                🔁 3: Round the loop
+            </button>
+            <button id="btn-stage-4" onclick="setStage(4)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🚀 4: No lift!
             </button>
         </div>
 
@@ -85,13 +88,13 @@
             <!-- Elevator shaft — ghost floors above G and below A show the alphabet looping -->
             <div id="ladder-shaft" class="bg-slate-700 rounded-2xl p-2 flex flex-col gap-1 relative" style="width: 90px;">
                 <div id="floor-ghost-top" class="text-slate-400 font-black text-center rounded-lg py-1 text-sm opacity-60 border border-dashed border-slate-500">A</div>
-                <div id="floor-G" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">G</div>
-                <div id="floor-F" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">F</div>
-                <div id="floor-E" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">E</div>
-                <div id="floor-D" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">D</div>
-                <div id="floor-C" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">C</div>
-                <div id="floor-B" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">B</div>
-                <div id="floor-A" class="floor-row bg-slate-600 text-white font-black text-center rounded-lg py-1.5 text-lg">A</div>
+                <div id="floor-G" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#00acc1">G</div>
+                <div id="floor-F" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#43a047">F</div>
+                <div id="floor-E" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#f4b400">E</div>
+                <div id="floor-D" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#fb8c00">D</div>
+                <div id="floor-C" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#e53935">C</div>
+                <div id="floor-B" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#ec407a">B</div>
+                <div id="floor-A" class="floor-row text-white font-black text-center rounded-lg py-1.5 text-lg" style="background:#7e57c2">A</div>
                 <div id="floor-ghost-bottom" class="text-slate-400 font-black text-center rounded-lg py-1 text-sm opacity-60 border border-dashed border-slate-500">G</div>
             </div>
 
@@ -141,6 +144,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
+    <script>window.GP_TOTAL_STAGES = 4;</script> <!-- this game has 4 stages, not the usual 3 -->
     <script src="game-progress.js"></script>
     <script>
         const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
@@ -158,15 +162,18 @@
         let currentIndex = 0;
         let direction = 'up';
         let correctAnswer = null;
+        let wrapped = false;              // this round crosses G->A (going up) or A->G (going down)
 
         const STAGE_CONFIGS = {
             1: { directions: ['up'], allowWrap: false },
             2: { directions: ['down'], allowWrap: false },
-            3: { directions: ['up', 'down'], allowWrap: true }
+            3: { directions: ['up', 'down'], allowWrap: true, loopFirst: true },   // the G->A / A->G loop, with the lift to look at (as in the video)
+            4: { directions: ['up', 'down'], allowWrap: true }
         };
 
         const dialogs = {
             start: "Hi, I'm Melody! Step into the Alphabet Elevator — going up means A→B→C…, going down means the reverse!",
+            loop: "Round the loop! After G we go back to A — and going down, below A comes G.",
             correct: "That's it! You know your musical alphabet! 🎶",
             incorrect: "Not quite! Remember, the alphabet only goes from A to G."
         };
@@ -217,7 +224,7 @@
 
         function setStage(stageNum) {
             currentStage = stageNum;
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 4; i++) {
                 const btn = document.getElementById(`btn-stage-${i}`);
                 if (i === stageNum) {
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-amber-400 text-white border-b-2 border-amber-600 shadow";
@@ -227,6 +234,7 @@
             }
             updateLadderVisibility();
             resetStats();
+            if (stageNum === 3) document.getElementById('mascot-dialog').innerText = dialogs.loop;
             newRound();
         }
 
@@ -238,8 +246,8 @@
         }
 
         function updateLadderVisibility() {
-            // Hard mode hides the ladder entirely — no visual counting, just recall.
-            const hideLadder = currentStage === 3;
+            // Stage 4 hides the lift entirely — no visual counting, just recall.
+            const hideLadder = currentStage === 4;
             document.getElementById('ladder-shaft').classList.toggle('hidden', hideLadder);
             document.getElementById('no-ladder-note').classList.toggle('hidden', !hideLadder);
         }
@@ -254,11 +262,13 @@
                 else candidates = candidates.filter(i => i !== 0); // exclude A
             }
             currentIndex = candidates[Math.floor(Math.random() * candidates.length)];
+            if (config.loopFirst && Math.random() < 0.45) currentIndex = direction === 'up' ? 6 : 0;
 
             const nextIndex = direction === 'up'
                 ? (currentIndex + 1) % 7
                 : (currentIndex - 1 + 7) % 7;
             correctAnswer = LETTERS[nextIndex];
+            wrapped = (direction === 'up' && currentIndex === 6) || (direction === 'down' && currentIndex === 0);
             controlLock = false;
 
             document.getElementById('current-letter').innerText = LETTERS[currentIndex];
@@ -267,17 +277,26 @@
 
             highlightFloor(LETTERS[currentIndex]);
             renderAnswers(nextIndex);
+            playTone(LETTER_FREQ[LETTERS[currentIndex]], 'triangle', 0.45);   // the floor you're on, so the answer can be heard going up or down from it
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 mb-3";
             feedback.innerText = "Pick the next letter!";
         }
 
-        function highlightFloor(letter) {
+        function highlightFloor(letter, ghost = null) {
             LETTERS.forEach(l => {
                 document.getElementById(`floor-${l}`).classList.remove('current');
             });
-            document.getElementById(`floor-${letter}`).classList.add('current');
+            ['top', 'bottom'].forEach(g => { const el = document.getElementById(`floor-ghost-${g}`); el.classList.remove('lit'); el.style.background = ''; });
+            if (ghost) {
+                // round the loop: light the dashed floor above G (A again) or below A (G again), in its letter's colour
+                const el = document.getElementById(`floor-ghost-${ghost}`);
+                el.style.background = ghost === 'top' ? '#7e57c2' : '#00acc1';
+                el.classList.add('lit');
+            } else {
+                document.getElementById(`floor-${letter}`).classList.add('current');
+            }
         }
 
         function renderAnswers(correctIndex) {
@@ -326,8 +345,11 @@
                 feedback.className = "text-center text-lg font-bold text-green-600 mb-3";
                 feedback.innerText = `⭐ Yes! ${correctAnswer} is correct! ⭐`;
 
-                highlightFloor(correctAnswer);
-                playTone(LETTER_FREQ[correctAnswer], 'triangle', 0.4);
+                const ghost = wrapped ? (direction === 'up' ? 'top' : 'bottom') : null;
+                highlightFloor(correctAnswer, ghost);
+                const octave = wrapped ? (direction === 'up' ? 2 : 0.5) : 1;
+                playTone(LETTER_FREQ[correctAnswer] * octave, 'triangle', 0.5);
+                if (wrapped) feedback.innerText = direction === 'up' ? '⭐ Yes! After G, back to A! ⭐' : '⭐ Yes! Below A comes G! ⭐';
                 triggerConfetti();
                 document.getElementById('mascot-dialog').innerText = dialogs.correct;
 
@@ -336,7 +358,8 @@
                 controlLock = true;
                 setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
-                setTimeout(newRound, 1100);
+                // not if this answer finished the stage: the card is up, so don't start (or sound) a round behind it
+                setTimeout(() => { if (document.getElementById('overlay').classList.contains('hidden')) newRound(); }, 1100);
             } else {
                 streak = 0;
                 lives--;
@@ -389,7 +412,7 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage);
+            GameProgress.stageCleared(currentStage, 4);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
@@ -397,7 +420,7 @@
             const oMsg = document.getElementById('overlay-msg');
             const oBtn = document.getElementById('overlay-btn');
 
-            if (currentStage < 3) {
+            if (currentStage < 4) {
                 oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
@@ -442,8 +465,11 @@
             renderAnswers(nextIndex);
         }
 
+        // set to the video's address once it is published, and a "Watch the video" link appears
+        const VIDEO_URL = '';
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: The music alphabet'; document.getElementById('game-card').appendChild(a); }
             setStage(1);
         });
     </script>
