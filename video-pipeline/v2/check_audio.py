@@ -10,6 +10,7 @@ norm = lambda t: re.sub(r'[^a-z ]', '', t.lower().replace('-', ' ')).split()
 bad = 0
 for grp, d in (('shared', 'shared'), ('clips', name)):
     for c in script[grp]:
+        if 'src' in c: continue                          # a reused recording: checked under its own id
         mp3 = HERE / 'audio' / d / f"{c['id']}.mp3"
         with tempfile.TemporaryDirectory() as t:
             wav = pathlib.Path(t) / 'a.wav'

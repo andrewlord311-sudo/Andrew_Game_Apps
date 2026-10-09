@@ -53,7 +53,8 @@ function renderNotation(containerEl, spec) {
     // EasyScore shorthand is "<letter><octave>/<duration>" (no slash between
     // letter and octave) - e.g. "e4/q", not the StaveNote "e/4" key format.
     const noteStr = notes.map((n) => `${n.replace('/', '')}/q`).join(', ');
-    const voice = score.voice(score.notes(noteStr, { clef, stem: 'auto' }));
+    // more than four crotchets overflow EasyScore's default 4/4 voice, so give longer runs (a whole scale) room
+    const voice = score.voice(score.notes(noteStr, { clef, stem: 'auto' }), notes.length > 4 ? { time: `${notes.length}/4` } : undefined);
     voice.setStrict(false); // these are illustrative snippets, not full measures - don't require exact time-signature completion
     const stave = system.addStave({ voices: [voice] });
     if (showClef) stave.addClef(clef);
