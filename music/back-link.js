@@ -30,6 +30,12 @@
     st.textContent = `
       /* tablets and small laptops: keep a bottom lane clear for the animal and the stars */
       @media (max-width: 1100px) and (min-width: 701px) { body { padding-bottom: calc(clamp(96px, 20vw, 240px) + 40px) !important; } }
+      /* laptops: a lane down the right edge holds the animal with the stars just above it, so a wide game card
+         (e.g. Alphabet Elevator's side-by-side layout) never slides underneath either of them */
+      @media (min-width: 1101px) and (max-width: 1700px) {
+        body { padding-right: calc(clamp(96px, 20vw, 240px) + 32px) !important; }
+        #game-progress-widget { left: auto !important; right: 16px !important; bottom: calc(clamp(96px, 20vw, 240px) + 30px) !important; }
+      }
       /* phones: everything fixed lives in a lane along the TOP (Arcade pill, stars, animal), so nothing covers the answers */
       @media (max-width: 700px) {
         body { padding-top: 84px !important; padding-bottom: 16px !important; }
