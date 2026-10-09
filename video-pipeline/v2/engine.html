@@ -328,6 +328,108 @@ S.outro2=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game2','animals')-0.15;
    this.an.forEach((d,i)=>{const q=prog(t,t0+i*0.22,0.55);const hop=q>=1?Math.abs(Math.sin((t-t0-i*0.22)*3.2+i))*-10:0;d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${hop+(1-easeOut(q))*-90}px`})}});
 
+
+// ======================================================================== VIDEO 3: the music alphabet
+// A lift with a floor for each letter (A at the bottom, G at the top) and a dashed "ghost" floor above G (A again) and
+// below A (G again), beside a treble stave where each floor's note appears at its real height: going up the lift = going
+// up the stave = higher notes.
+const V3L=['G','A','B','C','D','E','F','G','A'];                 // floor 0 = ghost G below, 1..7 = A..G, 8 = ghost A above
+const V3P=['g/4','a/4','b/4','c/5','d/5','e/5','f/5','g/5','a/5'];
+const V3C={A:'#7e57c2',B:'#ec407a',C:'#e53935',D:'#fb8c00',E:'#f4b400',F:'#43a047',G:'#00acc1'};
+const ROW_Y=i=>176+(8-i)*44;
+function liftBuild(r,opt={}){
+  const L={rows:[],opt};
+  L.shaft=document.createElement('div');L.shaft.className='abs';L.shaft.style.cssText='left:286px;top:160px;width:268px;height:428px;border-radius:26px;background:rgba(255,255,255,.55);box-shadow:0 9px 0 rgba(0,0,0,.1)';r.appendChild(L.shaft);
+  for(let i=0;i<9;i++){const d=document.createElement('div');d.className='abs';const ghost=i===0||i===8;
+    d.style.cssText=`left:310px;top:${ROW_Y(i)+3}px;width:220px;height:38px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One';font-size:30px;color:#fff;`+
+      (ghost?'border:3px dashed #94a3b8;color:#94a3b8;background:transparent':'background:#cbd5e1');
+    d.textContent=V3L[i];r.appendChild(d);L.rows.push(d)}
+  L.car=document.createElement('div');L.car.className='abs';L.car.style.cssText='left:300px;width:240px;height:44px;border-radius:16px;border:5px solid #f59e0b;box-shadow:0 0 0 3px #fff,0 0 22px 6px rgba(245,158,11,.55);opacity:0';r.appendChild(L.car);
+  L.arrow=document.createElement('div');L.arrow.className='abs';L.arrow.style.cssText="left:226px;width:56px;height:56px;border-radius:50%;background:var(--orange);color:#fff;font-family:'Fredoka One';font-size:38px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.18);opacity:0";r.appendChild(L.arrow);
+  if(opt.stave!==false){L.st=makeStave(r,{clef:'treble',notes:V3P,scale:2.25,w:230,h:170,cx:842,cy:372});
+    L.st.heads.forEach((h,i)=>{h.color(V3C[V3L[i]]);h.sn.style.opacity=0});
+    L.halo=halo(r,0,0,60,'rgba(245,158,11,.55)')}
+  return L}
+// steps: [[time, floor]] in order. Floors reached stay lit; the car glides to the latest; its note shows on the stave.
+function liftUpdate(L,t,steps,o={}){
+  const reached=steps.filter(s=>t>=s[0]);const lit=new Set(o.lit||[]);reached.forEach(s=>lit.add(s[1]));
+  const cur=reached.length?reached[reached.length-1]:null, prev=reached.length>1?reached[reached.length-2]:(o.from!=null?[0,o.from]:null);
+  L.rows.forEach((d,i)=>{const ghost=i===0||i===8;const on=lit.has(i);const isCur=cur&&cur[1]===i&&t-cur[0]<9;
+    if(ghost&&!on){d.style.opacity=o.ghosts?'1':'0';d.style.background='transparent';d.style.color='#94a3b8';d.style.border='3px dashed #94a3b8';d.style.scale='1';return}
+    d.style.opacity='1';d.style.border='none';d.style.background=on?V3C[V3L[i]]:'#cbd5e1';d.style.color=on?'#fff':'#94a3b8';
+    const fresh=cur&&cur[1]===i?prog(t,cur[0],0.35):1;d.style.scale=String(isCur?lerp(1.25,1.08,easeOut(fresh)):1)});
+  // the car
+  let floor=o.from!=null?o.from:null;
+  if(cur){const a=prev?prev[1]:cur[1];floor=lerp(a,cur[1],easeOut(prog(t,cur[0]-0.05,0.35)))}
+  if(floor!=null){L.car.style.opacity='1';L.car.style.top=(ROW_Y(floor)-0)+'px'}else L.car.style.opacity='0';
+  if(o.dir){L.arrow.textContent=o.dir>0?'↑':'↓';L.arrow.style.opacity=String(clamp(prog(t,o.dirAt??-9,0.3)*2));L.arrow.style.top=(ROW_Y(floor??4)-6)+'px';L.arrow.style.scale=String(1+0.06*Math.sin(t*6))}else L.arrow.style.opacity='0';
+  // the stave: the notes of the floors reached so far (in this scene), the newest with a glow
+  if(L.st){const shown=o.notes===false?new Set():new Set(reached.map(s=>s[1]).concat(o.notesLit||[]));
+    L.st.heads.forEach((h,i)=>{const on=shown.has(i);const at=(reached.find(s=>s[1]===i)||[0])[0];const q=on?prog(t,at-0.05,0.3):0;
+      h.sn.style.opacity=on?String(clamp(q*2)):'0';h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`scale(${lerp(1.6,1,easeBack(q))})`});
+    if(cur&&o.notes!==false){const h=L.st.heads[cur[1]];L.halo.style.left=(h.x-60)+'px';L.halo.style.top=(h.y-60)+'px';L.halo.style.opacity=String(clamp(prog(t,cur[0],0.3)*2)*(0.65+0.3*Math.sin(t*6)))}else L.halo.style.opacity='0';
+    L.st.box.style.opacity=String(o.staveOn===false?0:1)}}
+const at=id=>CL[id].start-0.08;
+
+S.v3recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.st=makeStave(r,{clef:'treble',notes:['g/4','c/5'],scale:3.6,w:330,cy:335});
+  const [a,b]=this.st.heads;a.color('#0d9488');b.color('#be185d');
+  this.ba=bandAt(r,this.st,1,'line','rgba(13,148,136,.5)');this.bb=bandAt(r,this.st,2,'space','rgba(236,72,153,.4)');
+  this.ca=chip(r,'on a LINE','var(--melody-deep)',a.x+40,this.st.lineY[0]-96);this.cb=chip(r,'in a SPACE','var(--pink)',b.x+40,this.st.lineY[0]-96);
+  },update(t,L,c){const tl=wt('recap3','notes')-0.15;const p=prog(t,tl,0.4);
+   this.ba.style.opacity=String(clamp(p*2)*(0.5+0.3*Math.sin(t*5)));this.bb.style.opacity=String(clamp(prog(t,tl+0.5,0.4)*2)*(0.5+0.3*Math.sin(t*5+1)));
+   pop(this.ca,t,tl,0.4);pop(this.cb,t,tl+0.5,0.4);
+   if(t>=wt('recap3','live')-0.15)c.caption('WHERE NOTES LIVE','#241f3d',wt('recap3','live')-0.15)}};
+
+S.v3intro={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r,{stave:false})},
+  update(t,L,c){const t7=wt('seven','seven')-0.1;
+   this.L.shaft.style.opacity=String(prog(L,0.2,0.4));
+   this.L.rows.forEach((d,i)=>{if(i===0||i===8){d.style.opacity='0';return}const q=prog(t,t7+(i-1)*0.16,0.3);d.style.opacity=String(t<t7?0.25:clamp(q*2));d.style.background=t>=t7+(i-1)*0.16?V3C[V3L[i]]:'#cbd5e1';d.style.color='#fff';d.style.border='none';d.style.scale=String(lerp(1.3,1,easeBack(q)))});
+   if(t>=t7)c.caption('7 LETTERS','var(--orange)',t7)}};
+
+S.v3letters={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r)},
+  update(t,L,c){const steps=[...'ABCDEFG'].map((x,i)=>[at('l'+x),i+1]);liftUpdate(this.L,t,steps,{});
+   const n=steps.filter(s=>t>=s[0]).length;if(n)c.caption([...'ABCDEFG'].slice(0,n).join(' '),'#241f3d',steps[0][0])}};
+
+S.v3up={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r)},
+  update(t,L,c){const steps=[...'ABCDEFG'].map((x,i)=>[at('up'+x),i+1]);liftUpdate(this.L,t,steps,{from:1,dir:1,dirAt:wt('up','up')-0.1});
+   if(t>=wt('up','higher')-0.1)c.caption('↑  UP = HIGHER','var(--melody-deep)',wt('up','higher')-0.1)}};
+
+S.v3down={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r)},
+  update(t,L,c){const steps=[...'GFEDCBA'].map((x,i)=>[at('dn'+x),7-i]);liftUpdate(this.L,t,steps,{from:7,dir:-1,dirAt:wt('down','down')-0.1});
+   if(t>=wt('down','lower')-0.1)c.caption('↓  DOWN = LOWER','var(--barnaby)',wt('down','lower')-0.1)}};
+
+S.v3top={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r);
+  this.h=document.createElement('div');this.h.className='abs';this.h.style.cssText="left:556px;top:"+(ROW_Y(8)-6)+"px;font-family:'Fredoka One';font-size:46px;color:#dc2626;opacity:0";this.h.innerHTML='<span style="text-decoration:line-through;text-decoration-thickness:6px">H</span> ✗';r.appendChild(this.h)},
+  update(t,L,c){const tb=wt('backa','back')-0.1;const steps=[[CL.afterg.start-0.3,7],[tb,8]];
+   liftUpdate(this.L,t,steps,{lit:[1,2,3,4,5,6,7],ghosts:true,notesLit:[1,2,3,4,5,6,7],dir:1,dirAt:CL.afterg.start});
+   const th=wt('afterg','there')-0.15;const q=prog(t,th,0.4);this.h.style.opacity=String(clamp(q*2)*(t<tb?1:0.35));this.h.style.scale=String(lerp(0.4,1,easeBack(q)));
+   if(t>=tb)c.caption('AFTER G … BACK TO A!','var(--orange)',tb);else if(t>=th)c.caption('NO H!','#dc2626',th)}};
+
+S.v3bottom={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r)},
+  update(t,L,c){const tc=wt('downa','comes')-0.05;const steps=[[CL.downa.start-0.3,1],[tc,0]];
+   liftUpdate(this.L,t,steps,{lit:[1,2,3,4,5,6,7],ghosts:true,notesLit:[1,2,3,4,5,6,7],dir:-1,dirAt:CL.downa.start});
+   if(t>=tc)c.caption('BELOW A … COMES G!','var(--barnaby)',tc)}};
+
+// quiz rounds: the lift waits at a floor with an arrow and a "?" on the floor it will go to; the answer lights it
+function v3quiz(ans,from,to,dir){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r);
+  this.q=document.createElement('div');this.q.className='abs';this.q.style.cssText="left:556px;font-family:'Fredoka One';font-size:52px;color:var(--orange);opacity:0";this.q.textContent='?';r.appendChild(this.q);
+  if(ans==='qG'){this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})}},
+  update(t,L,c){const ta=at(ans);const sc=SC.find(s=>t>=s.start&&t<s.end);const s0=sc?sc.start:0;
+   const qStart=ans==='qE'?CL.yourturn.end+0.3:s0+0.3;
+   liftUpdate(this.L,t,[[s0-1,from],[ta,to]],{lit:[1,2,3,4,5,6,7],ghosts:true,notesLit:[from],dir,dirAt:qStart});
+   const p=prog(t,qStart,0.4);this.q.style.top=(ROW_Y(to)-14)+'px';this.q.style.opacity=String(t<ta?clamp(p*2):0);this.q.style.scale=String(lerp(0.4,1,easeBack(p))*(1+0.08*Math.sin(t*7)));
+   if(t>=ta)c.caption(V3L[to],V3C[V3L[to]],ta);else if(t>=qStart)c.caption(V3L[from]+(dir>0?'  ↑  ?':'  ↓  ?'),'#241f3d',qStart);
+   if(this.conf){const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}}}}
+S.v3q1=v3quiz('qE',4,5,1);S.v3q2=v3quiz('qA',7,8,1);S.v3q3=v3quiz('qG',1,0,-1);
+
+// the closing call: a little lift of the seven letters hopping up in a rising staircase
+S.outro3=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.ls=[...'ABCDEFG'].map((x,i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${372+i*78}px;top:${430-i*26}px;width:62px;height:62px;border-radius:50%;background:${V3C[x]};color:#fff;font-family:'Fredoka One';font-size:36px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;d.textContent=x;r.appendChild(d);return d});
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game3','elevator')-0.2;
+   this.ls.forEach((d,i)=>{const q=prog(t,t0+i*0.14,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3+i*0.6))*8:0}px`})}});
+
 // ---------------------------------------------------------------- engine
 const ctxHelpers={caption(text,color,t0){C.text=text;C.color=color;C.t0=t0}};
 const C={text:'',color:'#241f3d',t0:0,last:''};
@@ -348,11 +450,11 @@ function renderAt(t){
   // speaker, bubble, hosts
   const sp=speakerAt(t);
   const bub=$('#bubble');
-  if(sc.def.ui.bubble&&sp&&!/^n\d$/.test(sp.id)){const key=sp.id;if(bub.dataset.k!==key){bub.dataset.k=key;bub.className=sp.who==='melody'?'m':'b';bub.innerHTML=`<span class="who" style="background:${sp.who==='melody'?'#0d9488':'#6366f1'}">${sp.who==='melody'?'Melody':'Barnaby'}</span>${sp.text}`;
+  if(sc.def.ui.bubble&&sp&&!/^n\d$/.test(sp.id)&&!sp.quiet){const key=sp.id;if(bub.dataset.k!==key){bub.dataset.k=key;bub.className=sp.who==='melody'?'m':'b';bub.innerHTML=`<span class="who" style="background:${sp.who==='melody'?'#0d9488':'#6366f1'}">${sp.who==='melody'?'Melody':'Barnaby'}</span>${sp.text}`;
       const w=bub.offsetWidth;bub.style.marginLeft=(-w/2)+'px'}
     const q=prog(t,sp.start-0.05,0.3);bub.style.opacity=String(Math.min(q*2,1)*(sc.def.ui.bubble?1:0));bub.style.scale=String(lerp(0.85,1,easeBack(q)))}
   else{bub.style.opacity=String(Math.max(0,parseFloat(bub.style.opacity||0)*0))}
-  if(sc.def.ui.bubble&&sp&&/^n\d$/.test(sp.id)){bub.style.opacity=0}
+  if(sc.def.ui.bubble&&sp&&(/^n\d$/.test(sp.id)||sp.quiet)){bub.style.opacity=0}
   const hp=easeOut(prog(t,layoutT0,0.6));
   [['hostM','m','melody'],['hostB','b','barnaby']].forEach(([id,k,who],ix)=>{const el=$('#'+id);const a=prevLayout[k],b=curLayout[k];
     const left=lerp(a[0],b[0],hp),bot=lerp(a[1],b[1],hp),size=lerp(a[2],b[2],hp);
@@ -366,7 +468,8 @@ function renderAt(t){
     if(sc.id==='opener'||sc.id==='outro') pose=(Math.sin(t*4+ix)>-0.2)?'wave'+side:'idle';
     else if(sc.id==='hook'&&isSp) pose='think';
     else if(sp&&sp.id==='well') pose='cheer';
-    else if(isSp&&['stave','clef','bass','note','linespace','ledger'].includes(sc.id)&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
     setHost(el,who,pose==='waveL'?'waveL':pose,mouth,blink);

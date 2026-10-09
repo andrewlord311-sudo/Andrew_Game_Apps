@@ -16,7 +16,8 @@ def load(path, sr=SR):
 
 clips = {}
 for c in script['shared']: clips[c['id']] = {**c, 'path': HERE / 'audio' / 'shared' / f"{c['id']}.mp3"}
-for c in script['clips']: clips[c['id']] = {**c, 'path': HERE / 'audio' / name / f"{c['id']}.mp3"}
+# a clip with "src" reuses another clip's recording (e.g. the same spoken letter in the ride up, the ride down and the quiz)
+for c in script['clips']: clips[c['id']] = {**c, 'path': HERE / 'audio' / name / f"{c.get('src', c['id'])}.mp3"}
 missing = [k for k, c in clips.items() if not c['path'].exists()]
 if missing and not DRY: sys.exit('no audio yet for: ' + ', '.join(missing) + '\n(run gen_audio.py when the script is final, or use --dry for a free silent preview)')
 for c in clips.values():
@@ -96,7 +97,7 @@ def sparkle(vol=0.11):
     out = np.zeros(int(0.9 * SR), dtype=np.float32)
     for i, f in enumerate([1046, 1318, 1568, 2093]): put(out, i * 0.07, tone(f, 0.5, vol), 1)
     return out
-FREQ = {'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'a5': 880.0}
+FREQ = {'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
 for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
@@ -130,6 +131,6 @@ def levels(sig):
     r = r / (np.percentile(r, 92) + 1e-9); r = np.clip(r, 0, 1)
     return np.convolve(r, [0.25, 0.5, 0.25], 'same')
 out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'titleAt': script.get('titleAt'), 'todayLead': script.get('todayLead'), 'dry': DRY, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
-       'clips': {cid: {'who': c['who'], 'text': c.get('show', c['text']), 'words': c['words'], 'start': round(c['start'], 3), 'end': round(c['end'], 3), 'env': [round(float(v), 2) for v in levels(c['wave'])]} for cid, c in clips.items()}}
+       'clips': {cid: {'who': c['who'], 'text': c.get('show', c['text']), 'quiet': c.get('quiet', False), 'words': c['words'], 'start': round(c['start'], 3), 'end': round(c['end'], 3), 'env': [round(float(v), 2) for v in levels(c['wave'])]} for cid, c in clips.items()}}
 json.dump(out, open(OUT / 'timeline.json', 'w'))
 print(f"duration {DURATION:.1f}s; scenes:", ', '.join(f"{s['id']} {s['start']:.1f}-{s['end']:.1f}" for s in scenes))

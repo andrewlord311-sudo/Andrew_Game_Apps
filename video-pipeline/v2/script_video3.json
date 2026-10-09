@@ -1,0 +1,689 @@
+{
+ "title": "The music alphabet",
+ "titleAt": "music",
+ "nugget": 3,
+ "game": "Alphabet Elevator",
+ "gameFile": "alphabet_elevator.html",
+ "todayLead": "Today we are going to meet",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "recap3",
+   "who": "melody",
+   "text": "Last time, <break time=\"0.45s\" /> we found out <break time=\"0.35s\" /> where notes live.",
+   "show": "Last time, we found out where notes live.",
+   "speed": 0.88
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today we are going to meet the music alphabet."
+  },
+  {
+   "id": "seven",
+   "who": "barnaby",
+   "text": "Music has its very own alphabet. <break time=\"0.5s\" /> It only has seven letters.",
+   "show": "Music has its very own alphabet. It only has seven letters.",
+   "speed": 0.88
+  },
+  {
+   "id": "lA",
+   "who": "melody",
+   "text": "A.",
+   "show": "A",
+   "prev": "Music has its very own alphabet. It only has seven letters.",
+   "quiet": true
+  },
+  {
+   "id": "lB",
+   "who": "melody",
+   "text": "B.",
+   "show": "B",
+   "prev": "A.",
+   "quiet": true
+  },
+  {
+   "id": "lC",
+   "who": "melody",
+   "text": "C.",
+   "show": "C",
+   "prev": "B.",
+   "quiet": true
+  },
+  {
+   "id": "lD",
+   "who": "melody",
+   "text": "D.",
+   "show": "D",
+   "prev": "C.",
+   "quiet": true
+  },
+  {
+   "id": "lE",
+   "who": "melody",
+   "text": "E.",
+   "show": "E",
+   "prev": "D.",
+   "quiet": true
+  },
+  {
+   "id": "lF",
+   "who": "melody",
+   "text": "F.",
+   "show": "F",
+   "prev": "E.",
+   "quiet": true
+  },
+  {
+   "id": "lG",
+   "who": "melody",
+   "text": "G.",
+   "show": "G",
+   "prev": "F.",
+   "quiet": true
+  },
+  {
+   "id": "up",
+   "who": "melody",
+   "text": "As we go up, <break time=\"0.4s\" /> the notes get higher.",
+   "show": "As we go up, the notes get higher.",
+   "speed": 0.88
+  },
+  {
+   "id": "upA",
+   "who": "melody",
+   "src": "lA",
+   "text": "A.",
+   "show": "A",
+   "quiet": true
+  },
+  {
+   "id": "upB",
+   "who": "melody",
+   "src": "lB",
+   "text": "B.",
+   "show": "B",
+   "quiet": true
+  },
+  {
+   "id": "upC",
+   "who": "melody",
+   "src": "lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "upD",
+   "who": "melody",
+   "src": "lD",
+   "text": "D.",
+   "show": "D",
+   "quiet": true
+  },
+  {
+   "id": "upE",
+   "who": "melody",
+   "src": "lE",
+   "text": "E.",
+   "show": "E",
+   "quiet": true
+  },
+  {
+   "id": "upF",
+   "who": "melody",
+   "src": "lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "upG",
+   "who": "melody",
+   "src": "lG",
+   "text": "G.",
+   "show": "G",
+   "quiet": true
+  },
+  {
+   "id": "down",
+   "who": "barnaby",
+   "text": "As we go down, <break time=\"0.4s\" /> the notes get lower.",
+   "show": "As we go down, the notes get lower.",
+   "speed": 0.88
+  },
+  {
+   "id": "dnG",
+   "who": "melody",
+   "src": "lG",
+   "text": "G.",
+   "show": "G",
+   "quiet": true
+  },
+  {
+   "id": "dnF",
+   "who": "melody",
+   "src": "lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "dnE",
+   "who": "melody",
+   "src": "lE",
+   "text": "E.",
+   "show": "E",
+   "quiet": true
+  },
+  {
+   "id": "dnD",
+   "who": "melody",
+   "src": "lD",
+   "text": "D.",
+   "show": "D",
+   "quiet": true
+  },
+  {
+   "id": "dnC",
+   "who": "melody",
+   "src": "lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "dnB",
+   "who": "melody",
+   "src": "lB",
+   "text": "B.",
+   "show": "B",
+   "quiet": true
+  },
+  {
+   "id": "dnA",
+   "who": "melody",
+   "src": "lA",
+   "text": "A.",
+   "show": "A",
+   "quiet": true
+  },
+  {
+   "id": "afterg",
+   "who": "melody",
+   "text": "What comes after G? <break time=\"0.6s\" /> There's no H in music!",
+   "show": "What comes after G? There's no H in music!",
+   "speed": 0.9
+  },
+  {
+   "id": "backa",
+   "who": "barnaby",
+   "text": "We go back to A, <break time=\"0.3s\" /> and start again!",
+   "show": "We go back to A, and start again!"
+  },
+  {
+   "id": "downa",
+   "who": "melody",
+   "text": "And going down, <break time=\"0.4s\" /> after A <break time=\"0.3s\" /> comes G.",
+   "show": "And going down, after A comes G.",
+   "speed": 0.88
+  },
+  {
+   "id": "yourturn",
+   "who": "barnaby",
+   "text": "Your turn! <break time=\"0.4s\" /> What comes next?",
+   "show": "Your turn! What comes next?"
+  },
+  {
+   "id": "qE",
+   "who": "melody",
+   "src": "lE",
+   "text": "E.",
+   "show": "E",
+   "quiet": true
+  },
+  {
+   "id": "qA",
+   "who": "melody",
+   "src": "lA",
+   "text": "A.",
+   "show": "A",
+   "quiet": true
+  },
+  {
+   "id": "qG",
+   "who": "melody",
+   "src": "lG",
+   "text": "G.",
+   "show": "G",
+   "quiet": true
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "src": "../video2/qwell",
+   "text": "You've got it!"
+  },
+  {
+   "id": "game3",
+   "who": "barnaby",
+   "text": "Ride the Alphabet Elevator, <break time=\"0.3s\" /> and see how high you can go!",
+   "show": "Ride the Alphabet Elevator, and see how high you can go!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v3recap",
+   "clips": [
+    "recap3"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 1.8
+  },
+  {
+   "id": "v3intro",
+   "clips": [
+    "seven"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 1.8
+  },
+  {
+   "id": "v3letters",
+   "clips": [
+    "lA",
+    "lB",
+    "lC",
+    "lD",
+    "lE",
+    "lF",
+    "lG"
+   ],
+   "lead": 0.6,
+   "gap": 0.6,
+   "tail": 1.8
+  },
+  {
+   "id": "v3up",
+   "clips": [
+    "up",
+    "upA",
+    "upB",
+    "upC",
+    "upD",
+    "upE",
+    "upF",
+    "upG"
+   ],
+   "lead": 0.5,
+   "gap": 0.5,
+   "tail": 1.8
+  },
+  {
+   "id": "v3down",
+   "clips": [
+    "down",
+    "dnG",
+    "dnF",
+    "dnE",
+    "dnD",
+    "dnC",
+    "dnB",
+    "dnA"
+   ],
+   "lead": 0.5,
+   "gap": 0.5,
+   "tail": 1.8
+  },
+  {
+   "id": "v3top",
+   "clips": [
+    "afterg",
+    "backa"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 2.2
+  },
+  {
+   "id": "v3bottom",
+   "clips": [
+    "downa"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v3q1",
+   "clips": [
+    "yourturn",
+    "qE"
+   ],
+   "lead": 0.5,
+   "gap": 3.2,
+   "tail": 1.6
+  },
+  {
+   "id": "v3q2",
+   "clips": [
+    "qA"
+   ],
+   "lead": 3.4,
+   "gap": 0.0,
+   "tail": 1.6
+  },
+  {
+   "id": "v3q3",
+   "clips": [
+    "qG",
+    "qwell"
+   ],
+   "lead": 3.4,
+   "gap": 0.8,
+   "tail": 1.4
+  },
+  {
+   "id": "outro3",
+   "clips": [
+    "game1",
+    "game3",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "tone",
+   "f": "a4",
+   "clip": "lA",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "a4",
+   "clip": "upA",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "a4",
+   "clip": "dnA",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "b4",
+   "clip": "lB",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "b4",
+   "clip": "upB",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "b4",
+   "clip": "dnB",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "lC",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "upC",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "dnC",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "lD",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "upD",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "dnD",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "e5",
+   "clip": "lE",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "e5",
+   "clip": "upE",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "e5",
+   "clip": "dnE",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "f5",
+   "clip": "lF",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "f5",
+   "clip": "upF",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "f5",
+   "clip": "dnF",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "g5",
+   "clip": "lG",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "g5",
+   "clip": "upG",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tone",
+   "f": "g5",
+   "clip": "dnG",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "pop",
+   "clip": "seven",
+   "word": "seven",
+   "off": -0.1
+  },
+  {
+   "kind": "pop",
+   "clip": "afterg",
+   "word": "there",
+   "off": -0.15
+  },
+  {
+   "kind": "tone",
+   "f": "a5",
+   "clip": "backa",
+   "word": "back",
+   "off": 0.25
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "downa",
+   "word": "comes",
+   "off": 0.35
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "yourturn",
+   "from": "end",
+   "off": 0.6
+  },
+  {
+   "kind": "tone",
+   "f": "g5",
+   "clip": "qA",
+   "off": -3.0
+  },
+  {
+   "kind": "tone",
+   "f": "a4",
+   "clip": "qG",
+   "off": -3.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qE",
+   "off": -2.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qE",
+   "off": -1.0
+  },
+  {
+   "kind": "tone",
+   "f": "e5",
+   "clip": "qE",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tick",
+   "clip": "qA",
+   "off": -2.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qA",
+   "off": -1.0
+  },
+  {
+   "kind": "tone",
+   "f": "a5",
+   "clip": "qA",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "tick",
+   "clip": "qG",
+   "off": -2.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qG",
+   "off": -1.0
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "qG",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  }
+ ],
+ "gapOverride": {
+  "upA": 0.7,
+  "dnG": 0.7
+ }
+}

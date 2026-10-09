@@ -27,5 +27,6 @@ if __name__ == '__main__':
     for c in script['shared']:
         if only is None or c['id'] in only: spent += gen(c['who'], c['text'], HERE / 'audio' / 'shared' / f"{c['id']}.mp3")
     for c in script['clips']:
+        if 'src' in c: continue                      # reuses another clip's recording: nothing to generate
         if only is None or c['id'] in only: spent += gen(c['who'], c['text'], HERE / 'audio' / name / f"{c['id']}.mp3", c.get('prev'), c.get('speed'))
     print('credits spent this run (characters):', spent)
