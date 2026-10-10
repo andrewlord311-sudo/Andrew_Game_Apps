@@ -450,7 +450,7 @@ function v4drawArrow(svg,a,b,kind,p){const col=V4COL[kind];const x0=a.x+46,y0=a.
 function v4pair(o){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.st=makeStave(r,{clef:'treble',notes:o.notes,scale:3.6,w:330,cy:322});
   const [a,b]=this.st.heads;a.color('#64748b');b.color('#2563eb');
-  this.lab=['1st','2nd'].map((t,i)=>{const h=this.st.heads[i];return chip(r,t,i?'#2563eb':'#64748b',h.x,(i?b:a).y>this.st.lineY[4]-10?this.st.lineY[0]-110:this.st.lineY[4]+56)});
+  this.lab=['1st','2nd'].map((t,i)=>{const h=this.st.heads[i];return chip(r,t,i?'#2563eb':'#64748b',h.x,this.st.lineY[4]+62)});   // always under the stave: above it, the speech bubble can cover them
   this.arrow=v4arrow(r);
   if(o.answer){this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:132px;font-size:88px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
     this.ch=[['HIGHER ↑','up'],['SAME =','same'],['LOWER ↓','down']].map(([t,k],i)=>{const c=chip(r,t,V4COL[k],420+i*220,536);return {c,k}})}

@@ -39,8 +39,9 @@
   {
    "id": "listen",
    "who": "barnaby",
-   "text": "Listen to these two notes.",
-   "speed": 0.9
+   "text": "Listen <break time=\"0.4s\" /> to these two notes.",
+   "speed": 0.85,
+   "show": "Listen to these two notes."
   },
   {
    "id": "higher",
@@ -58,9 +59,9 @@
   {
    "id": "same",
    "who": "melody",
-   "text": "And if they sit in the very same place, <break time=\"0.4s\" /> they sound the same!",
+   "text": "And if they sit <break time=\"0.3s\" /> in the very same place, <break time=\"0.5s\" /> they sound the same!",
    "show": "And if they sit in the very same place, they sound the same!",
-   "speed": 0.88
+   "speed": 0.85
   },
   {
    "id": "step",
