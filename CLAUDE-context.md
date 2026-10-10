@@ -1,6 +1,6 @@
 # Context for Claude -- Andrew_Game_Apps
 
-_Copied from Claude's memory on Andrew's Mac, 26 September 2026, by `vault-tools/sync-claude-context.py`. Don't edit by hand -- it's regenerated._
+_Copied from Claude's memory on Andrew's Mac, 10 October 2026, by `vault-tools/sync-claude-context.py`. Don't edit by hand -- it's regenerated._
 
 ## About Andrew
 
@@ -128,6 +128,19 @@ plus the paused `Characters.md` (mascot art pipeline). `Project Index.md`'s
 - Committed `2c65039`, pushed, live at the usual `andrewlord311-sudo.github.io/Andrew_Game_Apps/music/music_arcade.html` Pages URL.
 
 **How to apply:** when Andrew mentions "the music apps," "Nuggets," or asks about a specific game by name, check `Nuggets ideas.md` for its built/status and open feedback first rather than re-deriving from scratch. For the video spinoff specifically, check `voice_samples/` and the vault docs above for current state before re-planning from zero. **For any future video's notation: add entries to `storyboard_data.js`, open `storyboard_preview.html` and look, THEN wire up audio/timing/rendering — never hand-code a clef/note/ledger-line in CSS again, and never spend tokens on Playwright/ffmpeg before the storyboard preview has been eyeballed.** **For any future `.js` shared-module edit tested live via Claude_Browser: cache-bust the script tag's own `src`, not just the page URL — see the caching gotcha above.**
+
+**6.10.26 re-audit + launch plan** (full detail in vault `Claude Projects/Music teaching/Videos and channel/Channel launch plan.md`): 16 games live (0 console errors, phone-OK), only 1 video (95 s, still Google voices, unpublished); ElevenLabs works (Melody ID only; Andrew says allowance is back). Games' public blockers: "Who's playing?" picker with hard-wired kids' first names + animal picker before every game; hearts game-over too harsh; phone collisions. Video 1 is slideshow-like, 26% bumper, -19.4 LUFS. Andrew's decision 6.10.26: focus on launching the channel; ElevenLabs chosen over Google. Free ElevenLabs credits don't roll over — voice a batch of scripts per month; check commercial-use terms before monetising.
+
+**8.10.26 — Video 1 "Some musical names" APPROVED ("perfect")** (`videos/video1_some_musical_names_v2.mp4`, 102.7 s; v2 engine in `video-pipeline/v2/`: `script_*.json` → `gen_audio.py` (ElevenLabs, cached) → `check_audio.py` (whisper pronunciation check) → `build_timeline.py` (word timestamps via whisper, SFX, jingle) → `engine.html` (pure renderAt(t)) → `render.mjs`). Melody = existing voice, Barnaby = Daniel (`ELEVENLABS_BARNABY_VOICE_ID`). Outro no longer says Subscribe. **Andrew wants videos built as video–GAME PAIRS: tomorrow (9.10) he checks the first game (Name That Part) before videos 2–4 are made.** Lessons: audio must be 44.1 kHz stereo (96 kHz mono AAC played silent in browsers); put captions BEFORE the key word and hold scenes ≥1 s after (STAVE flashed for a fraction of a second); never fire SFX on a spoken word. Clickable end screens/cards are probably unavailable on "made for kids" videos — verify in Studio.
+
+**8.10.26 (evening) — games/characters/arcade overhaul:** Name That Part REBUILT to teach the six names from video 1 (stave, clef, note, line, space, ledger line; old durations game kept as `note_lengths.html` "How Long Is the Note?"); public `music/arcade.html` lists only PUBLISHED games (`PUBLISHED` array in `music/arcade-core.js` — add a game's file name the day its video goes live; `music_arcade.html` = all games, shown to teacher devices via `?all=1`/pupil mode; `window.ARCADE_URL` set by back-link.js); the 5 reward animals (cat/fox/bear/rabbit/owl) redrawn (lab: `design/animals.js`, live in `reward-system.js`); **Melody and Barnaby redrawn as full-body characters** (`music/mascots.js`: poses, `mouth` 0..1, `blink`; used in all games, both arcades, Meet page and the video engine with lip-sync from narration loudness); bass clef placement bug fixed (use `staffTop + 3.625*gap`); **speed**: Tailwind CDN → compiled `music/tailwind.css` (rebuild: `cd music && npx tailwindcss@3.4.17 -i tailwind-input.css -o tailwind.css --minify` after adding any new Tailwind class), fonts self-hosted (`fonts/`, `fonts.css`), Firebase loads only in pupil mode (auth.js), phone-4G first paint 2.2 s→0.4 s, playable 3.4 s→0.7 s. Video 1 re-rendered with the new characters (102.7 s).
+
+
+**Status 9 Oct 2026:** Video 1+Name That Part, Video 2+Line & Space Safari, **Video 3 (The music alphabet, `videos/video3_music_alphabet.mp4`) + Alphabet Elevator (4 stages now)** all passed by Andrew. **Next: video 4 "Higher, Lower or Same?" + its game, planned 10 Oct.** v2 engine now supports clip reuse (`"src"`) and `"quiet"` clips; single-letter clips need a vowel check (E came out as "eh-ee" ≈ A; fixed with previous/next-letter context + trim). Pre-launch to-dos in vault `Channel launch plan.md` (Status 9 Oct).
+
+**10 Oct 2026: all four launch pairs passed by Andrew** (video 4 + Higher Lower Same with the 1st→2nd note arrow). Remaining = launch admin: create channel (Andrew), upload, VIDEO_URL in each game, PUBLISHED list in arcade-core.js, factory-line answer.
+
+**Upload route (10 Oct 2026): Claude uploads via YouTube Studio in Andrew's Chrome (Claude in Chrome), per-batch go-ahead.** Do NOT use the YouTube Data API for uploads: unaudited projects created after 28 Jul 2020 get videos locked private (audit needed). Read-only stats via API are OK - set up nearer launch.
 
 ## Memory: project-nugget-video-template
 
