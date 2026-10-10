@@ -430,6 +430,60 @@ S.outro3=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game3','elevator')-0.2;
    this.ls.forEach((d,i)=>{const q=prog(t,t0+i*0.14,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3+i*0.6))*8:0}px`})}});
 
+
+// ======================================================================== VIDEO 4: higher, lower or same?
+// Each scene shows a pair of notes on the stave: the first appears and sounds, then the second 0.7 s later, and an
+// arrow is drawn FROM the first note TO the second (green and up = higher, pink and down = lower, amber and level =
+// the same). In the quiz the arrow only appears with the answer, so it can't give it away. The note times here must
+// match the "tone" events in script_video4.json.
+const V4COL={up:'#16a34a',down:'#db2777',same:'#f59e0b'};
+function v4arrow(r){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none';
+  svg.innerHTML='<path class="o" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round"/><path class="l" fill="none" stroke-width="12" stroke-linecap="round"/><polygon class="h" stroke="#fff" stroke-width="5" stroke-linejoin="round"/>';
+  r.appendChild(svg);return svg}
+function v4drawArrow(svg,a,b,kind,p){const col=V4COL[kind];const x0=a.x+46,y0=a.y,x1=b.x-50,y1=b.y;
+  const dx=x1-x0,dy=y1-y0,len=Math.hypot(dx,dy),ux=dx/len,uy=dy/len;const q=easeOut(clamp(p));
+  const ex=x0+dx*q-ux*26*q,ey=y0+dy*q-uy*26*q;const d=`M${x0},${y0} L${ex},${ey}`;
+  svg.querySelector('.o').setAttribute('d',d);svg.querySelector('.l').setAttribute('d',d);svg.querySelector('.l').setAttribute('stroke',col);
+  const tx=x0+dx*q,ty=y0+dy*q,px=-uy,py=ux;const h=svg.querySelector('.h');
+  h.setAttribute('points',`${tx},${ty} ${tx-ux*44+px*24},${ty-uy*44+py*24} ${tx-ux*44-px*24},${ty-uy*44-py*24}`);h.setAttribute('fill',col);
+  svg.style.opacity=p>0?'1':'0'}
+function v4pair(o){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.st=makeStave(r,{clef:'treble',notes:o.notes,scale:3.6,w:330,cy:322});
+  const [a,b]=this.st.heads;a.color('#64748b');b.color('#2563eb');
+  this.lab=['1st','2nd'].map((t,i)=>{const h=this.st.heads[i];return chip(r,t,i?'#2563eb':'#64748b',h.x,(i?b:a).y>this.st.lineY[4]-10?this.st.lineY[0]-110:this.st.lineY[4]+56)});
+  this.arrow=v4arrow(r);
+  if(o.answer){this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:132px;font-size:88px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+    this.ch=[['HIGHER ↑','up'],['SAME =','same'],['LOWER ↓','down']].map(([t,k],i)=>{const c=chip(r,t,V4COL[k],420+i*220,536);return {c,k}})}
+  },update(t,L,c){const t1=o.t1(),t2=t1+0.7;const [a,b]=this.st.heads;
+   [[a,t1],[b,t2]].forEach(([h,tt],i)=>{const p=prog(t,tt-0.05,0.4);h.sn.style.opacity=String(clamp(p*2));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`scale(${lerp(1.7,1,easeBack(p))})`;
+     pop(this.lab[i],t,tt,0.35)});
+   const ta=o.answer?CL[o.answer].start-0.1:t2+0.25;
+   v4drawArrow(this.arrow,a,b,o.kind,prog(t,ta,0.6));
+   if(o.answer){const thinking=t>=t2&&t<ta;this.q.style.opacity=String(thinking?clamp(prog(t,t2,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+     this.ch.forEach(({c:ch,k},i)=>{const p=prog(t,t2+0.1+i*0.12,0.35);const win=t>=ta&&k===o.kind;const lose=t>=ta&&k!==o.kind;
+       ch.style.opacity=String(clamp(p*2)*(lose?0.3:1));ch.style.scale=String(lerp(0.5,1,easeBack(p))*(win?1.22+0.04*Math.sin(t*9):1));ch.style.boxShadow=win?`0 0 0 5px #fff,0 0 26px 8px ${V4COL[k]}`:'0 6px 0 rgba(0,0,0,.14)'});
+     if(t>=ta)c.caption(o.capText,V4COL[o.kind],ta)}
+   else{const tw=wt(o.capClip,o.capWord)-0.1;if(t>=tw)c.caption(o.capText,V4COL[o.kind],tw)}}}}
+S.v4higher=v4pair({notes:['e/4','d/5'],kind:'up',t1:()=>CL.listen.end+0.35,capClip:'higher',capWord:'higher',capText:'HIGHER ↑'});
+S.v4lower=v4pair({notes:['e/5','g/4'],kind:'down',t1:()=>CL.lower.start-1.9,capClip:'lower',capWord:'lower',capText:'LOWER ↓'});
+S.v4same=v4pair({notes:['d/5','d/5'],kind:'same',t1:()=>CL.same.start-1.9,capClip:'same',capWord:'same',capText:'THE SAME ='});
+S.v4step=v4pair({notes:['g/4','a/4'],kind:'up',t1:()=>CL.step.start-1.9,capClip:'step',capWord:'higher',capText:'ONE STEP UP = HIGHER ↑'});
+S.v4q1=v4pair({notes:['e/4','c/5'],kind:'up',t1:()=>CL.yourturn.end+0.35,answer:'qHigher',capText:'HIGHER ↑'});
+S.v4q2=v4pair({notes:['f/5','f/5'],kind:'same',t1:()=>CL.qSame.start-4.0,answer:'qSame',capText:'THE SAME ='});
+S.v4q3=Object.assign(v4pair({notes:['c/5','b/4'],kind:'down',t1:()=>CL.qLower.start-4.0,answer:'qLower',capText:'LOWER ↓'}),{});
+(function(){const base=S.v4q3,b0=base.build,u0=base.update;
+  base.build=function(r){b0.call(this,r);this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})};
+  base.update=function(t,L,c){u0.call(this,t,L,c);const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}})();
+
+S.v4recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.L=liftBuild(r,{stave:false})},
+  update(t,L,c){const steps=[...'ABCDEFG'].map((x,i)=>[CL.recap4.start+0.3+i*0.32,i+1]);liftUpdate(this.L,t,steps,{});
+   const tw=wt('recap4','alphabet')-0.1;if(t>=tw)c.caption('THE MUSIC ALPHABET','#241f3d',tw)}};
+
+S.outro4=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.ch=[['HIGHER ↑','up'],['SAME =','same'],['LOWER ↓','down']].map(([tx,k],i)=>chip(r,tx,V4COL[k],420+i*220,330));
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game4','higher')-0.2;this.ch.forEach((ch,i)=>{const q=prog(t,t0+i*0.25,0.45);ch.style.opacity=String(clamp(q*2));ch.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.sin(t*5+i):1))})}});
+
 // ---------------------------------------------------------------- engine
 const ctxHelpers={caption(text,color,t0){C.text=text;C.color=color;C.t0=t0}};
 const C={text:'',color:'#241f3d',t0:0,last:''};
@@ -468,7 +522,7 @@ function renderAt(t){
     if(sc.id==='opener'||sc.id==='outro') pose=(Math.sin(t*4+ix)>-0.2)?'wave'+side:'idle';
     else if(sc.id==='hook'&&isSp) pose='think';
     else if(sp&&sp.id==='well') pose='cheer';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
