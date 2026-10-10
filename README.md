@@ -53,4 +53,5 @@ ElevenLabs credits are monthly and **do not roll over**.
 ## Related
 
 Design docs live in the vault under `Claude Projects/Music teaching/` —
-start with `Nuggets ideas`.
+start with `Nuggets dashboard` (status of every video + game); game notes are in
+`Games/`, video scripts and the launch plan in `Videos and channel/`.
