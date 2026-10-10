@@ -1,0 +1,346 @@
+{
+ "title": "Higher, lower or same?",
+ "titleAt": "higher",
+ "nugget": 4,
+ "game": "Higher, Lower or Same?",
+ "gameFile": "higher_lower_same.html",
+ "todayLead": "Today we are going to listen for",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "recap4",
+   "who": "melody",
+   "text": "Last time, <break time=\"0.45s\" /> we rode <break time=\"0.3s\" /> the music alphabet lift.",
+   "show": "Last time, we rode the music alphabet lift.",
+   "speed": 0.88
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today we are going to listen for higher, lower, <break time=\"0.35s\" /> or the same.",
+   "show": "Today we are going to listen for higher, lower, or the same."
+  },
+  {
+   "id": "listen",
+   "who": "barnaby",
+   "text": "Listen to these two notes.",
+   "speed": 0.9
+  },
+  {
+   "id": "higher",
+   "who": "melody",
+   "text": "The second note sits higher on the stave, <break time=\"0.4s\" /> so it sounds higher!",
+   "show": "The second note sits higher on the stave, so it sounds higher!",
+   "speed": 0.88
+  },
+  {
+   "id": "lower",
+   "who": "barnaby",
+   "text": "This time it sits lower, <break time=\"0.4s\" /> so it sounds lower.",
+   "show": "This time it sits lower, so it sounds lower."
+  },
+  {
+   "id": "same",
+   "who": "melody",
+   "text": "And if they sit in the very same place, <break time=\"0.4s\" /> they sound the same!",
+   "show": "And if they sit in the very same place, they sound the same!",
+   "speed": 0.88
+  },
+  {
+   "id": "step",
+   "who": "barnaby",
+   "text": "Even one tiny step up <break time=\"0.4s\" /> is still higher!",
+   "show": "Even one tiny step up is still higher!"
+  },
+  {
+   "id": "yourturn",
+   "who": "melody",
+   "text": "Your turn! <break time=\"0.4s\" /> Look, <break time=\"0.3s\" /> and listen.",
+   "show": "Your turn! Look, and listen."
+  },
+  {
+   "id": "qHigher",
+   "who": "barnaby",
+   "text": "Higher!",
+   "prev": "Is the second note higher, lower, or the same?",
+   "quiet": true
+  },
+  {
+   "id": "qSame",
+   "who": "melody",
+   "text": "The same!",
+   "prev": "Is the second note higher, lower, or the same?",
+   "quiet": true
+  },
+  {
+   "id": "qLower",
+   "who": "barnaby",
+   "text": "Lower!",
+   "prev": "Is the second note higher, lower, or the same?",
+   "quiet": true
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "src": "../video2/qwell",
+   "text": "You've got it!"
+  },
+  {
+   "id": "game4",
+   "who": "barnaby",
+   "text": "Play Higher, Lower or Same, <break time=\"0.3s\" /> and see how many you can get right!",
+   "show": "Play Higher, Lower or Same, and see how many you can get right!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v4recap",
+   "clips": [
+    "recap4"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 2.2
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 1.8
+  },
+  {
+   "id": "v4higher",
+   "clips": [
+    "listen",
+    "higher"
+   ],
+   "lead": 0.6,
+   "gap": 2.2,
+   "tail": 2.4
+  },
+  {
+   "id": "v4lower",
+   "clips": [
+    "lower"
+   ],
+   "lead": 2.2,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v4same",
+   "clips": [
+    "same"
+   ],
+   "lead": 2.2,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v4step",
+   "clips": [
+    "step"
+   ],
+   "lead": 2.2,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v4q1",
+   "clips": [
+    "yourturn",
+    "qHigher"
+   ],
+   "lead": 0.5,
+   "gap": 4.6,
+   "tail": 2.0
+  },
+  {
+   "id": "v4q2",
+   "clips": [
+    "qSame"
+   ],
+   "lead": 4.3,
+   "gap": 0.0,
+   "tail": 2.0
+  },
+  {
+   "id": "v4q3",
+   "clips": [
+    "qLower",
+    "qwell"
+   ],
+   "lead": 4.3,
+   "gap": 0.9,
+   "tail": 1.4
+  },
+  {
+   "id": "outro4",
+   "clips": [
+    "game1",
+    "game4",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "tone",
+   "f": "e4",
+   "clip": "listen",
+   "off": 0.35,
+   "from": "end"
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "listen",
+   "off": 1.0499999999999998,
+   "from": "end"
+  },
+  {
+   "kind": "tone",
+   "f": "e5",
+   "clip": "lower",
+   "off": -1.9
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "lower",
+   "off": -1.2
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "same",
+   "off": -1.9
+  },
+  {
+   "kind": "tone",
+   "f": "d5",
+   "clip": "same",
+   "off": -1.2
+  },
+  {
+   "kind": "tone",
+   "f": "g4",
+   "clip": "step",
+   "off": -1.9
+  },
+  {
+   "kind": "tone",
+   "f": "a4",
+   "clip": "step",
+   "off": -1.2
+  },
+  {
+   "kind": "tone",
+   "f": "e4",
+   "clip": "yourturn",
+   "off": 0.35,
+   "from": "end"
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "yourturn",
+   "off": 1.0499999999999998,
+   "from": "end"
+  },
+  {
+   "kind": "tone",
+   "f": "f5",
+   "clip": "qSame",
+   "off": -4.0
+  },
+  {
+   "kind": "tone",
+   "f": "f5",
+   "clip": "qSame",
+   "off": -3.3
+  },
+  {
+   "kind": "tone",
+   "f": "c5",
+   "clip": "qLower",
+   "off": -4.0
+  },
+  {
+   "kind": "tone",
+   "f": "b4",
+   "clip": "qLower",
+   "off": -3.3
+  },
+  {
+   "kind": "tick",
+   "clip": "qHigher",
+   "off": -2.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qHigher",
+   "off": -1.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qSame",
+   "off": -2.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qSame",
+   "off": -1.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qLower",
+   "off": -2.0
+  },
+  {
+   "kind": "tick",
+   "clip": "qLower",
+   "off": -1.0
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  }
+ ],
+ "gapOverride": {
+  "qwell": 0.9
+ }
+}

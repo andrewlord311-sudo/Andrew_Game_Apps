@@ -97,7 +97,7 @@ def sparkle(vol=0.11):
     out = np.zeros(int(0.9 * SR), dtype=np.float32)
     for i, f in enumerate([1046, 1318, 1568, 2093]): put(out, i * 0.07, tone(f, 0.5, vol), 1)
     return out
-FREQ = {'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0}
+FREQ = {'e4': 329.6, 'f4': 349.2, 'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
 for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
