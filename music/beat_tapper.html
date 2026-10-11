@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beat Tapper</title>
+    <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fef3c7 0%, #bae6fd 100%);
+            min-height: 100vh;
+        }
+        .kids-title { font-family: 'Fredoka One', cursive; }
+
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+        button { touch-action: manipulation; }
+
+        /* the four beat circles, like the video: 1 2 3 4 */
+        .beat-dot { width: 42px; height: 42px; border-radius: 50%; background: #fff; color: #94a3b8; display: flex; align-items: center; justify-content: center;
+            font-family: 'Fredoka One', cursive; font-size: 24px; box-shadow: 0 4px 0 rgba(0,0,0,.14); transition: transform .08s, background .08s, color .08s; }
+        .beat-dot.lit { color: #fff; transform: scale(1.22); }
+        /* the big drum */
+        #drum { touch-action: none; -webkit-tap-highlight-color: transparent; transform-origin: 50% 90%; transition: transform .07s; cursor: pointer; background: none; border: 0; padding: 0; }
+        #drum.hit { transform: scale(1.06, 0.92); }
+        #drum:disabled { cursor: default; }
+        #drum-wrap.waiting #drum { opacity: .45; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-amber-400 p-3 relative overflow-hidden">
+
+        <!-- Scoreboard Header -->
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-2xl text-amber-600 text-center mb-1">Beat Tapper</h1>
+
+        <!-- Difficulty Stages -->
+        <div class="grid grid-cols-3 gap-2 bg-amber-50 p-2 rounded-2xl mb-2 border border-amber-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">☀️ 1: Tap along</button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">🌴 2: Keep it going</button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">🚀 3: Steady or wobbly?</button>
+        </div>
+
+        <!-- Mascot Dialog -->
+        <div class="flex items-center gap-3 bg-sky-50 p-2 rounded-2xl border border-sky-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-sky-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-sky-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">Press Start, then tap the drum with the beat!</p>
+            </div>
+        </div>
+
+        <!-- Play area -->
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex flex-col items-center">
+            <div id="phase" class="kids-title text-xl text-amber-600 min-h-[28px] text-center">&nbsp;</div>
+            <div id="beat-dots" class="flex gap-3 my-0.5"></div>
+
+            <div id="drum-wrap" class="relative waiting">
+                <button id="drum" aria-label="Tap the drum" disabled></button>
+                <button id="start-btn" onclick="startActivity()" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-green-500 hover:bg-green-600 text-white font-black text-xl px-8 py-3 rounded-full border-b-4 border-green-700 shadow-lg active:brightness-90">▶ Start</button>
+            </div>
+
+            <canvas id="strip" width="400" height="110" class="w-auto max-h-24 rounded-xl bg-white shadow-inner mt-1"></canvas>
+            <button id="replay-btn" onclick="replayBeat()" class="hidden absolute top-2 right-2 bg-white text-amber-600 font-bold text-xs px-3 py-1.5 rounded-full shadow border border-amber-200 hover:bg-amber-50">🔊 Hear again</button>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
+
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-amber-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">Next Challenge!</button>
+            </div>
+        </div>
+
+        <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-1">&nbsp;</div>
+
+        <!-- Stage 3 answers -->
+        <div id="answers" class="grid grid-cols-2 gap-3 mb-1 hidden">
+            <button id="ans-steady" onclick="answer('steady')" class="bg-gradient-to-b from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-black py-1.5 rounded-2xl border-b-4 border-green-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
+                <span class="text-lg leading-none">✓</span><span class="text-base">STEADY</span>
+            </button>
+            <button id="ans-wobbly" onclick="answer('wobbly')" class="bg-gradient-to-b from-pink-400 to-pink-500 hover:from-pink-500 hover:to-pink-600 text-white font-black py-1.5 rounded-2xl border-b-4 border-pink-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
+                <span class="text-lg leading-none">〰</span><span class="text-base">WOBBLY</span>
+            </button>
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">🔄 Reset Score</button>
+        </div>
+    </div>
+
+    <script src="mascots.js"></script>
+    <script src="auth.js"></script>
+    <script src="back-link.js"></script>
+    <script src="reward-system.js"></script>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
+    <script src="game-progress.js"></script>
+    <script>
+        // ======================================================================== state
+        let currentStage = 1;
+        let score = 0, streak = 0, lives = 3;
+        let hintsEnabled = false;
+        let runId = 0;                 // bumps whenever an activity is stopped, so old timers quietly give up
+        let running = false;
+        let tapHandler = null;         // set by the stage that is listening for taps
+        let lastBeat = null;           // for "Hear again" in stage 3
+        const BEAT_COLOURS = ['#2dd4bf', '#6366f1', '#ec4899', '#f59e0b'];
+
+        const $ = id => document.getElementById(id);
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+        const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
+        const AV_MELODY = MASCOTS.html('melody', 'w-12 h-12 drop-shadow-md');
+        const SVG_BARNABY = MASCOTS.html('barnaby', 'w-16 h-16 drop-shadow-md');
+        const AV_BARNABY = MASCOTS.html('barnaby', 'w-12 h-12 drop-shadow-md');
+
+        const DIALOG = {
+            1: "Press Start. Listen to the drum, then tap along with every beat!",
+            2: "Listen to four beats. Then the drum goes quiet: keep the beat going yourself!",
+            3: "Listen to the beat. Is it steady, or does it wobble?"
+        };
+
+        // ======================================================================== sound (all synthesised)
+        let audioCtx = null;
+        function ac() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function noiseBuf(c, dur) {
+            const b = c.createBuffer(1, Math.floor(c.sampleRate * dur), c.sampleRate), d = b.getChannelData(0);
+            for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+            return b;
+        }
+        // the deep drum that keeps the beat (at an exact audio-clock time)
+        function playDrum(when, vol = 0.9) {
+            const c = ac();
+            const o = c.createOscillator(), g = c.createGain();
+            o.type = 'sine';
+            o.frequency.setValueAtTime(190, when);
+            o.frequency.exponentialRampToValueAtTime(58, when + 0.12);
+            g.gain.setValueAtTime(vol, when);
+            g.gain.exponentialRampToValueAtTime(0.001, when + 0.38);
+            o.connect(g); g.connect(c.destination); o.start(when); o.stop(when + 0.4);
+            const n = c.createBufferSource(); n.buffer = noiseBuf(c, 0.05);
+            const ng = c.createGain(); ng.gain.setValueAtTime(vol * 0.35, when); ng.gain.exponentialRampToValueAtTime(0.001, when + 0.04);
+            n.connect(ng); ng.connect(c.destination); n.start(when);
+        }
+        // the bright "tock" for the child's own tap, so it can be told apart from the drum
+        function playTock(when = 0) {
+            const c = ac(); const t = when || c.currentTime;
+            const o = c.createOscillator(), g = c.createGain();
+            o.type = 'triangle'; o.frequency.setValueAtTime(900, t); o.frequency.exponentialRampToValueAtTime(600, t + 0.07);
+            g.gain.setValueAtTime(0.45, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.12);
+            o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + 0.14);
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5) {
+            try {
+                const c = ac(), o = c.createOscillator(), g = c.createGain();
+                o.type = type; o.frequency.setValueAtTime(freq, c.currentTime);
+                g.gain.setValueAtTime(0, c.currentTime); g.gain.linearRampToValueAtTime(0.3, c.currentTime + 0.05);
+                g.gain.exponentialRampToValueAtTime(0.01, c.currentTime + duration);
+                o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + duration);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            try {
+                const c = ac(), now = c.currentTime;
+                [261.63, 329.63, 392.00, 523.25].forEach((freq, i) => {
+                    const o = c.createOscillator(), g = c.createGain();
+                    o.type = 'sine'; o.frequency.setValueAtTime(freq, now + i * 0.08);
+                    g.gain.setValueAtTime(0.15, now + i * 0.08); g.gain.exponentialRampToValueAtTime(0.01, now + i * 0.08 + 0.25);
+                    o.connect(g); g.connect(c.destination); o.start(now + i * 0.08); o.stop(now + i * 0.08 + 0.25);
+                });
+            } catch (e) {}
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // ======================================================================== the drum, the dots, the strip
+        const DRUM_SVG = `<svg viewBox="0 0 300 250" width="135" style="overflow:visible"><ellipse cx="150" cy="205" rx="112" ry="28" fill="#9f1239"/><rect x="38" y="76" width="224" height="130" fill="#e11d48"/><ellipse cx="150" cy="206" rx="112" ry="28" fill="#e11d48"/><polyline points="52,100 94,192 136,100 178,192 220,100 258,186" fill="none" stroke="#fde68a" stroke-width="7" stroke-linejoin="round"/><ellipse cx="150" cy="76" rx="112" ry="32" fill="#fde68a" stroke="#b45309" stroke-width="7"/><ellipse cx="150" cy="76" rx="92" ry="22" fill="none" stroke="#fbbf24" stroke-width="4"/></svg>`;
+        $('drum').innerHTML = DRUM_SVG;
+        $('beat-dots').innerHTML = [1, 2, 3, 4].map(n => `<div class="beat-dot" id="bd${n}">${n}</div>`).join('');
+
+        function setLit(i, on = true) {                  // i = 0..3
+            for (let k = 0; k < 4; k++) {
+                const d = $('bd' + (k + 1));
+                const lit = on && k === i;
+                d.classList.toggle('lit', lit);
+                d.style.background = lit ? BEAT_COLOURS[k] : '#fff';
+            }
+        }
+        function flashDrum() {
+            const d = $('drum'); d.classList.add('hit'); setTimeout(() => d.classList.remove('hit'), 90);
+        }
+        function setPhase(t) { $('phase').innerHTML = t || '&nbsp;'; }
+        function say(t, cls = 'text-slate-700') { const f = $('feedback'); f.className = 'text-center text-base font-bold min-h-[24px] mb-1 ' + cls; f.innerText = t; }
+
+        const strip = $('strip'), sctx = strip.getContext('2d');
+        function clearStrip() { sctx.clearRect(0, 0, strip.width, strip.height); }
+        // stages 1 and 2: the drum's beats on top, your taps underneath
+        function drawTapStrip(beatTimes, taps, win, ghost = false) {
+            clearStrip();
+            const W = strip.width, pad = 30, tmin = beatTimes[0] - 0.3, tmax = beatTimes[beatTimes.length - 1] + 0.3;
+            const X = t => pad + (t - tmin) / (tmax - tmin) * (W - 2 * pad);
+            sctx.font = '16px sans-serif'; sctx.textAlign = 'left'; sctx.fillText('🥁', 3, 38); sctx.fillText('👆', 3, 88);
+            beatTimes.forEach((t, i) => {
+                sctx.fillStyle = 'rgba(245,158,11,.16)'; sctx.fillRect(X(t - win), 14, X(t + win) - X(t - win), 84);
+                sctx.beginPath(); sctx.arc(X(t), 34, 13, 0, 7); sctx.fillStyle = ghost ? '#fde68a' : '#f59e0b'; sctx.fill();
+                sctx.fillStyle = '#fff'; sctx.font = 'bold 14px sans-serif'; sctx.textAlign = 'center'; sctx.fillText(i % 4 + 1, X(t), 39);
+            });
+            taps.forEach(tp => {
+                sctx.beginPath(); sctx.arc(X(tp.t), 84, 9, 0, 7); sctx.fillStyle = tp.ok ? '#16a34a' : '#fb923c'; sctx.fill();
+            });
+        }
+        // stage 3: the beats leave dots along a line at their true spacing; equal gaps look steady, uneven gaps look wobbly
+        function drawJudgeStrip(times, upTo, reveal, kind) {
+            clearStrip();
+            const W = strip.width, pad = 26, span = Math.max(times[times.length - 1] - times[0], 1);
+            const X = t => pad + (t - times[0]) / span * (W - 2 * pad);
+            sctx.fillStyle = 'rgba(36,31,61,.15)'; sctx.fillRect(pad - 8, 52, W - 2 * pad + 16, 5);
+            let gmin = 9; times.forEach((t, i) => { if (i) gmin = Math.min(gmin, t - times[i - 1]); });
+            const r = Math.max(5, Math.min(11, gmin * (W - 2 * pad) / span * 0.35));
+            const dotCol = reveal ? (kind === 'steady' ? '#16a34a' : '#db2777') : '#f59e0b';
+            for (let i = 0; i < times.length; i++) {
+                if (i > upTo) break;
+                sctx.beginPath(); sctx.arc(X(times[i]), 54, r, 0, 7); sctx.fillStyle = dotCol; sctx.fill();
+                if (reveal && i) { sctx.fillStyle = ['#2dd4bf', '#6366f1'][i % 2]; const x0 = X(times[i - 1]) + r + 2, x1 = X(times[i]) - r - 2; sctx.fillRect(x0, 78, Math.max(3, x1 - x0), 12); }
+            }
+            if (reveal) { sctx.fillStyle = dotCol; sctx.font = 'bold 18px Quicksand, sans-serif'; sctx.textAlign = 'center'; sctx.fillText(kind === 'steady' ? 'Equal gaps = STEADY' : 'Uneven gaps = WOBBLY', W / 2, 22); }
+        }
+
+        // ======================================================================== stages
+        function stopAll() {
+            runId++; running = false; tapHandler = null;
+            setLit(-1, false); setPhase(''); clearStrip();
+            $('answers').classList.add('hidden'); $('replay-btn').classList.add('hidden');
+            $('drum').disabled = true; $('drum-wrap').classList.add('waiting'); $('start-btn').classList.remove('hidden');
+            setAnswersEnabled(false);
+        }
+        function setStage(n) {
+            currentStage = n; stopAll();
+            for (let i = 1; i <= 3; i++) {
+                $('btn-stage-' + i).className = 'py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 ' +
+                    (i === n ? 'bg-amber-400 text-white border-b-2 border-amber-600 shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200');
+            }
+            $('mascot-avatar').innerHTML = n === 3 ? AV_BARNABY : AV_MELODY;
+            $('mascot-dialog').innerText = DIALOG[n];
+            say('');
+            resetStats();
+            $('hearts-container').style.visibility = n === 3 ? 'visible' : 'hidden';   // hearts only matter in stage 3: no harsh losses for tapping
+        }
+        function startActivity() {
+            ac();
+            $('start-btn').classList.add('hidden');
+            running = true; const my = ++runId;
+            if (currentStage === 1) stage1(my); else if (currentStage === 2) stage2Loop(my); else stage3Loop(my);
+        }
+        const alive = my => my === runId && running;
+        async function waitUntilCtx(t, my) {
+            while (alive(my) && ac().currentTime < t) await sleep(15);
+            return alive(my);
+        }
+
+        // tapping: the drum button, the space bar, or a finger anywhere on the drum
+        $('drum').addEventListener('pointerdown', e => { e.preventDefault(); tap(); });
+        document.addEventListener('keydown', e => { if ((e.code === 'Space' || e.code === 'Enter') && !e.repeat && tapHandler && document.activeElement === document.body) { e.preventDefault(); tap(); } });
+        function tap() {
+            if (!tapHandler) return;
+            const t = ac().currentTime;
+            playTock(t); flashDrum();
+            tapHandler(t);
+        }
+
+        // ---------------------------------------------------------------- stage 1: tap along with a drum that never stops
+        function matchTaps(beatTimes, taps, win) {
+            const used = new Set(); let hits = 0; const marks = taps.map(t => ({ t, ok: false }));
+            beatTimes.forEach(bt => {
+                let best = -1, bd = 9;
+                marks.forEach((m, i) => { const d = Math.abs(m.t - bt); if (!used.has(i) && d <= win && d < bd) { bd = d; best = i; } });
+                if (best >= 0) { used.add(best); marks[best].ok = true; hits++; }
+            });
+            return { hits, marks, extras: marks.filter(m => !m.ok).length };
+        }
+        async function stage1(my) {
+            const c = ac(), bpm = 80, per = 60 / bpm, win = 0.2, t0 = c.currentTime + 0.5;
+            let next = 0, taps = [], evaluated = -1;
+            $('drum').disabled = false; $('drum-wrap').classList.remove('waiting');
+            tapHandler = t => taps.push(t);
+            lastBeat = null;
+            say('');
+            const raf = () => {
+                if (!alive(my)) return;
+                const now = ac().currentTime, cb = Math.floor((now - t0) / per + 0.02);
+                if (cb >= 0) { setLit(cb % 4); setPhase(Math.floor(cb / 4) === 0 ? 'Listen…' : 'Tap with the drum!'); }
+                requestAnimationFrame(raf);
+            };
+            requestAnimationFrame(raf);
+            while (alive(my)) {
+                // keep the drum scheduled slightly ahead, so the beat is exact and never stops
+                while (t0 + next * per < ac().currentTime + 0.15) { playDrum(t0 + next * per); next++; }
+                const b = evaluated + 1, endT = t0 + (4 * b + 3) * per + 0.45;
+                if (ac().currentTime >= endT) {
+                    evaluated = b;
+                    if (b >= 1) {
+                        const bt = [0, 1, 2, 3].map(k => t0 + (4 * b + k) * per);
+                        const bar = taps.filter(t => t > bt[0] - win && t < bt[3] + 0.4);
+                        taps = taps.filter(t => t >= bt[3] + 0.4);
+                        const m = matchTaps(bt, bar, win);
+                        drawTapStrip(bt, m.marks, win);
+                        if (m.hits >= 3 && m.extras <= 2) { await barSuccess(m.hits === 4 ? 'Perfect! 4 out of 4!' : `Nearly perfect! ${m.hits} out of 4!`); if (!alive(my)) return; }
+                        else say(m.extras > 3 ? 'Lots of taps! Tap just once on each beat.' : `${m.hits} out of 4. Listen, and tap with the drum!`, 'text-amber-600');
+                    }
+                }
+                await sleep(20);
+            }
+        }
+        // a successful bar: reward, but never pause the drum (the animal-complete overlay will stop it)
+        function barSuccess(msg) {
+            score += 10; streak++; $('score').innerText = score; $('streak').innerText = streak;
+            Tracking.logAnswer({ correct: true, stage: currentStage });
+            say('⭐ ' + msg + ' ⭐', 'text-green-600');
+            triggerConfetti(); playTone(660, 'triangle', 0.2);
+            RewardSystem.correct();
+            return Promise.resolve();
+        }
+
+        // ---------------------------------------------------------------- stage 2: the drum stops after four beats; keep it going
+        async function stage2Loop(my) {
+            $('drum').disabled = false; $('drum-wrap').classList.remove('waiting');
+            while (alive(my)) { await stage2Round(my); if (!alive(my)) return; await sleep(1500); }
+        }
+        async function stage2Round(my) {
+            const c = ac(), bpm = [70, 80, 90, 100][Math.floor(Math.random() * 4)], per = 60 / bpm, win = Math.min(0.22, per * 0.3), t0 = c.currentTime + 0.7;
+            const beats = [0, 1, 2, 3, 4, 5, 6, 7].map(i => t0 + i * per);
+            let taps = [];
+            tapHandler = t => { taps.push(t); const n = taps.length; if (n <= 4) setLit(n - 1); };
+            say(''); clearStrip(); setPhase('Listen…'); setLit(-1, false);
+            for (let i = 0; i < 4; i++) playDrum(beats[i]);
+            for (let i = 0; i < 4; i++) {
+                if (!await waitUntilCtx(beats[i] - 0.02, my)) return;
+                setLit(i);
+            }
+            if (!await waitUntilCtx(beats[3] + per * 0.5, my)) return;
+            setLit(-1, false); setPhase('Keep it going!');
+            if (hintsEnabled) {                                   // hint: a silent light keeps the beat
+                for (let i = 4; i < 8; i++) { waitUntilCtx(beats[i] - 0.02, my).then(ok => { if (ok) { setLit(i - 4); setTimeout(() => setLit(-1, false), 150); } }); }
+            }
+            if (!await waitUntilCtx(beats[7] + win + 0.35, my)) return;
+            tapHandler = null;
+            const mine = taps.filter(t => t > beats[3] + per * 0.5 && t < beats[7] + win + 0.35);
+            const m = matchTaps(beats.slice(4), mine, win);
+            setPhase(m.hits >= 3 ? 'You kept the beat!' : 'Here is the beat…');
+            drawTapStrip(beats.slice(4), m.marks, win);
+            setLit(-1, false);
+            // the drum comes back in time, so the child can hear what a steady beat was
+            const again = c.currentTime + 0.4;
+            for (let i = 0; i < 4; i++) { playDrum(again + i * per); const k = i; waitUntilCtx(again + k * per - 0.02, my).then(ok => { if (ok) setLit(k); }); }
+            if (m.hits >= 3 && m.extras <= 2) { await barSuccess(m.hits === 4 ? 'Perfect! You kept the beat!' : `Nearly! ${m.hits} out of 4!`); }
+            else say(m.extras > 3 ? 'Lots of taps! Tap just once on each beat.' : `${m.hits} out of 4. Listen again, and keep the beat going!`, 'text-amber-600');
+            if (!await waitUntilCtx(again + 4 * per, my)) return;
+            setLit(-1, false); setPhase('');
+        }
+
+        // ---------------------------------------------------------------- stage 3: steady or wobbly?
+        let judging = null;           // {times (relative), kind}
+        let answerOpen = false;
+        function setAnswersEnabled(on) { answerOpen = on; ['ans-steady', 'ans-wobbly'].forEach(id => { $(id).disabled = !on; $(id).style.opacity = on ? 1 : 0.5; }); }
+        function makeBeat() {
+            const kind = Math.random() < 0.5 ? 'steady' : 'wobbly';
+            const bpm = [70, 80, 100, 120][Math.floor(Math.random() * 4)], per = 60 / bpm, n = Math.max(8, Math.round(5.6 / per) + 1);
+            const times = [0];
+            if (kind === 'steady') { for (let i = 1; i < n; i++) times.push(i * per); }
+            else {
+                let gaps;
+                do { gaps = Array.from({ length: n - 1 }, () => per * [0.55, 0.65, 1.0, 1.0, 1.35, 1.5][Math.floor(Math.random() * 6)]); }
+                while (gaps.filter(g => g < per * 0.75).length < 2 || gaps.filter(g => g > per * 1.25).length < 2);
+                gaps.forEach(g => times.push(times[times.length - 1] + g));
+            }
+            return { times, kind, per };
+        }
+        async function stage3Loop(my) {
+            while (alive(my)) {
+                lastBeat = makeBeat();
+                if (!await playJudgeBeat(my)) return;
+                const verdict = await new Promise(res => { judging = res; });          // resolved by answer()
+                if (!alive(my)) return;
+                await sleep(2400);
+                if (!alive(my)) return;
+                if (lives <= 0) return;
+            }
+        }
+        async function playJudgeBeat(my) {
+            const c = ac(), { times, kind } = lastBeat, t0 = c.currentTime + 0.6;
+            setAnswersEnabled(false); $('answers').classList.remove('hidden'); $('replay-btn').classList.add('hidden');
+            say(''); setPhase('Listen to the beat…'); setLit(-1, false);
+            times.forEach(t => playDrum(t0 + t));
+            for (let i = 0; i < times.length; i++) {
+                if (!await waitUntilCtx(t0 + times[i] - 0.02, my)) return false;
+                drawJudgeStrip(times.map(t => t0 + t), i, false, kind); setLit(i % 4); flashDrumVisual();
+            }
+            if (!await waitUntilCtx(t0 + times[times.length - 1] + 0.25, my)) return false;
+            setLit(-1, false); setPhase('Steady, or wobbly?'); setAnswersEnabled(true);
+            $('replay-btn').classList.remove('hidden');
+            return true;
+        }
+        function flashDrumVisual() { $('drum').classList.add('hit'); setTimeout(() => $('drum').classList.remove('hit'), 90); }
+        async function replayBeat() {
+            if (currentStage !== 3 || !lastBeat || !answerOpen) return;
+            const my = runId; setAnswersEnabled(false);
+            const c = ac(), { times, kind } = lastBeat, t0 = c.currentTime + 0.3;
+            times.forEach(t => playDrum(t0 + t));
+            for (let i = 0; i < times.length; i++) { if (!await waitUntilCtx(t0 + times[i] - 0.02, my)) return; drawJudgeStrip(times.map(t => t0 + t), i, false, kind); flashDrumVisual(); }
+            if (alive(my)) setAnswersEnabled(true);
+        }
+        function answer(a) {
+            if (!answerOpen || !lastBeat) return;
+            setAnswersEnabled(false); $('replay-btn').classList.add('hidden');
+            const right = a === lastBeat.kind, t0 = ac().currentTime;
+            drawJudgeStrip(lastBeat.times.map(t => t0 + t), 99, true, lastBeat.kind);
+            const avatar = $('mascot-avatar');
+            if (right) {
+                score += 10; streak++; $('score').innerText = score; $('streak').innerText = streak;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
+                say(lastBeat.kind === 'steady' ? '⭐ Yes! It was steady! ⭐' : '⭐ Yes! It wobbled! ⭐', 'text-green-600');
+                $('mascot-dialog').innerText = lastBeat.kind === 'steady' ? 'The gaps are all the same size. That is a steady beat!' : 'Look at the gaps: some short, some long. That is a wobbly beat!';
+                triggerConfetti(); playTone(660, 'triangle', 0.25);
+                avatar.className = 'mascot-spin shrink-0'; setTimeout(() => avatar.className = 'mascot-bounce shrink-0', 600);
+                RewardSystem.correct();
+            } else {
+                streak = 0; lives--; $('streak').innerText = streak; updateHearts();
+                Tracking.logAnswer({ correct: false, stage: currentStage });
+                say(lastBeat.kind === 'steady' ? 'It was steady. Look: all the gaps are equal.' : 'It wobbled. Look: the gaps are not equal.', 'text-rose-500');
+                $('mascot-dialog').innerText = 'Listen again next time, and watch the gaps between the beats.';
+                playFailBuzz(); avatar.className = 'mascot-sad shrink-0'; setTimeout(() => avatar.className = 'mascot-bounce shrink-0', 600);
+                if (lives <= 0) { setTimeout(triggerGameOver, 1400); }
+            }
+            if (judging) { const j = judging; judging = null; j(right); }
+        }
+
+        // ======================================================================== common game furniture (same as the other nuggets)
+        if (typeof RewardSystem !== 'undefined') RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
+
+        function triggerConfetti() {
+            const holder = $('confetti-holder'), colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div'); p.className = 'confetti';
+                const a = Math.random() * Math.PI * 2, d = 80 + Math.random() * 120;
+                p.style.setProperty('--dx', `${Math.cos(a) * d}px`); p.style.setProperty('--dy', `${Math.sin(a) * d}px`);
+                p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; p.style.left = '50%'; p.style.top = '50%';
+                holder.appendChild(p); setTimeout(() => p.remove(), 1000);
+            }
+        }
+        function updateHearts() {
+            const c = $('hearts-container'); c.innerHTML = '';
+            for (let i = 0; i < 3; i++) c.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+        function triggerStageComplete() {
+            stopAll();
+            GameProgress.stageCleared(currentStage, 3);
+            playSuccessArpeggio();
+            $('overlay-mascot').innerHTML = SVG_MELODY;
+            $('overlay-title').innerText = '🌟 Sensational! 🌟';
+            const oMsg = $('overlay-msg'), oBtn = $('overlay-btn');
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = 'Go to Next Stage!';
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = 'Outstanding! You can feel a beat, keep a beat, and spot a wobble!';
+                oBtn.innerText = 'Back to Arcade!';
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || 'music_arcade.html'); };
+            }
+            $('overlay').classList.remove('hidden');
+        }
+        function triggerGameOver() {
+            stopAll();
+            $('overlay-mascot').innerHTML = SVG_BARNABY;
+            $('overlay-title').innerText = 'No More Hearts!';
+            $('overlay-msg').innerText = "Let's fill your hearts and try this stage again together!";
+            const oBtn = $('overlay-btn'); oBtn.innerText = 'Restart Stage';
+            oBtn.onclick = () => { dismissOverlay(); setStage(currentStage); };
+            $('overlay').classList.remove('hidden');
+        }
+        function dismissOverlay() { $('overlay').classList.add('hidden'); }
+        function resetStats() { streak = 0; lives = 3; $('streak').innerText = streak; updateHearts(); }
+        function resetGame() { score = 0; $('score').innerText = score; setStage(1); }
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            $('hint-btn-text').innerText = hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On';
+            if (hintsEnabled) $('mascot-dialog').innerText = currentStage === 2 ? 'Hints on: a light will blink the beat while the drum is quiet.' : 'Hints on! In stage 2 a light keeps the beat when the drum stops.';
+        }
+        document.addEventListener('visibilitychange', () => { if (document.hidden && running) setStage(currentStage); });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Feel the beat'; $('game-card').appendChild(a); }
+            setStage(1);
+        });
+        // set to the video's address once it is published, and a "Watch the video" link appears
+        const VIDEO_URL = '';
+    </script>
+</body>
+</html>
