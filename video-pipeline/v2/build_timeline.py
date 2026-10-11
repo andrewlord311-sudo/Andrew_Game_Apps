@@ -59,14 +59,21 @@ def W(cid, word, nth=0):
     return clips[cid]['start'] + (hits[nth][1] if len(hits) > nth else 0.4)
 
 GAP_OVERRIDE = script.get('gapOverride', {})
-SCENES = [(sc['id'], sc['clips'], sc.get('lead', 0.4), sc.get('gap', 0.0), sc.get('tail', 0.5)) for sc in script['scenes']]
+SCENES = [(sc['id'], sc['clips'], sc.get('lead', 0.4), sc.get('gap', 0.0), sc.get('tail', 0.5), sc.get('grid')) for sc in script['scenes']]
 t = 0.0; scenes = []
-for sid, ids, lead, gap, tail in SCENES:
-    s0 = t; cur = s0 + lead
+for sid, ids, lead, gap, tail, grid in SCENES:
+    s0 = t; cur = s0 + lead; gbeats = []
     for i, cid in enumerate(ids):
         g = GAP_OVERRIDE.get(cid, gap) if i else 0
-        cur += g; clips[cid]['start'] = cur; cur += clips[cid]['dur']; clips[cid]['end'] = cur
-    t = cur + tail; scenes.append({'id': sid, 'start': s0, 'end': t, 'clips': ids})
+        if grid and i >= grid['from']:
+            # a beat grid: the clip's first word lands exactly on beat number (i - from), so spoken counts are dead steady
+            on = clips[cid]['words'][0][1] if clips[cid]['words'] else 0.08
+            if i == grid['from']: b0 = cur + g + on
+            B = b0 + (i - grid['from']) * grid['period']; gbeats.append(round(B, 3))
+            clips[cid]['start'] = B - on; cur = clips[cid]['start'] + clips[cid]['dur']; clips[cid]['end'] = cur
+        else:
+            cur += g; clips[cid]['start'] = cur; cur += clips[cid]['dur']; clips[cid]['end'] = cur
+    t = cur + tail; scenes.append({'id': sid, 'start': s0, 'end': t, 'clips': ids, 'grid': gbeats})
 DURATION = t
 
 total = int(DURATION * SR) + SR
@@ -97,6 +104,27 @@ def sparkle(vol=0.11):
     out = np.zeros(int(0.9 * SR), dtype=np.float32)
     for i, f in enumerate([1046, 1318, 1568, 2093]): put(out, i * 0.07, tone(f, 0.5, vol), 1)
     return out
+def drum(vol=0.55):
+    n = int(0.4 * SR); x = np.arange(n) / SR; f = 55 + 130 * np.exp(-x * 16)
+    body = np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.12)
+    k = np.random.default_rng(5).standard_normal(n) * np.exp(-x / 0.012) * 0.3
+    return ((body + k) * vol).astype(np.float32)
+def step(vol=0.5):
+    n = int(0.25 * SR); x = np.arange(n) / SR; f = 45 + 60 * np.exp(-x * 25)
+    body = np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.07)
+    z = np.random.default_rng(6).standard_normal(n); z = np.convolve(z, np.ones(30) / 30, 'same') * np.exp(-x / 0.02) * 1.6
+    return ((body + z) * vol).astype(np.float32)
+def clap(vol=0.45):
+    n = int(0.25 * SR); x = np.arange(n) / SR; z = np.random.default_rng(7).standard_normal(n)
+    z = z - np.convolve(z, np.ones(10) / 10, 'same')
+    e = np.exp(-x / 0.035) + 0.8 * np.exp(-np.maximum(x - 0.012, 0) / 0.03) * (x > 0.012) + 0.6 * np.exp(-np.maximum(x - 0.026, 0) / 0.03) * (x > 0.026)
+    return (z * e * vol * 0.8).astype(np.float32)
+def heart(vol=0.4):
+    out = np.zeros(int(0.5 * SR), dtype=np.float32)
+    for at, g in [(0.0, 1.0), (0.2, 0.65)]:
+        n = int(0.16 * SR); x = np.arange(n) / SR; f = 48 + 40 * np.exp(-x * 30)
+        put(out, at, (np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.05) * vol * g).astype(np.float32), 1)
+    return out
 FREQ = {'e4': 329.6, 'f4': 349.2, 'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
@@ -110,6 +138,23 @@ for e in events:
     k = e['kind']
     sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle}.get(k, lambda: tone(FREQ.get(e.get('f'), 440)))()
     put(mix, e['at'], sig, 1.0)
+
+# --- beat tracks (rhythm videos): a steady run of drum / step / clap / heartbeat hits; the page draws its pulses from the same times ---
+SND = {'drum': drum, 'step': step, 'clap': clap, 'heart': heart}
+beats = []
+for b in script.get('beats', []):
+    if 'grid' in b: times = list(next(sc for sc in scenes if sc['id'] == b['grid'])['grid'])
+    else:
+        at = b['at']
+        base = clips[at['clip']]['end' if at.get('from') == 'end' else 'start'] if 'clip' in at else next(sc for sc in scenes if sc['id'] == at['scene'])['start']
+        base += at.get('off', 0)
+        if 'offsets' in b: times = [base + o for o in b['offsets']]
+        else:
+            per = 60.0 / b['bpm']
+            n = b['count'] if 'count' in b else int((next(sc for sc in scenes if sc['id'] == b['until'])['end'] - 0.25 - base) / per) + 1
+            times = [base + i * per for i in range(n)]
+    for i, tm in enumerate(times):
+        beats.append({'t': round(tm, 3), 'track': b['track'], 'i': i, 'sound': b['sound']}); put(mix, tm, SND[b['sound']](), 1.0)
 
 # --- the jingle: Andrew's own track, trimmed and faded, same every video (opening and closing) ---
 jingle = load(HERE / 'audio' / 'shared' / 'jingle.mp3')
@@ -130,7 +175,7 @@ def levels(sig):
     r = np.array([np.sqrt(np.mean(sig[i * h:(i + 1) * h] ** 2)) for i in range(n)])
     r = r / (np.percentile(r, 92) + 1e-9); r = np.clip(r, 0, 1)
     return np.convolve(r, [0.25, 0.5, 0.25], 'same')
-out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'titleAt': script.get('titleAt'), 'todayLead': script.get('todayLead'), 'dry': DRY, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
+out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'beats': beats, 'titleAt': script.get('titleAt'), 'todayLead': script.get('todayLead'), 'dry': DRY, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
        'clips': {cid: {'who': c['who'], 'text': c.get('show', c['text']), 'quiet': c.get('quiet', False), 'words': c['words'], 'start': round(c['start'], 3), 'end': round(c['end'], 3), 'env': [round(float(v), 2) for v in levels(c['wave'])]} for cid, c in clips.items()}}
 json.dump(out, open(OUT / 'timeline.json', 'w'))
 print(f"duration {DURATION:.1f}s; scenes:", ', '.join(f"{s['id']} {s['start']:.1f}-{s['end']:.1f}" for s in scenes))
