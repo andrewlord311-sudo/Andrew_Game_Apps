@@ -484,6 +484,90 @@ S.outro4=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   this.ch=[['HIGHER ↑','up'],['SAME =','same'],['LOWER ↓','down']].map(([tx,k],i)=>chip(r,tx,V4COL[k],420+i*220,330));
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game4','higher')-0.2;this.ch.forEach((ch,i)=>{const q=prog(t,t0+i*0.25,0.45);ch.style.opacity=String(clamp(q*2));ch.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.sin(t*5+i):1))})}});
 
+
+// ======================================================================== VIDEO 5: feel the beat
+// Every pulse on screen is drawn from TL.beats (the same times the drum sounds are mixed at), so sight and sound cannot drift.
+function beatAt(tracks,t){let best=null;for(const b of TL.beats){if(tracks.includes(b.track)&&b.t<=t&&(!best||b.t>best.t))best=b}return best}
+function pulse(tracks,t,k=8){const b=beatAt(tracks,t);return b?Math.exp(-(t-b.t)*k):0}
+const BEATCOL=['#2dd4bf','#6366f1','#ec4899','#f59e0b'];
+function heartSvg(w){return `<svg viewBox="0 0 300 280" width="${w}" style="overflow:visible"><path d="M150,262 C14,160 36,34 150,98 C264,34 286,160 150,262 Z" fill="#ef4444" stroke="#b91c1c" stroke-width="9" stroke-linejoin="round"/><ellipse cx="96" cy="92" rx="30" ry="18" fill="#fff" opacity=".45" transform="rotate(-35 96 92)"/></svg>`}
+function drumSvg(w){return `<svg viewBox="0 0 300 250" width="${w}" style="overflow:visible"><ellipse cx="150" cy="205" rx="112" ry="28" fill="#9f1239"/><rect x="38" y="76" width="224" height="130" fill="#e11d48"/><ellipse cx="150" cy="206" rx="112" ry="28" fill="#e11d48"/><polyline points="52,100 94,192 136,100 178,192 220,100 258,186" fill="none" stroke="#fde68a" stroke-width="7" stroke-linejoin="round"/><ellipse cx="150" cy="76" rx="112" ry="32" fill="#fde68a" stroke="#b45309" stroke-width="7"/><ellipse cx="150" cy="76" rx="92" ry="22" fill="none" stroke="#fbbf24" stroke-width="4"/></svg>`}
+function ripple(r,x,y,color){const d=document.createElement('div');d.className='halo';d.style.cssText=`left:${x-110}px;top:${y-110}px;width:220px;height:220px;border:10px solid ${color};background:none`;r.appendChild(d);return d}
+function rippleUpdate(d,t,tracks){const b=beatAt(tracks,t);const a=b?t-b.t:9;const q=clamp(a/0.55);d.style.opacity=b&&a<0.55?String(0.8*(1-q)):'0';d.style.scale=String(lerp(0.5,1.9,easeOut(q)))}
+function beatStrip(r,y){return [0,1,2,3].map(i=>{const d=document.createElement('div');d.className='abs big';d.style.cssText=`left:${640+(i-1.5)*190-46}px;top:${y}px;width:92px;height:92px;border-radius:50%;background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.14);font-size:56px;line-height:92px;color:#94a3b8;opacity:0`;d.textContent=i+1;r.appendChild(d);return d})}
+function beatStripUpdate(ds,t,tracks,appear){const b=beatAt(tracks,t);const cur=b?b.i%4:-1,age=b?t-b.t:9;
+  ds.forEach((d,i)=>{const p=prog(t,appear+i*0.12,0.35);const lit=i===cur&&age<0.4;d.style.opacity=String(clamp(p*2));d.style.scale=String(lerp(0.4,1,easeBack(p))*(lit?1.28-age*0.5:1));d.style.background=lit?BEATCOL[i]:'#fff';d.style.color=lit?'#fff':'#94a3b8'})}
+function bigCount(r,top){const d=document.createElement('div');d.className='big abs';d.style.cssText=`left:0;right:0;top:${top}px;font-size:230px;opacity:0`;r.appendChild(d);return d}
+function bigCountUpdate(d,t,tracks,appear){const b=beatAt(tracks,t);const age=b?t-b.t:9;if(!b||t<appear||age>0.62){d.style.opacity='0';return}
+  d.textContent=b.i%4+1;d.style.color=BEATCOL[b.i%4];d.style.opacity=String(clamp(1-(age-0.4)/0.2));d.style.scale=String(lerp(1.5,1,easeBack(clamp(age/0.25))))}
+
+S.v5recap=v4pair({notes:['e/4','d/5'],kind:'up',t1:()=>wt('recap5','higher')-1.0,capClip:'recap5',capWord:'higher',capText:'HIGHER ↑'});
+
+S.v5heart={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.h=document.createElement('div');this.h.className='abs';this.h.style.cssText='left:490px;top:215px;width:300px;opacity:0;transform-origin:50% 55%';this.h.innerHTML=heartSvg(300);r.appendChild(this.h);
+  this.rip=ripple(r,640,360,'#ef4444');
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:520px;font-size:62px;color:#b91c1c;opacity:0';this.q.textContent='Can you feel it?';r.appendChild(this.q);
+  },update(t,L,c){pop(this.h,L,0.3,0.5,0.3);const p=pulse(['heart'],t,9);this.h.style.scale=String(clamp(prog(L,0.3,0.5)*2.2)>0?lerp(0.3,1,easeBack(prog(L,0.3,0.5)))*(1+0.2*p):0);
+   rippleUpdate(this.rip,t,['heart']);const tq=CL.chest.start+0.2;this.q.style.opacity=String(prog(t,tq,0.4));this.q.style.scale=String(lerp(0.7,1,easeBack(prog(t,tq,0.5))));
+   const tw=wt('heart','beat')-0.1;if(t>=tw&&t<CL.chest.start)c.caption('THE BEAT','#e11d48',tw)}};
+
+S.v5drum={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:470px;top:230px;width:340px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(340);r.appendChild(this.d);
+  this.rip=ripple(r,640,320,'#fbbf24');
+  },update(t,L,c){const p=pulse(['drum1'],t,10);const a=prog(L,0.4,0.5);this.d.style.opacity=String(clamp(a*2));this.d.style.scale=`${lerp(0.4,1,easeBack(a))*(1+0.07*p)} ${lerp(0.4,1,easeBack(a))*(1-0.1*p)}`;
+   rippleUpdate(this.rip,t,['drum1']);const tw=wt('steady','steady')-0.1;if(t>=tw)c.caption('A STEADY BEAT','#e11d48',tw)}};
+
+S.v5count={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.ds=beatStrip(r,480);this.n=bigCount(r,210)},
+  update(t,L,c){const t0=CL.c1.start-0.4;beatStripUpdate(this.ds,t,['count'],t0);bigCountUpdate(this.n,t,['count'],t0-0.2)}};
+
+function v5foot(col,flip){return `<svg viewBox="0 0 90 140" width="90" style="overflow:visible"><ellipse cx="45" cy="86" rx="32" ry="48" fill="${col}" stroke="#fff" stroke-width="6" transform="rotate(${flip?10:-10} 45 86)"/><g fill="${col}" stroke="#fff" stroke-width="4"><circle cx="20" cy="26" r="9"/><circle cx="38" cy="14" r="9"/><circle cx="58" cy="14" r="9"/><circle cx="74" cy="26" r="9"/></g></svg>`}
+S.v5march={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.n=bigCount(r,90);
+  this.feet=Array.from({length:8},(_,i)=>{const d=document.createElement('div');d.className='abs';const x=270+i*105,y=i%2?392:452;d.style.cssText=`left:${x-45}px;top:${y-70}px;opacity:0`;d.innerHTML=v5foot(i%2?'#6366f1':'#0d9488',i%2);r.appendChild(d);
+    const l=document.createElement('div');l.className='abs big';l.style.cssText=`left:${x-30}px;top:${y+66}px;width:60px;font-size:40px;color:#241f3d;opacity:0`;l.textContent=i%4+1;r.appendChild(l);return {d,l}})},
+  update(t,L,c){const bs=TL.beats.filter(b=>b.track==='march');bigCountUpdate(this.n,t,['march'],CL.march.end);
+   this.feet.forEach((f,i)=>{const bt=bs[i]?bs[i].t:1e9;const p=prog(t,bt-0.03,0.3);f.d.style.opacity=String(clamp(p*2.5));f.d.style.scale=String(lerp(1.6,1,easeBack(p)));f.l.style.opacity=String(clamp(p*2.5))})}};
+
+S.v5clap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.h=document.createElement('div');this.h.className='big abs';this.h.style.cssText='left:0;right:0;top:150px;font-size:230px;opacity:0;transform-origin:50% 60%';this.h.textContent='👏';r.appendChild(this.h);
+  this.burst=Array.from({length:10},(_,i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText='left:630px;top:300px;width:8px;height:48px;border-radius:5px;background:#f59e0b;opacity:0;transform-origin:50% 50%';r.appendChild(d);return d});
+  this.ds=beatStrip(r,500)},
+  update(t,L,c){const p=pulse(['clap'],t,11);const b=beatAt(['clap'],t);const a=prog(L,0.4,0.4);this.h.style.opacity=String(clamp(a*2));this.h.style.scale=String(lerp(0.4,1,easeBack(a))*(1+0.28*p));this.h.style.rotate=(p*(b&&b.i%2?6:-6))+'deg';
+   const age=b?t-b.t:9;this.burst.forEach((d,i)=>{const q=clamp(age/0.45),ang=i/10*Math.PI*2,rr=lerp(110,230,easeOut(q));d.style.opacity=b&&age<0.45?String(1-q):'0';d.style.transform=`translate(${Math.cos(ang)*rr}px,${Math.sin(ang)*rr*0.8+30}px) rotate(${ang*57.3+90}deg)`});
+   beatStripUpdate(this.ds,t,['clap'],CL.clapl.end+0.1)}};
+
+S.v5tempo={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:490px;top:190px;width:300px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(300);r.appendChild(this.d);
+  this.rip=ripple(r,640,315,'#fbbf24');this.ds=beatStrip(r,475)},
+  update(t,L,c){const T=['fast','slow','steady2'];const p=pulse(T,t,10);const a=prog(L,0.3,0.5);this.d.style.opacity=String(clamp(a*2));this.d.style.scale=`${lerp(0.4,1,easeBack(a))*(1+0.07*p)} ${lerp(0.4,1,easeBack(a))*(1-0.1*p)}`;
+   rippleUpdate(this.rip,t,T);beatStripUpdate(this.ds,t,T,CL.fast.end);
+   if(t>=CL.steadyline.start)c.caption('STEADY ✓','#6366f1',CL.steadyline.start);else if(t>=CL.slow.start)c.caption('SLOW 🐢','#0d9488',CL.slow.start);else if(t>=CL.fast.start)c.caption('FAST ⚡','#f59e0b',CL.fast.start)}};
+
+// the quiz: hear a beat, then think, then the answer. The beats leave dots along a line at their true spacing, so equal gaps look steady and uneven gaps look wobbly.
+function v5quiz(o){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:525px;top:175px;width:230px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(230);r.appendChild(this.d);
+  this.rip=ripple(r,640,271,'#fbbf24');
+  this.line=document.createElement('div');this.line.className='abs';this.line.style.cssText='left:230px;top:526px;width:820px;height:8px;border-radius:4px;background:rgba(36,31,61,.15);opacity:0';r.appendChild(this.line);
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:372px;font-size:96px;color:var(--orange);opacity:0;display:none';this.q.textContent='?';r.appendChild(this.q);
+  this.bs=TL.beats.filter(b=>b.track===o.track);this.dots=this.bs.map(b=>{const d=document.createElement('div');d.className='abs';d.style.cssText='width:40px;height:40px;border-radius:50%;background:#f59e0b;box-shadow:0 5px 0 rgba(0,0,0,.15);opacity:0';d.style.left=(240+(b.t-this.bs[0].t)*190-20)+'px';d.style.top='510px';r.appendChild(d);return d});
+  this.bars=this.bs.slice(1).map((b,i)=>{const d=document.createElement('div');d.className='abs';const x0=240+(this.bs[i].t-this.bs[0].t)*190,x1=240+(b.t-this.bs[0].t)*190;d.style.cssText=`left:${x0+22}px;top:560px;width:${Math.max(4,x1-x0-44)}px;height:16px;border-radius:8px;opacity:0`;d.style.background=['#2dd4bf','#6366f1'][i%2];r.appendChild(d);return d});
+  },update(t,L,c){const p=pulse([o.track],t,10);const a=prog(L,0.2,0.4);this.d.style.opacity=String(clamp(a*2));this.d.style.scale=`${lerp(0.4,1,easeBack(a))*(1+0.07*p)} ${lerp(0.4,1,easeBack(a))*(1-0.1*p)}`;rippleUpdate(this.rip,t,[o.track]);
+   const last=this.bs[this.bs.length-1].t,ta=CL[o.answer].start-0.05;this.line.style.opacity=String(prog(t,this.bs[0].t-0.3,0.4));
+   this.dots.forEach((d,i)=>{const q=prog(t,this.bs[i].t-0.03,0.25);d.style.opacity=String(clamp(q*2.5));d.style.scale=String(lerp(1.8,1,easeBack(q)));d.style.background=t>=ta?(o.kind==='steady'?'#16a34a':'#db2777'):'#f59e0b'});
+   this.bars.forEach((d,i)=>{d.style.opacity=String(prog(t,ta+i*0.12,0.3)*0.9)});
+   const thinking=t>last+0.5&&t<ta;this.q.style.display='block';this.q.style.opacity=String(thinking?clamp(prog(t,last+0.5,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+   if(t>=ta)c.caption(o.kind==='steady'?'STEADY ✓':'WOBBLY 〰',o.kind==='steady'?'#16a34a':'#db2777',ta)}}}
+S.v5q1=v5quiz({track:'q1',answer:'yes1',kind:'steady'});
+S.v5q2=v5quiz({track:'q2',answer:'no1',kind:'wobbly'});
+S.v5q3=v5quiz({track:'q3',answer:'yes2',kind:'steady'});
+(function(){const base=S.v5q3,b0=base.build,u0=base.update;
+  base.build=function(r){b0.call(this,r);this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})};
+  base.update=function(t,L,c){u0.call(this,t,L,c);const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}})();
+
+S.outro5=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:540px;top:262px;width:200px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(200);r.appendChild(this.d);
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game5','drum')-0.2;const q=prog(t,t0,0.45);const p=pulse(['outro'],t,9);this.d.style.opacity=String(clamp(q*2));this.d.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.06*Math.abs(Math.sin(t*5.2)):1))}});
+
 // ---------------------------------------------------------------- engine
 const ctxHelpers={caption(text,color,t0){C.text=text;C.color=color;C.t0=t0}};
 const C={text:'',color:'#241f3d',t0:0,last:''};
@@ -522,13 +606,16 @@ function renderAt(t){
     if(sc.id==='opener'||sc.id==='outro') pose=(Math.sin(t*4+ix)>-0.2)?'wave'+side:'idle';
     else if(sc.id==='hook'&&isSp) pose='think';
     else if(sp&&sp.id==='well') pose='cheer';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(sc.id==='v5march'||sc.id==='v5clap') pose=pulse([sc.id==='v5march'?'march':'clap'],t,9)>0.3?'cheer':'idle';
+    else if(sc.id==='v5heart') pose='idle';
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
     setHost(el,who,pose==='waveL'?'waveL':pose,mouth,blink);
     el.style.left=left+'px';el.style.bottom=(bot+(isSp?4:0))+'px';el.style.width=size+'px';
-    el.style.transform=`translateY(${-bob-lv*5}px) rotate(${isSp?Math.sin(t*11)*1.6*lv:0}deg) scale(${base*enter*(1+0.025*lv)},${base*enter*(1-0.02*lv)})`;
+    const marching=sc.id==='v5march'||sc.id==='v5clap';const bp=marching?pulse([sc.id==='v5march'?'march':'clap'],t,9):0;const bb=marching?beatAt([sc.id==='v5march'?'march':'clap'],t):null;const lean=sc.id==='v5march'&&bb?((bb.i%2?1:-1)*bp*6):0;
+    el.style.transform=`translateY(${-bob-lv*5-bp*28}px) rotate(${(isSp?Math.sin(t*11)*1.6*lv:0)+lean}deg) scale(${base*enter*(1+0.025*lv)},${base*enter*(1-0.02*lv)})`;
     el.style.opacity=String(clamp(enter*1.5));
   });
   // caption

@@ -1,0 +1,579 @@
+{
+ "title": "Feel the beat",
+ "titleAt": "feel",
+ "nugget": 5,
+ "game": "Beat Tapper",
+ "gameFile": "beat_tapper.html",
+ "todayLead": "Today we are going to",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "recap5",
+   "who": "melody",
+   "text": "Last time, <break time=\"0.45s\" /> we listened for higher, <break time=\"0.3s\" /> lower, <break time=\"0.3s\" /> or the same.",
+   "show": "Last time, we listened for higher, lower, or the same.",
+   "speed": 0.88
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today we are going to feel the beat."
+  },
+  {
+   "id": "heart",
+   "who": "melody",
+   "text": "Music has a beat. <break time=\"0.5s\" /> It keeps going, <break time=\"0.4s\" /> like your heartbeat.",
+   "show": "Music has a beat. It keeps going, like your heartbeat.",
+   "speed": 0.88
+  },
+  {
+   "id": "chest",
+   "who": "barnaby",
+   "text": "Put your hand on your chest. <break time=\"0.5s\" /> Can you feel it?",
+   "show": "Put your hand on your chest. Can you feel it?",
+   "speed": 0.88
+  },
+  {
+   "id": "steady",
+   "who": "melody",
+   "text": "A steady beat <break time=\"0.3s\" /> never rushes, <break time=\"0.3s\" /> and never stops.",
+   "show": "A steady beat never rushes, and never stops.",
+   "speed": 0.88
+  },
+  {
+   "id": "letscount",
+   "who": "barnaby",
+   "text": "Let's count the beat.",
+   "speed": 0.88
+  },
+  {
+   "id": "c1",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true
+  },
+  {
+   "id": "c2",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "prev": "One."
+  },
+  {
+   "id": "c3",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "prev": "One. Two."
+  },
+  {
+   "id": "c4",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "prev": "One. Two. Three."
+  },
+  {
+   "id": "c5",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "c1"
+  },
+  {
+   "id": "c6",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "c2"
+  },
+  {
+   "id": "c7",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "c3"
+  },
+  {
+   "id": "c8",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "c4"
+  },
+  {
+   "id": "march",
+   "who": "barnaby",
+   "text": "Now march with me!"
+  },
+  {
+   "id": "m1",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "c1"
+  },
+  {
+   "id": "m2",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "c2"
+  },
+  {
+   "id": "m3",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "c3"
+  },
+  {
+   "id": "m4",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "c4"
+  },
+  {
+   "id": "m5",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "c1"
+  },
+  {
+   "id": "m6",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "c2"
+  },
+  {
+   "id": "m7",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "c3"
+  },
+  {
+   "id": "m8",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "c4"
+  },
+  {
+   "id": "clapl",
+   "who": "melody",
+   "text": "Now clap on every beat!"
+  },
+  {
+   "id": "k1",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "c1"
+  },
+  {
+   "id": "k2",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "c2"
+  },
+  {
+   "id": "k3",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "c3"
+  },
+  {
+   "id": "k4",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "c4"
+  },
+  {
+   "id": "k5",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "c1"
+  },
+  {
+   "id": "k6",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "c2"
+  },
+  {
+   "id": "k7",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "c3"
+  },
+  {
+   "id": "k8",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "c4"
+  },
+  {
+   "id": "fast",
+   "who": "barnaby",
+   "text": "A beat can be fast,",
+   "speed": 0.88
+  },
+  {
+   "id": "slow",
+   "who": "melody",
+   "text": "or slow.",
+   "speed": 0.85
+  },
+  {
+   "id": "steadyline",
+   "who": "barnaby",
+   "text": "But it always stays steady.",
+   "speed": 0.88
+  },
+  {
+   "id": "yourturn5",
+   "who": "barnaby",
+   "text": "Your turn! <break time=\"0.4s\" /> Is this beat steady?",
+   "show": "Your turn! Is this beat steady?",
+   "speed": 0.88
+  },
+  {
+   "id": "yes1",
+   "who": "melody",
+   "text": "Yes! <break time=\"0.3s\" /> Steady.",
+   "show": "Yes! Steady.",
+   "speed": 0.85
+  },
+  {
+   "id": "no1",
+   "who": "barnaby",
+   "text": "No! <break time=\"0.3s\" /> It wobbled.",
+   "show": "No! It wobbled.",
+   "speed": 0.85
+  },
+  {
+   "id": "yes2",
+   "who": "melody",
+   "text": "Yes! <break time=\"0.3s\" /> Steady.",
+   "show": "Yes! Steady.",
+   "speed": 0.85,
+   "src": "yes1"
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "src": "../video2/qwell"
+  },
+  {
+   "id": "game5",
+   "who": "barnaby",
+   "text": "Play Beat Tapper, <break time=\"0.3s\" /> and tap along with the drum!",
+   "show": "Play Beat Tapper, and tap along with the drum!",
+   "speed": 0.88
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v5recap",
+   "clips": [
+    "recap5"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 2.2
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 1.8
+  },
+  {
+   "id": "v5heart",
+   "clips": [
+    "heart",
+    "chest"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 3.6
+  },
+  {
+   "id": "v5drum",
+   "clips": [
+    "steady"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.9
+  },
+  {
+   "id": "v5count",
+   "clips": [
+    "letscount",
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "c5",
+    "c6",
+    "c7",
+    "c8"
+   ],
+   "lead": 0.6,
+   "gap": 0.8,
+   "tail": 1.6,
+   "grid": {
+    "period": 0.75,
+    "from": 1
+   }
+  },
+  {
+   "id": "v5march",
+   "clips": [
+    "march",
+    "m1",
+    "m2",
+    "m3",
+    "m4",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 1.6,
+   "grid": {
+    "period": 0.75,
+    "from": 1
+   }
+  },
+  {
+   "id": "v5clap",
+   "clips": [
+    "clapl",
+    "k1",
+    "k2",
+    "k3",
+    "k4",
+    "k5",
+    "k6",
+    "k7",
+    "k8"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 1.6,
+   "grid": {
+    "period": 0.75,
+    "from": 1
+   }
+  },
+  {
+   "id": "v5tempo",
+   "clips": [
+    "fast",
+    "slow",
+    "steadyline"
+   ],
+   "lead": 0.5,
+   "gap": 0.5,
+   "tail": 3.4
+  },
+  {
+   "id": "v5q1",
+   "clips": [
+    "yourturn5",
+    "yes1"
+   ],
+   "lead": 0.5,
+   "gap": 6.7,
+   "tail": 1.6
+  },
+  {
+   "id": "v5q2",
+   "clips": [
+    "no1"
+   ],
+   "lead": 7.4,
+   "gap": 0.0,
+   "tail": 1.6
+  },
+  {
+   "id": "v5q3",
+   "clips": [
+    "yes2",
+    "qwell"
+   ],
+   "lead": 7.2,
+   "gap": 0.8,
+   "tail": 1.4
+  },
+  {
+   "id": "outro5",
+   "clips": [
+    "game1",
+    "game5",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [],
+ "beats": [
+  {
+   "track": "heart",
+   "sound": "heart",
+   "at": {
+    "scene": "v5heart",
+    "off": 0.7
+   },
+   "bpm": 80,
+   "until": "v5heart"
+  },
+  {
+   "track": "drum1",
+   "sound": "drum",
+   "at": {
+    "clip": "steady",
+    "from": "end",
+    "off": 0.55
+   },
+   "bpm": 80,
+   "count": 4
+  },
+  {
+   "track": "count",
+   "sound": "drum",
+   "grid": "v5count"
+  },
+  {
+   "track": "march",
+   "sound": "step",
+   "grid": "v5march"
+  },
+  {
+   "track": "clap",
+   "sound": "clap",
+   "grid": "v5clap"
+  },
+  {
+   "track": "fast",
+   "sound": "drum",
+   "at": {
+    "clip": "fast",
+    "from": "end",
+    "off": 0.4
+   },
+   "bpm": 120,
+   "count": 4
+  },
+  {
+   "track": "slow",
+   "sound": "drum",
+   "at": {
+    "clip": "slow",
+    "from": "end",
+    "off": 0.4
+   },
+   "bpm": 60,
+   "count": 4
+  },
+  {
+   "track": "steady2",
+   "sound": "drum",
+   "at": {
+    "clip": "steadyline",
+    "from": "end",
+    "off": 0.4
+   },
+   "bpm": 80,
+   "count": 4
+  },
+  {
+   "track": "q1",
+   "sound": "drum",
+   "at": {
+    "clip": "yourturn5",
+    "from": "end",
+    "off": 0.5
+   },
+   "bpm": 80,
+   "count": 5
+  },
+  {
+   "track": "q2",
+   "sound": "drum",
+   "at": {
+    "scene": "v5q2",
+    "off": 0.6
+   },
+   "offsets": [
+    0,
+    0.75,
+    1.2,
+    2.25,
+    2.75,
+    3.8
+   ]
+  },
+  {
+   "track": "q3",
+   "sound": "drum",
+   "at": {
+    "scene": "v5q3",
+    "off": 0.6
+   },
+   "bpm": 120,
+   "count": 8
+  }
+ ],
+ "gapOverride": {
+  "slow": 2.6,
+  "steadyline": 4.2,
+  "qwell": 0.8
+ }
+}
