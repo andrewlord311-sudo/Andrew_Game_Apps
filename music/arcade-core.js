@@ -75,6 +75,14 @@
                 comingSoon: false
             },
             {
+                title: "Beat Tapper",
+                description: "Feel the beat! Tap along with the drum, keep the beat going when it stops, and decide: steady or wobbly?",
+                emoji: "🥁",
+                color: "#f59e0b", // Amber accent
+                file: "beat_tapper.html",
+                comingSoon: false
+            },
+            {
                 title: "Higher, Lower or Same?",
                 description: "Compare two notes on the stave and decide: is the second one higher, lower, or just the same?",
                 emoji: "↕️",
