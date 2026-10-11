@@ -60,15 +60,19 @@ def W(cid, word, nth=0):
 
 GAP_OVERRIDE = script.get('gapOverride', {})
 SCENES = [(sc['id'], sc['clips'], sc.get('lead', 0.4), sc.get('gap', 0.0), sc.get('tail', 0.5), sc.get('grid')) for sc in script['scenes']]
+MASTER = script.get('master'); MT0 = None; MPER = 60.0 / MASTER['bpm'] if MASTER else None
 t = 0.0; scenes = []
 for sid, ids, lead, gap, tail, grid in SCENES:
     s0 = t; cur = s0 + lead; gbeats = []
+    if MASTER and sid == MASTER['from']['scene']: MT0 = s0 + MASTER['from'].get('off', 0)
     for i, cid in enumerate(ids):
         g = GAP_OVERRIDE.get(cid, gap) if i else 0
         if grid and i >= grid['from']:
             # a beat grid: the clip's first word lands exactly on beat number (i - from), so spoken counts are dead steady
             on = clips[cid]['words'][0][1] if clips[cid]['words'] else 0.08
-            if i == grid['from']: b0 = cur + g + on
+            if i == grid['from']:
+                b0 = cur + g + on
+                if MASTER and MT0 is not None and sid in MASTER['sounds']: b0 = MT0 + math.ceil((b0 - MT0) / MPER - 1e-9) * MPER   # lock the spoken counts onto the continuous master beat
             B = b0 + (i - grid['from']) * grid['period']; gbeats.append(round(B, 3))
             clips[cid]['start'] = B - on; cur = clips[cid]['start'] + clips[cid]['dur']; clips[cid]['end'] = cur
         else:
@@ -142,6 +146,18 @@ for e in events:
 # --- beat tracks (rhythm videos): a steady run of drum / step / clap / heartbeat hits; the page draws its pulses from the same times ---
 SND = {'drum': drum, 'step': step, 'clap': clap, 'heart': heart}
 beats = []
+master_out = None
+if MASTER:   # one continuous beat under the whole first part: it never stops between scenes
+    mend = next(sc for sc in scenes if sc['id'] == MASTER['to'])['end'] - 0.25
+    k = 0; tm = MT0
+    while tm <= mend:
+        sc = next(x for x in scenes if x['start'] <= tm < x['end'])
+        speaking = any((not c.get('quiet')) and c['start'] - 0.05 <= tm <= c['end'] for c in clips.values())
+        g = MASTER.get('under', 0.6) if speaking else 1.0
+        snd = MASTER['sounds'].get(sc['id'], 'drum')
+        beats.append({'t': round(tm, 3), 'track': 'main', 'i': k, 'sound': snd}); put(mix, tm, SND[snd](), g)
+        k += 1; tm = MT0 + k * MPER
+    master_out = {'t0': round(MT0, 3), 't1': round(mend, 3)}
 for b in script.get('beats', []):
     if 'grid' in b: times = list(next(sc for sc in scenes if sc['id'] == b['grid'])['grid'])
     else:
@@ -154,7 +170,8 @@ for b in script.get('beats', []):
             n = b['count'] if 'count' in b else int((next(sc for sc in scenes if sc['id'] == b['until'])['end'] - 0.25 - base) / per) + 1
             times = [base + i * per for i in range(n)]
     for i, tm in enumerate(times):
-        beats.append({'t': round(tm, 3), 'track': b['track'], 'i': i, 'sound': b['sound']}); put(mix, tm, SND[b['sound']](), 1.0)
+        beats.append({'t': round(tm, 3), 'track': b['track'], 'i': i, 'sound': b['sound']})
+        if not b.get('silent'): put(mix, tm, SND[b['sound']](), 1.0)
 
 # --- the jingle: Andrew's own track, trimmed and faded, same every video (opening and closing) ---
 jingle = load(HERE / 'audio' / 'shared' / 'jingle.mp3')
@@ -175,7 +192,7 @@ def levels(sig):
     r = np.array([np.sqrt(np.mean(sig[i * h:(i + 1) * h] ** 2)) for i in range(n)])
     r = r / (np.percentile(r, 92) + 1e-9); r = np.clip(r, 0, 1)
     return np.convolve(r, [0.25, 0.5, 0.25], 'same')
-out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'beats': beats, 'titleAt': script.get('titleAt'), 'todayLead': script.get('todayLead'), 'dry': DRY, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
+out = {'fps': FPS, 'duration': round(DURATION, 3), 'scenes': scenes, 'events': events, 'beats': beats, 'master': master_out, 'titleAt': script.get('titleAt'), 'todayLead': script.get('todayLead'), 'dry': DRY, 'game': script['game'], 'gameFile': script['gameFile'], 'title': script['title'], 'nugget': script['nugget'],
        'clips': {cid: {'who': c['who'], 'text': c.get('show', c['text']), 'quiet': c.get('quiet', False), 'words': c['words'], 'start': round(c['start'], 3), 'end': round(c['end'], 3), 'env': [round(float(v), 2) for v in levels(c['wave'])]} for cid, c in clips.items()}}
 json.dump(out, open(OUT / 'timeline.json', 'w'))
 print(f"duration {DURATION:.1f}s; scenes:", ', '.join(f"{s['id']} {s['start']:.1f}-{s['end']:.1f}" for s in scenes))

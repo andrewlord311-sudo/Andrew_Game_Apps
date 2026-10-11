@@ -345,7 +345,7 @@
    ],
    "lead": 0.6,
    "gap": 0.0,
-   "tail": 3.9
+   "tail": 1.8
   },
   {
    "id": "v5count",
@@ -428,7 +428,7 @@
     "yes1"
    ],
    "lead": 0.5,
-   "gap": 6.7,
+   "gap": 9.7,
    "tail": 1.6
   },
   {
@@ -436,7 +436,7 @@
    "clips": [
     "no1"
    ],
-   "lead": 7.4,
+   "lead": 11.2,
    "gap": 0.0,
    "tail": 1.6
   },
@@ -446,7 +446,7 @@
     "yes2",
     "qwell"
    ],
-   "lead": 7.2,
+   "lead": 11.1,
    "gap": 0.8,
    "tail": 1.4
   },
@@ -465,40 +465,22 @@
  "events": [],
  "beats": [
   {
-   "track": "heart",
-   "sound": "heart",
-   "at": {
-    "scene": "v5heart",
-    "off": 0.7
-   },
-   "bpm": 80,
-   "until": "v5heart"
-  },
-  {
-   "track": "drum1",
-   "sound": "drum",
-   "at": {
-    "clip": "steady",
-    "from": "end",
-    "off": 0.55
-   },
-   "bpm": 80,
-   "count": 4
-  },
-  {
    "track": "count",
    "sound": "drum",
-   "grid": "v5count"
+   "grid": "v5count",
+   "silent": true
   },
   {
    "track": "march",
    "sound": "step",
-   "grid": "v5march"
+   "grid": "v5march",
+   "silent": true
   },
   {
    "track": "clap",
    "sound": "clap",
-   "grid": "v5clap"
+   "grid": "v5clap",
+   "silent": true
   },
   {
    "track": "fast",
@@ -542,7 +524,7 @@
     "off": 0.5
    },
    "bpm": 80,
-   "count": 5
+   "count": 9
   },
   {
    "track": "q2",
@@ -557,7 +539,12 @@
     1.2,
     2.25,
     2.75,
-    3.8
+    3.8,
+    4.55,
+    5.0,
+    6.1,
+    6.6,
+    7.6
    ]
   },
   {
@@ -568,12 +555,28 @@
     "off": 0.6
    },
    "bpm": 120,
-   "count": 8
+   "count": 16
   }
  ],
  "gapOverride": {
   "slow": 2.6,
   "steadyline": 4.2,
   "qwell": 0.8
+ },
+ "master": {
+  "bpm": 80,
+  "from": {
+   "scene": "v5heart",
+   "off": 0.7
+  },
+  "to": "v5clap",
+  "under": 0.62,
+  "sounds": {
+   "v5heart": "heart",
+   "v5drum": "drum",
+   "v5count": "drum",
+   "v5march": "step",
+   "v5clap": "clap"
+  }
  }
 }
