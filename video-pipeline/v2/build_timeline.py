@@ -60,6 +60,10 @@ def W(cid, word, nth=0):
 
 GAP_OVERRIDE = script.get('gapOverride', {})
 SCENES = [(sc['id'], sc['clips'], sc.get('lead', 0.4), sc.get('gap', 0.0), sc.get('tail', 0.5), sc.get('grid')) for sc in script['scenes']]
+def energy_onset(c):
+    if c.get('est'): return 0.08
+    w = np.abs(c['wave']); k = int(0.01 * SR); e = np.convolve(w, np.ones(k) / k, 'same'); hit = np.argmax(e > 0.15 * e.max())
+    return float(hit) / SR
 MASTER = script.get('master'); MT0 = None; MPER = 60.0 / MASTER['bpm'] if MASTER else None
 t = 0.0; scenes = []
 for sid, ids, lead, gap, tail, grid in SCENES:
@@ -69,7 +73,7 @@ for sid, ids, lead, gap, tail, grid in SCENES:
         g = GAP_OVERRIDE.get(cid, gap) if i else 0
         if grid and i >= grid['from']:
             # a beat grid: the clip's first word lands exactly on beat number (i - from), so spoken counts are dead steady
-            on = clips[cid]['words'][0][1] if clips[cid]['words'] else 0.08
+            on = energy_onset(clips[cid])   # where the sound really starts (the recogniser can't time bare numbers like 'two')
             if i == grid['from']:
                 b0 = cur + g + on
                 if MASTER and MT0 is not None and sid in MASTER['sounds']: b0 = MT0 + math.ceil((b0 - MT0) / MPER - 1e-9) * MPER   # lock the spoken counts onto the continuous master beat

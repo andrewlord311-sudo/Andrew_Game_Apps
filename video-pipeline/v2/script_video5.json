@@ -33,7 +33,9 @@
   {
    "id": "today",
    "who": "barnaby",
-   "text": "Today we are going to feel the beat."
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> feel the beat.",
+   "show": "Today we are going to feel the beat.",
+   "speed": 0.88
   },
   {
    "id": "heart",
@@ -181,7 +183,9 @@
   {
    "id": "clapl",
    "who": "melody",
-   "text": "Now clap on every beat!"
+   "text": "Now <break time=\"0.3s\" /> clap on every beat!",
+   "show": "Now clap on every beat!",
+   "speed": 0.88
   },
   {
    "id": "k1",
