@@ -225,13 +225,13 @@
    "tail": 2.4
   },
   {
-   "id": "today",
+   "id": "today7",
    "clips": [
     "today"
    ],
    "lead": 0.5,
    "gap": 0.0,
-   "tail": 1.8
+   "tail": 2.6
   },
   {
    "id": "v7hold",

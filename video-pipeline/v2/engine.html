@@ -720,10 +720,14 @@ function handsBuild(r,o={}){ // o: y (top), w (width), lx, rx (left edges)
     const hl=document.createElement('div');hl.className='abs';hl.style.cssText=`left:${x-40}px;top:${Y-20}px;width:${W+80}px;height:${W*HAND_RATIO+40}px;border-radius:50%;background:radial-gradient(circle,${side==='L'?LCOL:RCOL}99 0%,rgba(255,255,255,0) 66%);opacity:0`;r.insertBefore(hl,d);return {d,hl,side}};
   return {L:mk('L',o.lx??310),R:mk('R',o.rx??730)}}
 function handGlow(H,t,t0,on){const p=prog(t,t0,0.4);H.hl.style.opacity=on?String(clamp(p)*(0.55+0.45*pulse6(t,t0))):'0'}
-function labelChip(r,txt,col,x,y){const c=chip(r,txt,col,x,y);c.style.fontSize='38px';c.style.padding='8px 26px';return c}
+function labelChip(r,txt,col,x,y,fs=38,pad='8px 26px'){const c=chip(r,txt,col,x,y);c.style.fontSize=fs+'px';c.style.padding=pad;c.style.left=(x-c.offsetWidth/2)+'px';return c}
 // a keyboard lowered so hands can hover above it
 function lowKeys(self,r,dy){self.K=kbBuild(r);self.K.root.style.opacity='1';self.K.root.style.translate=`0 ${dy}px`;kbPaint(self.K,{whiteBg:'#f8fafc'});self.K.blacks.forEach(b=>{b.style.translate='0 0'})}
 
+S.today7=Object.assign({},S.today,{build(r){S.today.build.call(this,r);
+  this.hi=labelChip(r,'higher  ↑',RCOL,640,425,64,'10px 44px');this.lo=labelChip(r,'lower  ↓',LCOL,640,540,64,'10px 44px')},
+ update(t,L,c){S.today.update.call(this,t,L,c);const th=wt('today','higher')-0.15,tl=wt('today','lower')-0.15;
+  pop(this.hi,t,th,0.4);pop(this.lo,t,tl,0.4)}});
 S.v7recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
   const lit={};GRP.forEach((g,gi)=>g.forEach(k=>{lit[k]=GCOL[gi]}));kbPaint(K,{whiteBg:'#f8fafc',lit});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
   kbBadgesBrackets(K,t,{badge:{},br:GRP.map(()=>[-1,0.9])});
@@ -748,7 +752,7 @@ const v7leftScene=(lMode)=>({ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowK
    this.K.root.style.opacity=String(showL?0.35:1);
    handGlow(H.L,t,tl,!showL);pop(this.lc,t,lMode?L-1:tl,0.4);
    this.big.style.opacity=String(prog(t,tL,0.4));this.big.style.scale=String(lerp(0.5,1,easeBack(prog(t,tL,0.5))));
-   if(lMode)c.caption('PALM DOWN · MAKE AN L',LCOL,wt('ltrick','keep')-0.05);else if(t>=tl)c.caption('THE LEFT HAND',LCOL,tl)}});
+   if(lMode)c.caption('PALM DOWN · MAKE AN L',LCOL,wt('ltrick','keep')-0.05);else if(t>=tl)c.caption('THE LEFT HAND',LCOL,tl,'L')}});
 S.v7left=v7leftScene(false);S.v7lhand=v7leftScene(true);
 
 S.v7right={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
@@ -757,7 +761,7 @@ S.v7right={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);th
    const tr=wt('rightis','right')-0.1,tlw=CL.lw.start-0.1,trw=CL.rw.start-0.1;
    this.lc.style.opacity='1';
    handGlow(H.L,t,tlw,t>=tlw&&t<trw);handGlow(H.R,t,Math.min(tr,trw),t>=tr);pop(this.rc,t,tr,0.4);
-   if(t>=trw)c.caption('RIGHT',RCOL,trw);else if(t>=tlw)c.caption('LEFT',LCOL,tlw);else if(t>=tr)c.caption('THE RIGHT HAND',RCOL,tr)}};
+   if(t>=trw)c.caption('RIGHT',RCOL,trw,'R');else if(t>=tlw)c.caption('LEFT',LCOL,tlw,'L');else if(t>=tr)c.caption('THE RIGHT HAND',RCOL,tr,'R')}};
 
 // after the child has had a few seconds to act, the right hand waves to confirm: it sways about its wrist three times
 const waveAngle=(t,t0,dur=1.6)=>{const q=(t-t0)/dur;return q>=0&&q<=1?Math.sin(q*Math.PI*6)*13*(1-0.25*q):0};
@@ -790,19 +794,19 @@ S.v7ends={ui:V6UI,build(r){kbEndsBuild(this,r)},update(t,L,c){const K=this.K;kbI
   const tl=wt('ends','left')-0.1,tr=wt('ends','right')-0.1;
   endsPaint(K,t,{l:t>=tl,r:t>=tr});kbBadgesBrackets(K,t,{});
   pop(this.lc,t,tl,0.4);pop(this.rc,t,tr,0.4);this.lo.style.opacity='0';this.hi.style.opacity='0';
-  if(t>=tr)c.caption('RIGHT END',RCOL,tr);else if(t>=tl)c.caption('LEFT END',LCOL,tl)}};
+  if(t>=tr)c.caption('RIGHT END',RCOL,tr,'R');else if(t>=tl)c.caption('LEFT END',LCOL,tl,'L')}};
 
 S.v7low={ui:V6UI,build(r){kbEndsBuild(this,r)},update(t,L,c){const K=this.K;kbIn(K,L);
   const tn=CL.listenl.end+0.4-0.1,tw=CL.lowword.start-0.15;
   endsPaint(K,t,{l:true,r:true,pl:tn});kbBadgesBrackets(K,t,{});
   this.lc.style.opacity='1';this.rc.style.opacity='1';pop(this.lo,t,tw,0.4);this.hi.style.opacity='0';
-  if(t>=tw)c.caption('LOW',LCOL,tw);else if(t>=tn)c.caption('LISTEN TO THE LEFT END',LCOL,tn)}};
+  if(t>=tw)c.caption('LOW',LCOL,tw,'L');else if(t>=tn)c.caption('LISTEN TO THE LEFT END',LCOL,tn)}};
 
 S.v7high={ui:{ribbon:1,hosts:'low',bubble:true},build(r){kbEndsBuild(this,r)},update(t,L,c){const K=this.K;kbIn(K,L);
   const tn=CL.listenr.end+0.4-0.1,tw=CL.highword.start-0.15;
   endsPaint(K,t,{l:true,r:true,pr:tn});kbBadgesBrackets(K,t,{});
   this.lc.style.opacity='1';this.rc.style.opacity='1';this.lo.style.opacity='1';pop(this.hi,t,tw,0.4);
-  if(t>=tw)c.caption('HIGH',RCOL,tw);else if(t>=tn)c.caption('LISTEN TO THE RIGHT END',RCOL,tn)}};
+  if(t>=tw)c.caption('HIGH',RCOL,tw,'R');else if(t>=tn)c.caption('LISTEN TO THE RIGHT END',RCOL,tn)}};
 
 S.v7slide={ui:V6UI,build(r){kbEndsBuild(this,r);
   this.g=document.createElement('div');this.g.className='abs';this.g.style.cssText=`left:0;top:${KB.top-8}px;width:46px;height:${KB.h+16}px;border-radius:23px;background:rgba(245,158,11,.4);box-shadow:0 0 22px 10px rgba(245,158,11,.45);opacity:0`;r.appendChild(this.g);
@@ -812,7 +816,7 @@ S.v7slide={ui:V6UI,build(r){kbEndsBuild(this,r);
   const stp=Math.floor((t-ts)/0.2),on=stp>=0&&stp<15&&(t-ts)<3.1;this.g.style.opacity=on?'0.9':'0';this.g.style.width=(KB.w-3)+'px';this.g.style.borderRadius='10px';this.g.style.left=(KB.x0+Math.max(0,Math.min(14,stp))*KB.w)+'px';
   this.arrow.style.opacity=String(prog(t,ts-0.2,0.5));
   const tl=wt('slideline','low')-0.1,th=wt('slideline','high')-0.1;
-  if(t>=th)c.caption('RIGHT IS HIGH',RCOL,th);else if(t>=tl)c.caption('LEFT IS LOW',LCOL,tl)}};
+  if(t>=th)c.caption('RIGHT IS HIGH',RCOL,th,'R');else if(t>=tl)c.caption('LEFT IS LOW',LCOL,tl,'L')}};
 
 const ENDHANDS={y:196,w:196,lx:KB.x0-20,rx:KB.x0+15*KB.w-176};   // left hand over the left (low) end, right hand over the right (high) end
 S.v7play={ui:V6UI,build(r){kbEndsBuild(this,r);this.K.root.style.translate='0 70px';this.H=handsBuild(r,ENDHANDS);
@@ -838,7 +842,7 @@ function v7quiz(ans,keyIdx,kind,right){return {ui:V6UI,build(r){kbEndsBuild(this
    this.q.style.opacity=String(thinking?clamp(prog(t,t1+1.6,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
    const lab=kind==='lowhigh'?(right?'HIGH ✓':'LOW ✓'):kind==='hand'?(right?'RIGHT HAND ✓':'LEFT HAND ✓'):(right?'RIGHT END ✓':'LEFT END ✓');
    this.ans.style.opacity='0';
-   if(t>=ta)c.caption(lab,right?RCOL:LCOL,ta);
+   if(t>=ta)c.caption(lab,right?RCOL:LCOL,ta,right?'R':'L');
    if(this.conf){const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}}}}
 S.v7q1=v7quiz('a1',1,'lowhigh',false);S.v7q2=v7quiz('a2',1,'hand',false);S.v7q3=v7quiz('a3',13,'end',true);
 
@@ -848,8 +852,8 @@ S.outro7=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game7','left')-0.2;this.h.forEach((d,i)=>{const q=prog(t,t0+i*0.3,0.5);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`${i?150:-150}px ${q>=1?-Math.abs(Math.sin((t-t0)*3+i))*8:0}px`})}});
 
 // ---------------------------------------------------------------- engine
-const ctxHelpers={caption(text,color,t0){C.text=text;C.color=color;C.t0=t0}};
-const C={text:'',color:'#241f3d',t0:0,last:''};
+const ctxHelpers={caption(text,color,t0,side){C.text=text;C.color=color;C.t0=t0;C.side=side||''}};
+const C={text:'',color:'#241f3d',t0:0,last:'',side:''};
 let prevLayout=HOSTS.open,curLayout=HOSTS.open,layoutT0=0,curScene=null;
 function setLayout(name,t){if(curScene&&curScene.layoutName!==name){prevLayout=curLayout;layoutT0=t}curLayout=HOSTS[name]}
 function posHost(el,a,b,p,k){const v=[0,1,2].map(i=>lerp(a[i],b[i],p));el.dataset.l=v[0];el.dataset.b=v[1];el.dataset.s=v[2]}
@@ -902,7 +906,7 @@ function renderAt(t){
   });
   // caption
   const cap=$('#caption');
-  if(C.text){if(cap.dataset.k!==C.text){cap.dataset.k=C.text;cap.textContent=C.text;cap.style.background=C.color;const w=cap.offsetWidth;cap.style.marginLeft=(-w/2)+'px'}
+  if(C.text){const ck=C.text+'|'+C.side;if(cap.dataset.k!==ck){cap.dataset.k=ck;cap.textContent=C.text;cap.style.background=C.color;cap.style.left=C.side==='L'?'26%':C.side==='R'?'74%':'50%';const w=cap.offsetWidth;cap.style.marginLeft=(-w/2)+'px'}
     const q=prog(t,C.t0,0.35);cap.style.opacity=String(clamp(q*2));cap.style.scale=String(lerp(0.6,1,easeBack(q)))}
   else{cap.style.opacity='0'; cap.dataset.k=''}
   // floaters
