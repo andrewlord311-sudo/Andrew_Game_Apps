@@ -758,11 +758,14 @@ S.v7right={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);th
    handGlow(H.L,t,tlw,t>=tlw&&t<trw);handGlow(H.R,t,Math.min(tr,trw),t>=tr);pop(this.rc,t,tr,0.4);
    if(t>=trw)c.caption('RIGHT',RCOL,trw);else if(t>=tlw)c.caption('LEFT',LCOL,tlw);else if(t>=tr)c.caption('THE RIGHT HAND',RCOL,tr)}};
 
+// after the child has had a few seconds to act, the right hand waves to confirm: it sways about its wrist three times
+const waveAngle=(t,t0,dur=1.6)=>{const q=(t-t0)/dur;return q>=0&&q<=1?Math.sin(q*Math.PI*6)*13*(1-0.25*q):0};
 S.v7show={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);this.lc=labelChip(r,'LEFT',LCOL,190,352);this.rc=labelChip(r,'RIGHT',RCOL,1090,352)},
   update(t,L,c){const H=this.H;[H.L,H.R].forEach(h=>{h.d.style.opacity='1';h.d.style.scale='1'});this.lc.style.opacity='1';this.rc.style.opacity='1';
-   const a=wt('showl','left')-0.1,b=wt('showr','right')-0.1;
+   const a=wt('showl','left')-0.1,b=wt('showr','right')-0.1,wl=CL.showl.end+2.1,wr=CL.showr.end+2.1;
    handGlow(H.L,t,a,t>=a&&t<b);handGlow(H.R,t,b,t>=b);
-   if(t>=b)c.caption('SHOW ME YOUR RIGHT HAND',RCOL,b);else if(t>=a)c.caption('SHOW ME YOUR LEFT HAND',LCOL,a)}};
+   H.L.d.style.rotate=waveAngle(t,wl)+'deg';H.R.d.style.rotate=waveAngle(t,wr)+'deg';
+   if(t>=wr)c.caption('THAT IS YOUR RIGHT HAND',RCOL,wr);else if(t>=b)c.caption('SHOW ME YOUR RIGHT HAND',RCOL,b);else if(t>=wl)c.caption('THAT IS YOUR LEFT HAND',LCOL,wl);else if(t>=a)c.caption('SHOW ME YOUR LEFT HAND',LCOL,a)}};
 
 function shoeSvg(col,letter,flip){return `<svg viewBox="0 0 260 150" width="320" style="overflow:visible"><g${flip?' transform="translate(260,0) scale(-1,1)"':''}><path d="M20,100 C20,40 70,30 110,34 C140,36 150,60 190,70 C235,76 250,92 250,112 L250,124 L20,124 Z" fill="${col}" stroke="#fff" stroke-width="6" stroke-linejoin="round"/><rect x="14" y="120" width="244" height="18" rx="9" fill="#f1f5f9" stroke="#94a3b8" stroke-width="3"/></g><text x="130" y="100" font-family="Fredoka One" font-size="64" fill="#fff" text-anchor="middle">${letter}</text></svg>`}
 S.v7practice={ui:{ribbon:1,hosts:'low',bubble:true},build(r){
