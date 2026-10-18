@@ -809,7 +809,7 @@ S.v7slide={ui:V6UI,build(r){kbEndsBuild(this,r);
   this.arrow=document.createElement('div');this.arrow.className='big abs';this.arrow.style.cssText=`left:${KB.x0+230}px;width:${15*KB.w-460}px;top:${KB.top+KB.h+4}px;font-size:60px;color:#f59e0b;opacity:0`;this.arrow.textContent='➜ ➜ ➜ ➜ ➜';r.appendChild(this.arrow)},
   update(t,L,c){const K=this.K;kbIn(K,L);const ts=CL.slideline.end+0.5,dur=3.4;
   endsPaint(K,t,{l:true,r:true});kbBadgesBrackets(K,t,{});this.lc.style.opacity='1';this.rc.style.opacity='1';this.lo.style.opacity='1';this.hi.style.opacity='1';
-  const q=prog(t,ts,dur);this.g.style.opacity=String(q>0&&q<1?0.9:0);this.g.style.left=(KB.x0-12+q*(15*KB.w-30))+'px';
+  const stp=Math.floor((t-ts)/0.2),on=stp>=0&&stp<15&&(t-ts)<3.1;this.g.style.opacity=on?'0.9':'0';this.g.style.width=(KB.w-3)+'px';this.g.style.borderRadius='10px';this.g.style.left=(KB.x0+Math.max(0,Math.min(14,stp))*KB.w)+'px';
   this.arrow.style.opacity=String(prog(t,ts-0.2,0.5));
   const tl=wt('slideline','low')-0.1,th=wt('slideline','high')-0.1;
   if(t>=th)c.caption('RIGHT IS HIGH',RCOL,th);else if(t>=tl)c.caption('LEFT IS LOW',LCOL,tl)}};
