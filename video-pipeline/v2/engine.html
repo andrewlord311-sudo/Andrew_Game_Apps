@@ -711,23 +711,23 @@ function handSvg(side, mode, w) {
     if (joints >= 2) marks.push(`<path d="M${bx - W * 0.22},${tip + L * 0.66} h${W * 0.44} M${bx - W * 0.16},${tip + L * 0.66 + 5} h${W * 0.32}" transform="${tr}"/>`); // middle joint
   };
   if (mode === 'L') {
-    finger(122, 168, 112, 22, 0);                                                                                  // index straight up
-    parts.push(`<rect x="128" y="176" width="78" height="25" rx="12.5" transform="rotate(-6 134 188)"/>`);          // thumb straight out
-    marks.push(`<path d="M196,181 q-5,6 0,12" transform="rotate(-6 134 188)"/><path d="M168,180 v8 M174,181 v7" transform="rotate(-6 134 188)"/>`);
-    [[62, 140, 20], [82, 134, 21], [102, 132, 21]].forEach(([x, y, r]) => parts.push(`<rect x="${x - r / 2}" y="${y}" width="${r}" height="50" rx="${r / 2}"/>`));   // curled fingers
-    marks.push(`<path d="M56,148 q6,4 12,0 M76,142 q6,4 12,0 M96,140 q6,4 12,0"/>`);
+    finger(122, 132, 112, 22, 0);                                                                                  // index straight up
+    parts.push(`<rect x="128" y="158" width="78" height="25" rx="12.5" transform="rotate(-6 134 170)"/>`);          // thumb straight out
+    marks.push(`<path d="M196,163 q-5,6 0,12" transform="rotate(-6 134 170)"/><path d="M168,162 v8 M174,163 v7" transform="rotate(-6 134 170)"/>`);
+    [[62, 104, 20], [82, 98, 21], [102, 96, 21]].forEach(([x, y, r]) => parts.push(`<rect x="${x - r / 2}" y="${y}" width="${r}" height="50" rx="${r / 2}"/>`));   // curled fingers
+    marks.push(`<path d="M56,112 q6,4 12,0 M76,106 q6,4 12,0 M96,104 q6,4 12,0"/>`);
   } else {
-    finger(58, 182, 70, 20, -24, 1);     // little finger
-    finger(80, 168, 94, 21, -10);        // ring
-    finger(102, 162, 102, 22, 2);        // middle
-    finger(124, 168, 90, 21, 15);        // index
+    finger(58, 146, 70, 20, -24, 1);     // little finger
+    finger(80, 132, 94, 21, -10);        // ring
+    finger(102, 126, 102, 22, 2);        // middle
+    finger(124, 132, 90, 21, 15);        // index
     // thumb: leaves the hand low down and angles in towards the other hand
     parts.push(`<rect x="117" y="118" width="26" height="96" rx="13" transform="rotate(44 130 206)"/>`);
     marks.push(`<path d="M124,128 q6,4 12,0" transform="rotate(44 130 206)"/><path d="M122,160 h12 M124,165 h8" transform="rotate(44 130 206)"/>`);
     parts.push(`<path d="M151,202 Q133,216 126,242 L108,242 L118,196 Z"/>`);   // the thumb sweeps smoothly down into the wrist
   }
   // the back of the hand, tapering to a narrow wrist
-  parts.push(`<path d="M48,186 C45,168 62,156 82,154 L124,156 C132,159 135,167 134,178 C133,194 130,210 128,228 L78,228 C70,214 52,202 48,186 Z"/>`);
+  parts.push(`<path d="M48,154 C44,132 62,120 82,118 L124,120 C132,123 135,133 133,148 C131,172 129,202 128,228 L78,228 C70,206 52,182 48,154 Z"/>`);
   parts.push(`<path d="M78,222 L128,222 L125,264 L81,264 Z"/>`);                                                            // wrist
   const P = parts.join('');
   let g = `<ellipse cx="102" cy="250" rx="70" ry="13" fill="rgba(0,0,0,.18)" filter="url(#bl)"/>`;
@@ -761,7 +761,7 @@ S.v7recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.K=kbBuild(r)},up
 const HOVER={y:212,w:240,lx:310,rx:730};   // two hands hovering over a lowered keyboard: left hand left of centre, right hand right of centre
 // knuckle markers: a pulsing orange oval over the knuckles of each hand (hand-box coordinates: knuckles sit at about 47% down, 44% across)
 function knuckleMarks(r,H,W){return [[H.L,0.425],[H.R,0.528]].map(([h,fx])=>{const m=document.createElement('div');m.className='abs';const Y=parseFloat(h.d.style.top),X=parseFloat(h.d.style.left);
-  m.style.cssText=`left:${X+fx*W-0.24*W}px;top:${Y+0.747*W-0.07*W}px;width:${0.48*W}px;height:${0.14*W}px;border-radius:50%;border:5px solid #ea580c;background:rgba(251,146,60,.28);opacity:0`;r.appendChild(m);return m})}
+  m.style.cssText=`left:${X+fx*W-0.24*W}px;top:${Y+0.579*W-0.07*W}px;width:${0.48*W}px;height:${0.14*W}px;border-radius:50%;border:5px solid #ea580c;background:rgba(251,146,60,.28);opacity:0`;r.appendChild(m);return m})}
 S.v7hold={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);this.km=knuckleMarks(r,this.H,HOVER.w)},update(t,L,c){
   [this.H.L,this.H.R].forEach((h,i)=>{const p=prog(L,0.5+i*0.25,0.55);h.d.style.opacity=String(clamp(p*2));h.d.style.scale=String(lerp(0.6,1,easeBack(p)));h.hl.style.opacity='0'});
   const tp=wt('holdup','palms')-0.1,tk=wt('holdup','knuckles')-0.1;
