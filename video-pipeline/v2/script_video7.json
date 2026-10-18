@@ -99,8 +99,9 @@
   {
    "id": "piano",
    "who": "barnaby",
-   "text": "Now let's look at the piano.",
-   "speed": 0.88
+   "text": "Now <break time=\"0.3s\" /> let us look at the piano.",
+   "speed": 0.8,
+   "show": "Now let's look at the piano."
   },
   {
    "id": "ends",
@@ -125,8 +126,9 @@
   {
    "id": "listenr",
    "who": "barnaby",
-   "text": "Now listen to the right end.",
-   "speed": 0.85
+   "text": "Now <break time=\"0.3s\" /> listen to the right end.",
+   "speed": 0.8,
+   "show": "Now listen to the right end."
   },
   {
    "id": "highword",
@@ -243,11 +245,19 @@
   {
    "id": "v7left",
    "clips": [
-    "leftis",
+    "leftis"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 2.6
+  },
+  {
+   "id": "v7lhand",
+   "clips": [
     "ltrick"
    ],
    "lead": 0.6,
-   "gap": 1.2,
+   "gap": 0.0,
    "tail": 3.2
   },
   {
