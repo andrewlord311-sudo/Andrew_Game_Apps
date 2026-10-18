@@ -1,0 +1,456 @@
+{
+ "title": "left and right",
+ "titleAt": "left",
+ "nugget": 7,
+ "game": "Left, Right, High, Low",
+ "gameFile": "left_right_high_low.html",
+ "todayLead": "Today we are going to learn",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "recap7",
+   "who": "melody",
+   "text": "Last time, <break time=\"0.45s\" /> we found groups <break time=\"0.3s\" /> of two and three.",
+   "show": "Last time, we found groups of two and three.",
+   "speed": 0.88
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today we are going to learn <break time=\"0.35s\" /> left and right, <break time=\"0.4s\" /> and higher <break time=\"0.3s\" /> and lower.",
+   "show": "Today we are going to learn left and right, and higher and lower.",
+   "speed": 0.86
+  },
+  {
+   "id": "holdup",
+   "who": "melody",
+   "text": "Hold up your hands. <break time=\"0.5s\" /> Look at them.",
+   "show": "Hold up your hands. Look at them.",
+   "speed": 0.85
+  },
+  {
+   "id": "leftis",
+   "who": "barnaby",
+   "text": "This is your left hand.",
+   "speed": 0.85
+  },
+  {
+   "id": "ltrick",
+   "who": "melody",
+   "text": "Make an L <break time=\"0.4s\" /> with your thumb and finger. <break time=\"0.5s\" /> That is your left hand.",
+   "show": "Make an L with your thumb and finger. That is your left hand.",
+   "speed": 0.85
+  },
+  {
+   "id": "rightis",
+   "who": "barnaby",
+   "text": "This is your right hand.",
+   "speed": 0.85
+  },
+  {
+   "id": "lw",
+   "who": "melody",
+   "text": "Left.",
+   "prev": "This is your left hand.",
+   "quiet": true
+  },
+  {
+   "id": "rw",
+   "who": "barnaby",
+   "text": "Right.",
+   "prev": "This is your right hand.",
+   "quiet": true
+  },
+  {
+   "id": "showl",
+   "who": "barnaby",
+   "text": "Show me your left hand.",
+   "speed": 0.85
+  },
+  {
+   "id": "showr",
+   "who": "barnaby",
+   "text": "Show me your right hand.",
+   "speed": 0.85
+  },
+  {
+   "id": "practice",
+   "who": "melody",
+   "text": "Left and right take lots of practice. <break time=\"0.4s\" /> That is okay! <break time=\"0.4s\" /> Ask a grown-up to practise with you.",
+   "show": "Left and right take lots of practice. That is okay! Ask a grown-up to practise with you.",
+   "speed": 0.85
+  },
+  {
+   "id": "piano",
+   "who": "barnaby",
+   "text": "Now let's look at the piano.",
+   "speed": 0.88
+  },
+  {
+   "id": "ends",
+   "who": "melody",
+   "text": "A piano has a left end, <break time=\"0.5s\" /> and a right end.",
+   "show": "A piano has a left end, and a right end.",
+   "speed": 0.85
+  },
+  {
+   "id": "listenl",
+   "who": "barnaby",
+   "text": "Listen to the left end.",
+   "speed": 0.85
+  },
+  {
+   "id": "lowword",
+   "who": "melody",
+   "text": "Low.",
+   "prev": "Listen to the left end.",
+   "quiet": true
+  },
+  {
+   "id": "listenr",
+   "who": "barnaby",
+   "text": "Now listen to the right end.",
+   "speed": 0.85
+  },
+  {
+   "id": "highword",
+   "who": "melody",
+   "text": "High.",
+   "prev": "Now listen to the right end.",
+   "quiet": true
+  },
+  {
+   "id": "slideline",
+   "who": "barnaby",
+   "text": "Left is low. <break time=\"0.5s\" /> Right is high.",
+   "show": "Left is low. Right is high.",
+   "speed": 0.85
+  },
+  {
+   "id": "handsplay",
+   "who": "melody",
+   "text": "Your left hand plays the low sounds. <break time=\"0.6s\" /> Your right hand plays the high sounds.",
+   "show": "Your left hand plays the low sounds. Your right hand plays the high sounds.",
+   "speed": 0.85
+  },
+  {
+   "id": "yourturn7",
+   "who": "melody",
+   "text": "Your turn! <break time=\"0.4s\" /> Is this sound high, <break time=\"0.4s\" /> or low?",
+   "show": "Your turn! Is this sound high, or low?",
+   "speed": 0.88
+  },
+  {
+   "id": "a1",
+   "who": "barnaby",
+   "text": "Low!",
+   "prev": "Is this sound high, or low?",
+   "quiet": true
+  },
+  {
+   "id": "q2",
+   "who": "melody",
+   "text": "Which hand plays this low sound?",
+   "speed": 0.88
+  },
+  {
+   "id": "a2",
+   "who": "barnaby",
+   "text": "Left!",
+   "prev": "Which hand plays this low sound?",
+   "quiet": true
+  },
+  {
+   "id": "q3",
+   "who": "melody",
+   "text": "Is this sound on the left end, <break time=\"0.4s\" /> or the right end?",
+   "show": "Is this sound on the left end, or the right end?",
+   "speed": 0.88
+  },
+  {
+   "id": "a3",
+   "who": "barnaby",
+   "text": "Right!",
+   "prev": "Is this sound on the left end, or the right end?",
+   "quiet": true
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "src": "../video2/qwell",
+   "text": "You've got it!"
+  },
+  {
+   "id": "game7",
+   "who": "barnaby",
+   "text": "Play Left, Right, High and Low, <break time=\"0.3s\" /> and practise with your hands!",
+   "show": "Play Left, Right, High and Low, and practise with your hands!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v7recap",
+   "clips": [
+    "recap7"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 1.8
+  },
+  {
+   "id": "v7hold",
+   "clips": [
+    "holdup"
+   ],
+   "lead": 0.7,
+   "gap": 0.0,
+   "tail": 3.0
+  },
+  {
+   "id": "v7left",
+   "clips": [
+    "leftis",
+    "ltrick"
+   ],
+   "lead": 0.6,
+   "gap": 1.2,
+   "tail": 3.0
+  },
+  {
+   "id": "v7right",
+   "clips": [
+    "rightis",
+    "lw",
+    "rw"
+   ],
+   "lead": 0.6,
+   "gap": 1.2,
+   "tail": 2.6
+  },
+  {
+   "id": "v7show",
+   "clips": [
+    "showl",
+    "showr"
+   ],
+   "lead": 0.6,
+   "gap": 4.0,
+   "tail": 4.0
+  },
+  {
+   "id": "v7practice",
+   "clips": [
+    "practice"
+   ],
+   "lead": 0.7,
+   "gap": 0.0,
+   "tail": 3.2
+  },
+  {
+   "id": "v7ends",
+   "clips": [
+    "piano",
+    "ends"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 3.2
+  },
+  {
+   "id": "v7low",
+   "clips": [
+    "listenl",
+    "lowword"
+   ],
+   "lead": 0.6,
+   "gap": 2.8,
+   "tail": 3.0
+  },
+  {
+   "id": "v7high",
+   "clips": [
+    "listenr",
+    "highword"
+   ],
+   "lead": 0.6,
+   "gap": 2.8,
+   "tail": 3.0
+  },
+  {
+   "id": "v7slide",
+   "clips": [
+    "slideline"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 5.2
+  },
+  {
+   "id": "v7play",
+   "clips": [
+    "handsplay"
+   ],
+   "lead": 0.7,
+   "gap": 0.0,
+   "tail": 3.6
+  },
+  {
+   "id": "v7q1",
+   "clips": [
+    "yourturn7",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 5.4,
+   "tail": 2.4
+  },
+  {
+   "id": "v7q2",
+   "clips": [
+    "q2",
+    "a2"
+   ],
+   "lead": 0.5,
+   "gap": 5.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v7q3",
+   "clips": [
+    "q3",
+    "a3",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 5.0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro7",
+   "clips": [
+    "game1",
+    "game7",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "tone",
+   "f": "c3",
+   "clip": "listenl",
+   "from": "end",
+   "off": 0.4
+  },
+  {
+   "kind": "tone",
+   "f": "c6",
+   "clip": "listenr",
+   "from": "end",
+   "off": 0.4
+  },
+  {
+   "kind": "slide",
+   "clip": "slideline",
+   "from": "end",
+   "off": 0.5,
+   "dur": 3.4
+  },
+  {
+   "kind": "tone",
+   "f": "c3",
+   "clip": "handsplay",
+   "word": "left",
+   "off": 0.9
+  },
+  {
+   "kind": "tone",
+   "f": "c6",
+   "clip": "handsplay",
+   "word": "right",
+   "off": 0.9
+  },
+  {
+   "kind": "tone",
+   "f": "c3",
+   "clip": "a1",
+   "off": -4.3
+  },
+  {
+   "kind": "tone",
+   "f": "c3",
+   "clip": "a1",
+   "off": -3.0
+  },
+  {
+   "kind": "tone",
+   "f": "g3",
+   "clip": "a2",
+   "off": -4.3
+  },
+  {
+   "kind": "tone",
+   "f": "g3",
+   "clip": "a2",
+   "off": -3.0
+  },
+  {
+   "kind": "tone",
+   "f": "c6",
+   "clip": "a3",
+   "off": -4.3
+  },
+  {
+   "kind": "tone",
+   "f": "c6",
+   "clip": "a3",
+   "off": -3.0
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  }
+ ],
+ "gapOverride": {
+  "qwell": 0.9
+ }
+}

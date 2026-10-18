@@ -112,6 +112,10 @@ def sparkle(vol=0.11):
     out = np.zeros(int(0.9 * SR), dtype=np.float32)
     for i, f in enumerate([1046, 1318, 1568, 2093]): put(out, i * 0.07, tone(f, 0.5, vol), 1)
     return out
+def slide(dur=3.4, vol=0.16):   # a smooth glide from low to high, like running a finger up the keyboard
+    n=int(dur*SR); x=np.arange(n)/SR; f=110*np.exp(x/dur*math.log(1320/110))
+    ph=2*math.pi*np.cumsum(f)/SR; sig=np.sin(ph)+0.35*np.sin(2*ph)
+    return (sig*np.minimum(x/0.05,1)*np.minimum((dur-x)/0.2,1)*vol).astype(np.float32)
 def drum(vol=0.55):
     n = int(0.4 * SR); x = np.arange(n) / SR; f = 55 + 130 * np.exp(-x * 16)
     body = np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.12)
@@ -133,18 +137,18 @@ def heart(vol=0.4):
         n = int(0.16 * SR); x = np.arange(n) / SR; f = 48 + 40 * np.exp(-x * 30)
         put(out, at, (np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.05) * vol * g).astype(np.float32), 1)
     return out
-FREQ = {'e4': 329.6, 'f4': 349.2, 'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0, 'cs4': 277.2, 'ds4': 311.1, 'fs4': 370.0, 'gs4': 415.3, 'as4': 466.2, 'cs5': 554.4, 'ds5': 622.3}
+FREQ = {'e4': 329.6, 'f4': 349.2, 'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0, 'cs4': 277.2, 'ds4': 311.1, 'fs4': 370.0, 'gs4': 415.3, 'as4': 466.2, 'cs5': 554.4, 'ds5': 622.3, 'c3': 130.8, 'g3': 196.0, 'c6': 1046.5}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
 for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
 for r in script.get('events', []):
     c = clips[r['clip']]
     base = W(r['clip'], r['word'], r.get('nth', 0)) if 'word' in r else (c['end'] if r.get('from') == 'end' else c['start'])
-    extra = {k: v for k, v in r.items() if k in ('f',)}
+    extra = {k: v for k, v in r.items() if k in ('f', 'dur')}
     ev(r['kind'], base + r.get('off', 0), **extra)
 for e in events:
     k = e['kind']
-    sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle}.get(k, lambda: tone(FREQ.get(e.get('f'), 440)))()
+    sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle, 'slide': lambda: slide(e.get('dur', 3.4))}.get(k, lambda: tone(FREQ.get(e.get('f'), 440), 0.9 if e.get('f') not in ('c3','g3') else 1.3, 0.2 if e.get('f') in ('c3','g3') else 0.13))()
     put(mix, e['at'], sig, 1.0)
 
 # --- beat tracks (rhythm videos): a steady run of drum / step / clap / heartbeat hits; the page draws its pulses from the same times ---
