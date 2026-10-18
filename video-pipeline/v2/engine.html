@@ -735,7 +735,7 @@ S.v7hold={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);thi
   const tw=wt('holdup','look')-0.1;if(t>=tw)c.caption('LOOK AT YOUR HANDS','var(--orange)',tw)}};
 
 S.v7left={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
-  this.lc=labelChip(r,'LEFT',LCOL,190,352);this.big=document.createElement('div');this.big.className='big abs';this.big.style.cssText=`left:196px;top:300px;width:110px;font-size:190px;color:${LCOL};opacity:0`;this.big.textContent='L';r.appendChild(this.big);
+  this.lc=labelChip(r,'LEFT',LCOL,190,352);this.big=document.createElement('div');this.big.className='big abs';this.big.style.cssText=`left:575px;top:320px;width:110px;font-size:190px;color:${LCOL};opacity:0`;this.big.textContent='L';r.appendChild(this.big);
   this.hand2=document.createElement('div');this.hand2.className='abs';this.hand2.style.cssText='left:300px;top:200px;width:240px;opacity:0';this.hand2.innerHTML=handSvg('L','L',240);r.appendChild(this.hand2)},
   update(t,L,c){const H=this.H;[H.L,H.R].forEach(h=>{h.d.style.opacity='1';h.d.style.scale='1'});
    const tl=wt('leftis','left')-0.1,tm=wt('ltrick','make')-0.1,showL=t>=tm;
