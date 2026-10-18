@@ -116,6 +116,15 @@ def slide(dur=3.4, vol=0.16):   # a smooth glide from low to high, like running 
     n=int(dur*SR); x=np.arange(n)/SR; f=110*np.exp(x/dur*math.log(1320/110))
     ph=2*math.pi*np.cumsum(f)/SR; sig=np.sin(ph)+0.35*np.sin(2*ph)
     return (sig*np.minimum(x/0.05,1)*np.minimum((dur-x)/0.2,1)*vol).astype(np.float32)
+NOTE_SEMI = {'c': 0, 'cs': 1, 'd': 2, 'ds': 3, 'e': 4, 'f': 5, 'fs': 6, 'g': 7, 'gs': 8, 'a': 9, 'as': 10, 'b': 11}
+_PIANO = {}
+def piano(note, dur=1.8, vol=0.5):   # 'c3', 'fs4' ... -> a sampled piano note (audio/piano/<midi>.wav, from render_piano.swift)
+    import re
+    m = re.match(r'^([a-g]s?)(\d)$', note); midi = (int(m.group(2)) + 1) * 12 + NOTE_SEMI[m.group(1)]
+    if midi not in _PIANO:
+        w = load(HERE / 'audio' / 'piano' / f'{midi}.wav'); _PIANO[midi] = w / (np.abs(w).max() + 1e-9)
+    w = _PIANO[midi][:int(dur * SR)].copy(); n = len(w); fade = min(int(0.4 * SR), n)
+    w[n - fade:] *= np.linspace(1, 0, fade); return (w * vol).astype(np.float32)
 def drum(vol=0.55):
     n = int(0.4 * SR); x = np.arange(n) / SR; f = 55 + 130 * np.exp(-x * 16)
     body = np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.12)
@@ -144,11 +153,13 @@ for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
 for r in script.get('events', []):
     c = clips[r['clip']]
     base = W(r['clip'], r['word'], r.get('nth', 0)) if 'word' in r else (c['end'] if r.get('from') == 'end' else c['start'])
-    extra = {k: v for k, v in r.items() if k in ('f', 'dur')}
-    ev(r['kind'], base + r.get('off', 0), **extra)
+    extra = {k: v for k, v in r.items() if k in ('f', 'dur', 'note', 'vol')}
+    if r['kind'] == 'run':    # a run of single piano notes, one every `step` seconds, e.g. a finger running up the keys
+        for i, nt in enumerate(r['notes']): ev('pno', base + r.get('off', 0) + i * r['step'], note=nt, vol=r.get('vol', 0.5), dur=r.get('dur', 1.2))
+    else: ev(r['kind'], base + r.get('off', 0), **extra)
 for e in events:
     k = e['kind']
-    sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle, 'slide': lambda: slide(e.get('dur', 3.4))}.get(k, lambda: tone(FREQ.get(e.get('f'), 440), 0.9 if e.get('f') not in ('c3','g3') else 1.3, 0.2 if e.get('f') in ('c3','g3') else 0.13))()
+    sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle, 'slide': lambda: slide(e.get('dur', 3.4)), 'pno': lambda: piano(e['note'], e.get('dur', 1.8), e.get('vol', 0.5))}.get(k, lambda: tone(FREQ.get(e.get('f'), 440), 0.9 if e.get('f') not in ('c3','g3') else 1.3, 0.2 if e.get('f') in ('c3','g3') else 0.13))()
     put(mix, e['at'], sig, 1.0)
 
 # --- beat tracks (rhythm videos): a steady run of drum / step / clap / heartbeat hits; the page draws its pulses from the same times ---
