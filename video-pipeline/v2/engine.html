@@ -708,7 +708,7 @@ function handSvg(side,mode,w){ // side 'L'|'R'; mode 'flat' (hovering, palm down
   }else{
     g+=R(36,112,104,102,34);                                                                       // back of the hand
     [[0,60],[1,76],[2,84],[3,76]].forEach(([i,h])=>{const x=38+i*25;g+=R(x,112-h,24,h+26,12)+N(x+4,112-h+6,16,18)});   // four fingers, with nails
-    g+=R(126,150,28,76,14,skin,'rotate(34 140 214)')+N(137,128,18,18,'rotate(34 140 214)');        // thumb on the inner (right) side
+    g+=R(126,150,28,76,14,skin,'rotate(34 140 214)')+N(131,156,18,20,'rotate(34 140 214)');        // thumb on the inner (right) side
     g+=`<path d="M58,140 q14,-8 28,0 M92,140 q14,-8 28,0" fill="none" stroke="${edge}" stroke-width="2" opacity=".5"/>`;   // knuckles
   }
   const tr=side==='R'?' transform="translate(204,0) scale(-1,1)"':'';
