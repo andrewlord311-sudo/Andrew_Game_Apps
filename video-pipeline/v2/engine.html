@@ -692,28 +692,53 @@ S.outro6=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
 // coming from the player, nails show it is the back of the hand, and a soft shadow on the keys shows it is hovering.
 // Left = teal, right = purple, all the way through. Low and high sit at the left and right ends of the keyboard.
 const LCOL='#0d9488', RCOL='#7c3aed';
-function handSvg(side,mode,w){ // side 'L'|'R'; mode 'flat' (hovering, palm down) | 'L' (held up, thumb and finger make an L; back of the hand towards the child)
-  const skin='#f6cba4',edge='#b9794a',nail='#fde8d6',sw=3,sleeve=side==='L'?'#0d9488':'#7c3aed',sleeveEdge=side==='L'?'#115e59':'#5b21b6';
-  const R=(x,y,wd,h,rx,fill=skin,tr='')=>`<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${rx}" fill="${fill}" stroke="${edge}" stroke-width="${sw}" ${tr?`transform="${tr}"`:''}/>`;
-  const N=(x,y,wd,h,tr='')=>`<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${wd/2.2}" fill="${nail}" stroke="${edge}" stroke-width="1.6" ${tr?`transform="${tr}"`:''}/>`;
-  let g='';
-  g+=`<ellipse cx="102" cy="236" rx="78" ry="16" fill="rgba(0,0,0,.22)" filter="url(#bl)"/>`;     // soft shadow on the keys
-  g+=R(54,238,98,62,10,sleeve).replace(`stroke="${edge}"`,`stroke="${sleeveEdge}"`);                 // sleeve, coming from the player
-  g+=R(66,200,76,52,18);                                                                          // wrist
-  if(mode==='L'){
-    g+=R(40,98,92,92,30);
-    [0,1,2].forEach(i=>{g+=R(42+i*22,84,22,38,11)});                                              // three curled fingers
-    g+=R(106,4,26,128,13)+N(110,10,18,22);                                                        // index finger straight up
-    g+=R(110,150,92,26,13)+N(180,154,18,18);                                                      // thumb straight out to the right: an L
-  }else{
-    g+=R(36,112,104,102,34);                                                                       // back of the hand
-    [[0,60],[1,76],[2,84],[3,76]].forEach(([i,h])=>{const x=38+i*25;g+=R(x,112-h,24,h+26,12)+N(x+4,112-h+6,16,18)});   // four fingers, with nails
-    g+=R(126,150,28,76,14,skin,'rotate(34 140 214)')+N(131,156,18,20,'rotate(34 140 214)');        // thumb on the inner (right) side
-    g+=`<path d="M58,140 q14,-8 28,0 M92,140 q14,-8 28,0" fill="none" stroke="${edge}" stroke-width="2" opacity=".5"/>`;   // knuckles
+// Hands in the style Andrew chose on 19 Oct 2026 (from a reference outline drawing): long slender fingers splayed apart, one clean
+// outline round the whole hand, thumbs low and angled in, a small curve for each nail and short dashes at the joints, a narrow wrist.
+// Palm down, seen from above as a player sees them from the stool: the LEFT hand has its thumb on the right; the right hand mirrors it.
+function handSvg(side, mode, w) {
+  const LCOL = '#0d9488', RCOL = '#7c3aed';
+  const skin = '#f6cfac', edge = '#7a4a2a', sw = 3.2;
+  const sleeve = side === 'L' ? LCOL : RCOL, sleeveEdge = side === 'L' ? '#115e59' : '#5b21b6';
+  const parts = [];      // every piece of the hand; drawn twice (outline, then fill) so only the outer edge shows
+  const marks = [];      // nail curves and joint dashes, drawn on top
+  // a finger: base (bx,by), length L, width W, tilt a degrees (0 = straight up)
+  const finger = (bx, by, L, W, a, joints = 2) => {
+    const tr = `rotate(${a} ${bx} ${by})`;
+    parts.push(`<rect x="${bx - W / 2}" y="${by - L}" width="${W}" height="${L + 30}" rx="${W / 2}" transform="${tr}"/>`);
+    const tip = by - L;
+    marks.push(`<path d="M${bx - W * 0.22},${tip + 13} q${W * 0.22},${5} ${W * 0.44},0" transform="${tr}"/>`);            // the nail: a small smile near the tip
+    if (joints >= 1) marks.push(`<path d="M${bx - W * 0.2},${tip + L * 0.36} h${W * 0.4} M${bx - W * 0.14},${tip + L * 0.36 + 5} h${W * 0.28}" transform="${tr}"/>`);   // top joint
+    if (joints >= 2) marks.push(`<path d="M${bx - W * 0.22},${tip + L * 0.66} h${W * 0.44} M${bx - W * 0.16},${tip + L * 0.66 + 5} h${W * 0.32}" transform="${tr}"/>`); // middle joint
+  };
+  if (mode === 'L') {
+    finger(122, 168, 112, 22, 0);                                                                                  // index straight up
+    parts.push(`<rect x="128" y="176" width="78" height="25" rx="12.5" transform="rotate(-6 134 188)"/>`);          // thumb straight out
+    marks.push(`<path d="M196,181 q-5,6 0,12" transform="rotate(-6 134 188)"/><path d="M168,180 v8 M174,181 v7" transform="rotate(-6 134 188)"/>`);
+    [[62, 140, 20], [82, 134, 21], [102, 132, 21]].forEach(([x, y, r]) => parts.push(`<rect x="${x - r / 2}" y="${y}" width="${r}" height="50" rx="${r / 2}"/>`));   // curled fingers
+    marks.push(`<path d="M56,148 q6,4 12,0 M76,142 q6,4 12,0 M96,140 q6,4 12,0"/>`);
+  } else {
+    finger(58, 182, 70, 20, -24, 1);     // little finger
+    finger(80, 168, 94, 21, -10);        // ring
+    finger(102, 162, 102, 22, 2);        // middle
+    finger(124, 168, 90, 21, 15);        // index
+    // thumb: leaves the hand low down and angles in towards the other hand
+    parts.push(`<rect x="117" y="118" width="26" height="96" rx="13" transform="rotate(44 130 206)"/>`);
+    marks.push(`<path d="M124,128 q6,4 12,0" transform="rotate(44 130 206)"/><path d="M122,160 h12 M124,165 h8" transform="rotate(44 130 206)"/>`);
+    parts.push(`<path d="M151,202 Q133,216 126,242 L108,242 L118,196 Z"/>`);   // the thumb sweeps smoothly down into the wrist
   }
-  const tr=side==='R'?' transform="translate(204,0) scale(-1,1)"':'';
-  return `<svg viewBox="0 0 204 300" width="${w}" style="overflow:visible"><defs><filter id="bl" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="5"/></filter></defs><g${tr}>${g}</g></svg>`}
-const HAND_RATIO=300/204;
+  // the back of the hand, tapering to a narrow wrist
+  parts.push(`<path d="M48,186 C45,168 62,156 82,154 L124,156 C132,159 135,167 134,178 C133,194 130,210 128,228 L78,228 C70,214 52,202 48,186 Z"/>`);
+  parts.push(`<path d="M78,222 L128,222 L125,264 L81,264 Z"/>`);                                                            // wrist
+  const P = parts.join('');
+  let g = `<ellipse cx="102" cy="250" rx="70" ry="13" fill="rgba(0,0,0,.18)" filter="url(#bl)"/>`;
+  g += `<rect x="58" y="256" width="90" height="50" rx="10" fill="${sleeve}" stroke="${sleeveEdge}" stroke-width="${sw}"/>`;    // sleeve
+  g += `<g fill="${skin}" stroke="${edge}" stroke-width="${sw * 2}" stroke-linejoin="round">${P}</g>`;        // outline of the whole hand
+  g += `<g fill="${skin}" stroke="none">${P}</g>`;                                                          // fill on top: only the outer edge remains
+  g += `<g fill="none" stroke="${edge}" stroke-width="2.4" stroke-linecap="round">${marks.join('')}</g>`;
+  const tr = side === 'R' ? ' transform="translate(204,0) scale(-1,1)"' : '';
+  return `<svg viewBox="0 0 214 304" width="${w}" style="overflow:visible"><defs><filter id="bl" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="5"/></filter></defs><g${tr}>${g}</g></svg>`;
+}
+const HAND_RATIO=304/214;
 function handsBuild(r,o={}){ // o: y (top), w (width), lx, rx (left edges)
   const W=o.w??240,Y=o.y??212;
   const mk=(side,x)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x}px;top:${Y}px;width:${W}px;opacity:0;transform-origin:50% 100%`;d.innerHTML=handSvg(side,'flat',W);r.appendChild(d);
@@ -735,8 +760,8 @@ S.v7recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.K=kbBuild(r)},up
 
 const HOVER={y:212,w:240,lx:310,rx:730};   // two hands hovering over a lowered keyboard: left hand left of centre, right hand right of centre
 // knuckle markers: a pulsing orange oval over the knuckles of each hand (hand-box coordinates: knuckles sit at about 47% down, 44% across)
-function knuckleMarks(r,H,W){return [[H.L,0.436],[H.R,0.564]].map(([h,fx])=>{const m=document.createElement('div');m.className='abs';const Y=parseFloat(h.d.style.top),X=parseFloat(h.d.style.left);
-  m.style.cssText=`left:${X+fx*W-0.24*W}px;top:${Y+0.686*W-0.07*W}px;width:${0.48*W}px;height:${0.14*W}px;border-radius:50%;border:5px solid #ea580c;background:rgba(251,146,60,.28);opacity:0`;r.appendChild(m);return m})}
+function knuckleMarks(r,H,W){return [[H.L,0.425],[H.R,0.528]].map(([h,fx])=>{const m=document.createElement('div');m.className='abs';const Y=parseFloat(h.d.style.top),X=parseFloat(h.d.style.left);
+  m.style.cssText=`left:${X+fx*W-0.24*W}px;top:${Y+0.747*W-0.07*W}px;width:${0.48*W}px;height:${0.14*W}px;border-radius:50%;border:5px solid #ea580c;background:rgba(251,146,60,.28);opacity:0`;r.appendChild(m);return m})}
 S.v7hold={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);this.km=knuckleMarks(r,this.H,HOVER.w)},update(t,L,c){
   [this.H.L,this.H.R].forEach((h,i)=>{const p=prog(L,0.5+i*0.25,0.55);h.d.style.opacity=String(clamp(p*2));h.d.style.scale=String(lerp(0.6,1,easeBack(p)));h.hl.style.opacity='0'});
   const tp=wt('holdup','palms')-0.1,tk=wt('holdup','knuckles')-0.1;
