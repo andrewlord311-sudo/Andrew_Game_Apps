@@ -268,8 +268,8 @@
     "showr"
    ],
    "lead": 0.6,
-   "gap": 4.0,
-   "tail": 4.0
+   "gap": 4.4,
+   "tail": 4.2
   },
   {
    "id": "v7practice",
@@ -448,6 +448,18 @@
    "clip": "qwell",
    "from": "end",
    "off": 0.05
+  },
+  {
+   "kind": "pop",
+   "clip": "showl",
+   "from": "end",
+   "off": 2.1
+  },
+  {
+   "kind": "pop",
+   "clip": "showr",
+   "from": "end",
+   "off": 2.1
   }
  ],
  "gapOverride": {
