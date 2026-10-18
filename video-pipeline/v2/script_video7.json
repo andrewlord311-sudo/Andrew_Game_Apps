@@ -40,9 +40,9 @@
   {
    "id": "holdup",
    "who": "melody",
-   "text": "Hold up your hands. <break time=\"0.5s\" /> Look at them.",
-   "show": "Hold up your hands. Look at them.",
-   "speed": 0.85
+   "text": "Hold your hands out in front of you. <break time=\"0.6s\" /> Palms down. <break time=\"0.6s\" /> Knuckles up.",
+   "show": "Hold your hands out in front of you. Palms down. Knuckles up.",
+   "speed": 0.82
   },
   {
    "id": "leftis",
@@ -53,9 +53,9 @@
   {
    "id": "ltrick",
    "who": "melody",
-   "text": "Make an L <break time=\"0.4s\" /> with your thumb and finger. <break time=\"0.5s\" /> That is your left hand.",
-   "show": "Make an L with your thumb and finger. That is your left hand.",
-   "speed": 0.85
+   "text": "Keep your palm down. <break time=\"0.4s\" /> Point one finger away, <break time=\"0.3s\" /> thumb out. <break time=\"0.5s\" /> That is an L. <break time=\"0.4s\" /> That is your left hand.",
+   "show": "Keep your palm down. Point one finger away, thumb out. That is an L. That is your left hand.",
+   "speed": 0.84
   },
   {
    "id": "rightis",
@@ -238,7 +238,7 @@
    ],
    "lead": 0.7,
    "gap": 0.0,
-   "tail": 3.0
+   "tail": 3.4
   },
   {
    "id": "v7left",
@@ -248,7 +248,7 @@
    ],
    "lead": 0.6,
    "gap": 1.2,
-   "tail": 3.0
+   "tail": 3.2
   },
   {
    "id": "v7right",
