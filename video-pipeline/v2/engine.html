@@ -687,60 +687,73 @@ S.outro6=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game6','groups')-0.3;this.ch.forEach((d,i)=>{const q=prog(t,t0+i*0.18,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3+i*0.8))*8:0}px`})}});
 
 // ======================================================================== VIDEO 7: left, right, higher, lower
-// Hands are drawn from the CHILD'S OWN point of view (looking down at your own hands, backs up), so the left hand is on the left of the screen.
+// Hands are drawn the way a player sees them from the stool: LOOKING DOWN, palms down, hovering over the keys, fingers pointing away,
+// so the left hand is on the left and its thumb is on its RIGHT (the inner side); the right hand mirrors it. A sleeve and wrist show the arm
+// coming from the player, nails show it is the back of the hand, and a soft shadow on the keys shows it is hovering.
 // Left = teal, right = purple, all the way through. Low and high sit at the left and right ends of the keyboard.
 const LCOL='#0d9488', RCOL='#7c3aed';
-function handSvg(side,mode,w){ // side 'L'|'R'; mode 'flat'|'L'
-  const skin='#f6cba4',edge='#b9794a',sw=3;
-  const R=(x,y,wd,h,rx,extra='')=>`<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${rx}" fill="${skin}" stroke="${edge}" stroke-width="${sw}" ${extra}/>`;
+function handSvg(side,mode,w){ // side 'L'|'R'; mode 'flat' (hovering, palm down) | 'L' (held up, thumb and finger make an L; back of the hand towards the child)
+  const skin='#f6cba4',edge='#b9794a',nail='#fde8d6',sw=3,sleeve=side==='L'?'#0d9488':'#7c3aed',sleeveEdge=side==='L'?'#115e59':'#5b21b6';
+  const R=(x,y,wd,h,rx,fill=skin,tr='')=>`<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${rx}" fill="${fill}" stroke="${edge}" stroke-width="${sw}" ${tr?`transform="${tr}"`:''}/>`;
+  const N=(x,y,wd,h,tr='')=>`<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${wd/2.2}" fill="${nail}" stroke="${edge}" stroke-width="1.6" ${tr?`transform="${tr}"`:''}/>`;
   let g='';
+  g+=`<ellipse cx="102" cy="236" rx="78" ry="16" fill="rgba(0,0,0,.22)" filter="url(#bl)"/>`;     // soft shadow on the keys
+  g+=R(54,238,98,62,10,sleeve).replace(`stroke="${edge}"`,`stroke="${sleeveEdge}"`);                 // sleeve, coming from the player
+  g+=R(66,200,76,52,18);                                                                          // wrist
   if(mode==='L'){
-    g+=R(40,98,92,86,28);                                    // palm
-    [0,1,2].forEach(i=>{g+=R(40+i*22,82,22,34,11)});         // three curled fingers
-    g+=R(106,6,26,120,13);                                   // index finger, straight up
-    g+=R(110,150,86,26,13);                                  // thumb, straight out to the side: together an L
+    g+=R(40,98,92,92,30);
+    [0,1,2].forEach(i=>{g+=R(42+i*22,84,22,38,11)});                                              // three curled fingers
+    g+=R(106,4,26,128,13)+N(110,10,18,22);                                                        // index finger straight up
+    g+=R(110,150,92,26,13)+N(180,154,18,18);                                                      // thumb straight out to the right: an L
   }else{
-    g+=R(40,92,92,92,28);
-    [[0,58],[1,72],[2,80],[3,72]].forEach(([i,h])=>{g+=R(42+i*22,96-h,22,h+20,11)});
-    g+=R(118,126,26,70,13,'transform="rotate(38 131 190)"');
+    g+=R(36,112,104,102,34);                                                                       // back of the hand
+    [[0,60],[1,76],[2,84],[3,76]].forEach(([i,h])=>{const x=38+i*25;g+=R(x,112-h,24,h+26,12)+N(x+4,112-h+6,16,18)});   // four fingers, with nails
+    g+=R(126,150,28,76,14,skin,'rotate(34 140 214)')+N(137,128,18,18,'rotate(34 140 214)');        // thumb on the inner (right) side
+    g+=`<path d="M58,140 q14,-8 28,0 M92,140 q14,-8 28,0" fill="none" stroke="${edge}" stroke-width="2" opacity=".5"/>`;   // knuckles
   }
-  const tr=side==='R'?' transform="translate(220,0) scale(-1,1)"':'';
-  return `<svg viewBox="0 0 220 200" width="${w}" style="overflow:visible"><g${tr}>${g}</g></svg>`}
-function handsBuild(r,o={}){ // o.y top; returns {L,R} wrappers
-  const mk=(side,x)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x}px;top:${o.y??285}px;width:${o.w??300}px;opacity:0;transform-origin:50% 100%`;d.innerHTML=handSvg(side,'flat',o.w??300);r.appendChild(d);
-    const hl=document.createElement('div');hl.className='abs';hl.style.cssText=`left:${x-30}px;top:${(o.y??285)-30}px;width:${(o.w??300)+60}px;height:${(o.w??300)*0.95+60}px;border-radius:50%;background:radial-gradient(circle,${side==='L'?LCOL:RCOL}aa 0%,rgba(255,255,255,0) 68%);opacity:0`;r.insertBefore(hl,d);return {d,hl,side}};
-  return {L:mk('L',o.lx??310),R:mk('R',o.rx??670)}}
+  const tr=side==='R'?' transform="translate(204,0) scale(-1,1)"':'';
+  return `<svg viewBox="0 0 204 300" width="${w}" style="overflow:visible"><defs><filter id="bl" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="5"/></filter></defs><g${tr}>${g}</g></svg>`}
+const HAND_RATIO=300/204;
+function handsBuild(r,o={}){ // o: y (top), w (width), lx, rx (left edges)
+  const W=o.w??240,Y=o.y??212;
+  const mk=(side,x)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x}px;top:${Y}px;width:${W}px;opacity:0;transform-origin:50% 100%`;d.innerHTML=handSvg(side,'flat',W);r.appendChild(d);
+    const hl=document.createElement('div');hl.className='abs';hl.style.cssText=`left:${x-40}px;top:${Y-20}px;width:${W+80}px;height:${W*HAND_RATIO+40}px;border-radius:50%;background:radial-gradient(circle,${side==='L'?LCOL:RCOL}99 0%,rgba(255,255,255,0) 66%);opacity:0`;r.insertBefore(hl,d);return {d,hl,side}};
+  return {L:mk('L',o.lx??310),R:mk('R',o.rx??730)}}
 function handGlow(H,t,t0,on){const p=prog(t,t0,0.4);H.hl.style.opacity=on?String(clamp(p)*(0.55+0.45*pulse6(t,t0))):'0'}
 function labelChip(r,txt,col,x,y){const c=chip(r,txt,col,x,y);c.style.fontSize='38px';c.style.padding='8px 26px';return c}
+// a keyboard lowered so hands can hover above it
+function lowKeys(self,r,dy){self.K=kbBuild(r);self.K.root.style.opacity='1';self.K.root.style.translate=`0 ${dy}px`;kbPaint(self.K,{whiteBg:'#f8fafc'});self.K.blacks.forEach(b=>{b.style.translate='0 0'})}
 
 S.v7recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
   const lit={};GRP.forEach((g,gi)=>g.forEach(k=>{lit[k]=GCOL[gi]}));kbPaint(K,{whiteBg:'#f8fafc',lit});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
   kbBadgesBrackets(K,t,{badge:{},br:GRP.map(()=>[-1,0.9])});
   const tw=wt('recap7','groups')-0.1;if(t>=tw)c.caption('GROUPS OF 2 AND 3','var(--orange)',tw)}};
 
-S.v7hold={ui:{ribbon:1,hosts:'low',bubble:true},build(r){this.H=handsBuild(r)},update(t,L,c){
-  [this.H.L,this.H.R].forEach((h,i)=>{const p=prog(L,0.5+i*0.25,0.55);h.d.style.opacity=String(clamp(p*2));h.d.style.scale=String(lerp(0.5,1,easeBack(p)));h.hl.style.opacity='0'});
+const HOVER={y:212,w:240,lx:310,rx:730};   // two hands hovering over a lowered keyboard: left hand left of centre, right hand right of centre
+S.v7hold={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER)},update(t,L,c){
+  [this.H.L,this.H.R].forEach((h,i)=>{const p=prog(L,0.5+i*0.25,0.55);h.d.style.opacity=String(clamp(p*2));h.d.style.scale=String(lerp(0.6,1,easeBack(p)));h.hl.style.opacity='0'});
   const tw=wt('holdup','look')-0.1;if(t>=tw)c.caption('LOOK AT YOUR HANDS','var(--orange)',tw)}};
 
-S.v7left={ui:{ribbon:1,hosts:'low',bubble:true},build(r){this.H=handsBuild(r);
-  this.lc=labelChip(r,'LEFT',LCOL,460,214);this.big=document.createElement('div');this.big.className='big abs';this.big.style.cssText=`left:196px;top:290px;width:110px;font-size:190px;color:${LCOL};opacity:0`;this.big.textContent='L';r.appendChild(this.big);
-  this.hand2=document.createElement('div');this.hand2.className='abs';this.hand2.style.cssText='left:310px;top:285px;width:300px;opacity:0';this.hand2.innerHTML=handSvg('L','L',300);r.appendChild(this.hand2)},
+S.v7left={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
+  this.lc=labelChip(r,'LEFT',LCOL,190,352);this.big=document.createElement('div');this.big.className='big abs';this.big.style.cssText=`left:196px;top:300px;width:110px;font-size:190px;color:${LCOL};opacity:0`;this.big.textContent='L';r.appendChild(this.big);
+  this.hand2=document.createElement('div');this.hand2.className='abs';this.hand2.style.cssText='left:300px;top:200px;width:240px;opacity:0';this.hand2.innerHTML=handSvg('L','L',240);r.appendChild(this.hand2)},
   update(t,L,c){const H=this.H;[H.L,H.R].forEach(h=>{h.d.style.opacity='1';h.d.style.scale='1'});
    const tl=wt('leftis','left')-0.1,tm=wt('ltrick','make')-0.1,showL=t>=tm;
    H.L.d.style.opacity=showL?'0':'1';this.hand2.style.opacity=showL?String(prog(t,tm,0.4)):'0';
-   handGlow(H.L,t,tl,true);pop(this.lc,t,tl,0.4);
+   this.K.root.style.opacity=String(showL?0.35:1);
+   handGlow(H.L,t,tl,!showL);pop(this.lc,t,tl,0.4);
    this.big.style.opacity=String(prog(t,tm+0.3,0.4));this.big.style.scale=String(lerp(0.5,1,easeBack(prog(t,tm+0.3,0.5))));
    if(t>=tl)c.caption(showL?'MAKE AN L':'THE LEFT HAND',LCOL,showL?tm:tl)}};
 
-S.v7right={ui:{ribbon:1,hosts:'low',bubble:true},build(r){this.H=handsBuild(r);
-  this.lc=labelChip(r,'LEFT',LCOL,460,214);this.rc=labelChip(r,'RIGHT',RCOL,820,214)},
+S.v7right={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
+  this.lc=labelChip(r,'LEFT',LCOL,190,352);this.rc=labelChip(r,'RIGHT',RCOL,1090,352)},
   update(t,L,c){const H=this.H;[H.L,H.R].forEach(h=>{h.d.style.opacity='1';h.d.style.scale='1'});
    const tr=wt('rightis','right')-0.1,tlw=CL.lw.start-0.1,trw=CL.rw.start-0.1;
    this.lc.style.opacity='1';
    handGlow(H.L,t,tlw,t>=tlw&&t<trw);handGlow(H.R,t,Math.min(tr,trw),t>=tr);pop(this.rc,t,tr,0.4);
    if(t>=trw)c.caption('RIGHT',RCOL,trw);else if(t>=tlw)c.caption('LEFT',LCOL,tlw);else if(t>=tr)c.caption('THE RIGHT HAND',RCOL,tr)}};
 
-S.v7show={ui:{ribbon:1,hosts:'low',bubble:true},build(r){this.H=handsBuild(r);this.lc=labelChip(r,'LEFT',LCOL,460,214);this.rc=labelChip(r,'RIGHT',RCOL,820,214)},
+S.v7show={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);this.lc=labelChip(r,'LEFT',LCOL,190,352);this.rc=labelChip(r,'RIGHT',RCOL,1090,352)},
   update(t,L,c){const H=this.H;[H.L,H.R].forEach(h=>{h.d.style.opacity='1';h.d.style.scale='1'});this.lc.style.opacity='1';this.rc.style.opacity='1';
    const a=wt('showl','left')-0.1,b=wt('showr','right')-0.1;
    handGlow(H.L,t,a,t>=a&&t<b);handGlow(H.R,t,b,t>=b);
@@ -792,24 +805,25 @@ S.v7slide={ui:V6UI,build(r){kbEndsBuild(this,r);
   const tl=wt('slideline','low')-0.1,th=wt('slideline','high')-0.1;
   if(t>=th)c.caption('RIGHT IS HIGH',RCOL,th);else if(t>=tl)c.caption('LEFT IS LOW',LCOL,tl)}};
 
-S.v7play={ui:V6UI,build(r){kbEndsBuild(this,r);this.H=handsBuild(r,{y:KB.top+KB.h+6,w:104,lx:KB.x0+4,rx:KB.x0+15*KB.w-108});
-  this.l1=labelChip(r,'LEFT HAND · LOW',LCOL,KB.x0+245,KB.top+KB.h+34);this.r1=labelChip(r,'RIGHT HAND · HIGH',RCOL,KB.x0+15*KB.w-250,KB.top+KB.h+34)},
-  update(t,L,c){const K=this.K;kbIn(K,L);this.lc.style.opacity='0';this.rc.style.opacity='0';this.lo.style.opacity='0';this.hi.style.opacity='0';
+const ENDHANDS={y:196,w:196,lx:KB.x0-20,rx:KB.x0+15*KB.w-176};   // left hand over the left (low) end, right hand over the right (high) end
+S.v7play={ui:V6UI,build(r){kbEndsBuild(this,r);this.K.root.style.translate='0 70px';this.H=handsBuild(r,ENDHANDS);
+  this.l1=labelChip(r,'LEFT HAND · LOW',LCOL,KB.x0+190,KB.top+70+KB.h+28);this.r1=labelChip(r,'RIGHT HAND · HIGH',RCOL,KB.x0+15*KB.w-210,KB.top+70+KB.h+28)},
+  update(t,L,c){const K=this.K;K.root.style.opacity=String(clamp(prog(L,0.2,0.5)*2));this.lc.style.opacity='0';this.rc.style.opacity='0';this.lo.style.opacity='0';this.hi.style.opacity='0';
   const a=wt('handsplay','left')-0.1,b=wt('handsplay','right')-0.1;
-  [this.H.L,this.H.R].forEach((h,i)=>{const p=prog(L,0.4+i*0.2,0.5);h.d.style.opacity=String(clamp(p*2));h.d.style.scale=String(lerp(0.5,1,easeBack(p)))});
+  [this.H.L,this.H.R].forEach((h,i)=>{const p=prog(L,0.4+i*0.2,0.5);h.d.style.opacity=String(clamp(p*2));h.d.style.scale=String(lerp(0.6,1,easeBack(p)))});
   endsPaint(K,t,{l:t>=a,r:t>=b,pl:t>=a?a:null,pr:t>=b?b:null});kbBadgesBrackets(K,t,{});
-  handGlow(this.H.L,t,a,t>=a);handGlow(this.H.R,t,b,t>=b);pop(this.l1,t,a,0.4);pop(this.r1,t,b,0.4);
+  handGlow(this.H.L,t,a,t>=a);handGlow(this.H.R,t,b,t>=b);this.l1.style.opacity='0';this.r1.style.opacity='0';
   if(t>=b)c.caption('RIGHT HAND PLAYS HIGH',RCOL,b);else if(t>=a)c.caption('LEFT HAND PLAYS LOW',LCOL,a)}};
 
 // quiz: a key sounds and pulses, "?" , then the answer. kind: 'lowhigh' | 'hand' | 'end'
 function v7quiz(ans,keyIdx,kind,right){return {ui:V6UI,build(r){kbEndsBuild(this,r);
   this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
-  if(kind==='hand')this.H=handsBuild(r,{y:KB.top+KB.h+8,w:104,lx:KB.x0+360,rx:KB.x0+15*KB.w-470});
-  this.ans=labelChip(r,'',right?RCOL:LCOL,640,KB.top+KB.h+(kind==='hand'?190:40));
+  if(kind==='hand'){this.K.root.style.translate='0 70px';this.H=handsBuild(r,ENDHANDS)}
+  this.ans=labelChip(r,'',right?RCOL:LCOL,640,KB.top+KB.h+40);
   if(ans==='a3'){this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})}},
   update(t,L,c){const K=this.K;kbIn(K,L);const ta=CL[ans].start-0.05,t1=CL[ans].start-4.4,thinking=t>=t1+1.6&&t<ta;
    endsPaint(K,t,{l:false,r:false});kbBadgesBrackets(K,t,{});
-   K.whites.forEach((w,i)=>{if(i===keyIdx&&t>=t1){const ph=t<ta?pulse6(t,t1):1;w.style.background=mixHex('#f8fafc',t>=ta?(right?'#c4b5fd':'#5eead4'):'#fbbf24',0.4+0.6*ph);w.style.boxShadow=`0 0 0 ${3+2*ph}px ${t>=ta?(right?RCOL:LCOL):'#f59e0b'},0 7px 0 rgba(0,0,0,.14)`}});
+   K.root.style.opacity=String(clamp(prog(L,0.2,0.5)*2));K.whites.forEach((w,i)=>{if(i===keyIdx&&t>=t1){const ph=t<ta?pulse6(t,t1):1;w.style.background=mixHex('#f8fafc',t>=ta?(right?'#c4b5fd':'#5eead4'):'#fbbf24',0.4+0.6*ph);w.style.boxShadow=`0 0 0 ${3+2*ph}px ${t>=ta?(right?RCOL:LCOL):'#f59e0b'},0 7px 0 rgba(0,0,0,.14)`}});
    this.lc.style.opacity=kind==='end'?'1':'0';this.rc.style.opacity=kind==='end'?'1':'0';this.lo.style.opacity='0';this.hi.style.opacity='0';
    if(this.H){[this.H.L,this.H.R].forEach(h=>{h.d.style.opacity=String(clamp(prog(t,t1,0.4)*2));h.d.style.scale='1'});handGlow(this.H.L,t,ta,t>=ta&&!right);handGlow(this.H.R,t,ta,t>=ta&&right)}
    this.q.style.opacity=String(thinking?clamp(prog(t,t1+1.6,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
@@ -821,7 +835,7 @@ S.v7q1=v7quiz('a1',1,'lowhigh',false);S.v7q2=v7quiz('a2',1,'hand',false);S.v7q3=
 
 S.outro7=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
   S.outro.build.call(this,r);
-  this.h=[['L',160],['R',520]].map(([sd,x])=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x+260}px;top:268px;width:150px;opacity:0`;d.innerHTML=handSvg(sd,'flat',150);r.appendChild(d);return d});
+  this.h=[['L',160],['R',520]].map(([sd,x])=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x+280}px;top:240px;width:120px;opacity:0`;d.innerHTML=handSvg(sd,'flat',120);r.appendChild(d);return d});
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game7','left')-0.2;this.h.forEach((d,i)=>{const q=prog(t,t0+i*0.3,0.5);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`${i?150:-150}px ${q>=1?-Math.abs(Math.sin((t-t0)*3+i))*8:0}px`})}});
 
 // ---------------------------------------------------------------- engine
