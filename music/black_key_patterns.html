@@ -37,10 +37,18 @@
             box-shadow: inset 0 -6px 0 #000000, 0 3px 5px rgba(0,0,0,0.3);
             transition: background-color 0.1s, transform 0.05s, box-shadow 0.05s;
         }
+        /* a slow, smooth pulse between the key's own colour and orange (matches the video) */
+        @keyframes keypulse { 0% { background-color: #0f172a; } 100% { background-color: #f59e0b; } }
         .black-key.highlight {
-            background-color: #22d3ee !important;
-            box-shadow: inset 0 -6px 0 #0e7490, 0 0 0 3px #fbbf24;
+            animation: keypulse 1.4s ease-in-out infinite alternate;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,.35), 0 0 0 3px #fbbf24;
         }
+        .black-key.g2 { background-color: #0d9488 !important; box-shadow: inset 0 -6px 0 #115e59, 0 0 0 3px #99f6e4; }
+        .black-key.g3 { background-color: #db2777 !important; box-shadow: inset 0 -6px 0 #9d174d, 0 0 0 3px #fbcfe8; }
+        .black-key.wrong-flash { background-color: #ef4444 !important; }
+        .key-badge { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 9999px; color: #fff; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(0,0,0,.25); pointer-events: none; }
+        .key-badge.g2 { background: #0d9488; } .key-badge.g3 { background: #db2777; }
+        @media (prefers-reduced-motion: reduce) { .black-key.highlight { animation: none; background-color: #f59e0b !important; } }
         button { touch-action: manipulation; }
     </style>
 </head>
@@ -61,17 +69,17 @@
         </div>
 
         <h1 class="kids-title text-3xl text-cyan-600 text-center mb-1">Black Key Patterns</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Groups of 2 and 3 are your landmarks!</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Two, then three, two, then three: that's the pattern!</p>
 
         <div class="grid grid-cols-3 gap-2 bg-cyan-50 p-2 rounded-2xl mb-2 border border-cyan-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-cyan-400 text-white border-b-2 border-cyan-600 shadow">
-                ☀️ Stage 1: Easy
+                ☀️ 1: Two or three?
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Medium
+                🌴 2: Find the groups
             </button>
             <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
+                🚀 3: What comes next?
             </button>
         </div>
 
@@ -80,13 +88,13 @@
             <div class="relative bg-white border border-cyan-100 p-2 rounded-xl shadow-sm w-full">
                 <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-cyan-50"></div>
                 <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
-                    Hi, I'm Melody! Black keys come in groups of 2 and 3 — spot the pattern!
+                    Hi, I'm Melody! Black keys come in groups of two and three. Can you spot them?
                 </p>
             </div>
         </div>
 
         <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2">
-            Is this a group of 2 or a group of 3?
+            Is this a group of two, or three?
         </div>
 
         <div class="relative">
@@ -157,20 +165,22 @@
             });
         }
 
-        // Groups of 2 (landmark for C) and groups of 3, per octave
-        function getGroups() {
-            const groups2 = [3, 4].map(oct => ({ type: 2, keys: [`C#${oct}`, `D#${oct}`], cNote: `C${oct}` }));
-            const groups3 = [3, 4].map(oct => ({ type: 3, keys: [`F#${oct}`, `G#${oct}`, `A#${oct}`] }));
-            return { groups2, groups3 };
-        }
+        // The four groups, in keyboard order: 2, 3, 2, 3 (the same as the video). No note names are shown to the player.
+        const GROUPS = [
+            { type: 2, keys: ['C#3', 'D#3'] }, { type: 3, keys: ['F#3', 'G#3', 'A#3'] },
+            { type: 2, keys: ['C#4', 'D#4'] }, { type: 3, keys: ['F#4', 'G#4', 'A#4'] }
+        ];
+        const WORD = { 2: 'two', 3: 'three' };
+        const groupOf = id => GROUPS.find(g => g.keys.includes(id));
 
-        let currentGroup = null;
-        let mode = 'identify'; // 'identify' | 'findC' | 'findAnyC'
+        let currentGroup = null;      // the group being asked about
+        let currentIndex = 0;         // stage 3: how many groups are already shown
+        let mode = 'identify';        // 'identify' | 'findGroup' | 'next'
 
         const dialogs = {
-            start: "Hi, I'm Melody! Black keys come in groups of 2 and 3 — spot the pattern!",
-            correct: "Yes! You spotted it perfectly! 🎹",
-            incorrect: "Look again at the glowing keys and count carefully."
+            start: "Hi, I'm Melody! Black keys come in groups of two and three. Can you spot them?",
+            correct: "Yes! Let's count them! 🎹",
+            incorrect: "Look again, and count the keys carefully."
         };
 
         let audioCtx = null;
@@ -261,7 +271,7 @@
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
                 }
             }
-            mode = stageNum === 1 ? 'identify' : (stageNum === 2 ? 'findC' : 'findAnyC');
+            mode = stageNum === 1 ? 'identify' : (stageNum === 2 ? 'findGroup' : 'next');
             resetStats();
             newRound();
         }
@@ -274,29 +284,28 @@
         }
 
         function newRound() {
-            const { groups2, groups3 } = getGroups();
             controlLock = false;
-
+            const q = document.getElementById('question-text'), fb = document.getElementById('feedback');
             if (mode === 'identify') {
-                const pool = Math.random() < 0.5 ? groups2 : groups3;
-                currentGroup = pool[Math.floor(Math.random() * pool.length)];
-                document.getElementById('question-text').innerText = "Is this a group of 2 or a group of 3?";
+                currentGroup = GROUPS[Math.floor(Math.random() * GROUPS.length)];
+                q.innerText = "Is this a group of two, or three?";
                 renderIdentifyButtons();
-            } else if (mode === 'findC') {
-                currentGroup = groups2[Math.floor(Math.random() * groups2.length)];
-                document.getElementById('question-text').innerText = "Tap the white key hiding just left of this pair — that's C!";
+                fb.innerText = "Look at the glowing black keys!";
+            } else if (mode === 'findGroup') {
+                currentGroup = { type: Math.random() < 0.5 ? 2 : 3 };
+                q.innerText = `Tap a group of ${WORD[currentGroup.type]}!`;
                 document.getElementById('answer-buttons').innerHTML = '';
+                fb.innerText = "Tap any black key in the group.";
             } else {
-                currentGroup = null;
-                document.getElementById('question-text').innerText = "Tap any C you can find on the keyboard!";
-                document.getElementById('answer-buttons').innerHTML = '';
+                currentIndex = 1 + Math.floor(Math.random() * 3);           // 1 to 3 groups already shown
+                currentGroup = GROUPS[currentIndex];
+                const said = GROUPS.slice(0, currentIndex).map(g => WORD[g.type]).join(', then ') + ', then…?';
+                q.innerText = said[0].toUpperCase() + said.slice(1);
+                renderIdentifyButtons();
+                fb.innerText = "Look at the pattern so far. What comes next?";
             }
-
             renderPiano();
-
-            const feedback = document.getElementById('feedback');
-            feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
-            feedback.innerText = mode === 'identify' ? "Look at the glowing black keys!" : "Tap a white key to answer!";
+            fb.className = "text-center text-lg font-bold text-slate-700 my-3";
         }
 
         function renderIdentifyButtons() {
@@ -304,7 +313,7 @@
             container.innerHTML = '';
             [2, 3].forEach(n => {
                 const btn = document.createElement('button');
-                btn.innerText = `Group of ${n}`;
+                btn.innerText = n === 2 ? 'Two' : 'Three';
                 btn.className = "bg-gradient-to-b from-cyan-400 to-cyan-500 hover:from-cyan-500 hover:to-cyan-600 text-white font-black text-lg py-5 rounded-2xl border-b-4 border-cyan-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md";
                 btn.onclick = () => makeGuess(n);
                 container.appendChild(btn);
@@ -312,7 +321,7 @@
             if (hintsEnabled) {
                 const hint = document.createElement('div');
                 hint.className = "col-span-2 text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1 mt-1";
-                hint.innerText = `Answer: Group of ${currentGroup.type}`;
+                hint.innerText = `Answer: ${WORD[currentGroup.type]}`;
                 container.appendChild(hint);
             }
         }
@@ -324,54 +333,61 @@
 
             whiteKeys.forEach((key) => {
                 const keyDiv = document.createElement('div');
-                keyDiv.className = `white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none ${mode !== 'identify' ? 'cursor-pointer' : ''}`;
+                keyDiv.className = 'white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none';
                 keyDiv.dataset.note = key.id;
-                if (mode !== 'identify') {
-                    keyDiv.addEventListener('mousedown', () => handleWhiteKeyClick(key, keyDiv));
-                }
                 container.appendChild(keyDiv);
             });
 
             const containerWidth = container.clientWidth - 16;
             const whiteKeyWidth = containerWidth / whiteKeys.length;
 
-            const blackKeys = allKeys.filter(k => k.isBlack);
-            blackKeys.forEach((key) => {
+            allKeys.filter(k => k.isBlack).forEach((key) => {
                 const blackDiv = document.createElement('div');
-                const isHighlighted = mode === 'identify' && currentGroup && currentGroup.keys.includes(key.id);
-                const isHintHighlighted = mode === 'findC' && hintsEnabled && currentGroup && currentGroup.keys.includes(key.id);
-                blackDiv.className = `black-key absolute rounded-b-lg z-30 select-none ${(isHighlighted || (mode === 'findC' && currentGroup.keys.includes(key.id))) ? 'highlight' : 'bg-slate-950'}`;
+                const g = groupOf(key.id);
+                let cls = 'bg-slate-950';
+                if (mode === 'identify' && g === currentGroup) cls = 'highlight';
+                if (mode === 'next') {
+                    const gi = GROUPS.indexOf(g);
+                    if (gi < currentIndex) cls = g.type === 2 ? 'g2' : 'g3';          // earlier groups stay coloured, with number badges
+                    else if (g === currentGroup) cls = 'highlight';                    // the next group pulses: what is it?
+                }
+                if (mode === 'findGroup' && hintsEnabled && g.type === currentGroup.type) cls = 'highlight';
+                blackDiv.className = `black-key absolute rounded-b-lg z-30 select-none ${cls} ${mode === 'findGroup' ? 'cursor-pointer' : ''}`;
                 blackDiv.style.height = '3.5rem';
                 blackDiv.style.width = `${whiteKeyWidth * 0.65}px`;
-                const leftPos = (key.afterWhiteIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2);
-                blackDiv.style.left = `${leftPos}px`;
+                blackDiv.style.left = `${(key.afterWhiteIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2)}px`;
                 blackDiv.dataset.note = key.id;
+                if (mode === 'findGroup') blackDiv.addEventListener('pointerdown', () => handleBlackKeyTap(key, blackDiv));
+                if (mode === 'next' && GROUPS.indexOf(g) < currentIndex) {
+                    const n = g.keys.indexOf(key.id) + 1;
+                    blackDiv.insertAdjacentHTML('beforeend', `<span class="key-badge ${g.type === 2 ? 'g2' : 'g3'}">${n}</span>`);
+                }
                 container.appendChild(blackDiv);
             });
-
-            if (hintsEnabled && mode === 'findAnyC') {
-                whiteKeys.filter(k => k.name === 'C').forEach(k => {
-                    const el = container.querySelector(`[data-note="${k.id}"]`);
-                    if (el) el.classList.add('correct-flash');
-                });
-            }
         }
 
-        function handleWhiteKeyClick(key, keyElement) {
-            if (controlLock) return;
-            let correct = false;
-            if (mode === 'findC') {
-                correct = key.id === currentGroup.cNote;
-            } else if (mode === 'findAnyC') {
-                correct = key.name === 'C';
-            }
+        // Count the keys of a group one at a time: colour, number badge and note, like the video. Then carry on.
+        function revealGroup(group, done) {
+            const cls = group.type === 2 ? 'g2' : 'g3';
+            group.keys.forEach((id, i) => setTimeout(() => {
+                const el = document.querySelector(`#piano-container .black-key[data-note="${id}"]`);
+                if (!el) return;
+                el.classList.remove('highlight'); el.classList.add(cls);
+                el.insertAdjacentHTML('beforeend', `<span class="key-badge ${cls}">${i + 1}</span>`);
+                playTone(noteFrequency(id), 'triangle', 0.5);
+            }, i * 650));
+            setTimeout(done, group.keys.length * 650 + 900);
+        }
 
-            if (correct) {
-                keyElement.classList.add('correct-flash');
-                onCorrect(key.id);
+        function handleBlackKeyTap(key, el) {
+            if (controlLock) return;
+            const g = groupOf(key.id);
+            if (g.type === currentGroup.type) {
+                currentGroup = g;
+                onCorrect();
             } else {
-                keyElement.classList.add('wrong-flash');
-                setTimeout(() => keyElement.classList.remove('wrong-flash'), 400);
+                el.classList.add('wrong-flash');
+                setTimeout(() => el.classList.remove('wrong-flash'), 400);
                 onIncorrect();
             }
         }
@@ -385,7 +401,7 @@
             }
         }
 
-        function onCorrect(playedNote) {
+        function onCorrect() {
             score += 10;
             streak++;
             Tracking.logAnswer({ correct: true, stage: currentStage });
@@ -395,15 +411,7 @@
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-green-600 my-3";
-            feedback.innerText = `⭐ Yes! ⭐`;
-
-            if (mode === 'identify' && currentGroup) {
-                playNoteSequence(currentGroup.keys);
-            } else if (playedNote) {
-                playTone(noteFrequency(playedNote), 'triangle', 0.4);
-            } else {
-                playTone(440, 'triangle', 0.4);
-            }
+            feedback.innerText = `⭐ Yes! A group of ${WORD[currentGroup.type]}! ⭐`;
             triggerConfetti();
             document.getElementById('mascot-dialog').innerText = dialogs.correct;
 
@@ -412,7 +420,7 @@
             controlLock = true;
             setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
-            setTimeout(newRound, 1200);
+            revealGroup(currentGroup, newRound);
         }
 
         function onIncorrect() {
@@ -480,7 +488,7 @@
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
-                oMsg.innerText = `Fantastic! You can use black key patterns to find your way anywhere!`;
+                oMsg.innerText = `Fantastic! Two, then three, two, then three: you know the pattern!`;
                 oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
