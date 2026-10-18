@@ -51,6 +51,14 @@
                 comingSoon: false
             },
             {
+                title: "Left, Right, High, Low",
+                description: "Which hand is which? Left hand plays the low sounds, right hand plays the high sounds. Look, listen and tap!",
+                emoji: "🖐️",
+                color: "#7c3aed", // Purple accent (right hand colour)
+                file: "left_right_high_low.html",
+                comingSoon: false
+            },
+            {
                 title: "C Hunt",
                 description: "Track down every hiding C on the keyboard before the clock runs out on the hardest stage!",
                 emoji: "🔍",

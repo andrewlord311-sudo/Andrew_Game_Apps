@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Left, Right, High, Low</title>
+    <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #cffafe 0%, #e0e7ff 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+
+        .white-key {
+            box-shadow: inset 0 -8px 0 #e2e8f0, 0 4px 6px rgba(0,0,0,0.05);
+            transition: background-color 0.1s, transform 0.05s, box-shadow 0.05s;
+        }
+        .white-key.correct-flash { background-color: #86efac !important; }
+        .white-key.wrong-flash { background-color: #fca5a5 !important; }
+        .black-key {
+            box-shadow: inset 0 -6px 0 #000000, 0 3px 5px rgba(0,0,0,0.3);
+            transition: background-color 0.1s, transform 0.05s, box-shadow 0.05s;
+        }
+        /* a slow, smooth pulse between the key's own colour and orange (matches the video) */
+        @keyframes keypulse { 0% { background-color: #0f172a; } 100% { background-color: #f59e0b; } }
+        .black-key.highlight {
+            animation: keypulse 1.4s ease-in-out infinite alternate;
+            box-shadow: inset 0 -6px 0 rgba(0,0,0,.35), 0 0 0 3px #fbbf24;
+        }
+        .black-key.g2 { background-color: #0d9488 !important; box-shadow: inset 0 -6px 0 #115e59, 0 0 0 3px #99f6e4; }
+        .black-key.g3 { background-color: #db2777 !important; box-shadow: inset 0 -6px 0 #9d174d, 0 0 0 3px #fbcfe8; }
+        .black-key.wrong-flash { background-color: #ef4444 !important; }
+        .key-badge { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); width: 24px; height: 24px; border-radius: 9999px; color: #fff; font-weight: 800; font-size: 14px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 0 rgba(0,0,0,.25); pointer-events: none; }
+        .key-badge.g2 { background: #0d9488; } .key-badge.g3 { background: #db2777; }
+        @media (prefers-reduced-motion: reduce) { .black-key.highlight { animation: none; background-color: #f59e0b !important; } }
+        button { touch-action: manipulation; }
+        /* Left, Right, High, Low: left = teal, right = purple, the same as the video */
+        #stage { position: relative; height: 200px; background: #1e293b; border: 2px solid #cbd5e1; border-radius: 1rem; overflow: hidden; }
+        #kb { position: absolute; left: 8px; right: 8px; bottom: 8px; height: 88px; display: flex; }
+        .wk { flex: 1; min-width: 0; background: #f8fafc; border-right: 2px solid #e2e8f0; border-radius: 0 0 .6rem .6rem; box-shadow: inset 0 -6px 0 #e2e8f0; position: relative; }
+        .bk { position: absolute; top: 0; width: 4.2%; height: 56%; background: #0f172a; border-radius: 0 0 .4rem .4rem; box-shadow: inset 0 -5px 0 #000; z-index: 2; }
+        @keyframes keyglow { 0% { background: #f8fafc; } 100% { background: #fbbf24; } }
+        .wk.lit { animation: keyglow 1.1s ease-in-out infinite alternate; box-shadow: inset 0 -6px 0 #d97706, 0 0 0 3px #f59e0b; z-index: 1; }
+        .hand { position: absolute; bottom: 4px; transform: translateX(-50%); z-index: 5; transition: transform .2s; }
+        .hand.glowL { filter: drop-shadow(0 0 14px #2dd4bf) drop-shadow(0 0 6px #0d9488); }
+        .hand.glowR { filter: drop-shadow(0 0 14px #a78bfa) drop-shadow(0 0 6px #7c3aed); }
+        .hand.hintpulse { animation: handpulse 1s ease-in-out infinite alternate; }
+        @keyframes handpulse { 0% { filter: drop-shadow(0 0 0 #fff); } 100% { filter: drop-shadow(0 0 16px #fbbf24); } }
+        @keyframes sway { 0%,100% { transform: translateX(-50%) rotate(0deg); } 20% { transform: translateX(-50%) rotate(13deg); } 50% { transform: translateX(-50%) rotate(-13deg); } 80% { transform: translateX(-50%) rotate(9deg); } }
+        .hand.sway { animation: sway 1.1s ease-in-out 1; transform-origin: 50% 100%; }
+        .endlabel { font-weight: 800; font-size: .8rem; padding: 2px 12px; border-radius: 9999px; color: #fff; }
+        .endlabel.pulse { animation: handpulse .9s ease-in-out infinite alternate; }
+        .ans { color: #fff; font-weight: 900; font-size: 1.125rem; padding: 1.1rem 0; border-radius: 1rem; box-shadow: 0 4px 0 rgba(0,0,0,.25); transition: transform .05s; }
+        .ans:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+        .ans.L { background: #0d9488; } .ans.R { background: #7c3aed; }
+
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-cyan-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-cyan-600 text-center mb-1">Left, Right, High, Low</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Left hand, low sounds. Right hand, high sounds.</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-cyan-50 p-2 rounded-2xl mb-2 border border-cyan-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-cyan-400 text-white border-b-2 border-cyan-600 shadow">
+                ☀️ Stage 1: Which hand?
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🌴 Stage 2: High or low?
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🚀 Stage 3: Which hand plays it?
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-cyan-50 p-2 rounded-2xl border border-cyan-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-cyan-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-cyan-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug"></p>
+            </div>
+        </div>
+
+        <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2"></div>
+
+        <div class="relative">
+            <div id="stage"></div>
+            <div id="endlabels" class="flex justify-between mt-1 px-2"></div>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-cyan-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700 my-2"></div>
+        <div id="hint-box" class="hidden items-center justify-center gap-3 text-xs font-bold text-purple-700 bg-purple-50 rounded-xl py-1 mb-2"></div>
+
+        <div class="grid grid-cols-2 gap-3 mb-3" id="answer-buttons"></div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="replaySound()" class="bg-cyan-100 text-cyan-700 border-b-2 border-cyan-300 font-bold px-4 py-2 rounded-xl hover:bg-cyan-200">
+                🔊 Hear it again
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+    <script src="mascots.js"></script>
+    <script src="auth.js"></script>
+    <script src="back-link.js"></script>
+    <script src="reward-system.js"></script>
+    <script src="game-progress.js"></script>
+    <script>
+        const LCOL = '#0d9488', RCOL = '#7c3aed';
+        let currentStage = 1, score = 0, streak = 0, lives = 3, hintsEnabled = false, controlLock = false;
+        let round = null;   // {kind, side:'L'|'R', key}
+
+        // ---- the hands: drawn the way a player sees them from the stool (palm down, knuckles up, thumbs on the inner sides); same as the video
+        function handSvg(side, mode, w) {
+            const skin = '#f6cba4', edge = '#b9794a', nail = '#fde8d6', sw = 3, sleeve = side === 'L' ? LCOL : RCOL, sleeveEdge = side === 'L' ? '#115e59' : '#5b21b6';
+            const R = (x, y, wd, h, rx, fill = skin, tr = '') => `<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${rx}" fill="${fill}" stroke="${edge}" stroke-width="${sw}" ${tr ? `transform="${tr}"` : ''}/>`;
+            const N = (x, y, wd, h, tr = '') => `<rect x="${x}" y="${y}" width="${wd}" height="${h}" rx="${wd / 2.2}" fill="${nail}" stroke="${edge}" stroke-width="1.6" ${tr ? `transform="${tr}"` : ''}/>`;
+            let g = R(54, 238, 98, 62, 10, sleeve).replace(`stroke="${edge}"`, `stroke="${sleeveEdge}"`) + R(66, 200, 76, 52, 18);
+            if (mode === 'L') {
+                g += R(40, 98, 92, 92, 30);
+                [0, 1, 2].forEach(i => { g += R(42 + i * 22, 84, 22, 38, 11); });
+                g += R(106, 4, 26, 128, 13) + N(110, 10, 18, 22) + R(110, 150, 92, 26, 13) + N(180, 154, 18, 18);
+            } else {
+                g += R(36, 112, 104, 102, 34);
+                [[0, 60], [1, 76], [2, 84], [3, 76]].forEach(([i, h]) => { const x = 38 + i * 25; g += R(x, 112 - h, 24, h + 26, 12) + N(x + 4, 112 - h + 6, 16, 18); });
+                g += R(126, 150, 28, 76, 14, skin, 'rotate(34 140 214)') + N(131, 156, 18, 20, 'rotate(34 140 214)');
+                g += `<path d="M58,140 q14,-8 28,0 M92,140 q14,-8 28,0" fill="none" stroke="${edge}" stroke-width="2" opacity=".5"/>`;
+            }
+            const tr = side === 'R' ? ' transform="translate(204,0) scale(-1,1)"' : '';
+            return `<svg viewBox="0 0 204 300" width="${w}" style="overflow:visible"><g${tr}>${g}</g></svg>`;
+        }
+
+        // ---- sound (all synthesised): 15 white keys, C3 to C5, like the video
+        const NOTES = ['C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'];
+        const SEMI = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+        const noteFreq = n => { const m = (parseInt(n.slice(1), 10) + 1) * 12 + SEMI[n[0]]; return 440 * Math.pow(2, (m - 69) / 12); };
+        let audioCtx = null;
+        function ctx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); if (audioCtx.state === 'suspended') audioCtx.resume(); return audioCtx; }
+        function playTone(freq, type = 'triangle', dur = 0.5, vol = 0.3) {
+            try { const c = ctx(), o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(freq, c.currentTime);
+                g.gain.setValueAtTime(0, c.currentTime); g.gain.linearRampToValueAtTime(vol, c.currentTime + 0.03); g.gain.exponentialRampToValueAtTime(0.01, c.currentTime + dur);
+                o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + dur); } catch (e) {}
+        }
+        function playKey(i) { const f = noteFreq(NOTES[i]); playTone(f, 'triangle', 1.1, 0.34); playTone(f * 2, 'sine', 0.7, 0.08); }
+        function playSuccessArpeggio() { try { const c = ctx(), now = c.currentTime; [261.63, 329.63, 392, 523.25].forEach((f, i) => { const o = c.createOscillator(), g = c.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(f, now + i * .08); g.gain.setValueAtTime(.15, now + i * .08); g.gain.exponentialRampToValueAtTime(.01, now + i * .08 + .25); o.connect(g); g.connect(c.destination); o.start(now + i * .08); o.stop(now + i * .08 + .25); }); } catch (e) {} }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
+        const $ = id => document.getElementById(id);
+        const DIALOG = {
+            1: "Hold your hands out, palms down, knuckles up. Which hand is this one?",
+            2: "Listen to the key that glows. Is the sound high, or low? Left is low, right is high!",
+            3: "Your left hand plays the low sounds. Your right hand plays the high sounds. Which hand plays this one?"
+        };
+
+        // ---- drawing
+        const BLACK_AFTER = [0, 1, 3, 4, 5, 7, 8, 10, 11, 12];
+        function keyboardHtml(litIdx) {
+            let h = '<div id="kb">';
+            for (let i = 0; i < 15; i++) h += `<div class="wk${i === litIdx ? ' lit' : ''}" data-i="${i}"></div>`;
+            BLACK_AFTER.forEach(a => { h += `<div class="bk" style="left:calc(${(a + 1) / 15 * 100}% - 2.1%)"></div>`; });
+            return h + '</div>';
+        }
+        const HAND_W = 96;
+        function handDiv(side, leftPct, extra = '') { return `<div class="hand ${extra}" data-side="${side}" style="left:${leftPct}%">${handSvg(side, 'flat', HAND_W)}</div>`; }
+        function endLabels(on, pulse) {
+            $('endlabels').innerHTML = on ? `<span class="endlabel${pulse === 'L' ? ' pulse' : ''}" style="background:${LCOL}">◀ LOW · LEFT</span><span class="endlabel${pulse === 'R' ? ' pulse' : ''}" style="background:${RCOL}">HIGH · RIGHT ▶</span>` : '';
+        }
+        function answerButtons(pairs) {   // [[label,side,callback]]
+            const c = $('answer-buttons'); c.innerHTML = '';
+            pairs.forEach(([label, side]) => { const b = document.createElement('button'); b.className = 'ans ' + side; b.innerText = label; b.onclick = () => guess(side); c.appendChild(b); });
+        }
+
+        function setStage(n) {
+            currentStage = n;
+            for (let i = 1; i <= 3; i++) $('btn-stage-' + i).className = 'py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 ' + (i === n ? 'bg-cyan-400 text-white border-b-2 border-cyan-600 shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200');
+            $('mascot-dialog').innerText = DIALOG[n];
+            resetStats(); newRound();
+        }
+        if (typeof RewardSystem !== 'undefined') RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
+
+        function newRound() {
+            controlLock = false;
+            const side = Math.random() < 0.5 ? 'L' : 'R';
+            const fb = $('feedback'); fb.className = 'text-center text-lg font-bold min-h-[28px] text-slate-700 my-2';
+            if (currentStage === 1) {
+                round = { side };
+                $('question-text').innerText = 'Is this your left hand, or your right hand?';
+                $('stage').innerHTML = keyboardHtml(-1) + handDiv(side, 50, hintsEnabled ? 'hintpulse' : '');
+                endLabels(false); answerButtons([['Left hand', 'L'], ['Right hand', 'R']]);
+                fb.innerText = 'Look at where the thumb is.';
+            } else {
+                const key = side === 'L' ? Math.floor(Math.random() * 5) : 10 + Math.floor(Math.random() * 5);   // an end key, so the answer is never a close call
+                round = { side, key };
+                if (currentStage === 2) {
+                    $('question-text').innerText = 'Is this sound high, or low?';
+                    $('stage').innerHTML = keyboardHtml(key);
+                    answerButtons([['Low', 'L'], ['High', 'R']]);
+                    fb.innerText = 'Listen to the glowing key!';
+                } else {
+                    $('question-text').innerText = 'Which hand plays this sound?';
+                    $('stage').innerHTML = keyboardHtml(key) + handDiv('L', 13) + handDiv('R', 87);
+                    answerButtons([['Left hand', 'L'], ['Right hand', 'R']]);
+                    fb.innerText = 'Listen, and look at the hands.';
+                }
+                endLabels(true, hintsEnabled ? side : null);
+                setTimeout(() => { if (audioCtx && audioCtx.state === 'running') playKey(key); }, 250);
+            }
+            hintBox();
+            if (currentStage === 3 && hintsEnabled) $('stage').querySelector(`.hand[data-side="${side}"]`).classList.add('hintpulse');
+        }
+        function hintBox() {
+            const h = $('hint-box');
+            if (hintsEnabled && currentStage === 1) { h.className = 'flex items-center justify-center gap-3 text-xs font-bold text-purple-700 bg-purple-50 rounded-xl py-1 mb-2'; h.innerHTML = `<span style="width:54px;display:inline-block">${handSvg('L', 'L', 54)}</span><span>The left hand makes an <b>L</b>: finger up, thumb out. Where is this thumb?</span>`; }
+            else if (hintsEnabled && currentStage === 2) { h.className = 'flex items-center justify-center text-xs font-bold text-purple-700 bg-purple-50 rounded-xl py-1 mb-2'; h.innerText = 'Left end is low. Right end is high. Which end is the glowing key near?'; }
+            else if (hintsEnabled) { h.className = 'flex items-center justify-center text-xs font-bold text-purple-700 bg-purple-50 rounded-xl py-1 mb-2'; h.innerText = 'The left hand plays the low end. The right hand plays the high end.'; }
+            else h.className = 'hidden';
+        }
+        function replaySound() { ctx(); if (round && round.key != null) playKey(round.key); }
+
+        function guess(side) {
+            if (controlLock) return;
+            ctx();
+            if (side === round.side) onCorrect(); else onIncorrect();
+        }
+        const WORDS = { 1: { L: "That's your left hand. The thumb is on the right!", R: "That's your right hand. The thumb is on the left!" },
+                        2: { L: 'Low! Low sounds are on the left.', R: 'High! High sounds are on the right.' },
+                        3: { L: 'Left hand: it plays the low sounds.', R: 'Right hand: it plays the high sounds.' } };
+        function onCorrect() {
+            score += 10; streak++;
+            Tracking.logAnswer({ correct: true, stage: currentStage });
+            RewardSystem.correct();
+            $('score').innerText = score; $('streak').innerText = streak;
+            const fb = $('feedback'); fb.className = 'text-center text-lg font-bold text-green-600 my-2'; fb.innerText = '⭐ Yes! ' + WORDS[currentStage][round.side];
+            if (round.key != null) playKey(round.key); else playTone(520, 'triangle', 0.4);
+            // the right hand sways, so the child can see it was right
+            const hand = $('stage').querySelector(`.hand[data-side="${round.side}"]`);
+            if (hand) { hand.classList.remove('hintpulse'); hand.classList.add('sway', round.side === 'L' ? 'glowL' : 'glowR'); }
+            triggerConfetti();
+            $('mascot-dialog').innerText = 'Yes! Well done!';
+            const av = $('mascot-avatar'); av.className = 'mascot-spin shrink-0'; controlLock = true;
+            setTimeout(() => { av.className = 'mascot-bounce shrink-0'; }, 600);
+            setTimeout(newRound, 2200);
+        }
+        function onIncorrect() {
+            streak = 0; lives--;
+            Tracking.logAnswer({ correct: false, stage: currentStage });
+            $('streak').innerText = streak; updateHearts();
+            const fb = $('feedback'); fb.className = 'text-center text-lg font-bold text-rose-500 my-2'; fb.innerText = 'Close! Try again.';
+            playFailBuzz();
+            $('mascot-dialog').innerText = currentStage === 1 ? 'Look at the thumb. Or make an L with your left hand!' : 'Remember: left is low, right is high.';
+            const av = $('mascot-avatar'); av.className = 'mascot-sad shrink-0'; controlLock = true;
+            setTimeout(() => { av.className = 'mascot-bounce shrink-0'; controlLock = false; }, 600);
+            if (lives <= 0) setTimeout(triggerGameOver, 1000);
+        }
+        function triggerConfetti() {
+            const holder = $('confetti-holder'), colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) { const p = document.createElement('div'); p.className = 'confetti'; const a = Math.random() * Math.PI * 2, d = 80 + Math.random() * 120;
+                p.style.setProperty('--dx', `${Math.cos(a) * d}px`); p.style.setProperty('--dy', `${Math.sin(a) * d}px`); p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]; p.style.left = '50%'; p.style.top = '50%'; holder.appendChild(p); setTimeout(() => p.remove(), 1000); }
+        }
+        function updateHearts() { const c = $('hearts-container'); c.innerHTML = ''; for (let i = 0; i < 3; i++) c.innerHTML += i < lives ? '❤️' : '🖤'; }
+        function triggerStageComplete() {
+            GameProgress.stageCleared(currentStage);
+            playSuccessArpeggio();
+            $('overlay-mascot').innerHTML = SVG_MELODY; $('overlay-title').innerText = '🌟 Sensational! 🌟';
+            const m = $('overlay-msg'), b = $('overlay-btn');
+            if (currentStage < 3) { m.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`; b.innerText = 'Go to Next Stage!'; b.onclick = () => { dismissOverlay(); setStage(currentStage + 1); }; }
+            else { m.innerText = 'Fantastic! Left hand, low sounds. Right hand, high sounds. You know it!'; b.innerText = 'Back to Arcade!'; b.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || 'music_arcade.html'); }; }
+            $('overlay').classList.remove('hidden');
+        }
+        function triggerGameOver() {
+            $('overlay-mascot').innerHTML = SVG_MELODY; $('overlay-title').innerText = 'No More Hearts!';
+            $('overlay-msg').innerText = "Let's look again and retry this stage!";
+            const b = $('overlay-btn'); b.innerText = 'Restart Stage'; b.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
+            $('overlay').classList.remove('hidden');
+        }
+        function dismissOverlay() { $('overlay').classList.add('hidden'); }
+        function resetStats() { streak = 0; lives = 3; $('streak').innerText = streak; updateHearts(); }
+        function resetGame() { score = 0; $('score').innerText = score; setStage(1); }
+        function toggleHints() { hintsEnabled = !hintsEnabled; $('hint-btn-text').innerText = hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On'; newRound(); }
+
+        // set to the video's address once it is published, and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Left, right, high, low'; $('game-card').appendChild(a); }
+            $('mascot-avatar').innerHTML = SVG_MELODY;
+            setStage(1);
+        });
+    </script>
+</body>
+</html>
