@@ -1,0 +1,413 @@
+{
+ "title": "keys of a piano",
+ "titleAt": "keys",
+ "nugget": 6,
+ "game": "Black Key Patterns",
+ "gameFile": "black_key_patterns.html",
+ "todayLead": "Today we are going to look at the",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "recap6",
+   "who": "melody",
+   "text": "Last time, <break time=\"0.45s\" /> we felt <break time=\"0.3s\" /> the beat.",
+   "show": "Last time, we felt the beat.",
+   "speed": 0.88
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to look at the keys <break time=\"0.3s\" /> of a piano.",
+   "show": "Today we are going to look at the keys of a piano.",
+   "speed": 0.88
+  },
+  {
+   "id": "wb1",
+   "who": "melody",
+   "text": "A piano has <break time=\"0.45s\" /> white keys.",
+   "speed": 0.78,
+   "show": "A piano has white keys."
+  },
+  {
+   "id": "wb2",
+   "who": "melody",
+   "text": "And <break time=\"0.3s\" /> black keys.",
+   "speed": 0.78,
+   "prev": "A piano has white keys.",
+   "show": "And black keys."
+  },
+  {
+   "id": "lookb",
+   "who": "barnaby",
+   "text": "Look at the black keys.",
+   "speed": 0.88
+  },
+  {
+   "id": "groups",
+   "who": "barnaby",
+   "text": "They come <break time=\"0.3s\" /> in groups.",
+   "show": "They come in groups.",
+   "speed": 0.88
+  },
+  {
+   "id": "two1",
+   "who": "melody",
+   "text": "This group has <break time=\"0.3s\" /> two black keys.",
+   "show": "This group has two black keys.",
+   "speed": 0.88
+  },
+  {
+   "id": "n1",
+   "who": "melody",
+   "src": "../video5/c1",
+   "text": "One.",
+   "quiet": true
+  },
+  {
+   "id": "n2",
+   "who": "melody",
+   "src": "../video5/c2",
+   "text": "Two.",
+   "quiet": true
+  },
+  {
+   "id": "three1",
+   "who": "melody",
+   "text": "This group has <break time=\"0.3s\" /> three black keys.",
+   "show": "This group has three black keys.",
+   "speed": 0.88
+  },
+  {
+   "id": "t1",
+   "who": "melody",
+   "src": "../video5/c1",
+   "text": "One.",
+   "quiet": true
+  },
+  {
+   "id": "t2",
+   "who": "melody",
+   "src": "../video5/c2",
+   "text": "Two.",
+   "quiet": true
+  },
+  {
+   "id": "t3",
+   "who": "melody",
+   "src": "../video5/c3",
+   "text": "Three.",
+   "quiet": true
+  },
+  {
+   "id": "pat",
+   "who": "melody",
+   "text": "Two, <break time=\"0.5s\" /> then three, <break time=\"0.6s\" /> two, <break time=\"0.5s\" /> then three.",
+   "show": "Two\u2026 then three\u2026 two\u2026 then three.",
+   "speed": 0.85
+  },
+  {
+   "id": "rep",
+   "who": "barnaby",
+   "text": "The pattern repeats <break time=\"0.3s\" /> all the way <break time=\"0.3s\" /> along the piano.",
+   "show": "The pattern repeats all the way along the piano.",
+   "speed": 0.88
+  },
+  {
+   "id": "map",
+   "who": "melody",
+   "text": "It is like a map, <break time=\"0.5s\" /> that helps us find our way.",
+   "show": "It is like a map, that helps us find our way.",
+   "speed": 0.88
+  },
+  {
+   "id": "yourturn6",
+   "who": "melody",
+   "text": "Your turn! <break time=\"0.4s\" /> Is this a group of two, <break time=\"0.4s\" /> or three?",
+   "show": "Your turn! Is this a group of two, or three?",
+   "speed": 0.88
+  },
+  {
+   "id": "a1",
+   "who": "barnaby",
+   "text": "Two!",
+   "prev": "Is this a group of two, or three?",
+   "quiet": true
+  },
+  {
+   "id": "a2",
+   "who": "melody",
+   "text": "Three!",
+   "prev": "Is this a group of two, or three?",
+   "quiet": true
+  },
+  {
+   "id": "a3",
+   "who": "barnaby",
+   "text": "Two!",
+   "prev": "Is this a group of two, or three?",
+   "quiet": true
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "src": "../video2/qwell",
+   "text": "You've got it!"
+  },
+  {
+   "id": "game6",
+   "who": "barnaby",
+   "text": "Play Black Key Patterns, <break time=\"0.3s\" /> and find the groups!",
+   "show": "Play Black Key Patterns, and find the groups!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v6recap",
+   "clips": [
+    "recap6"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 1.8
+  },
+  {
+   "id": "v6wb",
+   "clips": [
+    "wb1",
+    "wb2"
+   ],
+   "lead": 1.0,
+   "gap": 2.6,
+   "tail": 3.2
+  },
+  {
+   "id": "v6groups",
+   "clips": [
+    "lookb",
+    "groups"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 2.6
+  },
+  {
+   "id": "v6two",
+   "clips": [
+    "two1",
+    "n1",
+    "n2"
+   ],
+   "lead": 0.6,
+   "gap": 1.4,
+   "tail": 2.6
+  },
+  {
+   "id": "v6three",
+   "clips": [
+    "three1",
+    "t1",
+    "t2",
+    "t3"
+   ],
+   "lead": 0.6,
+   "gap": 1.4,
+   "tail": 2.6
+  },
+  {
+   "id": "v6pattern",
+   "clips": [
+    "pat"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 3.2
+  },
+  {
+   "id": "v6repeat",
+   "clips": [
+    "rep"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.0
+  },
+  {
+   "id": "v6map",
+   "clips": [
+    "map"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.2
+  },
+  {
+   "id": "v6q1",
+   "clips": [
+    "yourturn6",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 5.4,
+   "tail": 2.4
+  },
+  {
+   "id": "v6q2",
+   "clips": [
+    "a2"
+   ],
+   "lead": 5.0,
+   "gap": 0.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v6q3",
+   "clips": [
+    "a3",
+    "qwell"
+   ],
+   "lead": 5.0,
+   "gap": 0.9,
+   "tail": 1.4
+  },
+  {
+   "id": "outro6",
+   "clips": [
+    "game1",
+    "game6",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "tone",
+   "f": "cs4",
+   "clip": "a1",
+   "off": -4.4
+  },
+  {
+   "kind": "tone",
+   "f": "ds4",
+   "clip": "a1",
+   "off": -3.8
+  },
+  {
+   "kind": "tone",
+   "f": "fs4",
+   "clip": "a2",
+   "off": -4.4
+  },
+  {
+   "kind": "tone",
+   "f": "gs4",
+   "clip": "a2",
+   "off": -3.8
+  },
+  {
+   "kind": "tone",
+   "f": "as4",
+   "clip": "a2",
+   "off": -3.2
+  },
+  {
+   "kind": "tone",
+   "f": "cs5",
+   "clip": "a3",
+   "off": -4.4
+  },
+  {
+   "kind": "tone",
+   "f": "ds5",
+   "clip": "a3",
+   "off": -3.8
+  },
+  {
+   "kind": "tone",
+   "f": "cs4",
+   "clip": "n1",
+   "off": -0.3
+  },
+  {
+   "kind": "tone",
+   "f": "ds4",
+   "clip": "n2",
+   "off": -0.3
+  },
+  {
+   "kind": "tone",
+   "f": "fs4",
+   "clip": "t1",
+   "off": -0.3
+  },
+  {
+   "kind": "tone",
+   "f": "gs4",
+   "clip": "t2",
+   "off": -0.3
+  },
+  {
+   "kind": "tone",
+   "f": "as4",
+   "clip": "t3",
+   "off": -0.3
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  }
+ ],
+ "beats": [
+  {
+   "track": "rc",
+   "sound": "drum",
+   "at": {
+    "clip": "recap6",
+    "off": 0.2
+   },
+   "bpm": 80,
+   "count": 4
+  }
+ ],
+ "gapOverride": {
+  "qwell": 0.9
+ }
+}

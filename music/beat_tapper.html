@@ -142,7 +142,7 @@
 
         const DIALOG = {
             1: "Press Start. Listen to the drum, then tap along with every beat!",
-            2: "Listen to four beats. Then the drum goes quiet: keep the beat going yourself!",
+            2: "The drum keeps a steady beat, but now and then it goes quiet. Keep tapping the beat through the quiet bit!",
             3: "Listen to the beat. Is it steady, or does it wobble?"
         };
 
@@ -224,15 +224,17 @@
         const strip = $('strip'), sctx = strip.getContext('2d');
         function clearStrip() { sctx.clearRect(0, 0, strip.width, strip.height); }
         // stages 1 and 2: the drum's beats on top, your taps underneath
-        function drawTapStrip(beatTimes, taps, win, ghost = false) {
+        function drawTapStrip(beatTimes, taps, win, ghost = false, silent = null) {
             clearStrip();
             const W = strip.width, pad = 30, tmin = beatTimes[0] - 0.3, tmax = beatTimes[beatTimes.length - 1] + 0.3;
             const X = t => pad + (t - tmin) / (tmax - tmin) * (W - 2 * pad);
             sctx.font = '16px sans-serif'; sctx.textAlign = 'left'; sctx.fillText('🥁', 3, 38); sctx.fillText('👆', 3, 88);
             beatTimes.forEach((t, i) => {
                 sctx.fillStyle = 'rgba(245,158,11,.16)'; sctx.fillRect(X(t - win), 14, X(t + win) - X(t - win), 84);
-                sctx.beginPath(); sctx.arc(X(t), 34, 13, 0, 7); sctx.fillStyle = ghost ? '#fde68a' : '#f59e0b'; sctx.fill();
-                sctx.fillStyle = '#fff'; sctx.font = 'bold 14px sans-serif'; sctx.textAlign = 'center'; sctx.fillText(i % 4 + 1, X(t), 39);
+                sctx.beginPath(); sctx.arc(X(t), 34, 13, 0, 7);
+                if (silent && silent.has(i)) { sctx.fillStyle = '#fff'; sctx.fill(); sctx.strokeStyle = '#f59e0b'; sctx.lineWidth = 2.5; sctx.setLineDash([4, 3]); sctx.stroke(); sctx.setLineDash([]); sctx.fillStyle = '#f59e0b'; }
+                else { sctx.fillStyle = ghost ? '#fde68a' : '#f59e0b'; sctx.fill(); sctx.fillStyle = '#fff'; }
+                sctx.font = 'bold 14px sans-serif'; sctx.textAlign = 'center'; sctx.fillText(i % 4 + 1, X(t), 39);
             });
             taps.forEach(tp => {
                 sctx.beginPath(); sctx.arc(X(tp.t), 84, 9, 0, 7); sctx.fillStyle = tp.ok ? '#16a34a' : '#fb923c'; sctx.fill();
@@ -264,7 +266,7 @@
             setAnswersEnabled(false);
         }
         function setStage(n) {
-            currentStage = n; stopAll();
+            currentStage = n; wins2 = 0; stopAll();
             for (let i = 1; i <= 3; i++) {
                 $('btn-stage-' + i).className = 'py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 ' +
                     (i === n ? 'bg-amber-400 text-white border-b-2 border-amber-600 shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200');
@@ -307,9 +309,27 @@
             });
             return { hits, marks, extras: marks.filter(m => !m.ok).length };
         }
+        // stage 2 only: which beats of each bar the drum leaves out. Two full bars first, then quiet beats now and then;
+        // the more bars the child gets right, the longer the quiet stretches (1 beat, then 1-2, then 2-3). Never a bar with no sound at all.
+        let wins2 = 0;
+        const gapPlans = [];
+        function gapPlan(b) {
+            if (currentStage !== 2 || b < 2) return new Set();
+            if (gapPlans[b]) return gapPlans[b];
+            const lvl = Math.min(2, Math.floor(wins2 / 3)), pr = gapPlans[b - 1], pr2 = gapPlans[b - 2];
+            let set = new Set();
+            const forcedFull = pr && pr.size && pr2 && pr2.size;
+            if (!forcedFull && Math.random() < 0.6) {
+                const n = lvl === 0 ? 1 : lvl === 1 ? 1 + Math.floor(Math.random() * 2) : 2 + Math.floor(Math.random() * 2);
+                const lo = lvl < 2 ? 1 : 0, hi = 4 - n, start = lo + Math.floor(Math.random() * (hi - lo + 1));
+                for (let k = 0; k < n; k++) set.add(start + k);
+            }
+            return (gapPlans[b] = set);
+        }
         async function stage1(my) {
             const c = ac(), bpm = 80, per = 60 / bpm, win = 0.2, t0 = c.currentTime + 0.5;
             let next = 0, taps = [], evaluated = -1;
+            gapPlans.length = 0;
             $('drum').disabled = false; $('drum-wrap').classList.remove('waiting');
             tapHandler = t => taps.push(t);
             lastBeat = null;
@@ -317,13 +337,17 @@
             const raf = () => {
                 if (!alive(my)) return;
                 const now = ac().currentTime, cb = Math.floor((now - t0) / per + 0.02);
-                if (cb >= 0) { setLit(cb % 4); setPhase(Math.floor(cb / 4) === 0 ? 'Listen…' : 'Tap with the drum!'); }
+                if (cb >= 0) {
+                    const bar = Math.floor(cb / 4), quiet = gapPlan(bar).has(cb % 4);
+                    if (!quiet || hintsEnabled) setLit(cb % 4); else setLit(-1, false);
+                    setPhase(bar === 0 ? 'Listen…' : gapPlan(bar).size ? 'Keep the beat going!' : 'Tap with the drum!');
+                }
                 requestAnimationFrame(raf);
             };
             requestAnimationFrame(raf);
             while (alive(my)) {
                 // keep the drum scheduled slightly ahead, so the beat is exact and never stops
-                while (t0 + next * per < ac().currentTime + 0.15) { playDrum(t0 + next * per); next++; }
+                while (t0 + next * per < ac().currentTime + 0.15) { if (!gapPlan(Math.floor(next / 4)).has(next % 4)) playDrum(t0 + next * per); next++; }
                 const b = evaluated + 1, endT = t0 + (4 * b + 3) * per + 0.45;
                 if (ac().currentTime >= endT) {
                     evaluated = b;
@@ -332,9 +356,10 @@
                         const bar = taps.filter(t => t > bt[0] - win && t < bt[3] + 0.4);
                         taps = taps.filter(t => t >= bt[3] + 0.4);
                         const m = matchTaps(bt, bar, win);
-                        drawTapStrip(bt, m.marks, win);
-                        if (m.hits >= 3 && m.extras <= 2) { await barSuccess(m.hits === 4 ? 'Perfect! 4 out of 4!' : `Nearly perfect! ${m.hits} out of 4!`); if (!alive(my)) return; }
-                        else say(m.extras > 3 ? 'Lots of taps! Tap just once on each beat.' : `${m.hits} out of 4. Listen, and tap with the drum!`, 'text-amber-600');
+                        const quietSet = gapPlan(b);
+                        drawTapStrip(bt, m.marks, win, false, quietSet);
+                        if (m.hits >= 3 && m.extras <= 2) { if (currentStage === 2) wins2++; await barSuccess(m.hits === 4 ? (quietSet.size ? 'Perfect! You kept the beat through the quiet!' : 'Perfect! 4 out of 4!') : `Nearly perfect! ${m.hits} out of 4!`); if (!alive(my)) return; }
+                        else say(m.extras > 3 ? 'Lots of taps! Tap just once on each beat.' : quietSet.size ? `${m.hits} out of 4. Keep tapping, even when the drum goes quiet!` : `${m.hits} out of 4. Listen, and tap with the drum!`, 'text-amber-600');
                     }
                 }
                 await sleep(20);
@@ -350,41 +375,10 @@
             return Promise.resolve();
         }
 
-        // ---------------------------------------------------------------- stage 2: the drum stops after four beats; keep it going
+        // ---------------------------------------------------------------- stage 2: the same steady beat as stage 1, but the drum goes quiet for a beat or two now and then
         async function stage2Loop(my) {
             $('drum').disabled = false; $('drum-wrap').classList.remove('waiting');
-            while (alive(my)) { await stage2Round(my); if (!alive(my)) return; await sleep(1500); }
-        }
-        async function stage2Round(my) {
-            const c = ac(), bpm = [70, 80, 90, 100][Math.floor(Math.random() * 4)], per = 60 / bpm, win = Math.min(0.22, per * 0.3), t0 = c.currentTime + 0.7;
-            const beats = [0, 1, 2, 3, 4, 5, 6, 7].map(i => t0 + i * per);
-            let taps = [];
-            tapHandler = t => { taps.push(t); const n = taps.length; if (n <= 4) setLit(n - 1); };
-            say(''); clearStrip(); setPhase('Listen…'); setLit(-1, false);
-            for (let i = 0; i < 4; i++) playDrum(beats[i]);
-            for (let i = 0; i < 4; i++) {
-                if (!await waitUntilCtx(beats[i] - 0.02, my)) return;
-                setLit(i);
-            }
-            if (!await waitUntilCtx(beats[3] + per * 0.5, my)) return;
-            setLit(-1, false); setPhase('Keep it going!');
-            if (hintsEnabled) {                                   // hint: a silent light keeps the beat
-                for (let i = 4; i < 8; i++) { waitUntilCtx(beats[i] - 0.02, my).then(ok => { if (ok) { setLit(i - 4); setTimeout(() => setLit(-1, false), 150); } }); }
-            }
-            if (!await waitUntilCtx(beats[7] + win + 0.35, my)) return;
-            tapHandler = null;
-            const mine = taps.filter(t => t > beats[3] + per * 0.5 && t < beats[7] + win + 0.35);
-            const m = matchTaps(beats.slice(4), mine, win);
-            setPhase(m.hits >= 3 ? 'You kept the beat!' : 'Here is the beat…');
-            drawTapStrip(beats.slice(4), m.marks, win);
-            setLit(-1, false);
-            // the drum comes back in time, so the child can hear what a steady beat was
-            const again = c.currentTime + 0.4;
-            for (let i = 0; i < 4; i++) { playDrum(again + i * per); const k = i; waitUntilCtx(again + k * per - 0.02, my).then(ok => { if (ok) setLit(k); }); }
-            if (m.hits >= 3 && m.extras <= 2) { await barSuccess(m.hits === 4 ? 'Perfect! You kept the beat!' : `Nearly! ${m.hits} out of 4!`); }
-            else say(m.extras > 3 ? 'Lots of taps! Tap just once on each beat.' : `${m.hits} out of 4. Listen again, and keep the beat going!`, 'text-amber-600');
-            if (!await waitUntilCtx(again + 4 * per, my)) return;
-            setLit(-1, false); setPhase('');
+            await stage1(my);
         }
 
         // ---------------------------------------------------------------- stage 3: steady or wobbly?
@@ -513,7 +507,7 @@
         function toggleHints() {
             hintsEnabled = !hintsEnabled;
             $('hint-btn-text').innerText = hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On';
-            if (hintsEnabled) $('mascot-dialog').innerText = currentStage === 2 ? 'Hints on: a light will blink the beat while the drum is quiet.' : 'Hints on! In stage 2 a light keeps the beat when the drum stops.';
+            if (hintsEnabled) $('mascot-dialog').innerText = currentStage === 2 ? 'Hints on: the number still lights up on a beat the drum misses.' : 'Hints on! In stage 2 a light still shows the beat when the drum goes quiet.';
         }
         document.addEventListener('visibilitychange', () => { if (document.hidden && running) setStage(currentStage); });
 

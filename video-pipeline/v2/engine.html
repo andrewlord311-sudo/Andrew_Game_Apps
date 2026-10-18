@@ -572,6 +572,113 @@ S.outro5=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:540px;top:262px;width:200px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(200);r.appendChild(this.d);
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game5','drum')-0.2;const q=prog(t,t0,0.45);const p=pulse(['outro'],t,9);this.d.style.opacity=String(clamp(q*2));this.d.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.06*Math.abs(Math.sin(t*5.2)):1))}});
 
+// ======================================================================== VIDEO 6: black-key groups
+// A two-octave piano (15 white keys, C to C). Black keys sit after white keys 0,1 | 3,4,5 | 7,8 | 10,11,12, which makes the groups 2,3,2,3.
+const KB={x0:130,w:68,top:235,h:260,bw:42,bh:164};
+const BLK=[0,1,3,4,5,7,8,10,11,12], GRP=[[0,1],[2,3,4],[5,6],[7,8,9]], GCOL=['#0d9488','#db2777','#0d9488','#db2777'], GWORD=['2','3','2','3'];
+function kbBuild(r){
+  const root=document.createElement('div');root.className='abs';root.style.cssText='left:0;top:0;width:1280px;height:720px;opacity:0';r.appendChild(root);
+  const whites=Array.from({length:15},(_,i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${KB.x0+i*KB.w}px;top:${KB.top}px;width:${KB.w-3}px;height:${KB.h}px;border-radius:0 0 12px 12px;background:#fff;box-shadow:0 7px 0 rgba(0,0,0,.14)`;root.appendChild(d);return d});
+  const blacks=BLK.map(i=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${KB.x0+(i+1)*KB.w-KB.bw/2-1.5}px;top:${KB.top}px;width:${KB.bw}px;height:${KB.bh}px;border-radius:0 0 9px 9px;background:#241f3d;box-shadow:0 6px 0 rgba(0,0,0,.25)`;root.appendChild(d);return d});
+  const badges=blacks.map((b,k)=>{const d=document.createElement('div');d.className='num';d.style.cssText+=`;left:${KB.x0+(BLK[k]+1)*KB.w-17-1.5}px;top:${KB.top+KB.bh+10}px`;d.textContent=(k-GRP[gOf(k)][0])+1;root.appendChild(d);return d});
+  const brackets=GRP.map((g,gi)=>{const x0=KB.x0+(BLK[g[0]]+1)*KB.w-KB.bw/2-8,x1=KB.x0+(BLK[g[g.length-1]]+1)*KB.w+KB.bw/2+5;
+    const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x0}px;top:${KB.top+KB.h+16}px;width:${x1-x0}px;height:16px;border-radius:8px;background:${GCOL[gi]};opacity:0`;root.appendChild(d);
+    const c=chip(root,g.length===2?'2 keys':'3 keys',GCOL[gi],(x0+x1)/2,KB.top+KB.h+40);return {d,c,x0,x1}});
+  return {root,whites,blacks,badges,brackets}}
+function gOf(k){return GRP.findIndex(g=>g.includes(k))}
+// per-key paint: lit[k]=colour or null; dim[k]=true fades it
+function kbPaint(K,o){
+  K.whites.forEach(w=>{w.style.background=o.whiteBg||'#fff'});
+  K.blacks.forEach((b,k)=>{const col=o.lit&&o.lit[k];const d=o.dim&&o.dim[k];b.style.background=col||'#241f3d';b.style.opacity=d?'0.28':'1';b.style.translate=col?'0 6px':'0 0';b.style.boxShadow=col?`0 0 0 4px #fff,0 0 22px 6px ${col}`:'0 6px 0 rgba(0,0,0,.25)'})}
+function kbIn(K,L){const p=prog(L,0.2,0.5);K.root.style.opacity=String(clamp(p*2));K.root.style.translate=`0 ${(1-easeBack(p))*40}px`}
+function kbBadgesBrackets(K,t,o){ // o.badge[k]=time shown, o.br[gi]=[timeShown,opacityAfter]
+  K.badges.forEach((b,k)=>{const at=o.badge&&o.badge[k];if(at==null){b.style.opacity='0';return}const p=prog(t,at,0.3);b.style.opacity=String(clamp(p*2)*(o.badgeOp?o.badgeOp[gOf(k)]??1:1));b.style.scale=String(lerp(0.3,1,easeBack(p)));b.style.background=GCOL[gOf(k)]});
+  K.brackets.forEach((b,gi)=>{const e=o.br&&o.br[gi];const at=e?e[0]:null;if(at==null){b.d.style.opacity='0';b.c.style.opacity='0';return}const p=prog(t,at,0.4);const op=clamp(p*2)*(e[1]??1);b.d.style.opacity=String(op);b.d.style.scale=`${lerp(0.4,1,easeOut(p))} 1`;b.c.style.opacity=String(op);b.c.style.scale=String(lerp(0.5,1,easeBack(p)))})}
+const V6UI={ribbon:1,hosts:'low',bubble:true};
+
+S.v6recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:490px;top:215px;width:300px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(300);r.appendChild(this.d);
+  this.rip=ripple(r,640,305,'#fbbf24');this.ds=beatStrip(r,510)},
+  update(t,L,c){const a=prog(L,0.3,0.5);const p=pulse(['rc'],t,10);this.d.style.opacity=String(clamp(a*2));this.d.style.scale=`${lerp(0.4,1,easeBack(a))*(1+0.07*p)} ${lerp(0.4,1,easeBack(a))*(1-0.1*p)}`;
+   rippleUpdate(this.rip,t,['rc']);beatStripUpdate(this.ds,t,['rc'],CL.recap6.start+0.1);
+   const tw=wt('recap6','beat')-0.1;if(t>=tw)c.caption('THE BEAT','#e11d48',tw)}};
+
+S.v6wb={ui:V6UI,build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
+  const tw=wt('wb1','white')-0.1,tb=wt('wb2','black')-0.1;
+  const wl=t>=tw&&t<tb,wd=t>=tb;
+  kbPaint(K,{whiteBg:wl?'#fde68a':wd?'#f8fafc':'#fff',lit:t>=tb?Object.fromEntries(K.blacks.map((_,k)=>[k,'#f59e0b'])):null});
+  K.whites.forEach((w,i)=>{w.style.boxShadow=wl?`0 0 0 4px #f59e0b,0 7px 0 rgba(0,0,0,.14)`:'0 7px 0 rgba(0,0,0,.14)'});
+  K.blacks.forEach(b=>{b.style.translate='0 0'});
+  kbBadgesBrackets(K,t,{});
+  if(t>=tb)c.caption('BLACK KEYS','#241f3d',tb);else if(t>=tw)c.caption('WHITE KEYS','#b45309',tw)}};
+
+S.v6groups={ui:V6UI,build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
+  const tg=wt('groups','groups')-0.15,tl=wt('lookb','black')-0.1;
+  K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+  const pu=t>=tl&&t<tg?0.6+0.4*Math.sin(t*6):0;
+  kbPaint(K,{whiteBg:'#f1f5f9',lit:t>=tl&&t<tg?Object.fromEntries(K.blacks.map((_,k)=>[k,pu>0.7?'#f59e0b':null])):null});
+  kbBadgesBrackets(K,t,{br:GRP.map((g,gi)=>[tg+gi*0.3,1])});
+  if(t>=tg)c.caption('GROUPS','var(--orange)',tg)}};
+
+function v6count(gi,ids,clipIntro,word){return {ui:V6UI,build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
+  const g=GRP[gi],lit={},dim={},badge={},br=[];
+  GRP.forEach((gg,i)=>{if(i<gi){gg.forEach(k=>{lit[k]=GCOL[i];dim[k]=false;badge[k]=-1});br[i]=[-1,0.35]}else if(i>gi)gg.forEach(k=>{dim[k]=true})});
+  g.forEach((k,j)=>{const tk=CL[ids[j]].start-0.3;if(t>=tk){lit[k]=GCOL[gi];badge[k]=tk+0.15}});
+  const tg=wt(clipIntro,word)-0.1;br[gi]=[tg,1];
+  kbPaint(K,{whiteBg:'#f8fafc',lit,dim});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+  // earlier groups stay on screen but quieter
+  kbBadgesBrackets(K,t,{badge,br,badgeOp:GRP.map((_,i)=>i<gi?0.4:1)});
+  if(t>=tg)c.caption(g.length===2?'A GROUP OF 2':'A GROUP OF 3',GCOL[gi],tg)}}}
+S.v6two=v6count(0,['n1','n2'],'two1','two');
+S.v6three=v6count(1,['t1','t2','t3'],'three1','three');
+
+S.v6pattern={ui:V6UI,build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
+  const T=[wt('pat','two',0),wt('pat','three',0),wt('pat','two',1),wt('pat','three',1)].map(x=>x-0.1);
+  const lit={},badge={};GRP.forEach((g,gi)=>{if(t>=T[gi])g.forEach((k,j)=>{lit[k]=GCOL[gi];badge[k]=T[gi]})});
+  kbPaint(K,{whiteBg:'#f8fafc',lit});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+  kbBadgesBrackets(K,t,{badge,br:GRP.map((g,gi)=>[T[gi],1])});
+  const n=T.filter(x=>t>=x).length;if(n)c.caption(GWORD.slice(0,n).join('  '),'#241f3d',T[0])}};
+
+S.v6repeat={ui:V6UI,build(r){this.K=kbBuild(r);
+  this.l=chip(r,'…','#64748b',70,KB.top+90);this.r=chip(r,'…','#64748b',1210,KB.top+90);
+  this.sweep=document.createElement('div');this.sweep.className='abs';this.sweep.style.cssText=`left:0;top:${KB.top-8}px;width:36px;height:${KB.h+16}px;border-radius:18px;background:rgba(245,158,11,.35);box-shadow:0 0 18px 8px rgba(245,158,11,.4);opacity:0`;r.appendChild(this.sweep)},
+  update(t,L,c){const K=this.K;kbIn(K,L);const lit={},badge={};GRP.forEach((g,gi)=>g.forEach(k=>{lit[k]=GCOL[gi];badge[k]=-1}));
+   K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+   const tw=wt('rep','repeats')-0.1,tp=wt('rep','piano');
+   kbPaint(K,{whiteBg:'#f8fafc',lit});kbBadgesBrackets(K,t,{badge:{},br:GRP.map(()=>[-1,1])});
+   pop(this.l,t,tw,0.4);pop(this.r,t,tw+0.2,0.4);
+   const q=prog(t,tw+0.1,Math.max(1.6,tp-tw));this.sweep.style.opacity=String(q>0&&q<1?0.9:0);this.sweep.style.left=(KB.x0-10+q*(15*KB.w))+'px';
+   c.caption('THE PATTERN REPEATS','var(--orange)',tw)}};
+
+S.v6map={ui:V6UI,build(r){this.K=kbBuild(r);
+  this.pin=document.createElement('div');this.pin.className='abs';this.pin.style.cssText='font-size:84px;opacity:0;left:0;top:0';this.pin.textContent='📍';r.appendChild(this.pin)},
+  update(t,L,c){const K=this.K;kbIn(K,L);const lit={};GRP.forEach((g,gi)=>g.forEach(k=>{lit[k]=GCOL[gi]}));
+   kbPaint(K,{whiteBg:'#f8fafc',lit});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+   kbBadgesBrackets(K,t,{badge:{},br:GRP.map(()=>[-1,0.9])});
+   const tm=wt('map','map')-0.1,hop=1.0;const idx=Math.min(3,Math.max(0,Math.floor((t-tm)/hop)));const lt=(t-tm)-idx*hop;
+   const b=K.brackets[idx],cx=(b.x0+b.x1)/2;const up=Math.abs(Math.sin(clamp(lt/hop)*Math.PI))*40;
+   this.pin.style.opacity=String(t>=tm?clamp(prog(t,tm,0.3)*2):0);this.pin.style.left=(cx-42)+'px';this.pin.style.top=(KB.top+KB.bh-62-up+(t>=tm?0:-40))+'px';
+   if(t>=tm)c.caption('A MAP OF THE KEYS','var(--orange)',tm)}};
+
+function v6quiz(gi,ans,n){return {ui:V6UI,build(r){this.K=kbBuild(r);
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+  if(n===3){this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})}},
+  update(t,L,c){const K=this.K;kbIn(K,L);const g=GRP[gi],ta=CL[ans].start-0.05,t1=CL[ans].start-4.4,lit={},dim={},badge={};
+   const thinking=t>=t1+g.length*0.6&&t<ta;
+   GRP.forEach((gg,i)=>{if(i!==gi)gg.forEach(k=>{dim[k]=true})});
+   g.forEach((k,j)=>{const tk=t1+j*0.6;if(t>=tk)lit[k]=t>=ta?GCOL[gi]:'#f59e0b';if(t>=ta)badge[k]=ta+0.1*j});
+   kbPaint(K,{whiteBg:'#f8fafc',lit,dim});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+   kbBadgesBrackets(K,t,{badge,br:GRP.map((gg,i)=>[i===gi?ta:null,1])});
+   this.q.style.opacity=String(thinking?clamp(prog(t,t1+g.length*0.6,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+   if(t>=ta)c.caption(g.length===2?'A GROUP OF 2 ✓':'A GROUP OF 3 ✓',GCOL[gi],ta);
+   if(this.conf){const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}}}}
+S.v6q1=v6quiz(0,'a1',1);S.v6q2=v6quiz(1,'a2',2);S.v6q3=v6quiz(2,'a3',3);
+
+S.outro6=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.ch=[['2',GCOL[0]],['3',GCOL[1]],['2',GCOL[0]],['3',GCOL[1]]].map(([tx,col],i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${454+i*100}px;top:300px;width:78px;height:78px;border-radius:50%;background:${col};color:#fff;font-family:'Fredoka One';font-size:48px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;d.textContent=tx;r.appendChild(d);return d});
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game6','groups')-0.3;this.ch.forEach((d,i)=>{const q=prog(t,t0+i*0.18,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3+i*0.8))*8:0}px`})}});
+
 // ---------------------------------------------------------------- engine
 const ctxHelpers={caption(text,color,t0){C.text=text;C.color=color;C.t0=t0}};
 const C={text:'',color:'#241f3d',t0:0,last:''};
@@ -615,7 +722,7 @@ function renderAt(t){
     else if(sp&&sp.id==='well') pose='cheer';
     else if(sc.id==='v5march'||sc.id==='v5clap') pose=pulse(['main'],t,9)>0.3?'cheer':'idle';
     else if(sc.id==='v5heart') pose='idle';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;

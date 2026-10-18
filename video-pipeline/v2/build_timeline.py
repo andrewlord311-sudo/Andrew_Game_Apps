@@ -133,7 +133,7 @@ def heart(vol=0.4):
         n = int(0.16 * SR); x = np.arange(n) / SR; f = 48 + 40 * np.exp(-x * 30)
         put(out, at, (np.sin(2 * math.pi * np.cumsum(f) / SR) * np.exp(-x / 0.05) * vol * g).astype(np.float32), 1)
     return out
-FREQ = {'e4': 329.6, 'f4': 349.2, 'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0}
+FREQ = {'e4': 329.6, 'f4': 349.2, 'g4': 392.0, 'a4': 440.0, 'b4': 493.9, 'c5': 523.3, 'd5': 587.3, 'e5': 659.3, 'f5': 698.5, 'g5': 784.0, 'a5': 880.0, 'cs4': 277.2, 'ds4': 311.1, 'fs4': 370.0, 'gs4': 415.3, 'as4': 466.2, 'cs5': 554.4, 'ds5': 622.3}
 events = []   # also written to timeline.json so the page can sync visuals if wanted
 def ev(kind, at, **kw): events.append({'kind': kind, 'at': round(at, 3), **kw})
 for s in scenes[1:-0]: ev('whoosh', s['start'] + 0.2)
