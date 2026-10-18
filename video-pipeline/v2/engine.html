@@ -739,16 +739,17 @@ S.v7hold={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);thi
   this.km.forEach(m=>{const on=t>=tk;m.style.opacity=on?String(clamp(prog(t,tk,0.4))*(0.7+0.3*pulse6(t,tk))):'0'});
   if(t>=tk)c.caption('KNUCKLES UP','#ea580c',tk);else if(t>=tp)c.caption('PALMS DOWN','var(--orange)',tp)}};
 
-S.v7left={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
+const v7leftScene=(lMode)=>({ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
   this.lc=labelChip(r,'LEFT',LCOL,190,352);this.big=document.createElement('div');this.big.className='big abs';this.big.style.cssText=`left:575px;top:320px;width:110px;font-size:190px;color:${LCOL};opacity:0`;this.big.textContent='L';r.appendChild(this.big);
   this.hand2=document.createElement('div');this.hand2.className='abs';this.hand2.style.cssText='left:300px;top:200px;width:240px;opacity:0';this.hand2.innerHTML=handSvg('L','L',240);r.appendChild(this.hand2)},
   update(t,L,c){const H=this.H;[H.L,H.R].forEach(h=>{h.d.style.opacity='1';h.d.style.scale='1'});
-   const tl=wt('leftis','left')-0.1,tm=wt('ltrick','point')-0.1,tL=wt('ltrick','that')-0.1,showL=t>=tm;
+   const tl=lMode?L-1:wt('leftis','left')-0.1,tm=lMode?-1:1e9,tL=lMode?wt('ltrick','that')-0.1:1e9,showL=lMode;
    H.L.d.style.opacity=showL?'0':'1';this.hand2.style.opacity=showL?String(prog(t,tm,0.4)):'0';
    this.K.root.style.opacity=String(showL?0.35:1);
-   handGlow(H.L,t,tl,!showL);pop(this.lc,t,tl,0.4);
+   handGlow(H.L,t,tl,!showL);pop(this.lc,t,lMode?L-1:tl,0.4);
    this.big.style.opacity=String(prog(t,tL,0.4));this.big.style.scale=String(lerp(0.5,1,easeBack(prog(t,tL,0.5))));
-   if(t>=tl)c.caption(showL?'PALM DOWN · MAKE AN L':'THE LEFT HAND',LCOL,showL?tm:tl)}};
+   if(lMode)c.caption('PALM DOWN · MAKE AN L',LCOL,wt('ltrick','keep')-0.05);else if(t>=tl)c.caption('THE LEFT HAND',LCOL,tl)}});
+S.v7left=v7leftScene(false);S.v7lhand=v7leftScene(true);
 
 S.v7right={ui:{ribbon:1,hosts:'low',bubble:true},build(r){lowKeys(this,r,100);this.H=handsBuild(r,HOVER);
   this.lc=labelChip(r,'LEFT',LCOL,190,352);this.rc=labelChip(r,'RIGHT',RCOL,1090,352)},
