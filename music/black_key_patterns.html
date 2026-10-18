@@ -71,15 +71,12 @@
         <h1 class="kids-title text-3xl text-cyan-600 text-center mb-1">Black Key Patterns</h1>
         <p class="text-slate-500 text-center text-sm font-semibold mb-3">Two, then three, two, then three: that's the pattern!</p>
 
-        <div class="grid grid-cols-3 gap-2 bg-cyan-50 p-2 rounded-2xl mb-2 border border-cyan-100">
+        <div class="grid grid-cols-2 gap-2 bg-cyan-50 p-2 rounded-2xl mb-2 border border-cyan-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-cyan-400 text-white border-b-2 border-cyan-600 shadow">
-                ☀️ 1: Two or three?
+                ☀️ Stage 1: Two or three?
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 2: Find the groups
-            </button>
-            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 3: What comes next?
+                🌴 Stage 2: Find the groups
             </button>
         </div>
 
@@ -133,6 +130,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
+    <script>window.GP_TOTAL_STAGES = 2;</script>
     <script src="game-progress.js"></script>
     <script>
         let currentStage = 1;
@@ -174,8 +172,7 @@
         const groupOf = id => GROUPS.find(g => g.keys.includes(id));
 
         let currentGroup = null;      // the group being asked about
-        let currentIndex = 0;         // stage 3: how many groups are already shown
-        let mode = 'identify';        // 'identify' | 'findGroup' | 'next'
+        let mode = 'identify';        // 'identify' (stage 1) | 'findGroup' (stage 2)
 
         const dialogs = {
             start: "Hi, I'm Melody! Black keys come in groups of two and three. Can you spot them?",
@@ -263,7 +260,7 @@
 
         function setStage(stageNum) {
             currentStage = stageNum;
-            for (let i = 1; i <= 3; i++) {
+            for (let i = 1; i <= 2; i++) {
                 const btn = document.getElementById(`btn-stage-${i}`);
                 if (i === stageNum) {
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-cyan-400 text-white border-b-2 border-cyan-600 shadow";
@@ -271,7 +268,7 @@
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
                 }
             }
-            mode = stageNum === 1 ? 'identify' : (stageNum === 2 ? 'findGroup' : 'next');
+            mode = stageNum === 1 ? 'identify' : 'findGroup';
             resetStats();
             newRound();
         }
@@ -296,13 +293,6 @@
                 q.innerText = `Tap a group of ${WORD[currentGroup.type]}!`;
                 document.getElementById('answer-buttons').innerHTML = '';
                 fb.innerText = "Tap any black key in the group.";
-            } else {
-                currentIndex = 1 + Math.floor(Math.random() * 3);           // 1 to 3 groups already shown
-                currentGroup = GROUPS[currentIndex];
-                const said = GROUPS.slice(0, currentIndex).map(g => WORD[g.type]).join(', then ') + ', then…?';
-                q.innerText = said[0].toUpperCase() + said.slice(1);
-                renderIdentifyButtons();
-                fb.innerText = "Look at the pattern so far. What comes next?";
             }
             renderPiano();
             fb.className = "text-center text-lg font-bold text-slate-700 my-3";
@@ -346,11 +336,6 @@
                 const g = groupOf(key.id);
                 let cls = 'bg-slate-950';
                 if (mode === 'identify' && g === currentGroup) cls = 'highlight';
-                if (mode === 'next') {
-                    const gi = GROUPS.indexOf(g);
-                    if (gi < currentIndex) cls = g.type === 2 ? 'g2' : 'g3';          // earlier groups stay coloured, with number badges
-                    else if (g === currentGroup) cls = 'highlight';                    // the next group pulses: what is it?
-                }
                 if (mode === 'findGroup' && hintsEnabled && g.type === currentGroup.type) cls = 'highlight';
                 blackDiv.className = `black-key absolute rounded-b-lg z-30 select-none ${cls} ${mode === 'findGroup' ? 'cursor-pointer' : ''}`;
                 blackDiv.style.height = '3.5rem';
@@ -358,10 +343,6 @@
                 blackDiv.style.left = `${(key.afterWhiteIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2)}px`;
                 blackDiv.dataset.note = key.id;
                 if (mode === 'findGroup') blackDiv.addEventListener('pointerdown', () => handleBlackKeyTap(key, blackDiv));
-                if (mode === 'next' && GROUPS.indexOf(g) < currentIndex) {
-                    const n = g.keys.indexOf(key.id) + 1;
-                    blackDiv.insertAdjacentHTML('beforeend', `<span class="key-badge ${g.type === 2 ? 'g2' : 'g3'}">${n}</span>`);
-                }
                 container.appendChild(blackDiv);
             });
         }
@@ -475,7 +456,7 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage);
+            GameProgress.stageCleared(currentStage, 2);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
@@ -483,7 +464,7 @@
             const oMsg = document.getElementById('overlay-msg');
             const oBtn = document.getElementById('overlay-btn');
 
-            if (currentStage < 3) {
+            if (currentStage < 2) {
                 oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
