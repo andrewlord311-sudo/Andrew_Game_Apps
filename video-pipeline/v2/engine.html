@@ -595,6 +595,9 @@ function kbBadgesBrackets(K,t,o){ // o.badge[k]=time shown, o.br[gi]=[timeShown,
   K.badges.forEach((b,k)=>{const at=o.badge&&o.badge[k];if(at==null){b.style.opacity='0';return}const p=prog(t,at,0.3);b.style.opacity=String(clamp(p*2)*(o.badgeOp?o.badgeOp[gOf(k)]??1:1));b.style.scale=String(lerp(0.3,1,easeBack(p)));b.style.background=GCOL[gOf(k)]});
   K.brackets.forEach((b,gi)=>{const e=o.br&&o.br[gi];const at=e?e[0]:null;if(at==null){b.d.style.opacity='0';b.c.style.opacity='0';return}const p=prog(t,at,0.4);const op=clamp(p*2)*(e[1]??1);b.d.style.opacity=String(op);b.d.style.scale=`${lerp(0.4,1,easeOut(p))} 1`;b.c.style.opacity=String(op);b.c.style.scale=String(lerp(0.5,1,easeBack(p)))})}
 const V6UI={ribbon:1,hosts:'low',bubble:true};
+const mixHex=(a,b,t)=>{const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=h(a),B=h(b);return '#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')};
+const pulse6=(t,t0)=>0.5-0.5*Math.cos(Math.max(0,t-t0)*2*Math.PI/1.4);   // smooth 0..1..0, one beat every 1.4 s, starting at 0
+
 
 S.v6recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
   this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:490px;top:215px;width:300px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(300);r.appendChild(this.d);
@@ -605,18 +608,22 @@ S.v6recap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
 
 S.v6wb={ui:V6UI,build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
   const tw=wt('wb1','white')-0.1,tb=wt('wb2','black')-0.1;
-  const wl=t>=tw&&t<tb,wd=t>=tb;
-  kbPaint(K,{whiteBg:wl?'#fde68a':wd?'#f8fafc':'#fff',lit:t>=tb?Object.fromEntries(K.blacks.map((_,k)=>[k,'#f59e0b'])):null});
-  K.whites.forEach((w,i)=>{w.style.boxShadow=wl?`0 0 0 4px #f59e0b,0 7px 0 rgba(0,0,0,.14)`:'0 7px 0 rgba(0,0,0,.14)'});
-  K.blacks.forEach(b=>{b.style.translate='0 0'});
+  kbPaint(K,{whiteBg:'#fff'});K.blacks.forEach(b=>{b.style.translate='0 0'});
+  if(t>=tb){ // black keys pulse between their own colour and orange; the white keys go back to normal
+    const ph=pulse6(t,tb);K.whites.forEach(w=>{w.style.background='#f8fafc';w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+    K.blacks.forEach(b=>{b.style.background=mixHex('#241f3d','#f59e0b',ph);b.style.boxShadow=`0 0 0 ${1+3*ph}px rgba(245,158,11,${.35+.5*ph}),0 6px 0 rgba(0,0,0,.25)`});
+  }else if(t>=tw){ // white keys pulse between white and yellow, with a steady outline
+    const ph=pulse6(t,tw);K.whites.forEach(w=>{w.style.background=mixHex('#ffffff','#fde68a',ph);w.style.boxShadow=`0 0 0 ${2+2*ph}px rgba(245,158,11,${.5+.4*ph}),0 7px 0 rgba(0,0,0,.14)`});
+  }
   kbBadgesBrackets(K,t,{});
   if(t>=tb)c.caption('BLACK KEYS','#241f3d',tb);else if(t>=tw)c.caption('WHITE KEYS','#b45309',tw)}};
 
 S.v6groups={ui:V6UI,build(r){this.K=kbBuild(r)},update(t,L,c){const K=this.K;kbIn(K,L);
   const tg=wt('groups','groups')-0.15,tl=wt('lookb','black')-0.1;
   K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
-  const pu=t>=tl&&t<tg?0.6+0.4*Math.sin(t*6):0;
-  kbPaint(K,{whiteBg:'#f1f5f9',lit:t>=tl&&t<tg?Object.fromEntries(K.blacks.map((_,k)=>[k,pu>0.7?'#f59e0b':null])):null});
+  const ph=t>=tl&&t<tg?pulse6(t,tl):0;
+  kbPaint(K,{whiteBg:'#f1f5f9'});
+  if(ph>0)K.blacks.forEach(b=>{b.style.background=mixHex('#241f3d','#f59e0b',ph);b.style.boxShadow=`0 0 0 ${1+3*ph}px rgba(245,158,11,${.35+.5*ph}),0 6px 0 rgba(0,0,0,.25)`});
   kbBadgesBrackets(K,t,{br:GRP.map((g,gi)=>[tg+gi*0.3,1])});
   if(t>=tg)c.caption('GROUPS','var(--orange)',tg)}};
 
