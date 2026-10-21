@@ -36,6 +36,11 @@
             box-shadow: inset 0 -8px 0 #16a34a, 0 4px 6px rgba(0,0,0,0.05);
         }
         .white-key.wrong-flash { background-color: #fca5a5 !important; }
+        .key-badge { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: 2.1rem; height: 2.1rem; border-radius: 9999px; color: #fff;
+            font-family: 'Fredoka One', cursive; font-size: 1.25rem; line-height: 2.1rem; text-align: center; border: 3px solid #fff; box-shadow: 0 3px 0 rgba(0,0,0,.2); pointer-events: none; animation: badge-pop .35s cubic-bezier(.3,1.7,.5,1); }
+        @keyframes badge-pop { from { transform: translateX(-50%) scale(.3); opacity: 0; } }
+        .black-key.tint-two { background-color: #0d9488 !important; box-shadow: inset 0 -6px 0 #0f766e, 0 0 0 2px #fff, 0 0 12px 2px rgba(13,148,136,.55); }
+        .black-key.tint-three { background-color: #db2777 !important; box-shadow: inset 0 -6px 0 #9d174d, 0 0 0 2px #fff, 0 0 12px 2px rgba(219,39,119,.55); }
         .black-key {
             box-shadow: inset 0 -6px 0 #000000, 0 3px 5px rgba(0,0,0,0.3);
             transition: background-color 0.1s, transform 0.05s, box-shadow 0.05s;
@@ -60,14 +65,17 @@
         </div>
 
         <h1 class="kids-title text-3xl text-emerald-600 text-center mb-1">C Hunt</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Spot the Cs hiding on the keyboard!</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Find C and F on the keyboard!</p>
 
-        <div class="grid grid-cols-2 gap-2 bg-emerald-50 p-2 rounded-2xl mb-2 border border-emerald-100">
+        <div class="grid grid-cols-3 gap-2 bg-emerald-50 p-2 rounded-2xl mb-2 border border-emerald-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-emerald-400 text-white border-b-2 border-emerald-600 shadow">
-                ☀️ Stage 1: Find 1 C
+                ☀️ Stage 1: Find C
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Find 2 Cs
+                🌴 Stage 2: Find F
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🌟 Stage 3: C or F?
             </button>
         </div>
 
@@ -76,13 +84,13 @@
             <div class="relative bg-white border border-emerald-100 p-2 rounded-xl shadow-sm w-full">
                 <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-emerald-50"></div>
                 <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
-                    Hi, I'm Melody! Tap every C you can find on the keyboard!
+                    Hi, I'm Melody! Let's find C and F on the keyboard!
                 </p>
             </div>
         </div>
 
         <div class="flex items-center justify-between mb-2">
-            <div id="progress-text" class="font-bold text-slate-700 text-sm">Found 0 / 1 C's</div>
+            <div id="progress-text" class="font-bold text-slate-700 text-sm">Find a C</div>
         </div>
 
         <div class="relative">
@@ -100,7 +108,7 @@
         </div>
 
         <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700 my-3">
-            Tap a C to begin!
+            Tap the key to begin!
         </div>
 
         <div class="flex justify-between items-center text-xs">
@@ -117,8 +125,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
-    <script>window.GP_TOTAL_STAGES = 2;</script> <!-- this game only has 2 stages, not the usual 3 -->
-    <script src="game-progress.js"></script>
+        <script src="game-progress.js"></script>
     <script>
         let currentStage = 1;
         let score = 0;
@@ -127,7 +134,9 @@
         let hintsEnabled = false;
         let controlLock = false;
         let foundSet = new Set();
-        let requiredCs = 1;
+        let lastTarget = null, sameCount = 0, roundTimer = null;
+        let target = 'C';              // the letter to find this round
+        const LETTER_FREQ = { C: 261.63, F: 349.23 };   // octave 4
 
         // Every round shows roughly two octaves of white+black keys, starting
         // from a random white note - never the same keys twice in a row. A
@@ -203,18 +212,22 @@
             }
         }
 
+        // Same words, colours and letter badges as the video "Finding C and F": C is the white key just below a group of
+        // two black keys (teal), F is the white key just below a group of three (pink).
+        // Stages 1 and 2 light up the matching black-key groups as a help; stage 3 asks for C or F with no help at all.
         const STAGE_CONFIGS = {
-            1: { requiredCs: 1 },
-            2: { requiredCs: 2 },
+            1: { letters: ['C'], tint: 'two' },
+            2: { letters: ['F'], tint: 'three' },
+            3: { letters: ['C', 'F'], tint: null },
         };
-
+        const BADGE_COL = { C: '#0d9488', F: '#db2777' };
+        const BELOW = { C: 'the white key just below a group of 2 black keys', F: 'the white key just below a group of 3 black keys' };
+        const an = L => (L === 'F' ? 'an F' : 'a C');
         const dialogs = {
-            start1: "Hi, I'm Melody! Find just ONE of the Cs hiding on the keyboard!",
-            start2: "Hi, I'm Melody! This time find TWO of the Cs hiding on the keyboard!",
-            correct: "Great find! Keep going! 🎹",
-            allFound1: "You found a C! Nice work! 🌟",
-            allFound2: "You found 2 Cs! Amazing C hunting! 🌟",
-            incorrect: "That's not a C — look for the white key just left of a group of 2 black keys!"
+            ask: L => `Find ${an(L)}! It's ${BELOW[L]}.`,
+            ask3: L => `Where is ${L}? No help this time!`,
+            found: L => `Yes, that's ${an(L)}! 🌟`,
+            incorrect: (L, name) => `That's ${name}, not ${L}. Look for ${BELOW[L]}!`
         };
 
         let audioCtx = null;
@@ -263,7 +276,7 @@
 
         function setStage(stageNum) {
             currentStage = stageNum;
-            for (let i = 1; i <= 2; i++) {
+            for (let i = 1; i <= 3; i++) {
                 const btn = document.getElementById(`btn-stage-${i}`);
                 if (i === stageNum) {
                     btn.className = "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-emerald-400 text-white border-b-2 border-emerald-600 shadow";
@@ -283,21 +296,25 @@
         }
 
         function newRound() {
+            clearTimeout(roundTimer);
             const config = STAGE_CONFIGS[currentStage];
-            requiredCs = config.requiredCs;
+            // stage 3 mixes the two letters, never the same one more than twice running
+            let next = config.letters[Math.floor(Math.random() * config.letters.length)];
+            if (config.letters.length > 1 && next === lastTarget && sameCount >= 2) next = config.letters.find(l => l !== lastTarget);
+            sameCount = next === lastTarget ? sameCount + 1 : 1; lastTarget = next; target = next;
             foundSet = new Set();
             controlLock = false;
 
             buildKeys();
 
-            document.getElementById('progress-text').innerText = `Found 0 / ${requiredCs} C's`;
-            document.getElementById('mascot-dialog').innerText = requiredCs === 1 ? dialogs.start1 : dialogs.start2;
+            document.getElementById('progress-text').innerText = currentStage === 3 ? `Where is ${target}?` : `Find ${an(target)}`;
+            document.getElementById('mascot-dialog').innerText = currentStage === 3 ? dialogs.ask3(target) : dialogs.ask(target);
 
             renderPiano();
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
-            feedback.innerText = "Tap a C to begin!";
+            feedback.innerText = `Tap ${target}!`;
         }
 
         function renderPiano() {
@@ -310,6 +327,7 @@
                 const isFound = foundSet.has(key.id);
                 keyDiv.className = `white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none cursor-pointer ${isFound ? 'found' : ''}`;
                 keyDiv.dataset.note = key.id;
+                if (isFound) keyDiv.innerHTML = `<span class="key-badge" style="background:${BADGE_COL[key.name]}">${key.name}</span>`;
                 keyDiv.addEventListener('mousedown', () => handleKeyClick(key, keyDiv));
                 container.appendChild(keyDiv);
             });
@@ -326,6 +344,9 @@
                 const leftPos = (key.afterWhiteIndex + 1) * whiteKeyWidth + 8 - (whiteKeyWidth * 0.65 / 2);
                 blackDiv.style.left = `${leftPos}px`;
                 blackDiv.dataset.note = key.id;
+                const tint = STAGE_CONFIGS[currentStage].tint;
+                if (tint === 'two' && ['C#', 'D#'].includes(key.name)) blackDiv.classList.add('tint-two');
+                if (tint === 'three' && ['F#', 'G#', 'A#'].includes(key.name)) blackDiv.classList.add('tint-three');
                 blackDiv.addEventListener('mousedown', (e) => {
                     e.stopPropagation();
                     handleKeyClick(key, blackDiv);
@@ -334,7 +355,7 @@
             });
 
             if (hintsEnabled) {
-                whiteKeys.filter(k => k.name === 'C' && !foundSet.has(k.id)).forEach(k => {
+                whiteKeys.filter(k => k.name === target && !foundSet.has(k.id)).forEach(k => {
                     const el = container.querySelector(`[data-note="${k.id}"]`);
                     if (el) el.style.boxShadow = 'inset 0 -8px 0 #fbbf24, 0 0 0 3px #fbbf24';
                 });
@@ -344,19 +365,14 @@
         function handleKeyClick(key, keyElement) {
             if (controlLock) return;
 
-            if (key.name === 'C') {
+            if (key.name === target) {
                 if (foundSet.has(key.id)) return; // already found
                 foundSet.add(key.id);
                 keyElement.classList.add('found');
-                document.getElementById('progress-text').innerText = `Found ${foundSet.size} / ${requiredCs} C's`;
+                keyElement.innerHTML = `<span class="key-badge" style="background:${BADGE_COL[target]}">${target}</span>`;
 
-                playTone(261.63 * Math.pow(2, key.octave - 4), 'triangle', 0.4);
-
-                if (foundSet.size >= requiredCs) {
-                    onAllFound();
-                } else {
-                    document.getElementById('mascot-dialog').innerText = dialogs.correct;
-                }
+                playTone(LETTER_FREQ[target] * Math.pow(2, key.octave - 4), 'triangle', 0.6);
+                onAllFound();
             } else {
                 streak = 0;
                 lives--;
@@ -369,10 +385,10 @@
 
                 const feedback = document.getElementById('feedback');
                 feedback.className = "text-center text-lg font-bold text-rose-500 my-3";
-                feedback.innerText = "That's not a C!";
+                feedback.innerText = `That's not ${an(target)}!`;
 
                 playFailBuzz();
-                document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+                document.getElementById('mascot-dialog').innerText = dialogs.incorrect(target, key.name.replace('#', ' sharp'));
 
                 if (lives <= 0) {
                     controlLock = true;
@@ -382,7 +398,7 @@
         }
 
         function onAllFound() {
-            score += 10 * requiredCs;
+            score += 10;
             streak++;
             Tracking.logAnswer({ correct: true, stage: currentStage });
             RewardSystem.correct();
@@ -391,17 +407,17 @@
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-green-600 my-3";
-            feedback.innerText = requiredCs === 1 ? `⭐ You found a C! ⭐` : `⭐ You found 2 Cs! ⭐`;
+            feedback.innerText = `⭐ You found ${an(target)}! ⭐`;
 
             triggerConfetti();
-            document.getElementById('mascot-dialog').innerText = requiredCs === 1 ? dialogs.allFound1 : dialogs.allFound2;
+            document.getElementById('mascot-dialog').innerText = dialogs.found(target);
 
             const avatar = document.getElementById('mascot-avatar');
             avatar.className = "mascot-spin shrink-0";
             controlLock = true;
             setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
-            setTimeout(newRound, 1400);
+            roundTimer = setTimeout(newRound, 1800);
         }
 
         function triggerConfetti() {
@@ -429,7 +445,7 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage, 2);
+            GameProgress.stageCleared(currentStage);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
@@ -437,12 +453,12 @@
             const oMsg = document.getElementById('overlay-msg');
             const oBtn = document.getElementById('overlay-btn');
 
-            if (currentStage < 2) {
+            if (currentStage < 3) {
                 oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
-                oMsg.innerText = `Incredible! You can hunt down every C on the keyboard!`;
+                oMsg.innerText = `Incredible! You can find C and F anywhere on the keyboard!`;
                 oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
