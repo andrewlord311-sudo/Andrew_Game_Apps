@@ -927,7 +927,7 @@ S.v8seven={ui:V6UI,build(r){
 
 // the first group of two / three: the group lights up, an arrow points at the white key just below it, the badge lands and STAYS
 function v8first(gi,key,lookClip,lookWord,belowClip,letClip,rule){return v8kb({state(s,t){
-  const tl=wt(lookClip,lookWord)-0.1,ta=wt(belowClip,'below')-0.1,tb=CL[letClip].start-0.25;
+  const tl=wt(lookClip,lookWord)-0.1,ta=wt(belowClip,'below')-0.1,tb=CL[letClip].start-0.6;
   if(gi===1){v8on(s,0,-1,false,0.4);v8on(s,2,-1,false,0.4);s.cf[0]={b:-1,op:0.5};s.cf[7]={b:-1,op:0.5};v8dim(s,[0,1,2])}else v8dim(s,[gi]);
   if(t>=tl)v8on(s,gi,tl,false);
   s.cf[key]=Object.assign(s.cf[key]||{},{b:tb,a:ta,aEnd:tb+1.8,p:ta,keep:true});
@@ -938,7 +938,7 @@ S.v8f1=v8first(1,3,'lookThree','three','belowF','fOnly','JUST BELOW 3 = F');
 
 // "Every group of two has a C sitting just below it": both groups pulse in turn, a C lands on the second and both stay
 function v8every(kind,clip){const f=kind==='C',gA=f?0:1,gB=f?2:3,kA=f?0:3,kB=f?7:10,ch=f?'C':'F';
-  return v8kb({state(s,t){const T0=CL[clip].start+0.5,T1=CL[clip].start+1.9;
+  return v8kb({state(s,t){const T0=CL[clip].end+0.2,T1=CL[clip].end+1.6;
     if(!f){v8on(s,0,-1,false,0.4);v8on(s,2,-1,false,0.4);s.cf[0]={b:-1,op:0.5};s.cf[7]={b:-1,op:0.5}}
     if(f)v8dim(s,[0,2]);v8on(s,gA,-1,false);s.cf[kA]={b:-1,m:T0,p:T0,keep:true};
     if(t>=T1){v8on(s,gB,T1,false);s.cf[kB]={b:T1+0.1,a:T1-0.4,aEnd:T1+1.6,p:T1,keep:true,m:T1+0.5}}else if(t>=T0-0.4){s.cf[kB]=undefined}
@@ -955,18 +955,18 @@ S.v8rule=v8kb({build(r){this.c1=labelChip(r,'just below 2 = C','#0d9488',330,522
 
 // "C… F… C… F." each letter lights its key, in order, and stays
 S.v8run=v8kb({state(s,t){const ids=['rC1','rF1','rC2','rF2'],keys=[0,3,7,10],gs=[0,1,2,3];let n=0;
-  ids.forEach((id,i)=>{const tk=CL[id].start-0.25;if(t>=tk){n++;v8on(s,gs[i],tk,false);s.cf[keys[i]]={b:tk,p:tk,keep:true,m:tk}}});
+  ids.forEach((id,i)=>{const tk=CL[id].start-0.6;if(t>=tk){n++;v8on(s,gs[i],tk,false);s.cf[keys[i]]={b:tk,p:tk,keep:true,m:tk}}});
   GRP.forEach((g,gi)=>{if(!s.lit[g[0]])g.forEach(k=>{s.dim[k]=false})});
-  s.cap=n?[['C','C  F','C  F  C','C  F  C  F'][n-1],'var(--orange)',CL[ids[0]].start-0.25]:null}});
+  s.cap=n?[['C','C  F','C  F  C','C  F  C  F'][n-1],'var(--orange)',CL[ids[0]].start-0.6]:null}});
 
 // the quiz: the letters are hidden again; the group(s) glow amber for a few seconds, a ?, then the badge lands with a tick
 function v8quiz(gs,keys,ans,mixed){return v8kb({build(r){
   this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
   if(mixed){this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})}},
-  state(s,t){const ta=CL[ans].start-0.2,t1=ta-4.2;
+  state(s,t){const ta=CL[ans].start-(mixed?1.0:0.6),t1=ta-4.2;
    if(!mixed)v8dim(s,gs);
    if(t>=t1)gs.forEach(gi=>{GRP[gi].forEach(k=>{s.lit[k]=t>=ta?GCOL[gi]:'#f59e0b'});s.br[gi]=[t>=ta?ta:null,1]});
-   if(t>=ta)keys.forEach((k,i)=>{s.cf[k]={b:ta+0.35*i,p:ta+0.35*i,keep:true}});
+   if(t>=ta)keys.forEach((k,i)=>{s.cf[k]={b:ta+0.5*i,p:ta+0.5*i,keep:true}});
    const l=CF[keys[0]].l;s.cap=t>=ta?[mixed?'C ✓  C ✓':`${l} ✓`,GCOL[CF[keys[0]].gi],ta]:null;this.t1=t1;this.ta=ta},
   after(t,L,K,s){const th=t>=this.t1+0.6&&t<this.ta;this.q.style.opacity=String(th?clamp(prog(t,this.t1+0.6,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
    if(this.conf){const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}}})}
