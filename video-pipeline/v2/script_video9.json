@@ -1,0 +1,365 @@
+{
+ "title": "every C",
+ "titleAt": "every",
+ "nugget": 9,
+ "game": "Octave Hunt",
+ "gameFile": "octave_hunt.html",
+ "todayLead": "Today we are going to find",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to find <break time=\"0.4s\" /> every C <break time=\"0.3s\" /> on the piano.",
+   "show": "Today we are going to find every C on the piano.",
+   "speed": 0.88
+  },
+  {
+   "id": "lookTwo",
+   "who": "melody",
+   "src": "../video8/lookTwo",
+   "text": "Look at this group of two black keys."
+  },
+  {
+   "id": "belowC",
+   "who": "barnaby",
+   "src": "../video8/belowC",
+   "text": "The white key just below… is C."
+  },
+  {
+   "id": "anotherC",
+   "who": "barnaby",
+   "text": "Here is another group of two. <break time=\"0.4s\" /> And here is another C.",
+   "show": "Here is another group of two. And here is another C.",
+   "speed": 0.88
+  },
+  {
+   "id": "listen",
+   "who": "melody",
+   "text": "Listen.",
+   "speed": 0.85
+  },
+  {
+   "id": "same",
+   "who": "barnaby",
+   "text": "The same note, <break time=\"0.5s\" /> but higher.",
+   "show": "The same note… but higher.",
+   "speed": 0.85
+  },
+  {
+   "id": "oct1",
+   "who": "barnaby",
+   "text": "From one C to the next C, <break time=\"0.4s\" /> is called an octave.",
+   "show": "From one C to the next C… is called an octave.",
+   "speed": 0.88
+  },
+  {
+   "id": "oct2",
+   "who": "melody",
+   "text": "An octave.",
+   "show": "An octave.",
+   "speed": 0.78,
+   "prev": "From one C to the next C, is called an octave."
+  },
+  {
+   "id": "fOct",
+   "who": "barnaby",
+   "text": "It works for F too. <break time=\"0.5s\" /> From one F to the next F, <break time=\"0.4s\" /> is also an octave.",
+   "show": "It works for F too. From one F to the next F… is also an octave.",
+   "speed": 0.88
+  },
+  {
+   "id": "allC",
+   "who": "melody",
+   "text": "Every C on the piano <break time=\"0.4s\" /> is the same note, <break time=\"0.4s\" /> higher or lower.",
+   "show": "Every C on the piano… is the same note… higher or lower.",
+   "speed": 0.88
+  },
+  {
+   "id": "yourturn9",
+   "who": "melody",
+   "text": "Your turn! <break time=\"0.4s\" /> Where is another C?",
+   "show": "Your turn! Where is another C?",
+   "speed": 0.88
+  },
+  {
+   "id": "aC1",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "aC2",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "whereF9",
+   "who": "melody",
+   "text": "Where is another F?",
+   "speed": 0.88,
+   "prev": "Where is another C?"
+  },
+  {
+   "id": "aF",
+   "who": "melody",
+   "src": "../video3/lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "src": "../video2/qwell",
+   "text": "You've got it!"
+  },
+  {
+   "id": "game9",
+   "who": "barnaby",
+   "text": "Play Octave Hunt, <break time=\"0.3s\" /> and find every C and F!",
+   "show": "Play Octave Hunt, and find every C and F!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 2.0
+  },
+  {
+   "id": "v9a",
+   "clips": [
+    "lookTwo",
+    "belowC"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 3.0
+  },
+  {
+   "id": "v9b",
+   "clips": [
+    "anotherC"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.4
+  },
+  {
+   "id": "v9c",
+   "clips": [
+    "listen",
+    "same"
+   ],
+   "lead": 0.6,
+   "gap": 3.2,
+   "tail": 2.8
+  },
+  {
+   "id": "v9d",
+   "clips": [
+    "oct1",
+    "oct2"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 3.4
+  },
+  {
+   "id": "v9e",
+   "clips": [
+    "fOct"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.8
+  },
+  {
+   "id": "v9f",
+   "clips": [
+    "allC"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 4.2
+  },
+  {
+   "id": "v9q1",
+   "clips": [
+    "yourturn9",
+    "aC1",
+    "aC2"
+   ],
+   "lead": 0.5,
+   "gap": 5.4,
+   "tail": 2.4
+  },
+  {
+   "id": "v9q2",
+   "clips": [
+    "whereF9",
+    "aF",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 5.0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro9",
+   "clips": [
+    "game1",
+    "game9",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "belowC",
+   "off": 0.25,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c5"
+   ],
+   "step": 1.0,
+   "clip": "anotherC",
+   "off": 0.25,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "c5"
+   ],
+   "step": 1.1,
+   "clip": "listen",
+   "off": 0.4,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4",
+    "f5"
+   ],
+   "step": 1.2,
+   "clip": "fOct",
+   "off": 0.4,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "c5",
+    "c6"
+   ],
+   "step": 1.0,
+   "clip": "allC",
+   "off": 0.5,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f5"
+   ],
+   "step": 1.0,
+   "clip": "aF",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c5"
+   ],
+   "step": 1.0,
+   "clip": "aC1",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c6"
+   ],
+   "step": 1.0,
+   "clip": "aC2",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  }
+ ],
+ "gapOverride": {
+  "same": 3.2,
+  "aC2": 1.0,
+  "qwell": 0.9
+ }
+}
