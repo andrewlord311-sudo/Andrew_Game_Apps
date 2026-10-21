@@ -96,8 +96,9 @@
   {
    "id": "lookTwo",
    "who": "melody",
-   "text": "Look at this group of two black keys.",
-   "speed": 0.88
+   "text": "Look at this group <break time=\"0.3s\" /> of two black keys.",
+   "speed": 0.88,
+   "show": "Look at this group of two black keys."
   },
   {
    "id": "belowC",
@@ -124,8 +125,9 @@
   {
    "id": "lookThree",
    "who": "melody",
-   "text": "Now look at a group of three black keys.",
-   "speed": 0.88
+   "text": "Now look at a group <break time=\"0.3s\" /> of three black keys.",
+   "speed": 0.88,
+   "show": "Now look at a group of three black keys."
   },
   {
    "id": "belowF",
@@ -278,8 +280,8 @@
     "lG"
    ],
    "lead": 0.6,
-   "gap": 0.6,
-   "tail": 2.4
+   "gap": 0.5,
+   "tail": 2.0
   },
   {
    "id": "v8c1",
