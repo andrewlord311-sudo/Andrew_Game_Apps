@@ -118,7 +118,7 @@
    "id": "pat",
    "who": "melody",
    "text": "Two, <break time=\"0.5s\" /> then three, <break time=\"0.6s\" /> two, <break time=\"0.5s\" /> then three.",
-   "show": "Two\u2026 then three\u2026 two\u2026 then three.",
+   "show": "Two… then three… two… then three.",
    "speed": 0.85
   },
   {
@@ -409,5 +409,6 @@
  ],
  "gapOverride": {
   "qwell": 0.9
- }
+ },
+ "pianoTones": true
 }
