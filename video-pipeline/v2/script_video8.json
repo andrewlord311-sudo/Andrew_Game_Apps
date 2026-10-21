@@ -1,0 +1,548 @@
+{
+ "title": "C and F",
+ "titleAt": "find",
+ "nugget": 8,
+ "game": "C Hunt",
+ "gameFile": "c_hunt.html",
+ "todayLead": "Today we are going to find",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "look8a",
+   "who": "melody",
+   "text": "Look at the black keys <break time=\"0.3s\" /> on the piano.",
+   "show": "Look at the black keys on the piano.",
+   "speed": 0.88
+  },
+  {
+   "id": "look8b",
+   "who": "melody",
+   "text": "They come in groups of two, <break time=\"0.5s\" /> and three.",
+   "show": "They come in groups of two… and three.",
+   "speed": 0.85
+  },
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to find <break time=\"0.4s\" /> C <break time=\"0.3s\" /> and F.",
+   "show": "Today we are going to find C and F.",
+   "speed": 0.88
+  },
+  {
+   "id": "seven8",
+   "who": "melody",
+   "text": "Piano keys are named <break time=\"0.3s\" /> with just seven letters.",
+   "show": "Piano keys are named with just seven letters.",
+   "speed": 0.88
+  },
+  {
+   "id": "lA",
+   "who": "melody",
+   "src": "../video3/lA",
+   "text": "A.",
+   "show": "A",
+   "quiet": true
+  },
+  {
+   "id": "lB",
+   "who": "melody",
+   "src": "../video3/lB",
+   "text": "B.",
+   "show": "B",
+   "quiet": true
+  },
+  {
+   "id": "lC",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "lD",
+   "who": "melody",
+   "src": "../video3/lD",
+   "text": "D.",
+   "show": "D",
+   "quiet": true
+  },
+  {
+   "id": "lE",
+   "who": "melody",
+   "src": "../video3/lE",
+   "text": "E.",
+   "show": "E",
+   "quiet": true
+  },
+  {
+   "id": "lF",
+   "who": "melody",
+   "src": "../video3/lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "lG",
+   "who": "melody",
+   "src": "../video3/lG",
+   "text": "G.",
+   "show": "G",
+   "quiet": true
+  },
+  {
+   "id": "lookTwo",
+   "who": "melody",
+   "text": "Look at this group of two black keys.",
+   "speed": 0.88
+  },
+  {
+   "id": "belowC",
+   "who": "barnaby",
+   "text": "The white key just below <break time=\"0.5s\" /> is C.",
+   "show": "The white key just below… is C.",
+   "speed": 0.88
+  },
+  {
+   "id": "cOnly",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "everyC",
+   "who": "barnaby",
+   "text": "Every group of two <break time=\"0.4s\" /> has a C <break time=\"0.3s\" /> sitting just below it.",
+   "show": "Every group of two has a C sitting just below it.",
+   "speed": 0.88
+  },
+  {
+   "id": "lookThree",
+   "who": "melody",
+   "text": "Now look at a group of three black keys.",
+   "speed": 0.88
+  },
+  {
+   "id": "belowF",
+   "who": "barnaby",
+   "text": "The white key just below <break time=\"0.5s\" /> is F.",
+   "show": "The white key just below… is F.",
+   "speed": 0.88
+  },
+  {
+   "id": "fOnly",
+   "who": "melody",
+   "src": "../video3/lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "everyF",
+   "who": "barnaby",
+   "text": "Every group of three <break time=\"0.4s\" /> has an F <break time=\"0.3s\" /> sitting just below it.",
+   "show": "Every group of three has an F sitting just below it.",
+   "speed": 0.88
+  },
+  {
+   "id": "rule8",
+   "who": "melody",
+   "text": "Just below two <break time=\"0.4s\" /> is C. <break time=\"0.8s\" /> Just below three <break time=\"0.4s\" /> is F.",
+   "show": "Just below two is C. Just below three is F.",
+   "speed": 0.85
+  },
+  {
+   "id": "rC1",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "rF1",
+   "who": "melody",
+   "src": "../video3/lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "rC2",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "rF2",
+   "who": "melody",
+   "src": "../video3/lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "yourturn8",
+   "who": "melody",
+   "text": "Your turn! <break time=\"0.4s\" /> Where is C?",
+   "show": "Your turn! Where is C?",
+   "speed": 0.88
+  },
+  {
+   "id": "aC1",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "whereF",
+   "who": "melody",
+   "text": "Where is F?",
+   "speed": 0.88,
+   "prev": "Where is C?"
+  },
+  {
+   "id": "aF",
+   "who": "melody",
+   "src": "../video3/lF",
+   "text": "F.",
+   "show": "F",
+   "quiet": true
+  },
+  {
+   "id": "whereC2",
+   "who": "melody",
+   "text": "Where is C?",
+   "speed": 0.88,
+   "prev": "Where is F?"
+  },
+  {
+   "id": "aC2",
+   "who": "melody",
+   "src": "../video3/lC",
+   "text": "C.",
+   "show": "C",
+   "quiet": true
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "src": "../video2/qwell",
+   "text": "You've got it!"
+  },
+  {
+   "id": "game8",
+   "who": "barnaby",
+   "text": "Play C Hunt, <break time=\"0.3s\" /> and find C and F!",
+   "show": "Play C Hunt, and find C and F!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 0.8
+  },
+  {
+   "id": "v8look",
+   "clips": [
+    "look8a",
+    "look8b"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 2.6
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0.0,
+   "tail": 2.0
+  },
+  {
+   "id": "v8seven",
+   "clips": [
+    "seven8",
+    "lA",
+    "lB",
+    "lC",
+    "lD",
+    "lE",
+    "lF",
+    "lG"
+   ],
+   "lead": 0.6,
+   "gap": 0.6,
+   "tail": 2.4
+  },
+  {
+   "id": "v8c1",
+   "clips": [
+    "lookTwo",
+    "belowC",
+    "cOnly"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 2.2
+  },
+  {
+   "id": "v8c2",
+   "clips": [
+    "everyC"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.0
+  },
+  {
+   "id": "v8f1",
+   "clips": [
+    "lookThree",
+    "belowF",
+    "fOnly"
+   ],
+   "lead": 0.6,
+   "gap": 1.0,
+   "tail": 2.2
+  },
+  {
+   "id": "v8f2",
+   "clips": [
+    "everyF"
+   ],
+   "lead": 0.6,
+   "gap": 0.0,
+   "tail": 3.0
+  },
+  {
+   "id": "v8rule",
+   "clips": [
+    "rule8"
+   ],
+   "lead": 0.8,
+   "gap": 0.0,
+   "tail": 3.2
+  },
+  {
+   "id": "v8run",
+   "clips": [
+    "rC1",
+    "rF1",
+    "rC2",
+    "rF2"
+   ],
+   "lead": 0.8,
+   "gap": 1.1,
+   "tail": 2.8
+  },
+  {
+   "id": "v8q1",
+   "clips": [
+    "yourturn8",
+    "aC1"
+   ],
+   "lead": 0.5,
+   "gap": 5.4,
+   "tail": 2.4
+  },
+  {
+   "id": "v8q2",
+   "clips": [
+    "whereF",
+    "aF"
+   ],
+   "lead": 0.5,
+   "gap": 5.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v8q3",
+   "clips": [
+    "whereC2",
+    "aC2",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 5.0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro8",
+   "clips": [
+    "game1",
+    "game8",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "cOnly",
+   "off": -0.25,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "c5"
+   ],
+   "step": 1.4,
+   "clip": "everyC",
+   "off": 0.5,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "fOnly",
+   "off": -0.25,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4",
+    "f5"
+   ],
+   "step": 1.4,
+   "clip": "everyF",
+   "off": 0.5,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "rC1",
+   "off": -0.25,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "rF1",
+   "off": -0.25,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c5"
+   ],
+   "step": 1.0,
+   "clip": "rC2",
+   "off": -0.25,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f5"
+   ],
+   "step": 1.0,
+   "clip": "rF2",
+   "off": -0.25,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "aC1",
+   "off": -0.2,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "aF",
+   "off": -0.2,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "c5"
+   ],
+   "step": 0.35,
+   "clip": "aC2",
+   "off": -0.2,
+   "vol": 0.5,
+   "dur": 1.4
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "from": "end",
+   "off": 0.05
+  }
+ ],
+ "gapOverride": {
+  "lA": 1.0,
+  "qwell": 0.9
+ }
+}
