@@ -60,10 +60,18 @@
             },
             {
                 title: "C Hunt",
-                description: "Track down every hiding C on the keyboard before the clock runs out on the hardest stage!",
+                description: "Find C (just below a group of two black keys) and F (just below a group of three) on the keyboard.",
                 emoji: "🔍",
                 color: "#84cc16", // Lime accent
                 file: "c_hunt.html",
+                comingSoon: false
+            },
+            {
+                title: "Octave Hunt",
+                description: "Find every C and every F on the keyboard, then spot the octaves between them: the same note, higher and lower.",
+                emoji: "🎼",
+                color: "#0d9488", // Teal accent (the C colour in the videos)
+                file: "octave_hunt.html",
                 comingSoon: false
             },
             {
