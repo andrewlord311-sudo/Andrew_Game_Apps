@@ -159,6 +159,8 @@ for r in script.get('events', []):
     else: ev(r['kind'], base + r.get('off', 0), **extra)
 for e in events:
     k = e['kind']
+    if k == 'tone' and script.get('pianoTones') and e.get('f') and __import__('re').match(r'^[a-g]s?\d$', e['f']):   # an old synthetic tone event, played as a real piano note instead
+        put(mix, e['at'], piano(e['f'], 1.2, 0.45), 1.0); continue
     sig = {'whoosh': whoosh, 'tick': tick, 'pop': pop, 'sparkle': sparkle, 'slide': lambda: slide(e.get('dur', 3.4)), 'pno': lambda: piano(e['note'], e.get('dur', 1.8), e.get('vol', 0.5))}.get(k, lambda: tone(FREQ.get(e.get('f'), 440), 0.9 if e.get('f') not in ('c3','g3') else 1.3, 0.2 if e.get('f') in ('c3','g3') else 0.13))()
     put(mix, e['at'], sig, 1.0)
 
