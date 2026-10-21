@@ -877,6 +877,106 @@ S.outro7=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game7','left')-0.2;this.h.forEach((d,i)=>{const q=prog(t,t0+i*0.3,0.5);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`${i?150:-150}px ${q>=1?-Math.abs(Math.sin((t-t0)*3+i))*8:0}px`})}});
 
 // ---------------------------------------------------------------- engine
+// ======================================================================== VIDEO 8: finding C and F
+// The same two-octave keyboard. C is the white key just below (to the lower side of) a group of two black keys, F just below a group of three.
+// Black-key groups, by index into GRP: 0 and 2 are twos (C is white key 0 and 7), 1 and 3 are threes (F is white key 3 and 10).
+// A big letter badge lands on the key just before it is spoken and then STAYS; a down-arrow shows which key is meant.
+const WKX=i=>KB.x0+i*KB.w;
+const CF={0:{l:'C',gi:0},7:{l:'C',gi:2},3:{l:'F',gi:1},10:{l:'F',gi:3}};
+const TINT=['#5eead4','#f9a8d4','#5eead4','#f9a8d4'];
+const arrowSvg=col=>`<svg viewBox="0 0 40 140" width="40" style="overflow:visible"><path d="M20 6 L20 98" stroke="${col}" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M2 84 L20 128 L38 84Z" fill="${col}" stroke="#fff" stroke-width="3" stroke-linejoin="round"/></svg>`;
+function kb8Build(self,r){const K=kbBuild(r);K.cf={};
+  Object.keys(CF).forEach(k=>{const {l,gi}=CF[k];
+    const b=document.createElement('div');b.className='big abs';b.style.cssText=`left:${WKX(k)+(KB.w-3)/2-31}px;top:${KB.top+KB.h-94}px;width:62px;height:62px;border-radius:50%;background:${GCOL[gi]};color:#fff;font-size:42px;line-height:64px;box-shadow:0 5px 0 rgba(0,0,0,.2);border:4px solid #fff;opacity:0`;b.textContent=l;K.root.appendChild(b);
+    const a=document.createElement('div');a.className='abs';a.style.cssText=`left:${WKX(k)+(KB.w-3)/2-28}px;top:${KB.top+24}px;width:40px;opacity:0`;a.innerHTML=arrowSvg(GCOL[gi]);K.root.appendChild(a);
+    K.cf[k]={b,a}});
+  self.K=K;return K}
+// items[key] = {b: time the badge lands, a: time the arrow starts, aEnd: when it goes, p: key starts to glow, keep: key stays tinted, m: a bump, op: opacity}
+function cfPaint(K,t,items){
+  Object.keys(CF).forEach(k=>{const it=items[k],e=K.cf[k],gi=CF[k].gi;
+    if(!it){e.b.style.opacity='0';e.a.style.opacity='0';return}
+    const pb=prog(t,it.b??1e9,0.35),op=it.op??1,bump=it.m!=null&&t>=it.m?0.2*Math.max(0,1-(t-it.m)/0.55):0;
+    e.b.style.opacity=String(clamp(pb*2)*op);e.b.style.scale=String(lerp(0.3,1,easeBack(pb))*(1+bump));
+    const pa=prog(t,it.a??1e9,0.3),gone=it.aEnd!=null?prog(t,it.aEnd,0.4):0;
+    e.a.style.opacity=String(clamp(pa*2)*(1-gone));e.a.style.translate=`0 ${it.a!=null?Math.sin(Math.max(0,t-it.a)*6)*7:0}px`;
+    if(it.p!=null&&t>=it.p){const ph=pulse6(t,it.p),k0=it.keep?0.4+0.3*(t<it.p+3?ph:0):ph*0.85;K.whites[k].style.background=mixHex('#f8fafc',TINT[gi],k0)}});}
+const v8s=()=>({lit:{},dim:{},badge:{},br:[],cf:{}});
+function v8on(s,gi,tm,numbers,op=1){GRP[gi].forEach(k=>{s.lit[k]=GCOL[gi];if(numbers)s.badge[k]=tm});s.br[gi]=[tm,op]}
+function v8dim(s,keep){GRP.forEach((g,gi)=>{if(!keep.includes(gi))g.forEach(k=>{s.dim[k]=true})})}
+function v8kb(f){return {ui:V6UI,build(r){kb8Build(this,r);if(f.build)f.build.call(this,r)},update(t,L,c){const K=this.K;kbIn(K,L);const s=v8s();f.state.call(this,s,t,L);
+  kbPaint(K,{whiteBg:'#f8fafc',lit:s.lit,dim:s.dim});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+  if(s.amber)K.blacks.forEach((b,k)=>{const ph=s.amber(k);if(ph>0){b.style.background=mixHex('#241f3d','#f59e0b',ph);b.style.boxShadow=`0 0 0 ${1+3*ph}px rgba(245,158,11,${.35+.5*ph}),0 6px 0 rgba(0,0,0,.25)`}});
+  kbBadgesBrackets(K,t,{badge:s.badge,br:s.br,badgeOp:s.badgeOp});cfPaint(K,t,s.cf);
+  if(s.cap)c.caption(s.cap[0],s.cap[1],s.cap[2]);if(f.after)f.after.call(this,t,L,K,s)}}}
+
+// "Look at the black keys on the piano… They come in groups of two… and three."
+S.v8look=v8kb({state(s,t){const tl=wt('look8a','black')-0.1,t2=wt('look8b','two')-0.1,t3=wt('look8b','three')-0.15;
+  if(t>=tl&&t<t2){const ph=pulse6(t,tl);s.amber=()=>ph}
+  if(t>=t2){v8on(s,0,t2,true);v8on(s,2,t2+0.25,true)}
+  if(t>=t3){v8on(s,1,t3,true);v8on(s,3,t3+0.25,true)}
+  s.cap=t>=t3?['GROUPS OF 2 AND 3','var(--orange)',t3]:t>=t2?['GROUPS OF 2','#0d9488',t2]:null}});
+
+// "Piano keys are named with just seven letters… A, B, C, D, E, F, G."  (the letters reuse video 3's recordings)
+S.v8seven={ui:V6UI,build(r){
+  this.t=['A','B','C','D','E','F','G'].map((l,i)=>{const d=document.createElement('div');d.className='big abs';
+    d.style.cssText=`left:${119+i*152}px;top:300px;width:130px;height:150px;border-radius:30px;background:#fff;color:var(--barnaby);font-size:104px;line-height:150px;box-shadow:0 9px 0 rgba(0,0,0,.13);opacity:0`;d.textContent=l;r.appendChild(d);return d})},
+  update(t,L,c){const ids=['lA','lB','lC','lD','lE','lF','lG'];
+   this.t.forEach((d,i)=>{const ts=CL[ids[i]].start-0.15,p=prog(t,ts,0.4),sp=t>=CL[ids[i]].start-0.05&&t<CL[ids[i]].end+0.4?1:0;
+    d.style.opacity=String(clamp(p*2));d.style.scale=String(lerp(0.3,1,easeBack(p))*(1+0.1*sp));d.style.background=sp?'#ede9fe':'#fff'});
+   const tw=wt('seven8','seven')-0.1;if(t>=tw)c.caption('SEVEN LETTERS','var(--barnaby)',tw)}};
+
+// the first group of two / three: the group lights up, an arrow points at the white key just below it, the badge lands and STAYS
+function v8first(gi,key,lookClip,lookWord,belowClip,letClip,rule){return v8kb({state(s,t){
+  const tl=wt(lookClip,lookWord)-0.1,ta=wt(belowClip,'below')-0.1,tb=CL[letClip].start-0.25;
+  if(gi===1){v8on(s,0,-1,false,0.4);v8on(s,2,-1,false,0.4);s.cf[0]={b:-1,op:0.5};s.cf[7]={b:-1,op:0.5};v8dim(s,[0,1,2])}else v8dim(s,[gi]);
+  if(t>=tl)v8on(s,gi,tl,false);
+  s.cf[key]=Object.assign(s.cf[key]||{},{b:tb,a:ta,aEnd:tb+1.8,p:ta,keep:true});
+  s.cap=t>=tb?[rule,GCOL[gi],tb]:t>=tl?[gi===0?'A GROUP OF 2':'A GROUP OF 3',GCOL[gi],tl]:null;
+  if(gi===1){const e=s.cf[0];if(t<tl){s.br[0]=[-1,0.4];s.br[2]=[-1,0.4]}}}})}
+S.v8c1=v8first(0,0,'lookTwo','two','belowC','cOnly','JUST BELOW 2 = C');
+S.v8f1=v8first(1,3,'lookThree','three','belowF','fOnly','JUST BELOW 3 = F');
+
+// "Every group of two has a C sitting just below it": both groups pulse in turn, a C lands on the second and both stay
+function v8every(kind,clip){const f=kind==='C',gA=f?0:1,gB=f?2:3,kA=f?0:3,kB=f?7:10,ch=f?'C':'F';
+  return v8kb({state(s,t){const T0=CL[clip].start+0.5,T1=CL[clip].start+1.9;
+    if(!f){v8on(s,0,-1,false,0.4);v8on(s,2,-1,false,0.4);s.cf[0]={b:-1,op:0.5};s.cf[7]={b:-1,op:0.5}}
+    if(f)v8dim(s,[0,2]);v8on(s,gA,-1,false);s.cf[kA]={b:-1,m:T0,p:T0,keep:true};
+    if(t>=T1){v8on(s,gB,T1,false);s.cf[kB]={b:T1+0.1,a:T1-0.4,aEnd:T1+1.6,p:T1,keep:true,m:T1+0.5}}else if(t>=T0-0.4){s.cf[kB]=undefined}
+    const ph=t>=T0&&t<T1?pulse6(t,T0):0;
+    s.cap=[f?'EVERY GROUP OF 2 HAS A C':'EVERY GROUP OF 3 HAS AN F',GCOL[gA],CL[clip].start+0.3]}})}
+S.v8c2=v8every('C','everyC');S.v8f2=v8every('F','everyF');
+
+// "Just below two is C. … Just below three is F."
+S.v8rule=v8kb({build(r){this.c1=labelChip(r,'just below 2 = C','#0d9488',330,522,40);this.c2=labelChip(r,'just below 3 = F','#db2777',950,522,40)},
+  state(s,t){const t2=wt('rule8','two')-0.1,t3=wt('rule8','three')-0.1;
+   GRP.forEach((g,gi)=>v8on(s,gi,-1,false));
+   s.cf[0]={b:-1,m:t2};s.cf[7]={b:-1,m:t2+0.3};s.cf[3]={b:-1,m:t3};s.cf[10]={b:-1,m:t3+0.3};s.br=[]},
+  after(t,L,K,s){const t2=wt('rule8','two')-0.1,t3=wt('rule8','three')-0.1;pop(this.c1,t,t2,0.45);pop(this.c2,t,t3,0.45)}});
+
+// "C… F… C… F." each letter lights its key, in order, and stays
+S.v8run=v8kb({state(s,t){const ids=['rC1','rF1','rC2','rF2'],keys=[0,3,7,10],gs=[0,1,2,3];let n=0;
+  ids.forEach((id,i)=>{const tk=CL[id].start-0.25;if(t>=tk){n++;v8on(s,gs[i],tk,false);s.cf[keys[i]]={b:tk,p:tk,keep:true,m:tk}}});
+  GRP.forEach((g,gi)=>{if(!s.lit[g[0]])g.forEach(k=>{s.dim[k]=false})});
+  s.cap=n?[['C','C  F','C  F  C','C  F  C  F'][n-1],'var(--orange)',CL[ids[0]].start-0.25]:null}});
+
+// the quiz: the letters are hidden again; the group(s) glow amber for a few seconds, a ?, then the badge lands with a tick
+function v8quiz(gs,keys,ans,mixed){return v8kb({build(r){
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+  if(mixed){this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})}},
+  state(s,t){const ta=CL[ans].start-0.2,t1=ta-4.2;
+   if(!mixed)v8dim(s,gs);
+   if(t>=t1)gs.forEach(gi=>{GRP[gi].forEach(k=>{s.lit[k]=t>=ta?GCOL[gi]:'#f59e0b'});s.br[gi]=[t>=ta?ta:null,1]});
+   if(t>=ta)keys.forEach((k,i)=>{s.cf[k]={b:ta+0.35*i,p:ta+0.35*i,keep:true}});
+   const l=CF[keys[0]].l;s.cap=t>=ta?[mixed?'C ✓  C ✓':`${l} ✓`,GCOL[CF[keys[0]].gi],ta]:null;this.t1=t1;this.ta=ta},
+  after(t,L,K,s){const th=t>=this.t1+0.6&&t<this.ta;this.q.style.opacity=String(th?clamp(prog(t,this.t1+0.6,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+   if(this.conf){const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}}})}
+S.v8q1=v8quiz([0],[0],'aC1',false);S.v8q2=v8quiz([1],[3],'aF',false);S.v8q3=v8quiz([0,1,2,3],[0,7],'aC2',true);
+
+S.outro8=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.ch=[['C',GCOL[0]],['F',GCOL[1]],['C',GCOL[0]],['F',GCOL[1]]].map(([tx,col],i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${454+i*100}px;top:300px;width:78px;height:78px;border-radius:50%;background:${col};color:#fff;font-family:'Fredoka One';font-size:48px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;d.textContent=tx;r.appendChild(d);return d});
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game8','find')-0.3;this.ch.forEach((d,i)=>{const q=prog(t,t0+i*0.18,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3+i*0.8))*8:0}px`})}});
+
 const ctxHelpers={caption(text,color,t0,side){C.text=text;C.color=color;C.t0=t0;C.side=side||''}};
 const C={text:'',color:'#241f3d',t0:0,last:'',side:''};
 let prevLayout=HOSTS.open,curLayout=HOSTS.open,layoutT0=0,curScene=null;
@@ -919,7 +1019,7 @@ function renderAt(t){
     else if(sp&&sp.id==='well') pose='cheer';
     else if(sc.id==='v5march'||sc.id==='v5clap') pose=pulse(['main'],t,9)>0.3?'cheer':'idle';
     else if(sc.id==='v5heart') pose='idle';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
