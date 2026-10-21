@@ -24,20 +24,6 @@
  ],
  "clips": [
   {
-   "id": "look8a",
-   "who": "melody",
-   "text": "Look at the black keys <break time=\"0.3s\" /> on the piano.",
-   "show": "Look at the black keys on the piano.",
-   "speed": 0.88
-  },
-  {
-   "id": "look8b",
-   "who": "melody",
-   "text": "They come in groups of two, <break time=\"0.5s\" /> and three.",
-   "show": "They come in groups of two… and three.",
-   "speed": 0.85
-  },
-  {
    "id": "today",
    "who": "barnaby",
    "text": "Today <break time=\"0.3s\" /> we are going to find <break time=\"0.4s\" /> C <break time=\"0.3s\" /> and F.",
@@ -269,16 +255,6 @@
    "lead": 0.8,
    "gap": 0.0,
    "tail": 0.8
-  },
-  {
-   "id": "v8look",
-   "clips": [
-    "look8a",
-    "look8b"
-   ],
-   "lead": 0.6,
-   "gap": 1.0,
-   "tail": 2.6
   },
   {
    "id": "today",
