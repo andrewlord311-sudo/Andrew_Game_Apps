@@ -23,7 +23,7 @@ videos. Plain HTML and JavaScript, published straight to GitHub Pages.
 Note reading and keyboard orientation, mostly: `stave_explorer_game`,
 `line_and_space_safari`, `clef_detective`, `space_face`, `face_finder`,
 `moo_clef`, `moo_keys`, `higher_lower_same`, `black_key_patterns`,
-`c_hunt`, `alphabet_elevator`, `finger_numbers`, `name_that_part`,
+`c_hunt`, `octave_hunt`, `alphabet_elevator`, `finger_numbers`, `name_that_part`,
 `meet_the_mascots`.
 
 Shared behaviour lives in `game-progress.js` (progress), `reward-system.js`
