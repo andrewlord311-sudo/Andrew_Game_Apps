@@ -1,0 +1,73 @@
+1
+00:00:00,800 --> 00:00:04,629
+Welcome to Melody and
+Barnaby's Music Nuggets!
+
+2
+00:00:05,729 --> 00:00:09,698
+Last time, we met the stave.
+
+3
+00:00:12,498 --> 00:00:16,420
+Today we are going to
+find out where notes live.
+
+4
+00:00:18,520 --> 00:00:21,090
+The stave has five lines.
+
+5
+00:00:21,140 --> 00:00:24,240
+The gaps between them are spaces.
+
+6
+00:00:24,290 --> 00:00:28,201
+Five lines, and four spaces!
+
+7
+00:00:30,501 --> 00:00:36,281
+If the line goes right through the middle
+of the note, the note is on a line.
+
+8
+00:00:37,581 --> 00:00:42,479
+If the note sits snug between
+two lines, it is in a space.
+
+9
+00:00:43,779 --> 00:00:45,054
+Let's try!
+
+10
+00:00:45,554 --> 00:00:46,754
+Line.
+
+11
+00:00:47,336 --> 00:00:48,536
+Space.
+
+12
+00:00:48,979 --> 00:00:50,208
+Space.
+
+13
+00:00:50,808 --> 00:00:52,008
+Line.
+
+14
+00:00:52,251 --> 00:00:53,573
+You've got it!
+
+15
+00:00:54,873 --> 00:00:56,334
+Now it's your turn!
+
+16
+00:00:56,434 --> 00:01:02,632
+Come and help the animals find their
+homes in Line and Space Safari!
+
+17
+00:01:02,732 --> 00:01:05,122
+See you for the next Nugget!
+
