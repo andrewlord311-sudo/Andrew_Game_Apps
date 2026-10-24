@@ -1,0 +1,30 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Fredoka One';src:url(../music/fonts/fredoka-one.woff2)}
+@font-face{font-family:'Quicksand';src:url(../music/fonts/quicksand.woff2)}
+body{margin:0}
+.pic{width:800px;height:800px;border-radius:0;background:radial-gradient(circle at 50% 40%,#fef3c7 0%,#bae6fd 100%);position:relative;overflow:hidden}
+.pic .m{position:absolute;left:130px;bottom:190px;width:270px}.pic .b{position:absolute;right:120px;bottom:190px;width:280px}
+.pic .n{position:absolute;left:0;right:0;bottom:118px;text-align:center;font-family:'Fredoka One';font-size:50px;color:#ea580c;letter-spacing:2px}
+.pic .notes{position:absolute;left:0;right:0;top:110px;text-align:center;font-size:90px;color:#241f3d;opacity:.85}
+.ban{width:2560px;height:1440px;background:radial-gradient(circle at 50% 50%,#fef3c7 0%,#bae6fd 70%,#a5d8ff 100%);position:relative;overflow:hidden;font-family:'Fredoka One'}
+.safe{position:absolute;left:507px;top:508px;width:1546px;height:423px;display:flex;align-items:center;justify-content:center;gap:40px}
+.safe .m{width:300px;margin-top:40px}.safe .b{width:310px;margin-top:40px}
+.t{text-align:center;color:#241f3d;line-height:1}
+.t .a{font-size:76px}.t .c{font-size:112px;color:#ea580c}.t .s{font-family:Quicksand;font-weight:700;font-size:34px;margin-top:14px;color:#334155;white-space:nowrap}
+.fl{position:absolute;font-size:120px;color:rgba(36,31,61,.13)}
+.st{position:absolute;left:0;right:0;height:6px;background:rgba(36,31,61,.12)}
+</style></head><body>
+<div id="pic" class="pic"><div class="notes">♪ ♫ ♪</div><div class="m" id="pm"></div><div class="b" id="pb"></div><div class="n">MUSIC NUGGETS</div></div>
+<div id="ban" class="ban"></div>
+<script src="../music/mascots.js"></script>
+<script>
+document.getElementById('pm').innerHTML=MASCOTS.melody({pose:'wave'});
+document.getElementById('pb').innerHTML=MASCOTS.barnaby({pose:'waveL'});
+const ban=document.getElementById('ban');
+for(let k=0;k<5;k++){const s=document.createElement('div');s.className='st';s.style.top=(1000+k*34)+'px';ban.appendChild(s)}
+const glyphs=['♪','♫','♩','♬'];for(let i=0;i<40;i++){const x=(i*347)%2480,y=(i*211)%1360;if(x>380&&x<2100&&y>380&&y<1000)continue;const f=document.createElement('div');f.className='fl';f.textContent=glyphs[i%4];f.style.left=x+'px';f.style.top=y+'px';ban.appendChild(f)}
+const safe=document.createElement('div');safe.className='safe';
+safe.innerHTML=`<div class="m">${MASCOTS.melody({pose:'wave'})}</div><div class="t"><div class="a">Melody &amp; Barnaby's</div><div class="c">Music Nuggets</div><div class="s">Learn to read music, one little nugget at a time</div></div><div class="b">${MASCOTS.barnaby({pose:'waveL'})}</div>`;
+ban.appendChild(safe);window.READY=true;
+</script></body></html>
