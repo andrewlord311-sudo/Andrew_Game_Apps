@@ -747,7 +747,7 @@
 
         // Initialize App on load
         // set to the video's address once it is published, and a "Watch the video" link appears
-        const VIDEO_URL = '';
+        const VIDEO_URL = 'https://youtu.be/Ngp-1WmKWgo';
         document.addEventListener('DOMContentLoaded', async () => {
             if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Where notes live'; document.getElementById('game-card').appendChild(a); }
             // Load the music-glyph font explicitly via the FontFace API rather than
