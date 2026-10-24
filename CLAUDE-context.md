@@ -1,6 +1,6 @@
 # Context for Claude -- Andrew_Game_Apps
 
-_Copied from Claude's memory on Andrew's Mac, 10 October 2026, by `vault-tools/sync-claude-context.py`. Don't edit by hand -- it's regenerated._
+_Copied from Claude's memory on Andrew's Mac, 24 October 2026, by `vault-tools/sync-claude-context.py`. Don't edit by hand -- it's regenerated._
 
 ## About Andrew
 
@@ -141,6 +141,11 @@ plus the paused `Characters.md` (mascot art pipeline). `Project Index.md`'s
 **10 Oct 2026: all four launch pairs passed by Andrew** (video 4 + Higher Lower Same with the 1st→2nd note arrow). Remaining = launch admin: create channel (Andrew), upload, VIDEO_URL in each game, PUBLISHED list in arcade-core.js, factory-line answer.
 
 **Upload route (10 Oct 2026): Claude uploads via YouTube Studio in Andrew's Chrome (Claude in Chrome), per-batch go-ahead.** Do NOT use the YouTube Data API for uploads: unaudited projects created after 28 Jul 2020 get videos locked private (audit needed). Read-only stats via API are OK - set up nearer launch.
+
+**11.10.26 — Video 5 "Feel the Beat" silent preview built** (Andrew_Game_Apps `video-pipeline/v2/script_video5.json`, commit in repo). Engine additions for rhythm: scene `grid` (spoken counts land exactly on beats — clip start = beat − first-word onset), script `beats` tracks (drum/step/clap/heart sounds + TL.beats the page draws pulses from), scenes v5heart/drum/count/march/clap/tempo/quiz. Counts are separate quiet clips c1–c4 reused via `src`. 130 s (longer than 1–4); NOT voiced yet; game = Beat Tapper (not built).
+**Video 5 revised 11.10.26** after Andrew: one continuous 80 bpm `master` beat from the heartbeat scene to the end of the clap scene (script `master` block; `build_timeline.py` snaps grid counts onto it; engine `#lamp` drum pulses across scene changes) and quiz examples doubled (9 / 11 uneven / 16 beats). Now 140 s, still unvoiced.
+**Video 5 VOICED 11.10.26** (862 chars: 737 + 125 re-record of `today`/`clapl`): `videos/video5_feel_the_beat.mp4` 149.9 s, audio committed. Counts locked to the beat by measured audio energy onset (whisper can't time bare numbers) — within 1 ms. pacing_check's count 'gaps' are file-edge false alarms (each count ~0.3 s of speech, ~0.45 s silence). Quiz scenes are 16 s by Andrew's request (doubled). Credits ~4,800. Next: Beat Tapper game, then Andrew checks it.
+**Beat Tapper built 11.10.26** (`music/beat_tapper.html`, commit in Andrew_Game_Apps; arcade list yes, `PUBLISHED` no; `VIDEO_URL` empty): 3 stages = tap along (rolling 80 bpm drum, a bar passes at ≥3/4 taps within ±200 ms) / keep it going (drum stops after 4 beats, hint light optional) / steady or wobbly (video quiz; hearts only here). Web Audio synth drum + 'tock' for the child's taps. Browser tests: `/tmp`-style playwright robot (tap in time → 8 bars → stage complete; silent & mashing → 0; stage 3 right/wrong). Gotcha fixed: Tailwind `active:translate-y-*` overrides `-translate-y-1/2` so a centred button jumped away on press — never combine them. Video 5 approved by Andrew.
 
 ## Memory: project-nugget-video-template
 
