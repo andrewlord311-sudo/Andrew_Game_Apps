@@ -492,7 +492,7 @@
         }
 
         // set to the video's address once it is published, and a "Watch the video" link appears
-        const VIDEO_URL = '';
+        const VIDEO_URL = 'https://youtu.be/grovb5cDimM';
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: The music alphabet'; document.getElementById('game-card').appendChild(a); }
