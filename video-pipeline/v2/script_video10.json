@@ -1,0 +1,562 @@
+{
+ "title": "bars",
+ "titleAt": "bars",
+ "nugget": 10,
+ "game": "Fill the Bar",
+ "gameFile": "fill_the_bar.html",
+ "todayLead": "Today we are going to learn about",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> learn about bars.",
+   "speed": 0.88,
+   "show": "Today we are going to learn about bars."
+  },
+  {
+   "id": "steady10",
+   "who": "melody",
+   "text": "Remember the beat? <break time=\"0.5s\" /> Music has a steady beat.",
+   "speed": 0.88,
+   "show": "Remember the beat? Music has a steady beat."
+  },
+  {
+   "id": "letscount",
+   "who": "barnaby",
+   "text": "Let's count the beat.",
+   "speed": 0.88,
+   "src": "../video5/letscount"
+  },
+  {
+   "id": "c1",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "../video5/c1"
+  },
+  {
+   "id": "c2",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "../video5/c2"
+  },
+  {
+   "id": "c3",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "../video5/c3"
+  },
+  {
+   "id": "c4",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "../video5/c4"
+  },
+  {
+   "id": "c5",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "../video5/c1"
+  },
+  {
+   "id": "c6",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "../video5/c2"
+  },
+  {
+   "id": "c7",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "../video5/c3"
+  },
+  {
+   "id": "c8",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "../video5/c4"
+  },
+  {
+   "id": "fourthen",
+   "who": "melody",
+   "text": "We count to four, <break time=\"0.5s\" /> and then start again.",
+   "speed": 0.88,
+   "show": "We count to four, and then start again."
+  },
+  {
+   "id": "drawline",
+   "who": "barnaby",
+   "text": "Let's draw a line <break time=\"0.5s\" /> after every four beats.",
+   "speed": 0.88,
+   "show": "Let's draw a line after every four beats."
+  },
+  {
+   "id": "barlineIs",
+   "who": "melody",
+   "text": "This is called <break time=\"0.5s\" /> a bar line.",
+   "speed": 0.88,
+   "show": "This is called a bar line."
+  },
+  {
+   "id": "barIs",
+   "who": "barnaby",
+   "text": "The space between two bar lines <break time=\"0.5s\" /> is a bar.",
+   "speed": 0.88,
+   "show": "The space between two bar lines is a bar."
+  },
+  {
+   "id": "american",
+   "who": "melody",
+   "text": "In America, <break time=\"0.4s\" /> a bar is called a measure.",
+   "speed": 0.88,
+   "show": "In America, a bar is called a measure."
+  },
+  {
+   "id": "same10",
+   "who": "barnaby",
+   "text": "Bar, <break time=\"0.5s\" /> or measure. <break time=\"0.5s\" /> They mean the same thing.",
+   "speed": 0.88,
+   "show": "Bar, or measure. They mean the same thing."
+  },
+  {
+   "id": "everybar",
+   "who": "melody",
+   "text": "Every bar <break time=\"0.5s\" /> has four beats.",
+   "speed": 0.88,
+   "show": "Every bar has four beats."
+  },
+  {
+   "id": "everymeasure",
+   "who": "barnaby",
+   "text": "Every measure <break time=\"0.5s\" /> has four beats too.",
+   "speed": 0.88,
+   "show": "Every measure has four beats too."
+  },
+  {
+   "id": "remstave",
+   "who": "melody",
+   "text": "Remember the stave? <break time=\"0.6s\" /> Five lines.",
+   "speed": 0.88,
+   "show": "Remember the stave? Five lines."
+  },
+  {
+   "id": "twonum",
+   "who": "barnaby",
+   "text": "At the start of the music, <break time=\"0.5s\" /> there are two numbers.",
+   "speed": 0.88,
+   "show": "At the start of the music, there are two numbers."
+  },
+  {
+   "id": "tsname",
+   "who": "melody",
+   "text": "They are called <break time=\"0.5s\" /> the time signature.",
+   "speed": 0.88,
+   "show": "They are called the time signature."
+  },
+  {
+   "id": "topnum",
+   "who": "barnaby",
+   "text": "The top number says <break time=\"0.5s\" /> four beats in every bar.",
+   "speed": 0.88,
+   "show": "The top number says four beats in every bar."
+  },
+  {
+   "id": "morelater",
+   "who": "melody",
+   "text": "We will learn more <break time=\"0.5s\" /> about it later.",
+   "speed": 0.88,
+   "show": "We will learn more about it later."
+  },
+  {
+   "id": "clapwith",
+   "who": "barnaby",
+   "text": "Clap with me!",
+   "speed": 0.88
+  },
+  {
+   "id": "k1",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "../video5/c1"
+  },
+  {
+   "id": "k2",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "../video5/c2"
+  },
+  {
+   "id": "k3",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "../video5/c3"
+  },
+  {
+   "id": "k4",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "../video5/c4"
+  },
+  {
+   "id": "k5",
+   "who": "melody",
+   "text": "One.",
+   "quiet": true,
+   "src": "../video5/c1"
+  },
+  {
+   "id": "k6",
+   "who": "melody",
+   "text": "Two.",
+   "quiet": true,
+   "src": "../video5/c2"
+  },
+  {
+   "id": "k7",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "src": "../video5/c3"
+  },
+  {
+   "id": "k8",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "../video5/c4"
+  },
+  {
+   "id": "yourturn10",
+   "who": "barnaby",
+   "text": "Your turn! <break time=\"0.4s\" /> Look at the bars.",
+   "speed": 0.88,
+   "show": "Your turn! Look at the bars."
+  },
+  {
+   "id": "q1ask",
+   "who": "melody",
+   "text": "How many beats <break time=\"0.4s\" /> in this bar?",
+   "speed": 0.88,
+   "show": "How many beats in this bar?"
+  },
+  {
+   "id": "a1",
+   "who": "melody",
+   "text": "Four.",
+   "quiet": true,
+   "src": "../video5/c4"
+  },
+  {
+   "id": "q2ask",
+   "who": "melody",
+   "text": "Is this measure full?",
+   "speed": 0.88
+  },
+  {
+   "id": "a2",
+   "who": "barnaby",
+   "text": "No! <break time=\"0.4s\" /> One beat is missing.",
+   "speed": 0.85,
+   "show": "No! One beat is missing."
+  },
+  {
+   "id": "q3ask",
+   "who": "barnaby",
+   "text": "How many bars, <break time=\"0.3s\" /> or measures?",
+   "speed": 0.88,
+   "show": "How many bars, or measures?"
+  },
+  {
+   "id": "a3",
+   "who": "melody",
+   "text": "Three.",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "How many bars, or measures?"
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "src": "../video2/qwell"
+  },
+  {
+   "id": "game10",
+   "who": "barnaby",
+   "text": "Play Fill the Bar, <break time=\"0.3s\" /> and give every bar four beats!",
+   "speed": 0.88,
+   "show": "Play Fill the Bar, and give every bar four beats!"
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0,
+   "tail": 0.8
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.8
+  },
+  {
+   "id": "v10beat",
+   "clips": [
+    "steady10"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.2
+  },
+  {
+   "id": "v10count",
+   "clips": [
+    "letscount",
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "c5",
+    "c6",
+    "c7",
+    "c8"
+   ],
+   "lead": 0.6,
+   "gap": 0.8,
+   "tail": 1.8,
+   "grid": {
+    "period": 0.75,
+    "from": 1
+   }
+  },
+  {
+   "id": "v10four",
+   "clips": [
+    "fourthen"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.6
+  },
+  {
+   "id": "v10line",
+   "clips": [
+    "drawline",
+    "barlineIs"
+   ],
+   "lead": 0.5,
+   "gap": 0.8,
+   "tail": 2.4
+  },
+  {
+   "id": "v10bar",
+   "clips": [
+    "barIs"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.8
+  },
+  {
+   "id": "v10measure",
+   "clips": [
+    "american",
+    "same10"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.6
+  },
+  {
+   "id": "v10fourbeats",
+   "clips": [
+    "everybar",
+    "everymeasure"
+   ],
+   "lead": 0.5,
+   "gap": 2.4,
+   "tail": 2.8
+  },
+  {
+   "id": "v10stave",
+   "clips": [
+    "remstave"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.8
+  },
+  {
+   "id": "v10ts1",
+   "clips": [
+    "twonum",
+    "tsname"
+   ],
+   "lead": 0.5,
+   "gap": 0.8,
+   "tail": 2.0
+  },
+  {
+   "id": "v10ts2",
+   "clips": [
+    "topnum",
+    "morelater"
+   ],
+   "lead": 0.5,
+   "gap": 0.8,
+   "tail": 2.4
+  },
+  {
+   "id": "v10clap",
+   "clips": [
+    "clapwith",
+    "k1",
+    "k2",
+    "k3",
+    "k4",
+    "k5",
+    "k6",
+    "k7",
+    "k8"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 1.8,
+   "grid": {
+    "period": 0.75,
+    "from": 1
+   }
+  },
+  {
+   "id": "v10q1",
+   "clips": [
+    "yourturn10",
+    "q1ask",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 1.6
+  },
+  {
+   "id": "v10q2",
+   "clips": [
+    "q2ask",
+    "a2"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.6
+  },
+  {
+   "id": "v10q3",
+   "clips": [
+    "q3ask",
+    "a3",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro10",
+   "clips": [
+    "game1",
+    "game10",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "tick",
+   "clip": "a1",
+   "off": -0.2
+  },
+  {
+   "kind": "pop",
+   "clip": "a2",
+   "off": -0.2
+  },
+  {
+   "kind": "tick",
+   "clip": "a3",
+   "off": -0.2
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "off": -0.1
+  }
+ ],
+ "beats": [],
+ "gapOverride": {
+  "q1ask": 0.8,
+  "a1": 4.6,
+  "a2": 4.4,
+  "a3": 4.4,
+  "qwell": 1.2
+ },
+ "master": {
+  "bpm": 80,
+  "from": {
+   "scene": "v10beat",
+   "off": 0.7
+  },
+  "to": "v10clap",
+  "under": 0.62,
+  "sounds": {
+   "v10beat": "drum",
+   "v10count": "drum",
+   "v10four": "drum",
+   "v10line": "drum",
+   "v10bar": "drum",
+   "v10measure": "drum",
+   "v10fourbeats": "drum",
+   "v10stave": "drum",
+   "v10ts1": "drum",
+   "v10ts2": "drum",
+   "v10clap": "clap"
+  }
+ }
+}
