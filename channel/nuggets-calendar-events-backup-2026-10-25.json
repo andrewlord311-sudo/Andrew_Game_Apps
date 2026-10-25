@@ -1,0 +1,802 @@
+[
+ {
+  "kind": "calendar#event",
+  "etag": "\"3584330886819998\"",
+  "id": "aroopit9onef1esvvo0lsrpb14",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=YXJvb3BpdDlvbmVmMWVzdnZvMGxzcnBiMTQgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:03.000Z",
+  "updated": "2026-10-16T15:44:03.409Z",
+  "summary": "🎵 Nuggets: Video 6 + game ready",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-17"
+  },
+  "end": {
+   "date": "2026-10-18"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "aroopit9onef1esvvo0lsrpb14@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3584646089158558\"",
+  "id": "0u260ahhjll3gmr29oiom30avs",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=MHUyNjBhaGhqbGwzZ21yMjlvaW9tMzBhdnMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:03.000Z",
+  "updated": "2026-10-18T11:30:44.579Z",
+  "summary": "🎵 Nuggets: Video 7 (Left, Right, Higher, Lower) + game ready",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-21"
+  },
+  "end": {
+   "date": "2026-10-22"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "0u260ahhjll3gmr29oiom30avs@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231253305086\"",
+  "id": "ugmk0kah2fn779ku5f40qeud28",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=dWdtazBrYWgyZm43NzlrdTVmNDBxZXVkMjggYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:04.000Z",
+  "updated": "2026-10-21T20:47:06.652Z",
+  "summary": "🎵 Nuggets: STRETCH: upload session (Claude uploads videos 1-4, and 5-9 too if time, in Chrome; schedules the whole run)",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-22"
+  },
+  "end": {
+   "date": "2026-10-23"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "ugmk0kah2fn779ku5f40qeud28@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3584646090377182\"",
+  "id": "bnsg1rabqqsee0klro1atmalio",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=Ym5zZzFyYWJxcXNlZTBrbHJvMWF0bWFsaW8gYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:04.000Z",
+  "updated": "2026-10-18T11:30:45.188Z",
+  "summary": "🎵 Nuggets: Video 8 (Finding C and F) + game ready",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-24"
+  },
+  "end": {
+   "date": "2026-10-25"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "bnsg1rabqqsee0klro1atmalio@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585235032781950\"",
+  "id": "p2pdfd8mhfmdafo6h41oa6vpjc",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=cDJwZGZkOG1oZm1kYWZvNmg0MW9hNnZwamMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:07.000Z",
+  "updated": "2026-10-21T21:18:36.390Z",
+  "summary": "🎵 Nuggets: STRETCH LAUNCH: videos 1 and 2 go live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-10-24T08:00:00+01:00",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-10-24T08:30:00+01:00",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "p2pdfd8mhfmdafo6h41oa6vpjc@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585235033353310\"",
+  "id": "p08d1jvsnpbj1lsd3bip9s5udo",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=cDA4ZDFqdnNucGJqMWxzZDNiaXA5czV1ZG8gYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-21T21:18:36.000Z",
+  "updated": "2026-10-21T21:18:36.676Z",
+  "summary": "🎵 Nuggets: STRETCH LAUNCH (part 2): videos 3 and 4 go live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-10-24T10:00:00+01:00",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-10-24T10:30:00+01:00",
+   "timeZone": "Europe/London"
+  },
+  "visibility": "private",
+  "iCalUID": "p08d1jvsnpbj1lsd3bip9s5udo@google.com",
+  "sequence": 0,
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585241246796766\"",
+  "id": "gssr6r78daaqc6at4mgbnnjna0",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=Z3NzcjZyNzhkYWFxYzZhdDRtZ2JubmpuYTAgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-21T22:10:23.000Z",
+  "updated": "2026-10-21T22:10:23.398Z",
+  "summary": "🎵 Nuggets: Wire up games 1-4 (ask Claude: fill VIDEO_URLs, add to PUBLISHED) once videos 3 and 4 are live",
+  "description": "Videos 1+2 go live 08:00, 3+4 at 10:00. Games: Name That Part, Line & Space Safari, Alphabet Elevator, Higher Lower or Same. YouTube addresses are in the Nuggets dashboard.",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-10-24T10:30:00+01:00",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-10-24T11:00:00+01:00",
+   "timeZone": "Europe/London"
+  },
+  "visibility": "private",
+  "iCalUID": "gssr6r78daaqc6at4mgbnnjna0@google.com",
+  "sequence": 0,
+  "reminders": {
+   "useDefault": false,
+   "overrides": [
+    {
+     "method": "popup",
+     "minutes": 0
+    }
+   ]
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231250202942\"",
+  "id": "f2r9cr8v6ijiedouoda8vuigf0",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=ZjJyOWNyOHY2aWppZWRvdW9kYTh2dWlnZjAgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:07.000Z",
+  "updated": "2026-10-21T20:47:05.101Z",
+  "summary": "🎵 Nuggets: Set up YouTube statistics access (one Allow)",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-27"
+  },
+  "end": {
+   "date": "2026-10-28"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "f2r9cr8v6ijiedouoda8vuigf0@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3584646091400062\"",
+  "id": "qpeme10bif624i3idb44e628gc",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=cXBlbWUxMGJpZjYyNGkzaWRiNDRlNjI4Z2MgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:05.000Z",
+  "updated": "2026-10-18T11:30:45.700Z",
+  "summary": "🎵 Nuggets: Video 9 (Octaves) + game ready",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-28"
+  },
+  "end": {
+   "date": "2026-10-29"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "qpeme10bif624i3idb44e628gc@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231240698366\"",
+  "id": "c835g13lbt28okd2rg38vkmlrg",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=YzgzNWcxM2xidDI4b2tkMnJnMzh2a21scmcgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:08.000Z",
+  "updated": "2026-10-21T20:47:00.349Z",
+  "summary": "🎵 Nuggets: Video 5 (Feel the Beat) goes live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby (if not launched on the stretch date 24 Oct, these release slots apply; if launched 24 Oct, releases move 2 weeks earlier)",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-10-28T15:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-10-28T15:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "c835g13lbt28okd2rg38vkmlrg@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3584646092456574\"",
+  "id": "a22mjd6de2p7gdnfe3es5u8ges",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=YTIybWpkNmRlMnA3Z2RuZmUzZXM1dThnZXMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:05.000Z",
+  "updated": "2026-10-18T11:30:46.228Z",
+  "summary": "🎵 Nuggets: Video 10 (Crotchets and Quavers) + game ready - stock complete",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-10-31"
+  },
+  "end": {
+   "date": "2026-11-01"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "a22mjd6de2p7gdnfe3es5u8ges@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231241686238\"",
+  "id": "rk62r141aencnb54t7t4iadses",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=cms2MnIxNDFhZW5jbmI1NHQ3dDRpYWRzZXMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:09.000Z",
+  "updated": "2026-10-21T20:47:00.843Z",
+  "summary": "🎵 Nuggets: Video 6 (Black-Key Groups) goes live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby (if not launched on the stretch date 24 Oct, these release slots apply; if launched 24 Oct, releases move 2 weeks earlier)",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-10-31T08:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-10-31T08:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "rk62r141aencnb54t7t4iadses@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231243648062\"",
+  "id": "qsevv61qrl810e22edpsq3obpc",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=cXNldnY2MXFybDgxMGUyMmVkcHNxM29icGMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:09.000Z",
+  "updated": "2026-10-21T20:47:01.824Z",
+  "summary": "🎵 Nuggets: Video 7 (Left, Right, Higher, Lower) goes live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby (if not launched on the stretch date 24 Oct, these release slots apply; if launched 24 Oct, releases move 2 weeks earlier)",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-11-04T15:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-11-04T15:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "qsevv61qrl810e22edpsq3obpc@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3584330895096062\"",
+  "id": "sfm5hs41hit343fj0c87ebc1p4",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=c2ZtNWhzNDFoaXQzNDNmajBjODdlYmMxcDQgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:07.000Z",
+  "updated": "2026-10-16T15:44:07.548Z",
+  "summary": "🎵 Nuggets: ElevenLabs credits refresh (10,000)",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-11-06"
+  },
+  "end": {
+   "date": "2026-11-07"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "sfm5hs41hit343fj0c87ebc1p4@google.com",
+  "sequence": 0,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231249155902\"",
+  "id": "eku4n57kr1qgqhg7lccu03m63c",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=ZWt1NG41N2tyMXFncWhnN2xjY3UwM202M2MgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-18T11:30:49.000Z",
+  "updated": "2026-10-21T20:47:04.577Z",
+  "summary": "🎵 Nuggets: Video 11 (Middle C) + game ready",
+  "description": "Renumbered 18 Oct 2026: a new video 7 (Left, Right, Higher, Lower) was added, so Finding C and F is 8, Octaves 9, Crotchets and Quavers 10, Middle C 11. Launch set stays at ten videos (1-10); Middle C (11) is the first video after launch. Vault: Claude Projects/Kids learning/Music teaching/Nuggets dashboard.md",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-11-07"
+  },
+  "end": {
+   "date": "2026-11-08"
+  },
+  "visibility": "private",
+  "iCalUID": "eku4n57kr1qgqhg7lccu03m63c@google.com",
+  "sequence": 1,
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231244714238\"",
+  "id": "o5th0i9ijre6pj94btq3iu2ph4",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=bzV0aDBpOWlqcmU2cGo5NGJ0cTNpdTJwaDQgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:09.000Z",
+  "updated": "2026-10-21T20:47:02.357Z",
+  "summary": "🎵 Nuggets: Video 8 (Finding C and F) goes live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby (if not launched on the stretch date 24 Oct, these release slots apply; if launched 24 Oct, releases move 2 weeks earlier)",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-11-07T08:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-11-07T08:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "o5th0i9ijre6pj94btq3iu2ph4@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231252282174\"",
+  "id": "qa1f31jjbkqs33g322l7rvh2lg",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=cWExZjMxampia3FzMzNnMzIybDdydmgybGcgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:06.000Z",
+  "updated": "2026-10-21T20:47:06.141Z",
+  "summary": "🎵 Nuggets: Upload session 2 (Claude uploads videos 10 and 11 in Chrome and schedules them; Andrew checks Scheduled list)",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "date": "2026-11-09"
+  },
+  "end": {
+   "date": "2026-11-10"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "qa1f31jjbkqs33g322l7rvh2lg@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": false
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231245840190\"",
+  "id": "0bb8rr4el94o9mp9hgmh8okrqc",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=MGJiOHJyNGVsOTRvOW1wOWhnbWg4b2tycWMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:10.000Z",
+  "updated": "2026-10-21T20:47:02.920Z",
+  "summary": "🎵 Nuggets: Video 9 (Octaves) goes live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby (if not launched on the stretch date 24 Oct, these release slots apply; if launched 24 Oct, releases move 2 weeks earlier)",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-11-11T15:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-11-11T15:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "0bb8rr4el94o9mp9hgmh8okrqc@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231246990110\"",
+  "id": "1ee1ubi22gp0sa1ns6gf8fr2os",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=MWVlMXViaTIyZ3Awc2ExbnM2Z2Y4ZnIyb3MgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-16T15:44:10.000Z",
+  "updated": "2026-10-21T20:47:03.495Z",
+  "summary": "🎵 Nuggets: Video 10 (Crotchets and Quavers) goes live",
+  "description": "Music Nuggets launch plan: vault Claude Projects/Music teaching/Channel launch plan.md. Channel: youtube.com/@MelodyAndBarnaby (if not launched on the stretch date 24 Oct, these release slots apply; if launched 24 Oct, releases move 2 weeks earlier)",
+  "colorId": "3",
+  "eventLabelId": "9e7a81c1-4c78-4726-abe3-94fcdad8be12",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-11-14T08:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-11-14T08:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "transparency": "transparent",
+  "visibility": "private",
+  "iCalUID": "1ee1ubi22gp0sa1ns6gf8fr2os@google.com",
+  "sequence": 1,
+  "extendedProperties": {
+   "private": {
+    "nuggets": "launch-plan"
+   }
+  },
+  "reminders": {
+   "useDefault": true
+  },
+  "eventType": "default"
+ },
+ {
+  "kind": "calendar#event",
+  "etag": "\"3585231248042206\"",
+  "id": "5jm92a62ouvnf2v376ff504ifc",
+  "status": "confirmed",
+  "htmlLink": "https://www.google.com/calendar/event?eid=NWptOTJhNjJvdXZuZjJ2Mzc2ZmY1MDRpZmMgYW5kcmV3bG9yZDMxMUBt",
+  "created": "2026-10-18T11:30:49.000Z",
+  "updated": "2026-10-21T20:47:04.021Z",
+  "summary": "🎵 Nuggets: Video 11 (Middle C) goes live - first video after launch",
+  "description": "Renumbered 18 Oct 2026: a new video 7 (Left, Right, Higher, Lower) was added, so Finding C and F is 8, Octaves 9, Crotchets and Quavers 10, Middle C 11. Launch set stays at ten videos (1-10); Middle C (11) is the first video after launch. Vault: Claude Projects/Kids learning/Music teaching/Nuggets dashboard.md",
+  "creator": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "organizer": {
+   "email": "andrewlord311@gmail.com",
+   "self": true
+  },
+  "start": {
+   "dateTime": "2026-11-18T15:00:00Z",
+   "timeZone": "Europe/London"
+  },
+  "end": {
+   "dateTime": "2026-11-18T15:30:00Z",
+   "timeZone": "Europe/London"
+  },
+  "visibility": "private",
+  "iCalUID": "5jm92a62ouvnf2v376ff504ifc@google.com",
+  "sequence": 1,
+  "reminders": {
+   "useDefault": false,
+   "overrides": [
+    {
+     "method": "popup",
+     "minutes": 30
+    }
+   ]
+  },
+  "eventType": "default"
+ }
+]
