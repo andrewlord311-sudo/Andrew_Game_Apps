@@ -1044,6 +1044,98 @@ S.outro9=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
   this.ch=[['C',GCOL[0]],['F',GCOL[1]],['C',GCOL[0]],['F',GCOL[1]]].map(([tx,col],i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${454+i*100}px;top:300px;width:78px;height:78px;border-radius:50%;background:${col};color:#fff;font-family:'Fredoka One';font-size:48px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;d.textContent=tx;r.appendChild(d);return d});
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game9','every')-0.3;this.ch.forEach((d,i)=>{const q=prog(t,t0+i*0.18,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)));d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3+i*0.8))*8:0}px`})}});
 
+
+// ======================================================================== VIDEO 10: bars and four beats
+// Eight numbered circles (two groups of four), bar lines, brackets labelled BAR / MEASURE, then the same beats as plain notes on a stave.
+const V10={x0:192,dx:128,y:330,d:86,G:['#2563eb','#ea580c']};
+const v10x=i=>V10.x0+i*V10.dx, v10xb=[(v10x(3)+v10x(4))/2,v10x(7)+72];
+const v10grid=id=>TL.scenes.find(s=>s.id===id).grid;
+function v10circles(r){return Array.from({length:8},(_,i)=>{const d=document.createElement('div');d.className='abs big';d.style.cssText=`left:${v10x(i)-V10.d/2}px;top:${V10.y-V10.d/2}px;width:${V10.d}px;height:${V10.d}px;border-radius:50%;background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.14);font-size:54px;line-height:${V10.d}px;color:#94a3b8;opacity:0`;d.textContent=i%4+1;r.appendChild(d);return d})}
+function v10circSet(d,i,o){const lit=o.lit,col=o.col||V10.G[i>3?1:0];d.style.opacity=String(clamp((o.p??1)*2.5));d.style.scale=String(lerp(o.from||1,1,easeBack(clamp(o.p??1)))*(o.pulse||1));d.style.background=lit?col:'#fff';d.style.color=lit?'#fff':'#94a3b8'}
+function v10barlines(r,y0,y1){return v10xb.map(x=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x-6}px;top:${y0}px;width:12px;height:${y1-y0}px;border-radius:6px;background:#241f3d;opacity:0;transform-origin:50% 0`;r.appendChild(d);return d})}
+function v10bl(d,t,t0,dur=0.6){const p=prog(t,t0,dur);d.style.opacity=String(clamp(p*3));d.style.transform=`scaleY(${easeOut(p)})`}
+function v10brackets(r,y){const br=[0,1].map(g=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${v10x(g*4)-V10.d/2}px;top:${y}px;width:${3*V10.dx+V10.d}px;height:18px;border-radius:9px;background:${V10.G[g]};opacity:0;transform-origin:0 50%`;r.appendChild(d);return d});
+  const lab=[0,1].map(g=>{const d=document.createElement('div');d.className='big abs';d.style.cssText=`left:${v10x(g*4)-V10.d/2}px;top:${y+26}px;width:${3*V10.dx+V10.d}px;font-size:50px;color:${V10.G[g]};opacity:0`;d.textContent='BAR';r.appendChild(d);return d});return {br,lab}}
+function v10brk(b,t,t0){const p=prog(t,t0,0.5);b.style.opacity=String(clamp(p*2.5));b.style.transform=`scaleX(${easeOut(p)})`}
+function v10lab(l,t,t0,txt){const p=prog(t,t0,0.4);if(txt)l.textContent=txt;l.style.opacity=String(clamp(p*2));l.style.scale=String(lerp(0.6,1,easeBack(p)))}
+// the same beats as plain notes on a five-line stave. The first note is a hidden spacer so the time signature has room at the left.
+function v10stave(r,n,o={}){const st=makeStave(r,{clef:'treble',notes:Array(n+1).fill('b/4'),scale:o.scale||2.5,w:o.w||430,cy:o.cy||350,showClef:false});st.heads[0].sn.style.opacity=0;
+  const xs=st.heads.map(h=>h.x);const y0=st.lineY[0],y1=st.lineY[4];st.xs=xs;
+  const cut=k=>(xs[k]+xs[k+1])/2,endx=xs[n]+(xs[n]-xs[n-1])*0.62;st.cuts=[];for(let k=4;k<n;k+=4)st.cuts.push(cut(k));st.cuts.push(endx);
+  st.bars=st.cuts.map(x=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x-4}px;top:${y0-1}px;width:8px;height:${y1-y0+2}px;border-radius:4px;background:#241f3d;opacity:0`;r.appendChild(d);return d});
+  st.lines.forEach(l=>{l.style.opacity=1});st.barlines.forEach(b=>b.style.opacity=0);return st}
+function v10noteSet(st,i,o){const h=st.heads[i];h.sn.style.opacity=String(clamp((o.p??1)*2.5));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(clamp(o.p??1)))*-26}px) scale(${o.s||1})`;h.color(o.col||'#241f3d')}
+function v10ts(r,st){const sp=st.sp,x=st.xs[0];return [0,1].map(k=>{const d=document.createElement('div');d.className='big abs';const cy=(st.lineY[0]+st.lineY[2])/2+k*(st.lineY[2]-st.lineY[0]);d.style.cssText=`left:${x-34}px;top:${cy-sp*1.55}px;width:68px;font-size:${sp*2.7}px;line-height:${sp*3.1}px;color:#241f3d;opacity:0`;d.textContent='4';r.appendChild(d);return d})}
+function v10badge(r,txt,x,y){const c=chip(r,'⟲ '+txt,'var(--melody-deep)',x,y);c.style.fontSize='26px';return c}
+
+S.v10beat={ui:{ribbon:1,hosts:'side',bubble:true},build(r){
+  this.d=document.createElement('div');this.d.className='abs';this.d.style.cssText='left:470px;top:230px;width:340px;opacity:0;transform-origin:50% 90%';this.d.innerHTML=drumSvg(340);r.appendChild(this.d);
+  this.rip=ripple(r,640,320,'#fbbf24');this.bg=v10badge(r,'Remember?',330,260)},
+  update(t,L,c){const p=pulse(['main'],t,10);const a=prog(L,0.4,0.5);this.d.style.opacity=String(clamp(a*2));this.d.style.scale=`${lerp(0.4,1,easeBack(a))*(1+0.07*p)} ${lerp(0.4,1,easeBack(a))*(1-0.1*p)}`;
+   rippleUpdate(this.rip,t,['main']);pop(this.bg,t,CL.steady10.start+0.05,0.4,0.4);const tw=wt('steady10','steady')-0.1;if(t>=tw)c.caption('A STEADY BEAT','#e11d48',tw)}};
+
+S.v10count={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.ds=v10circles(r);this.g=v10grid('v10count')},
+  update(t,L,c){this.ds.forEach((d,i)=>{const T=this.g[i],age=t-T;v10circSet(d,i,{p:prog(t,T-0.03,0.3),from:1.6,lit:age>=-0.03&&age<0.45,col:BEATCOL[i%4]})})}};
+
+function v10base(me,o={}){me.ds=v10circles(me.r);me.bl=v10barlines(me.r,V10.y-70,V10.y+70);if(o.brackets){const b=v10brackets(me.r,V10.y+78);me.br=b.br;me.lab=b.lab}}
+S.v10four={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.ds=v10circles(r)},
+  update(t,L,c){const t1=wt('fourthen','four')-0.15,t2=wt('fourthen','start')-0.15;this.ds.forEach((d,i)=>{const on=t>=(i>3?t2:t1);v10circSet(d,i,{lit:on,p:1})})}};
+
+S.v10line={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.ds=v10circles(r);this.bl=v10barlines(r,V10.y-72,V10.y+72);
+  this.ar=document.createElement('div');this.ar.className='big abs';this.ar.style.cssText=`left:${v10xb[0]-40}px;top:${V10.y-170}px;width:80px;font-size:70px;color:#241f3d;opacity:0`;this.ar.textContent='↓';r.appendChild(this.ar)},
+  update(t,L,c){this.ds.forEach((d,i)=>v10circSet(d,i,{lit:true,p:1}));v10bl(this.bl[0],t,wt('drawline','after')-0.05,0.7);v10bl(this.bl[1],t,CL.drawline.end+0.05,0.9);
+   const tc=wt('barlineIs','bar')-0.1;if(t>=tc)c.caption('BAR LINE','#241f3d',tc);this.ar.style.opacity=String(prog(t,tc,0.3));this.ar.style.translate=`0 ${Math.sin(t*6)*5}px`}};
+
+function v10barScene(f){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.ds=v10circles(r);this.bl=v10barlines(r,V10.y-72,V10.y+72);const b=v10brackets(r,V10.y+80);this.br=b.br;this.lab=b.lab;this.ds.forEach((d,i)=>v10circSet(d,i,{lit:true,p:1}));this.bl.forEach(x=>{x.style.opacity=1});if(f.build)f.build.call(this,r)},
+  update(t,L,c){f.update.call(this,t,L,c)}}}
+S.v10bar=v10barScene({update(t,L,c){const t1=wt('barIs','between')-0.1,tl=wt('barIs','bar',1)-0.15;v10brk(this.br[0],t,t1);v10brk(this.br[1],t,tl+0.5);v10lab(this.lab[0],t,tl,'BAR');v10lab(this.lab[1],t,tl+0.6,'BAR')}});
+S.v10measure=v10barScene({update(t,L,c){const tm=wt('american','measure')-0.12,ts=CL.same10.start;this.br.forEach(b=>{b.style.opacity=1});
+   this.lab.forEach((l,i)=>{const sw=t>=tm;const on=t>=ts&&t<CL.same10.end;l.textContent=sw?'BAR (measure)':'BAR';l.style.fontSize=sw?'44px':'50px';l.style.opacity=1;l.style.scale=String((on?1+0.09*Math.abs(Math.sin((t-ts)*3.5)):1)*(sw&&t<tm+0.5?lerp(0.7,1,easeBack(prog(t,tm,0.4))):1))});
+   const tq=wt('same10','same')-0.2;if(t>=tq)c.caption('BAR = MEASURE','#241f3d',tq)}});
+S.v10fourbeats=v10barScene({build(r){this.ch=chip(r,'4 BEATS IN EVERY BAR','#241f3d',640,V10.y+236);this.ch.style.fontSize='36px'},
+  update(t,L,c){const a=CL.everybar.start+0.25,b=CL.everymeasure.start+0.25;const sw=t>=CL.everymeasure.start-0.05;
+   this.lab.forEach(l=>{l.textContent=sw?'MEASURE (bar)':'BAR (measure)';l.style.fontSize='44px';l.style.opacity=1;l.style.scale=String(sw&&t<CL.everymeasure.start+0.5?lerp(0.7,1,easeBack(prog(t,CL.everymeasure.start,0.4))):1)});
+   this.br.forEach(x=>x.style.opacity=1);
+   this.ds.forEach((d,i)=>{let pl=1;[a,b].forEach(T=>{const age=t-(T+i*0.4);if(age>=0&&age<0.35)pl=1+0.28*Math.sin(age/0.35*Math.PI)});v10circSet(d,i,{lit:true,p:1,pulse:pl})});
+   pop(this.ch,t,wt('everybar','four')-0.1,0.4,0.5)}});
+
+S.v10stave={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.st=v10stave(r,8);this.bg=v10badge(r,'Remember?',250,150);this.ch=chip(r,'5 lines','var(--orange)',this.st.x1-120,this.st.lineY[0]-84)},
+  update(t,L,c){const t0=CL.remstave.start+0.2;this.st.heads.forEach((h,i)=>{if(i)v10noteSet(this.st,i,{p:prog(t,t0+0.4+i*0.16,0.35)})});this.st.bars.forEach(b=>b.style.opacity=prog(t,t0+1.9,0.5));
+   this.st.box.style.opacity=prog(L,0.1,0.4);pop(this.bg,t,CL.remstave.start+0.05,0.4,0.4);pop(this.ch,t,wt('remstave','five')-0.1,0.4,0.4)}};
+function v10tsScene(f){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.st=v10stave(r,8);this.ts=v10ts(r,this.st);this.st.heads.forEach((h,i)=>{if(i)v10noteSet(this.st,i,{p:1})});this.st.bars.forEach(b=>b.style.opacity=1);f.build.call(this,r)},update(t,L,c){f.update.call(this,t,L,c)}}}
+S.v10ts1=v10tsScene({build(r){this.sm=chip(r,'time signature','#64748b',430,this.st.lineY[4]+80);this.sm.style.fontSize='26px'},
+  update(t,L,c){const T=wt('twonum','two')-0.1;this.ts.forEach((d,i)=>pop(d,t,T+i*0.15,0.45,0.5));pop(this.sm,t,wt('tsname','time')-0.1,0.4,0.6)}});
+S.v10ts2=v10tsScene({build(r){this.sm=chip(r,'time signature','#64748b',430,this.st.lineY[4]+80);this.sm.style.fontSize='26px';this.sm.style.opacity=0.9;
+   this.ch=chip(r,'4 BEATS',V10.G[0],this.st.xs[0]+40,this.st.lineY[0]-84);this.ch.style.fontSize='28px';this.ml=chip(r,'more later','#94a3b8',690,this.st.lineY[4]+80);this.ml.style.fontSize='24px'},
+  update(t,L,c){this.ts.forEach(d=>{d.style.opacity=1});const T=wt('topnum','top')-0.05,p=prog(t,T,0.4);this.ts[0].style.color=p>0?V10.G[0]:'#241f3d';this.ts[0].style.scale=String(1+0.14*easeBack(p));
+   pop(this.ch,t,wt('topnum','four')-0.15,0.4,0.5);pop(this.ml,t,wt('morelater','more')-0.1,0.5,0.7);this.ml.style.opacity=String(clamp(prog(t,wt('morelater','more')-0.1,0.5)*0.75))}});
+
+S.v10clap={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.st=v10stave(r,8);this.g=v10grid('v10clap');this.ts=v10ts(r,this.st);this.st.bars.forEach(b=>b.style.opacity=1);
+  this.h=document.createElement('div');this.h.className='big abs';this.h.style.cssText='left:0;right:0;top:130px;font-size:120px;opacity:0;transform-origin:50% 60%';this.h.textContent='👏';r.appendChild(this.h)},
+  update(t,L,c){this.ts.forEach(d=>{d.style.opacity=1});const p=pulse(['main'],t,11);const a=prog(L,0.4,0.4);this.h.style.opacity=String(clamp(a*2));this.h.style.scale=String(lerp(0.4,1,easeBack(a))*(1+0.28*p));
+   this.st.heads.forEach((h,i)=>{if(!i)return;const age=t-this.g[i-1];const lit=age>=-0.03&&age<0.45;v10noteSet(this.st,i,{p:1,s:lit?1.32:1,col:lit?BEATCOL[(i-1)%4]:'#241f3d'})})}};
+
+function v10q(o){return {ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.st=v10stave(r,o.n,{scale:o.scale,w:o.w});this.st.bars.forEach(b=>b.style.opacity=1);
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:132px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+  if(o.build)o.build.call(this,r)},
+  update(t,L,c){const ta=CL[o.ans].start-0.1;this.st.box.style.opacity=prog(L,0.1,0.4);const thinking=t>CL[o.ask].end+0.4&&t<ta;this.q.style.opacity=String(thinking?clamp(prog(t,CL[o.ask].end+0.4,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));o.update.call(this,t,L,c,ta)}}}
+S.v10q1=v10q({n:4,ask:'q1ask',ans:'a1',update(t,L,c,ta){this.st.heads.forEach((h,i)=>{if(!i)return;const age=t-(ta+(i-1)*0.42);const lit=age>=0&&age<0.45;v10noteSet(this.st,i,{p:prog(t,CL.q1ask.start-0.2+(i-1)*0.15,0.35),s:lit?1.35:1,col:lit?BEATCOL[(i-1)%4]:'#241f3d'})});
+   if(t>=ta+1.6)c.caption('4 BEATS','#2563eb',ta+1.6)}});
+S.v10q2=v10q({n:4,ask:'q2ask',ans:'a2',build(r){const st=this.st;this.gap=document.createElement('div');this.gap.className='abs';this.gap.style.cssText=`left:${st.xs[4]-22}px;top:${st.lineY[2]-18}px;width:44px;height:36px;border:5px dashed #ec4899;border-radius:50%;opacity:0`;r.appendChild(this.gap)},
+  update(t,L,c,ta){const tm=ta+0.15;this.st.heads.forEach((h,i)=>{if(!i)return;const base=prog(t,CL.q2ask.start-0.2+(i-1)*0.15,0.35);v10noteSet(this.st,i,{p:i<4?base:prog(t,tm,0.4),col:i===4?'#ec4899':'#241f3d'})});
+   this.gap.style.opacity=String(t<tm?prog(t,CL.q2ask.start,0.4)*(0.7+0.3*Math.sin(t*6)):0);if(t>=tm)c.caption('1 BEAT MISSING','#ec4899',tm)}});
+S.v10q3=v10q({n:12,scale:2.1,w:500,ask:'q3ask',ans:'a3',build(r){this.nums=[0,1,2].map(k=>{const d=document.createElement('div');d.className='big abs';const xs=this.st.xs,x=(xs[k*4+1]+xs[k*4+4])/2;d.style.cssText=`left:${x-40}px;top:${this.st.lineY[0]-110}px;width:80px;height:80px;border-radius:50%;background:${['#2563eb','#ea580c','#16a34a'][k]};color:#fff;font-size:52px;line-height:80px;opacity:0`;d.textContent=k+1;r.appendChild(d);return d});
+    this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})},
+  update(t,L,c,ta){this.st.heads.forEach((h,i)=>{if(i)v10noteSet(this.st,i,{p:prog(t,CL.q3ask.start-0.2+(i-1)*0.08,0.3)})});this.nums.forEach((d,k)=>pop(d,t,ta+k*0.5,0.4,0.4));
+   const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`})}});
+
+S.outro10=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.ds=[0,1,2,3].map(i=>{const d=document.createElement('div');d.className='abs big';d.style.cssText=`left:${498+i*78}px;top:290px;width:62px;height:62px;border-radius:50%;background:${V10.G[0]};color:#fff;font-size:38px;line-height:62px;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;d.textContent=i+1;r.appendChild(d);return d});
+  this.br=document.createElement('div');this.br.className='abs';this.br.style.cssText=`left:498px;top:362px;width:296px;height:14px;border-radius:7px;background:${V10.G[0]};opacity:0`;r.appendChild(this.br);
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game10','every')-0.3;this.ds.forEach((d,i)=>{const q=prog(t,t0+i*0.2,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)))});this.br.style.opacity=String(prog(t,t0+0.9,0.4))}});
+
+
 const ctxHelpers={caption(text,color,t0,side){C.text=text;C.color=color;C.t0=t0;C.side=side||''}};
 const C={text:'',color:'#241f3d',t0:0,last:'',side:''};
 let prevLayout=HOSTS.open,curLayout=HOSTS.open,layoutT0=0,curScene=null;
@@ -1086,7 +1178,7 @@ function renderAt(t){
     else if(sp&&sp.id==='well') pose='cheer';
     else if(sc.id==='v5march'||sc.id==='v5clap') pose=pulse(['main'],t,9)>0.3?'cheer':'idle';
     else if(sc.id==='v5heart') pose='idle';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8')||sc.id.startsWith('v9'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8')||sc.id.startsWith('v9')||sc.id.startsWith('v10'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
