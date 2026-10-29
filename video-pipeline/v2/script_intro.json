@@ -35,15 +35,15 @@
   {
    "id": "pair",
    "who": "melody",
-   "text": "Each Nugget is a short video, <break time=\"0.5s\" /> with a free game to practise it.",
-   "show": "Each Nugget is a short video, with a free game to practise it.",
+   "text": "Each Nugget is a short video, <break time=\"0.5s\" /> with a game to practise it.",
+   "show": "Each Nugget is a short video, with a game to practise it.",
    "speed": 0.88
   },
   {
    "id": "free",
    "who": "barnaby",
-   "text": "No sign-up. <break time=\"0.6s\" /> No adverts. <break time=\"0.6s\" /> Just play.",
-   "show": "No sign-up. No adverts. Just play.",
+   "text": "No sign-up. <break time=\"0.6s\" /> No adverts. <break time=\"0.6s\" /> Everything here is free, <break time=\"0.4s\" /> and it stays free.",
+   "show": "No sign-up. No adverts. Everything here is free, and it stays free.",
    "speed": 0.88
   },
   {
@@ -231,7 +231,7 @@
   {
    "kind": "pop",
    "clip": "free",
-   "word": "play",
+   "word": "free",
    "off": -0.15
   },
   {
