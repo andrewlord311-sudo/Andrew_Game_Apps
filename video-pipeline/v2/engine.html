@@ -1136,6 +1136,60 @@ S.outro10=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game10','every')-0.3;this.ds.forEach((d,i)=>{const q=prog(t,t0+i*0.2,0.45);d.style.opacity=String(clamp(q*2));d.style.scale=String(lerp(0.3,1,easeBack(q)))});this.br.style.opacity=String(prog(t,t0+0.9,0.4))}});
 
 
+
+// ======================================================================== CHANNEL INTRO: "Start here"
+// Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
+function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}
+function viBox(r,css){const d=document.createElement('div');d.className='abs';d.style.cssText=css;r.appendChild(d);return d}
+const VIUI={ribbon:1,hosts:'side',bubble:true};
+S.vi_hello={ui:VIUI,build(r){this.t=viBox(r,'left:0;right:0;top:215px;text-align:center;font-family:Fredoka One;font-size:150px;line-height:1;opacity:0;color:#241f3d');this.t.textContent='Start here';
+  this.tag=viPill(r,'For grown-ups','var(--melody-deep)',640,420,40)},
+  update(t,L){const p=prog(L,0.6,0.5);this.t.style.opacity=String(clamp(p*2));this.t.style.scale=String(lerp(0.5,1,easeBack(p)));pop(this.tag,t,wt('hello','parents')-0.1,0.45,0.4)}};
+S.vi_idea={ui:VIUI,build(r){this.st=makeStave(r,{clef:'treble',notes:['c/5'],scale:3.2,w:330,cy:350});this.st.lines.forEach(l=>l.style.opacity=1);this.h=this.st.heads[0]},
+  update(t,L,c){this.st.box.style.opacity=prog(L,0.1,0.4);const T=wt('idea','one')-0.2,p=prog(t,T,0.5);this.h.sn.style.opacity=clamp(p*2.5);this.h.sn.style.transformBox='fill-box';this.h.sn.style.transformOrigin='50% 50%';this.h.sn.style.transform=`translateY(${(1-easeBack(p))*-70}px)`;
+   const tc=wt('idea','one')-0.1;if(t>=tc)c.caption('ONE IDEA AT A TIME','#241f3d',tc)}};
+S.vi_pair={ui:VIUI,build(r){
+  this.a=viBox(r,"left:200px;top:225px;width:500px;height:281px;border-radius:22px;background:url(assets/intro_video.jpg) center/cover;box-shadow:0 12px 0 rgba(0,0,0,.14);opacity:0");
+  this.pl=viBox(r,'left:715px;top:340px;width:70px;font-family:Fredoka One;font-size:64px;color:#241f3d;text-align:center;opacity:0');this.pl.textContent='+';
+  this.b=viBox(r,"left:810px;top:215px;width:215px;height:350px;border-radius:34px;border:7px solid #241f3d;background:url(assets/intro_game.png) top center/cover;box-shadow:0 12px 0 rgba(0,0,0,.14);opacity:0");
+  this.la=viPill(r,'VIDEO','var(--orange)',450,535,40);this.lb=viPill(r,'GAME','var(--melody-deep)',918,585,40)},
+  update(t,L){const ta=wt('pair','video')-0.15,tb=wt('pair','game')-0.15;pop(this.a,t,ta,0.5,0.6);pop(this.la,t,ta+0.2,0.4,0.5);pop(this.pl,t,wt('pair','with')-0.1,0.4,0.5);pop(this.b,t,tb,0.5,0.6);pop(this.lb,t,tb+0.2,0.4,0.5)}};
+S.vi_free={ui:VIUI,build(r){this.ps=[['NO SIGN-UP','#16a34a',205],['NO ADVERTS','#2563eb',325],['FREE','#ea580c',445]].map(([tx,col,y])=>viPill(r,tx,col,640,y,66))},
+  update(t,L){['sign','adverts','play'].forEach((w,i)=>{const T=wt('free',w)-0.15;pop(this.ps[i],t,T,0.45,0.4)})}};
+S.vi_order={ui:VIUI,build(r){this.ds=Array.from({length:8},(_,i)=>{const d=viBox(r,`left:${150+i*140-42}px;top:${340+Math.sin(i*0.95)*55-42}px;width:84px;height:84px;border-radius:50%;background:#fff;color:#94a3b8;font-family:Fredoka One;font-size:50px;line-height:84px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.14);opacity:0`);d.textContent=i+1;return d});
+  this.more=viBox(r,'left:1060px;top:420px;font-family:Fredoka One;font-size:44px;color:#64748b;opacity:0');this.more.textContent='…'},
+  update(t,L){const T=wt('order','order')-0.1;this.ds.forEach((d,i)=>{const a=prog(L,0.3+i*0.07,0.3);const lit=i<4&&t>=T+0.2+i*0.55;d.style.opacity=String(clamp(a*2)*(lit?1:0.55));d.style.scale=String(lerp(0.5,1,easeBack(a))*(lit?1.12:1));d.style.background=lit?['#2dd4bf','#6366f1','#ec4899','#f59e0b'][i]:'#fff';d.style.color=lit?'#fff':'#94a3b8'});this.more.style.opacity=String(prog(t,T+3,0.4))}};
+S.vi_strands={ui:VIUI,build(r){this.ts=[['🥁','Rhythm','#ea580c'],['🎹','Notes','#2563eb'],['🎵','Melody','#16a34a'],['🪜','Scales','#db2777'],['🎶','Harmony','#7c3aed']].map(([e,tx,col],i)=>{
+    const d=viBox(r,`left:${100+i*226}px;top:255px;width:190px;height:225px;border-radius:30px;background:#fff;box-shadow:0 10px 0 rgba(0,0,0,.12);text-align:center;opacity:0`);d.innerHTML=`<div style="font-size:90px;line-height:130px">${e}</div><div style="font-family:Fredoka One;font-size:38px;color:${col}">${tx}</div>`;d.dataset.col=col;return d})},
+  update(t,L){['rhythm','notes','melody','scales','harmony'].forEach((w,i)=>{const d=this.ts[i],a=prog(L,0.3+i*0.08,0.3),T=wt('strands',w)-0.12,on=t>=T;const q=prog(t,T,0.4);
+    d.style.opacity=String(clamp(a*2)*(on?1:0.45));d.style.scale=String(lerp(0.5,1,easeBack(a))*(on?1+0.1*easeBack(q):1));d.style.boxShadow=on?`0 0 0 6px ${d.dataset.col},0 12px 0 rgba(0,0,0,.12)`:'0 10px 0 rgba(0,0,0,.12)'})}};
+S.vi_week={ui:VIUI,build(r){this.ds=['MON','TUE','WED','THU','FRI','SAT','SUN'].map((tx,i)=>{const d=viBox(r,`left:${150+i*150-56}px;top:260px;width:112px;height:112px;border-radius:50%;background:#fff;color:#94a3b8;font-family:Fredoka One;font-size:36px;line-height:112px;text-align:center;box-shadow:0 8px 0 rgba(0,0,0,.14);opacity:0`);d.textContent=tx;return d});
+  this.cs=[2,5].map(i=>viPill(r,'NEW NUGGET','var(--orange)',150+i*150,410,28))},
+  update(t,L){this.ds.forEach((d,i)=>{const a=prog(L,0.3+i*0.07,0.3);const k=i===2?0:i===5?1:-1;const T=k<0?1e9:wt('week',k?'saturday':'wednesday')-0.15;const on=t>=T;
+    d.style.opacity=String(clamp(a*2)*(on||k<0?(on?1:0.6):0.6));d.style.scale=String(lerp(0.5,1,easeBack(a))*(on?1.14:1));d.style.background=on?'#ea580c':'#fff';d.style.color=on?'#fff':'#94a3b8'});
+   this.cs.forEach((c,k)=>pop(c,t,wt('week',k?'saturday':'wednesday')+0.1,0.4,0.5))}};
+S.vi_ages={ui:VIUI,build(r){this.e=viBox(r,'left:0;right:0;top:200px;text-align:center;font-size:170px;line-height:1.1;opacity:0');this.e.textContent='👩 👧 👩‍🏫';this.c=viPill(r,'AGES 4 TO 7','var(--orange)',640,440,64)},
+  update(t,L){pop(this.c,t,wt('ages','four')-0.15,0.5,0.4);pop(this.e,t,wt('ages','grown')-0.2,0.5,0.4)}};
+S.vi_desc={ui:VIUI,build(r){this.card=viBox(r,'left:240px;top:225px;width:800px;height:300px;border-radius:26px;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.14);opacity:0');
+  this.card.innerHTML='<div style="margin:30px 40px 0"><div style="height:16px;width:92%;border-radius:8px;background:#e2e8f0;margin-bottom:14px"></div><div style="height:16px;width:76%;border-radius:8px;background:#e2e8f0;margin-bottom:30px"></div><div style="font-weight:700;font-size:28px;color:#475569;margin-bottom:8px">🎮 Practise it with the free game, Line &amp; Space Safari (no sign-up, no adverts):</div><div id="addrline" style="display:inline-block;font-weight:700;font-size:34px;color:#241f3d;padding:6px 14px;border-radius:10px;background:rgba(251,191,36,0)">andrewlord311-sudo.github.io/g2</div><div style="height:16px;width:84%;border-radius:8px;background:#e2e8f0;margin-top:30px"></div></div>';
+  this.hl=this.card.querySelector('#addrline');this.ch=viPill(r,'its own line','var(--melody-deep)',900,548,30)},
+  update(t,L){pop(this.card,t,CL.desc.start-0.1+0.1,0.5,0.7);const T=wt('desc','link')-0.1,p=prog(t,T,0.4);this.hl.style.background=`rgba(251,191,36,${0.85*p*(0.8+0.2*Math.sin(t*5))})`;pop(this.ch,t,T+0.3,0.4,0.5)}};
+S.vi_addr={ui:VIUI,build(r){this.c=viPill(r,'TYPE THIS INTO ANY BROWSER','var(--melody-deep)',640,190,32);this.a=viBox(r,'left:80px;right:80px;top:290px;text-align:center;font-weight:700;font-size:62px;color:#241f3d;background:#fff;border-radius:30px;padding:26px 10px;box-shadow:0 12px 0 rgba(0,0,0,.14);opacity:0');this.a.textContent='andrewlord311-sudo.github.io/games'},
+  update(t,L){pop(this.c,t,CL.addr.start+0.1,0.4,0.5);const T=wt('addr','address')-0.1;pop(this.a,t,T,0.5,0.7)}};
+S.vi_sub={ui:VIUI,build(r){this.b=viBox(r,'left:200px;top:310px;width:330px;height:100px;border-radius:50px;background:#ef4444;color:#fff;font-family:Fredoka One;font-size:50px;line-height:100px;text-align:center;box-shadow:0 10px 0 #b91c1c;opacity:0');this.b.textContent='Subscribe';
+  this.ar=viBox(r,'left:545px;top:318px;font-family:Fredoka One;font-size:80px;color:#241f3d;opacity:0');this.ar.textContent='→';
+  this.box=viBox(r,'left:650px;top:235px;width:430px;height:300px;border-radius:28px;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.14);opacity:0');this.box.innerHTML='<div style="font-family:Fredoka One;font-size:36px;color:#241f3d;margin:20px 0 0 28px">📺 Subscriptions</div>';
+  this.th=[0,1,2].map(i=>{const d=viBox(r,`left:${690+i*128}px;top:335px;width:112px;height:150px;border-radius:16px;background:${['#2dd4bf','#6366f1','#f59e0b'][i]};color:#fff;font-family:Fredoka One;font-size:40px;line-height:150px;text-align:center;opacity:0`);d.textContent=['♪','♫','♩'][i];return d})},
+  update(t,L){const T=wt('sub','subscribe')-0.1;const p=prog(t,T,0.4);this.b.style.opacity=String(clamp(p*2));this.b.style.scale=String(lerp(0.6,1,easeBack(p))*(1+0.06*Math.max(0,Math.sin((t-T)*6))*(t<T+1.2?1:0)));
+   pop(this.ar,t,wt('sub','every')-0.15,0.4,0.5);pop(this.box,t,wt('sub','every')-0.1,0.5,0.7);const tw=wt('sub','waiting')-0.2;this.th.forEach((d,i)=>pop(d,t,tw+i*0.3,0.45,0.4))}};
+S.outroi=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  this.t=viBox(r,'left:0;right:0;top:60px;text-align:center;font-family:Fredoka One;font-size:90px;color:#241f3d;opacity:0');this.t.textContent='Start here';
+  this.a=viBox(r,'left:80px;right:80px;top:210px;text-align:center;font-weight:700;font-size:48px;color:#241f3d;background:#fff;border-radius:26px;padding:18px 8px;box-shadow:0 10px 0 rgba(0,0,0,.14);opacity:0');this.a.textContent='andrewlord311-sudo.github.io/games';
+  this.l=viBox(r,'left:0;right:0;top:310px;text-align:center;font-weight:700;font-size:28px;opacity:0');this.l.textContent='Free games · no sign-up · no adverts';
+  this.b=viBox(r,'left:0;right:0;bottom:30px;text-align:center;font-family:Fredoka One;font-size:44px;opacity:0');this.b.innerHTML='See you for the next Nugget! 👋'},
+  update(t,L,c){pop(this.t,L,0.4,0.5,0.4);pop(this.a,L,1.0,0.5,0.6);fade(this.l,L,1.7,0.5);this.b.style.opacity=prog(t,CL.bye.start,0.4)}});
+
+
 const ctxHelpers={caption(text,color,t0,side){C.text=text;C.color=color;C.t0=t0;C.side=side||''}};
 const C={text:'',color:'#241f3d',t0:0,last:'',side:''};
 let prevLayout=HOSTS.open,curLayout=HOSTS.open,layoutT0=0,curScene=null;
@@ -1173,12 +1227,12 @@ function renderAt(t){
     // pose: waving at the start and end, pointing in at the content while explaining, cheering on "Brilliant!"
     let pose='idle';
     const side=who==='melody'?'':'L';
-    if(sc.id==='opener'||sc.id==='outro') pose=(Math.sin(t*4+ix)>-0.2)?'wave'+side:'idle';
+    if(sc.id==='opener'||sc.id==='outro'||sc.id==='outroi') pose=(Math.sin(t*4+ix)>-0.2)?'wave'+side:'idle';
     else if(sc.id==='hook'&&isSp) pose='think';
     else if(sp&&sp.id==='well') pose='cheer';
     else if(sc.id==='v5march'||sc.id==='v5clap') pose=pulse(['main'],t,9)>0.3?'cheer':'idle';
     else if(sc.id==='v5heart') pose='idle';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8')||sc.id.startsWith('v9')||sc.id.startsWith('v10'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8')||sc.id.startsWith('v9')||sc.id.startsWith('v10')||sc.id.startsWith('vi_'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
@@ -1195,7 +1249,7 @@ function renderAt(t){
   else{cap.style.opacity='0'; cap.dataset.k=''}
   // floaters
   $('#floaters').querySelectorAll('.f').forEach((e,i)=>{const sp=18+i*5;const y=720-((t*sp+i*97)%820)+50;e.style.top=y+'px';e.style.left=(90+i*155+Math.sin(t*0.7+i)*20)+'px'});
-  $('#ttl').textContent='Nugget '+TL.nugget+' · '+TL.title;
+  $('#ttl').textContent=TL.nugget?('Nugget '+TL.nugget+' · '+TL.title):TL.title;
 }
 function layoutNow(t){const hp=easeOut(prog(t,layoutT0,0.6));return {m:[0,1,2].map(i=>lerp(prevLayout.m[i],curLayout.m[i],hp)),b:[0,1,2].map(i=>lerp(prevLayout.b[i],curLayout.b[i],hp))}}
 
