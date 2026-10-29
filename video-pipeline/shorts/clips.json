@@ -1,10 +1,43 @@
 [
-  {"id": "short01_name_the_stave", "src": "videos/video1_some_musical_names_v2.mp4", "srt": "channel/captions/video1.en-GB.srt",
-   "start": 16.7, "end": 37.9, "hook": "Five lines in a row.<br>What's it called?"},
-  {"id": "short02_line_or_space", "src": "videos/video2_where_notes_live.mp4", "srt": "channel/captions/video2.en-GB.srt",
-   "start": 30.3, "end": 53.8, "hook": "Is the note on a <b>line</b><br>or in a <b>space</b>?"},
-  {"id": "short03_no_h_in_music", "src": "videos/video3_music_alphabet.mp4", "srt": "channel/captions/video3.en-GB.srt",
-   "start": 64.6, "end": 80.4, "hook": "What comes after G?<br>There's no H in music!"},
-  {"id": "short04_higher_lower_same", "src": "videos/video4_higher_lower_same.mp4", "srt": "channel/captions/video4.en-GB.srt",
-   "start": 21.0, "end": 51.2, "hook": "Higher, lower<br>or the same?"}
+  {
+    "id": "short01_name_the_stave",
+    "src": "videos/video1_some_musical_names_v2.mp4",
+    "srt": "channel/captions/video1.en-GB.srt",
+    "start": 16.7,
+    "end": 37.9,
+    "hook": "Five lines in a row.<br>What's it called?"
+  },
+  {
+    "id": "short02_line_or_space",
+    "src": "videos/video2_where_notes_live.mp4",
+    "srt": "channel/captions/video2.en-GB.srt",
+    "start": 30.3,
+    "end": 53.8,
+    "hook": "Is the note on a <b>line</b><br>or in a <b>space</b>?"
+  },
+  {
+    "id": "short03_no_h_in_music",
+    "src": "videos/video3_music_alphabet.mp4",
+    "srt": "channel/captions/video3.en-GB.srt",
+    "start": 64.6,
+    "end": 80.4,
+    "hook": "What comes after G?<br>There's no H in music!"
+  },
+  {
+    "id": "short04_higher_lower_same",
+    "src": "videos/video4_higher_lower_same.mp4",
+    "srt": "channel/captions/video4.en-GB.srt",
+    "start": 21.0,
+    "end": 51.2,
+    "hook": "Higher, lower<br>or the same?"
+  },
+  {
+    "id": "short05_start_here",
+    "src": "videos/intro_start_here.mp4",
+    "srt": "channel/captions/intro.en-GB.srt",
+    "start": 5.5,
+    "end": 41.6,
+    "hook": "New here?<br>Start here.",
+    "footer": "Watch the full video on YouTube ▶"
+  }
 ]

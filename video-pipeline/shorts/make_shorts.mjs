@@ -24,7 +24,7 @@ const html = `<!doctype html><meta charset=utf-8><style>
 #foot{position:absolute;left:0;right:0;top:1400px;text-align:center;display:none}
 #foot .a{display:inline-block;background:#e8590c;color:#fff;font-size:46px;border-radius:50px;padding:14px 44px}
 #foot .b{margin-top:22px;font-size:40px;opacity:.85}
-</style><div id=hook></div><div id=cap><span></span></div><div id=foot><div class=a>Full lesson + free game ▶</div><div class=b>🎵 Melody &amp; Barnaby's Music Nuggets</div></div>`;
+</style><div id=hook></div><div id=cap><span></span></div><div id=foot><div class=a id=ftxt>Full lesson + free game ▶</div><div class=b>🎵 Melody &amp; Barnaby's Music Nuggets</div></div>`;
 
 const b = await chromium.launch(); const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
 await p.setContent(html); await p.evaluate(() => document.fonts.ready);
@@ -37,7 +37,7 @@ const shot = async (file, show) => { await p.evaluate(s => { for (const id of ['
 
 for (const c of clips) {
   const dur = c.end - c.start, tmp = here + 'out/_' + c.id + '/'; fs.mkdirSync(tmp, { recursive: true });
-  await p.evaluate(h => { document.getElementById('hook').innerHTML = h; }, c.hook);
+  await p.evaluate(([h, f]) => { document.getElementById('hook').innerHTML = h; document.getElementById('ftxt').textContent = f || 'Full lesson + free game ▶'; }, [c.hook, c.footer]);
   await shot(tmp + 'static.png', ['hook', 'foot']);
   const cues = parseSrt(fs.readFileSync(repo + c.srt, 'utf8')).filter(q => q.a >= c.start - 0.2 && q.z <= c.end + 0.2);
   const inputs = ['-ss', c.start, '-t', dur, '-i', repo + c.src, '-loop', 1, '-framerate', 30, '-t', dur, '-i', bgf, '-loop', 1, '-framerate', 30, '-t', dur, '-i', tmp + 'static.png'];
