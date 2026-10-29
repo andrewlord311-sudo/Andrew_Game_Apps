@@ -1047,7 +1047,7 @@ S.outro9=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(
 
 // ======================================================================== VIDEO 10: bars and four beats
 // Eight numbered circles (two groups of four), bar lines, brackets labelled BAR / MEASURE, then the same beats as plain notes on a stave.
-const V10={x0:192,dx:128,y:330,d:86,G:['#2563eb','#ea580c']};
+const V10={x0:192,dx:128,y:300,d:86,G:['#2563eb','#ea580c']};
 const v10x=i=>V10.x0+i*V10.dx, v10xb=[(v10x(3)+v10x(4))/2,v10x(7)+72];
 const v10grid=id=>TL.scenes.find(s=>s.id===id).grid;
 function v10circles(r){return Array.from({length:8},(_,i)=>{const d=document.createElement('div');d.className='abs big';d.style.cssText=`left:${v10x(i)-V10.d/2}px;top:${V10.y-V10.d/2}px;width:${V10.d}px;height:${V10.d}px;border-radius:50%;background:#fff;box-shadow:0 8px 0 rgba(0,0,0,.14);font-size:54px;line-height:${V10.d}px;color:#94a3b8;opacity:0`;d.textContent=i%4+1;r.appendChild(d);return d})}
@@ -1092,12 +1092,12 @@ S.v10bar=v10barScene({update(t,L,c){const t1=wt('barIs','between')-0.1,tl=wt('ba
 S.v10measure=v10barScene({update(t,L,c){const tm=wt('american','measure')-0.12,ts=CL.same10.start;this.br.forEach(b=>{b.style.opacity=1});
    this.lab.forEach((l,i)=>{const sw=t>=tm;const on=t>=ts&&t<CL.same10.end;l.textContent=sw?'BAR (measure)':'BAR';l.style.fontSize=sw?'44px':'50px';l.style.opacity=1;l.style.scale=String((on?1+0.09*Math.abs(Math.sin((t-ts)*3.5)):1)*(sw&&t<tm+0.5?lerp(0.7,1,easeBack(prog(t,tm,0.4))):1))});
    const tq=wt('same10','same')-0.2;if(t>=tq)c.caption('BAR = MEASURE','#241f3d',tq)}});
-S.v10fourbeats=v10barScene({build(r){this.ch=chip(r,'4 BEATS IN EVERY BAR','#241f3d',640,V10.y+236);this.ch.style.fontSize='36px'},
+S.v10fourbeats=v10barScene({build(r){this.ch=chip(r,'4 BEATS IN EVERY BAR','#241f3d',640,V10.y+236);this.ch.style.fontSize='36px';this.ch.style.left=(640-this.ch.offsetWidth/2)+'px';this.nt=chip(r,'Bars can have other numbers of beats too, like 3 or 2','#64748b',640,V10.y+310);this.nt.style.fontSize='24px';this.nt.style.left=(640-this.nt.offsetWidth/2)+'px'},
   update(t,L,c){const a=CL.everybar.start+0.25,b=CL.everymeasure.start+0.25;const sw=t>=CL.everymeasure.start-0.05;
    this.lab.forEach(l=>{l.textContent=sw?'MEASURE (bar)':'BAR (measure)';l.style.fontSize='44px';l.style.opacity=1;l.style.scale=String(sw&&t<CL.everymeasure.start+0.5?lerp(0.7,1,easeBack(prog(t,CL.everymeasure.start,0.4))):1)});
    this.br.forEach(x=>x.style.opacity=1);
    this.ds.forEach((d,i)=>{let pl=1;[a,b].forEach(T=>{const age=t-(T+i*0.4);if(age>=0&&age<0.35)pl=1+0.28*Math.sin(age/0.35*Math.PI)});v10circSet(d,i,{lit:true,p:1,pulse:pl})});
-   pop(this.ch,t,wt('everybar','four')-0.1,0.4,0.5)}});
+   pop(this.ch,t,wt('everybar','four')-0.1,0.4,0.5);pop(this.nt,t,wt('everybar','four')+0.9,0.5,0.6)}});
 
 S.v10stave={ui:{ribbon:1,hosts:'side',bubble:true},build(r){this.st=v10stave(r,8);this.bg=v10badge(r,'Remember?',250,150);this.ch=chip(r,'5 lines','var(--orange)',this.st.x1-120,this.st.lineY[0]-84)},
   update(t,L,c){const t0=CL.remstave.start+0.2;this.st.heads.forEach((h,i)=>{if(i)v10noteSet(this.st,i,{p:prog(t,t0+0.4+i*0.16,0.35)})});this.st.bars.forEach(b=>b.style.opacity=prog(t,t0+1.9,0.5));

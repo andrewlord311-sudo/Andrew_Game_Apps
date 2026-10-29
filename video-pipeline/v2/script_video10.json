@@ -1,5 +1,5 @@
 {
- "title": "bars",
+ "title": "bars and barlines",
  "titleAt": "bars",
  "nugget": 10,
  "game": "Fill the Bar",
@@ -26,9 +26,9 @@
   {
    "id": "today",
    "who": "barnaby",
-   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> learn about bars.",
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> learn about bars and barlines.",
    "speed": 0.88,
-   "show": "Today we are going to learn about bars."
+   "show": "Today we are going to learn about bars and barlines."
   },
   {
    "id": "steady10",
@@ -131,9 +131,9 @@
   {
    "id": "american",
    "who": "melody",
-   "text": "In America, <break time=\"0.4s\" /> a bar is called a measure.",
+   "text": "Bars are also called <break time=\"0.4s\" /> measures.",
    "speed": 0.88,
-   "show": "In America, a bar is called a measure."
+   "show": "Bars are also called measures."
   },
   {
    "id": "same10",
