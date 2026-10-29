@@ -1,0 +1,276 @@
+{
+ "title": "Start here",
+ "titleAt": "hello",
+ "nugget": 0,
+ "game": "Line and Space Safari",
+ "gameFile": "line_and_space_safari.html",
+ "todayLead": "",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "hello",
+   "who": "melody",
+   "text": "Hello, <break time=\"0.3s\" /> parents, <break time=\"0.3s\" /> teachers <break time=\"0.3s\" /> and helpers!",
+   "show": "Hello, parents, teachers and helpers!",
+   "speed": 0.88
+  },
+  {
+   "id": "idea",
+   "who": "barnaby",
+   "text": "Here, children learn to read music, <break time=\"0.5s\" /> one small idea at a time.",
+   "show": "Here, children learn to read music, one small idea at a time.",
+   "speed": 0.88
+  },
+  {
+   "id": "pair",
+   "who": "melody",
+   "text": "Each Nugget is a short video, <break time=\"0.5s\" /> with a free game to practise it.",
+   "show": "Each Nugget is a short video, with a free game to practise it.",
+   "speed": 0.88
+  },
+  {
+   "id": "free",
+   "who": "barnaby",
+   "text": "No sign-up. <break time=\"0.6s\" /> No adverts. <break time=\"0.6s\" /> Just play.",
+   "show": "No sign-up. No adverts. Just play.",
+   "speed": 0.88
+  },
+  {
+   "id": "order",
+   "who": "melody",
+   "text": "The Nuggets go in order, <break time=\"0.5s\" /> so each one builds on the last.",
+   "show": "The Nuggets go in order, so each one builds on the last.",
+   "speed": 0.88
+  },
+  {
+   "id": "strands",
+   "who": "barnaby",
+   "text": "Rhythm, <break time=\"0.4s\" /> notes, <break time=\"0.4s\" /> melody, <break time=\"0.4s\" /> scales <break time=\"0.4s\" /> and harmony, <break time=\"0.5s\" /> all growing together.",
+   "show": "Rhythm, notes, melody, scales and harmony, all growing together.",
+   "speed": 0.88
+  },
+  {
+   "id": "week",
+   "who": "melody",
+   "text": "A new Nugget arrives <break time=\"0.5s\" /> every Wednesday <break time=\"0.4s\" /> and Saturday.",
+   "show": "A new Nugget arrives every Wednesday and Saturday.",
+   "speed": 0.88
+  },
+  {
+   "id": "ages",
+   "who": "barnaby",
+   "text": "Made for children aged four to seven, <break time=\"0.5s\" /> and the grown-ups who help them.",
+   "show": "Made for children aged four to seven, and the grown-ups who help them.",
+   "speed": 0.88
+  },
+  {
+   "id": "desc",
+   "who": "melody",
+   "text": "To find the games, <break time=\"0.4s\" /> use the link <break time=\"0.4s\" /> in each video's description.",
+   "show": "To find the games, use the link in each video's description.",
+   "speed": 0.88
+  },
+  {
+   "id": "addr",
+   "who": "barnaby",
+   "text": "Or type this address <break time=\"0.5s\" /> into any browser.",
+   "show": "Or type this address into any browser.",
+   "speed": 0.88
+  },
+  {
+   "id": "sub",
+   "who": "melody",
+   "text": "Subscribe, <break time=\"0.5s\" /> and every new Nugget <break time=\"0.4s\" /> will be waiting in your Subscriptions.",
+   "show": "Subscribe, and every new Nugget will be waiting in your Subscriptions.",
+   "speed": 0.88
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0,
+   "tail": 0.8
+  },
+  {
+   "id": "vi_hello",
+   "clips": [
+    "hello"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.4
+  },
+  {
+   "id": "vi_idea",
+   "clips": [
+    "idea"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.6
+  },
+  {
+   "id": "vi_pair",
+   "clips": [
+    "pair"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.8
+  },
+  {
+   "id": "vi_free",
+   "clips": [
+    "free"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.4
+  },
+  {
+   "id": "vi_order",
+   "clips": [
+    "order"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.6
+  },
+  {
+   "id": "vi_strands",
+   "clips": [
+    "strands"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.8
+  },
+  {
+   "id": "vi_week",
+   "clips": [
+    "week"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.6
+  },
+  {
+   "id": "vi_ages",
+   "clips": [
+    "ages"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.4
+  },
+  {
+   "id": "vi_desc",
+   "clips": [
+    "desc"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.8
+  },
+  {
+   "id": "vi_addr",
+   "clips": [
+    "addr"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 4.6
+  },
+  {
+   "id": "vi_sub",
+   "clips": [
+    "sub"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.8
+  },
+  {
+   "id": "outroi",
+   "clips": [
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0,
+   "tail": 3.6
+  }
+ ],
+ "events": [
+  {
+   "kind": "pop",
+   "clip": "free",
+   "word": "sign",
+   "off": -0.15
+  },
+  {
+   "kind": "pop",
+   "clip": "free",
+   "word": "adverts",
+   "off": -0.15
+  },
+  {
+   "kind": "pop",
+   "clip": "free",
+   "word": "play",
+   "off": -0.15
+  },
+  {
+   "kind": "tick",
+   "clip": "strands",
+   "word": "rhythm",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "strands",
+   "word": "notes",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "strands",
+   "word": "melody",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "strands",
+   "word": "scales",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "strands",
+   "word": "harmony",
+   "off": -0.12
+  },
+  {
+   "kind": "sparkle",
+   "clip": "sub",
+   "word": "waiting",
+   "off": -0.1
+  }
+ ],
+ "beats": [],
+ "gapOverride": {}
+}
