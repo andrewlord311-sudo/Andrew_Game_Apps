@@ -91,7 +91,7 @@
   {
    "id": "sub",
    "who": "melody",
-   "text": "Subscribe, <break time=\"0.5s\" /> and every new Nugget <break time=\"0.4s\" /> will be waiting in your Subscriptions.",
+   "text": "Subscribe, and every new Nugget <break time=\"0.4s\" /> will be waiting in your Subscriptions.",
    "show": "Subscribe, and every new Nugget will be waiting in your Subscriptions.",
    "speed": 0.88
   }
