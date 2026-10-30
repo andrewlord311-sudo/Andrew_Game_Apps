@@ -51,7 +51,7 @@
   .bunting span:nth-child(7){ border-top-color:#f4c542; }
   .bunting span:nth-child(8){ border-top-color:#4a9d5f; }
 
-  /* Tabs. Phonics and Times Tables are separate apps on their own GitHub
+  /* Tabs. Phonics, Maths and Colours are separate apps on their own GitHub
      Pages sites, so those cards link out by full URL rather than to a file
      sitting next to this page. */
   .tabs{
@@ -173,7 +173,7 @@
     <button class="tab" data-tab="music">🎵 Music</button>
     <button class="tab" data-tab="fun">🎲 Games</button>
     <button class="tab" data-tab="phonics">🔤 Phonics</button>
-    <button class="tab" data-tab="tables">✖️ Times Tables</button>
+    <button class="tab" data-tab="tables">✖️ Maths</button>
     <button class="tab" data-tab="colours">🎨 Colours</button>
   </nav>
 
@@ -193,7 +193,7 @@
   </section>
 
   <section class="panel" data-panel="tables">
-    <h2 class="section-heading">✖️ Times Tables</h2>
+    <h2 class="section-heading">✖️ Maths</h2>
     <div class="grid" id="grid-tables"></div>
   </section>
 
@@ -202,7 +202,7 @@
     <div class="grid single" id="grid-colours"></div>
   </section>
 
-  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES / PHONICS / TIMES_TABLES / COLOURS lists in the page source to add your own games.</footer>
+  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES / PHONICS / MATHS / COLOURS lists in the page source to add your own games.</footer>
 </div>
 
 <script>
@@ -260,7 +260,7 @@
   // Five separate games inside one app, reached by deep link (?game=...).
   // The app's own home screen is still there via its back button, so nobody
   // arriving this way is stuck in one game.
-  const TIMES_TABLES = [
+  const MATHS = [
     { title: "Feed Pip", description: "Answer eight questions to fill Pip up — clear a stage and a new guinea pig joins the farm.", emoji: "🥕", color: "#e8834a", file: "https://andrewlord311-sudo.github.io/TimesTables/app/?game=feed", comingSoon: false },
     { title: "Guinea Pig Jigsaw", description: "Every right answer uncovers another piece of a hidden guinea pig photo.", emoji: "🧩", color: "#3fa860", file: "https://andrewlord311-sudo.github.io/TimesTables/app/?game=jigsaw", comingSoon: false },
     { title: "Guinea Pig Run", description: "Just the 2, 5 and 10 times tables — ten questions to hop Evie over every obstacle to the finish flag.", emoji: "🏃", color: "#3fa7d6", file: "https://andrewlord311-sudo.github.io/TimesTables/app/?game=run", comingSoon: false },
@@ -323,7 +323,7 @@
   renderGrid(MUSIC_GAMES, document.getElementById('grid-music'));
   renderGrid(FUN_GAMES, document.getElementById('grid-fun'));
   renderGrid(PHONICS, document.getElementById('grid-phonics'));
-  renderGrid(TIMES_TABLES, document.getElementById('grid-tables'));
+  renderGrid(MATHS, document.getElementById('grid-tables'));
   renderGrid(COLOURS, document.getElementById('grid-colours'));
 
   // ---- Tabs ----
