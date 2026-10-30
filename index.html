@@ -174,6 +174,7 @@
     <button class="tab" data-tab="fun">🎲 Games</button>
     <button class="tab" data-tab="phonics">🔤 Phonics</button>
     <button class="tab" data-tab="tables">✖️ Times Tables</button>
+    <button class="tab" data-tab="colours">🎨 Colours</button>
   </nav>
 
   <section class="panel" data-panel="music">
@@ -196,7 +197,12 @@
     <div class="grid" id="grid-tables"></div>
   </section>
 
-  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES / PHONICS / TIMES_TABLES lists in the page source to add your own games.</footer>
+  <section class="panel" data-panel="colours">
+    <h2 class="section-heading">🎨 Colours</h2>
+    <div class="grid single" id="grid-colours"></div>
+  </section>
+
+  <footer>Made with ❤️ — edit the MUSIC_GAMES / FUN_GAMES / PHONICS / TIMES_TABLES / COLOURS lists in the page source to add your own games.</footer>
 </div>
 
 <script>
@@ -244,6 +250,11 @@
   // page and 404. Each is one app with its own menu inside, hence one card.
   const PHONICS = [
     { title: "Felix's Phonics", description: "Letter sounds, blending and tricky words — six games, following the school's Essential Letters and Sounds order.", emoji: "🔤", color: "#3fa7d6", file: "https://andrewlord311-sudo.github.io/PhonicsApp/", comingSoon: false }
+  ];
+
+  // Pip's Paint Pots: its own repo and Pages site, one app with its own menu.
+  const COLOURS = [
+    { title: "Pip's Paint Pots", description: "Mix paint to colour the guinea pigs' hutch, bows and coats — then warm and cool colours, opposites, and mixing light. Earns stars for the garden.", emoji: "🎨", color: "#e0567c", file: "https://andrewlord311-sudo.github.io/PipsPaintPots/", comingSoon: false }
   ];
 
   // Five separate games inside one app, reached by deep link (?game=...).
@@ -313,6 +324,7 @@
   renderGrid(FUN_GAMES, document.getElementById('grid-fun'));
   renderGrid(PHONICS, document.getElementById('grid-phonics'));
   renderGrid(TIMES_TABLES, document.getElementById('grid-tables'));
+  renderGrid(COLOURS, document.getElementById('grid-colours'));
 
   // ---- Tabs ----
   // The chosen tab is remembered, so a tablet left on Phonics opens on
