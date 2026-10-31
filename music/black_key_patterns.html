@@ -517,6 +517,12 @@
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             setStage(1);
         });
+    
+        // set to the video's address once it is published, and a "Watch the video" link appears
+        const VIDEO_URL = 'https://youtu.be/hBvuliCKjDQ';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-cyan-700 underline mt-2'; a.innerText = '▶ Watch the video: Black keys in twos and threes'; document.getElementById('game-card').appendChild(a); }
+        });
     </script>
 </body>
 </html>
