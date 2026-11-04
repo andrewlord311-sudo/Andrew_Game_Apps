@@ -354,7 +354,7 @@
         function toggleHints() { hintsEnabled = !hintsEnabled; $('hint-btn-text').innerText = hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On'; newRound(); }
 
         // set to the video's address once it is published, and a "Watch the video" link appears
-        const VIDEO_URL = '';
+        const VIDEO_URL = 'https://youtu.be/5j1Mm2eOUSs';
         document.addEventListener('DOMContentLoaded', () => {
             if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Left, right, high, low'; $('game-card').appendChild(a); }
             $('mascot-avatar').innerHTML = SVG_MELODY;
