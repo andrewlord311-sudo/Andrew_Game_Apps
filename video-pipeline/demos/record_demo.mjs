@@ -33,7 +33,7 @@ await p.addInitScript(() => { localStorage.setItem('tga_no_count', '1');
     document.body.appendChild(d);
     addEventListener('mousemove', e => { d.style.left = e.clientX + 'px'; d.style.top = e.clientY + 'px'; }, true);
     addEventListener('mousedown', () => d.style.transform = 'scale(.7)', true); addEventListener('mouseup', () => d.style.transform = '', true); }); });
-await p.goto(SITE + g.file + '?nocount=1'); await p.evaluate(() => { document.documentElement.style.zoom = 1.7; document.body.style.cssText += ';min-height:0;align-items:flex-start;padding-top:170px'; }); await p.waitForTimeout(2500);
+await p.goto(SITE + g.file + '?nocount=1'); await p.evaluate(() => { document.documentElement.style.zoom = 1.7; document.body.style.cssText += ';min-height:0;align-items:flex-start;padding-top:170px'; const st = document.createElement('style'); st.textContent = '#reward-widget{width:130px!important;height:130px!important;bottom:132px!important}'; document.head.appendChild(st); }); await p.waitForTimeout(2500);
 if (g.pre) await g.pre(p);
 for (let i = 0; i < g.rounds; i++) { await p.waitForTimeout(1500); await g.answer(p); await p.waitForTimeout(1800); }
 await p.waitForTimeout(1500);
@@ -50,9 +50,32 @@ body{margin:0;width:1080px;height:1920px;background:transparent;font-family:F,sa
 <div class=h>${g.hook}</div><div class=f><div class=a>Free game: no sign-up ▶ link in bio</div><br><div class=b>🎵 Melody &amp; Barnaby's Music Nuggets</div></div>`);
 await q.evaluate(() => document.fonts.ready); await q.screenshot({ path: here + 'out/_ov.png', omitBackground: true }); await b2.close();
 
+const INTRO = [  // parent-facing; no "free forever" promises (see the free-promise memory)
+  ['Why play music games?', 'The best way to learn<br>is by doing. 🎵'],
+  ['How easy are they?', 'Nothing to download.<br>No sign-up. No adverts.'],
+  ['What do you need?', 'Any phone, tablet<br>or computer with<br>a web browser. 📱'],
+  ['How do you get there?', 'Tap the link in our bio<br>or in the video description.'],
+  ['Let’s look at a typical game…', 'Name That Part ▶'],
+];
+const CARD_S = 3.6;
+const b3 = await chromium.launch(); const c = await b3.newPage({ viewport: { width: 1080, height: 1920 } });
+const cardHtml = (h, t) => `<!doctype html><meta charset=utf-8><style>@font-face{font-family:F;src:url(data:font/woff2;base64,${fs.readFileSync(repo + 'music/fonts/fredoka-one.woff2').toString('base64')})}
+body{margin:0;width:1080px;height:1920px;background:radial-gradient(ellipse at 50% 38%,#fff3c4 0%,#d9eef7 55%,#bfe3f5 100%);font-family:F,sans-serif;color:#1f1b3a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 70px;box-sizing:border-box}
+h1{font-size:112px;line-height:1.1;margin:0 0 60px;color:#e8590c}p{font-size:70px;line-height:1.3;margin:0}
+.b{position:absolute;bottom:90px;left:0;right:0;font-size:42px;opacity:.85}</style><h1>${h}</h1><p>${t}</p><div class=b>🎵 Melody &amp; Barnaby's Music Nuggets</div>`;
+const cards = [];
+for (let i = 0; i < INTRO.length; i++) { await c.setContent(cardHtml(...INTRO[i])); await c.evaluate(() => document.fonts.ready); const f = here + `out/_card${i}.png`; await c.screenshot({ path: f }); cards.push(f); }
+await b3.close();
+
 const music = '/Users/andrewlord/Library/Mobile Documents/iCloud~md~obsidian/Documents/Andrew Second Brain/Claude Projects/Kids learning/Music teaching/Videos and channel/intro outro.mp3';
 const out = here + `out/${id}_demo.mp4`;
-const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', raw, '-i', here + 'out/_ov.png', '-stream_loop', '-1', '-i', music,
-  '-filter_complex', '[0:v]scale=1080:1920,setsar=1[a];[a][1:v]overlay=0:0[v];[2:a]volume=0.35,aformat=sample_rates=44100:channel_layouts=stereo[m]',
-  '-map', '[v]', '-map', '[m]', '-shortest', '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', 30, '-c:a', 'aac', '-b:a', '192k', out], { stdio: 'inherit' });
+const inputs = [];
+cards.forEach(f => inputs.push('-loop', 1, '-framerate', 30, '-t', CARD_S, '-i', f));
+inputs.push('-i', raw, '-i', here + 'out/_ov.png', '-stream_loop', '-1', '-i', music);
+const n = cards.length;
+const chain = cards.map((_, i) => `[${i}:v]scale=1080:1920,setsar=1,format=yuv420p[c${i}]`).join(';')
+  + `;[${n}:v]scale=1080:1920,setsar=1[a];[a][${n + 1}:v]overlay=0:0,format=yuv420p[d];`
+  + cards.map((_, i) => `[c${i}]`).join('') + `[d]concat=n=${n + 1}:v=1:a=0[v];[${n + 2}:a]volume=0.35,aformat=sample_rates=44100:channel_layouts=stereo[m]`;
+const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', chain, '-map', '[v]', '-map', '[m]', '-shortest',
+  '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', 30, '-c:a', 'aac', '-b:a', '192k', out], { stdio: 'inherit' });
 console.log(r.status === 0 ? 'ok ' + out : 'FAILED');
