@@ -67,15 +67,16 @@ const cards = [];
 for (let i = 0; i < INTRO.length; i++) { await c.setContent(cardHtml(...INTRO[i])); await c.evaluate(() => document.fonts.ready); const f = here + `out/_card${i}.png`; await c.screenshot({ path: f }); cards.push(f); }
 await b3.close();
 
-const music = '/Users/andrewlord/Library/Mobile Documents/iCloud~md~obsidian/Documents/Andrew Second Brain/Claude Projects/Kids learning/Music teaching/Videos and channel/intro outro.mp3';
+const music = here + 'assets/sixes_and_sevens_flow1.mp3';  // Andrew's own piece; one continuous play, no looping
 const out = here + `out/${id}_demo.mp4`;
 const inputs = [];
 cards.forEach(f => inputs.push('-loop', 1, '-framerate', 30, '-t', CARD_S, '-i', f));
-inputs.push('-i', raw, '-i', here + 'out/_ov.png', '-stream_loop', '-1', '-i', music);
+inputs.push('-i', raw, '-i', here + 'out/_ov.png', '-i', music);
 const n = cards.length;
+const rawDur = parseFloat(spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', raw]).stdout), total = n * CARD_S + rawDur;
 const chain = cards.map((_, i) => `[${i}:v]scale=1080:1920,setsar=1,format=yuv420p[c${i}]`).join(';')
   + `;[${n}:v]scale=1080:1920,setsar=1[a];[a][${n + 1}:v]overlay=0:0,format=yuv420p[d];`
-  + cards.map((_, i) => `[c${i}]`).join('') + `[d]concat=n=${n + 1}:v=1:a=0[v];[${n + 2}:a]volume=0.35,aformat=sample_rates=44100:channel_layouts=stereo[m]`;
-const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', chain, '-map', '[v]', '-map', '[m]', '-shortest',
+  + cards.map((_, i) => `[c${i}]`).join('') + `[d]concat=n=${n + 1}:v=1:a=0[v];[${n + 2}:a]atrim=0:${total.toFixed(2)},afade=t=in:d=1.5,afade=t=out:st=${(total - 3).toFixed(2)}:d=3,volume=1.8,aformat=sample_rates=44100:channel_layouts=stereo[m]`;
+const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', chain, '-map', '[v]', '-map', '[m]', '-t', total.toFixed(2),
   '-c:v', 'libx264', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', 30, '-c:a', 'aac', '-b:a', '192k', out], { stdio: 'inherit' });
 console.log(r.status === 0 ? 'ok ' + out : 'FAILED');
