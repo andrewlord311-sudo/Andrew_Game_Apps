@@ -1,0 +1,208 @@
+{
+ "title": "Middle C",
+ "titleAt": "Middle C",
+ "nugget": 11,
+ "game": "Note ladder, rung 1",
+ "gameFile": "note_ladder.html",
+ "todayLead": "Today we are going to find",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> find Middle C.",
+   "speed": 0.88,
+   "show": "Today we are going to find Middle C."
+  },
+  {
+   "id": "kbstave",
+   "who": "melody",
+   "text": "Here is a keyboard… <break time=\"0.5s\" /> and here is the stave.",
+   "speed": 0.88,
+   "show": "Here is a keyboard… and here is the stave."
+  },
+  {
+   "id": "samenotes",
+   "who": "barnaby",
+   "text": "They show the same notes… <break time=\"0.5s\" /> in two different ways.",
+   "speed": 0.88,
+   "show": "They show the same notes… in two different ways."
+  },
+  {
+   "id": "lookmiddle",
+   "who": "melody",
+   "text": "Look at the middle of the keyboard.",
+   "speed": 0.88,
+   "show": "Look at the middle of the keyboard."
+  },
+  {
+   "id": "lefttwo",
+   "who": "barnaby",
+   "text": "Just to the left of the two black keys… <break time=\"0.5s\" /> is C.",
+   "speed": 0.88,
+   "show": "Just to the left of the two black keys… is C."
+  },
+  {
+   "id": "middlenamed",
+   "who": "melody",
+   "text": "This is the C nearest <break time=\"0.5s\" /> the middle of the piano… <break time=\"0.5s\" /> so it is called Middle C.",
+   "speed": 0.88,
+   "show": "This is the C nearest the middle of the piano… so it is called Middle C."
+  },
+  {
+   "id": "findstave",
+   "who": "barnaby",
+   "text": "Now find it on the stave.",
+   "speed": 0.88,
+   "show": "Now find it on the stave."
+  },
+  {
+   "id": "littleline",
+   "who": "melody",
+   "text": "Middle C sits on its own little line… <break time=\"0.5s\" /> right between the two staves.",
+   "speed": 0.88,
+   "show": "Middle C sits on its own little line… right between the two staves."
+  },
+  {
+   "id": "middleboth",
+   "who": "barnaby",
+   "text": "So Middle C is in the middle… <break time=\"0.5s\" /> of the keyboard… <break time=\"0.5s\" /> and in the middle of the music.",
+   "speed": 0.88,
+   "show": "So Middle C is in the middle… of the keyboard… and in the middle of the music."
+  },
+  {
+   "id": "trebleis",
+   "who": "barnaby",
+   "text": "Up here is the treble clef… <break time=\"0.5s\" /> for the right hand… <break time=\"0.5s\" /> and higher notes.",
+   "speed": 0.88,
+   "show": "Up here is the treble clef… for the right hand… and higher notes."
+  },
+  {
+   "id": "bassis",
+   "who": "melody",
+   "text": "Down here is the bass clef… <break time=\"0.5s\" /> for the left hand… <break time=\"0.5s\" /> and lower notes.",
+   "speed": 0.88,
+   "show": "Down here is the bass clef… for the left hand… and lower notes."
+  },
+  {
+   "id": "handsmeet",
+   "who": "barnaby",
+   "text": "Middle C is where the hands meet.",
+   "speed": 0.88,
+   "show": "Middle C is where the hands meet."
+  },
+  {
+   "id": "letsplay",
+   "who": "melody",
+   "text": "Let's play Middle C.",
+   "speed": 0.88,
+   "show": "Let's play Middle C."
+  },
+  {
+   "id": "yourturn11",
+   "who": "barnaby",
+   "text": "Your turn! <break time=\"0.4s\" /> Look at the notes.",
+   "speed": 0.88,
+   "show": "Your turn! Look at the notes."
+  },
+  {
+   "id": "q1ask",
+   "who": "melody",
+   "text": "Where is Middle C <break time=\"0.4s\" /> on the keyboard?",
+   "speed": 0.88,
+   "show": "Where is Middle C on the keyboard?"
+  },
+  {
+   "id": "a1",
+   "who": "melody",
+   "text": "Here.",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "Where is Middle C on the keyboard?"
+  },
+  {
+   "id": "q2ask",
+   "who": "melody",
+   "text": "Which hand plays <break time=\"0.4s\" /> the bass clef?",
+   "speed": 0.88,
+   "show": "Which hand plays the bass clef?"
+  },
+  {
+   "id": "a2",
+   "who": "barnaby",
+   "text": "The left hand.",
+   "speed": 0.85,
+   "show": "The left hand."
+  },
+  {
+   "id": "q3ask",
+   "who": "melody",
+   "text": "Is this note <break time=\"0.4s\" /> Middle C?",
+   "speed": 0.88,
+   "show": "Is this note Middle C?"
+  },
+  {
+   "id": "a3",
+   "who": "melody",
+   "text": "Yes!",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "Is this note Middle C?"
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "src": "../video2/qwell"
+  },
+  {
+   "id": "game11",
+   "who": "barnaby",
+   "text": "Play the note ladder <break time=\"0.3s\" /> and find Middle C!",
+   "speed": 0.88,
+   "show": "Play the note ladder and find Middle C!"
+  }
+ ],
+ "scenes": [],
+ "events": [
+  {
+   "kind": "tick",
+   "clip": "a1",
+   "off": -0.2
+  },
+  {
+   "kind": "tick",
+   "clip": "a3",
+   "off": -0.2
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "off": -0.1
+  }
+ ],
+ "beats": [],
+ "gapOverride": {
+  "q1ask": 0.8,
+  "a1": 4.6,
+  "a2": 4.4,
+  "a3": 4.4,
+  "qwell": 1.2
+ }
+}
