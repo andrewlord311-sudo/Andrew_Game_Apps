@@ -47,15 +47,15 @@
   {
    "id": "lookmiddle",
    "who": "melody",
-   "text": "Look at the middle of the keyboard.",
-   "speed": 0.88,
+   "text": "Look at the middle <break time=\"0.4s\" /> of the keyboard.",
+   "speed": 0.85,
    "show": "Look at the middle of the keyboard."
   },
   {
    "id": "lefttwo",
    "who": "barnaby",
-   "text": "Just to the left of the two black keys… <break time=\"0.5s\" /> is C.",
-   "speed": 0.88,
+   "text": "Just to the left <break time=\"0.4s\" /> of the two black keys… <break time=\"0.5s\" /> is C.",
+   "speed": 0.85,
    "show": "Just to the left of the two black keys… is C."
   },
   {
@@ -68,8 +68,8 @@
   {
    "id": "findstave",
    "who": "barnaby",
-   "text": "Now find it on the stave.",
-   "speed": 0.88,
+   "text": "Now find it… <break time=\"0.4s\" /> on the stave.",
+   "speed": 0.85,
    "show": "Now find it on the stave."
   },
   {
@@ -179,11 +179,265 @@
    "show": "Play the note ladder and find Middle C!"
   }
  ],
- "scenes": [],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0,
+   "tail": 0.8
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.8
+  },
+  {
+   "id": "v11kbstave",
+   "clips": [
+    "kbstave",
+    "samenotes"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 3.0
+  },
+  {
+   "id": "v11look",
+   "clips": [
+    "lookmiddle",
+    "lefttwo"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 3.0
+  },
+  {
+   "id": "v11mini",
+   "clips": [
+    "middlenamed"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.6
+  },
+  {
+   "id": "v11stave",
+   "clips": [
+    "findstave",
+    "littleline"
+   ],
+   "lead": 0.5,
+   "gap": 1.0,
+   "tail": 2.4
+  },
+  {
+   "id": "v11stave2",
+   "clips": [
+    "middleboth"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.2
+  },
+  {
+   "id": "v11hands",
+   "clips": [
+    "trebleis"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.2
+  },
+  {
+   "id": "v11hands2",
+   "clips": [
+    "bassis"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 2.2
+  },
+  {
+   "id": "v11hands3",
+   "clips": [
+    "handsmeet"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.6
+  },
+  {
+   "id": "v11play",
+   "clips": [
+    "letsplay"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 6.0
+  },
+  {
+   "id": "v11q1",
+   "clips": [
+    "yourturn11",
+    "q1ask",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 1.6
+  },
+  {
+   "id": "v11q2",
+   "clips": [
+    "q2ask",
+    "a2"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.6
+  },
+  {
+   "id": "v11q3",
+   "clips": [
+    "q3ask",
+    "a3",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro11",
+   "clips": [
+    "game1",
+    "game11",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.4,
+   "tail": 3.4
+  }
+ ],
  "events": [
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "e4",
+    "g4"
+   ],
+   "step": 0.7,
+   "clip": "samenotes",
+   "off": 0.3,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "middlenamed",
+   "off": 0.25,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "littleline",
+   "off": 0.25,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c5"
+   ],
+   "step": 1.0,
+   "clip": "trebleis",
+   "off": 0.2,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c3"
+   ],
+   "step": 1.0,
+   "clip": "bassis",
+   "off": 0.2,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "sparkle",
+   "clip": "handsmeet",
+   "from": "end",
+   "off": 0.9
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "c4",
+    "c4"
+   ],
+   "step": 1.4,
+   "clip": "letsplay",
+   "off": 0.5,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "a1",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "a3",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
   {
    "kind": "tick",
    "clip": "a1",
+   "off": -0.2
+  },
+  {
+   "kind": "pop",
+   "clip": "a2",
    "off": -0.2
   },
   {

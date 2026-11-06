@@ -1137,6 +1137,139 @@ S.outro10=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build
 
 
 
+// ======================================================================== VIDEO 11: Middle C
+// The 15-key keyboard (white key 7 is the C in the exact middle) shrunk under a grand staff: treble stave on top, bass stave below,
+// and Middle C on its own little line between them, straight above key 7.
+const V11={sc:0.62,ty:175,sp:1.5};
+const k11x=k=>640+V11.sc*(WKX(k)+(KB.w-3)/2-640), k11top=235+V11.ty;
+function v11mk(self,r,o={}){
+  const K=kb8Build(self,r);K.root.style.transformOrigin='640px 235px';K.root.style.scale=String(V11.sc);K.root.style.translate=`0 ${V11.ty}px`;
+  self.tr=makeStave(r,{clef:'treble',notes:['c/4','e/4','g/4'],scale:V11.sp,w:330,h:170,cx:640,cy:262});
+  self.bs=makeStave(r,{clef:'bass',notes:[],scale:V11.sp,w:330,h:170,cx:640,cy:262+6*self.tr.sp});
+  [self.tr,self.bs].forEach(st=>st.barlines.forEach(b=>{b.style.opacity=1}));
+  const h0=self.tr.heads[0];self.hh=halo(r,h0.x,h0.y,44,'rgba(245,158,11,.95)');
+  const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(svg);
+  self.lk=[0,1,2].map(()=>{const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('stroke','#f59e0b');l.setAttribute('stroke-width','4');l.setAttribute('stroke-dasharray','2 9');l.setAttribute('stroke-linecap','round');l.style.opacity=0;svg.appendChild(l);return l});
+  self.labKb=labelChip(r,'KEYBOARD','#475569',165,470,32,'6px 22px');self.labSt=labelChip(r,'STAVE','#475569',235,290,32,'6px 22px');
+  return K}
+// o: {kb,st: opacity of keyboard / staves; fadeSt: time the staves start to appear; notes:[t0,t1,t2]; keys:{k:[colour,amount]}; cf; links:[[k,head,t0]]; tint:{tr,bs}; hh:glow amount for Middle C note; labKb,labSt: times}
+function v11draw(self,t,L,o){
+  const K=self.K,p=prog(L,0.2,0.5),kb=o.kb??1,st=o.st??1,pst=o.fadeSt!=null?prog(t,o.fadeSt,0.6):p;
+  K.root.style.opacity=String(clamp(p*2)*kb);
+  [self.tr,self.bs].forEach(s=>{s.box.style.opacity=String(clamp(pst*2)*st)});
+  kbPaint(K,{whiteBg:'#f8fafc'});K.blacks.forEach(b=>{b.style.translate='0 0'});
+  K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+  Object.keys(o.keys||{}).forEach(k=>{const [col,a]=o.keys[k];K.whites[k].style.background=mixHex('#f8fafc',col,a);K.whites[k].style.boxShadow=`0 0 0 ${2+3*a}px ${col},0 7px 0 rgba(0,0,0,.14)`});
+  kbBadgesBrackets(K,t,{});cfPaint(K,t,o.cf||{});
+  self.tr.heads.forEach((h,i)=>{const at=o.notes&&o.notes[i];const q=prog(t,at==null?1e9:at,0.4);h.sn.style.opacity=String(clamp(q*2.5));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(q))*-28}px)`});
+  const tint=(s,col,on)=>{s.lines.forEach(l=>{l.style.stroke=on?col:'';l.style.strokeWidth=on?'2.4':''});s.box.style.filter=on?`drop-shadow(0 0 9px ${col})`:''};
+  tint(self.tr,RCOL,!!(o.tint&&o.tint.tr));tint(self.bs,LCOL,!!(o.tint&&o.tint.bs));
+  self.lk.forEach((l,i)=>{const e=o.links&&o.links[i];if(!e){l.style.opacity='0';return}const q=prog(t,e[2],0.5),h=self.tr.heads[e[1]],x1=k11x(e[0]),y1=k11top-4,x2=h.x,y2=h.y+16;
+    l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',lerp(x1,x2,easeOut(q)));l.setAttribute('y2',lerp(y1,y2,easeOut(q)));l.style.opacity=String(clamp(q*2)*(e[3]??1))});
+  self.hh.style.opacity=String((o.hh||0)*0.9);
+  pop(self.labKb,t,o.labKb??1e9,0.4);pop(self.labSt,t,o.labSt??1e9,0.4);
+  if(o.labKb==null)self.labKb.style.opacity='0';if(o.labSt==null)self.labSt.style.opacity='0'}
+const v11sc=(f)=>({ui:V6UI,build(r){v11mk(this,r);if(f.build)f.build.call(this,r)},update(t,L,c){const o=f.state.call(this,t,L,c)||{};v11draw(this,t,L,o);if(f.after)f.after.call(this,t,L,c,o)}});
+
+// "Here is a keyboard… and here is the stave. They show the same notes… in two different ways."
+S.v11kbstave=v11sc({state(t,L,c){const tk=wt('kbstave','keyboard')-0.1,ts=wt('kbstave','stave')-0.15,t1=CL.samenotes.start+0.3,dt=0.7;
+  const keys={},notes=[null,null,null],links=[],out=t>CL.samenotes.end+1.4?prog(t,CL.samenotes.end+1.4,0.8):0;
+  [7,9,11].forEach((k,i)=>{const ti=t1+i*dt;if(t>=ti){keys[k]=['#f59e0b',0.6*(1-out)+0.0];notes[i]=ti;links.push([k,i,ti,1-out])}});
+  return {kb:1,st:1,fadeSt:ts,labKb:tk,labSt:ts,keys,notes:notes.map((n,i)=>n==null?null:(out>0?1e9:n)),links}}});
+
+// "Look at the middle of the keyboard." "Just to the left of the two black keys… is C."
+S.v11look=v11sc({state(t,L,c){const tm=wt('lookmiddle','middle')-0.15,ta=wt('lefttwo','left')-0.1,tb=CL.lefttwo.end-0.6;
+  const cf={},keys={};let cap=null;
+  if(t>=tm)GRP[2].forEach(k=>{});
+  if(t>=tm&&t<ta){keys[7]=['#f59e0b',0.2+0.2*pulse6(t,tm)];keys[8]=['#f59e0b',0.2+0.2*pulse6(t,tm)];keys[6]=['#f59e0b',0.2+0.2*pulse6(t,tm)]}
+  if(t>=ta){cf[7]={b:tb,a:ta,aEnd:tb+1.8,p:ta,keep:true};keys[7]=['#0d9488',0.5]}
+  return {kb:1,st:0.25,cf,keys,labKb:1e9,hl:1,cap:t>=tb?['LEFT OF THE 2 = C','#0d9488',tb]:null}},
+  after(t,L,c,o){const K=this.K;if(this.hb==null){this.hb=true}
+   const tm=wt('lookmiddle','middle')-0.15,ta=wt('lefttwo','left')-0.1;
+   K.blacks.forEach((b,k)=>{const on=GRP[2].includes(k)&&t>=tm&&t<ta+0.2;if(on){const ph=pulse6(t,tm);b.style.background=mixHex('#241f3d','#f59e0b',ph);b.style.boxShadow=`0 0 0 ${1+3*ph}px rgba(245,158,11,${.35+.5*ph}),0 6px 0 rgba(0,0,0,.25)`}});
+   if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}});
+
+// "This is the C nearest the middle of the piano… so it is called Middle C." the whole 88-key piano, the centre marked, Middle C beside it
+S.v11mini={ui:V6UI,build(r){
+  const n=52,x0=70,w=1140/n,top=330,h=150;this.n=n;this.root=document.createElement('div');this.root.className='abs';this.root.style.cssText='left:0;top:0;width:1280px;height:720px;opacity:0';r.appendChild(this.root);
+  this.ws=Array.from({length:n},(_,i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x0+i*w}px;top:${top}px;width:${w-1.5}px;height:${h}px;border-radius:0 0 5px 5px;background:#f8fafc;box-shadow:0 5px 0 rgba(0,0,0,.14)`;this.root.appendChild(d);return d});
+  const nm=['A','B','C','D','E','F','G'];for(let i=0;i<n-1;i++){if(['A','C','D','F','G'].includes(nm[i%7])){const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x0+(i+1)*w-w*0.3}px;top:${top}px;width:${w*0.6}px;height:${h*0.62}px;border-radius:0 0 4px 4px;background:#241f3d`;this.root.appendChild(d)}}
+  this.cx=x0+26*w;this.c4=x0+23.5*w;
+  this.ctr=document.createElement('div');this.ctr.className='abs';this.ctr.style.cssText=`left:${this.cx-3}px;top:${top-70}px;width:6px;height:${h+100}px;border-radius:3px;background:repeating-linear-gradient(#f59e0b 0 12px,transparent 12px 22px);opacity:0`;this.root.appendChild(this.ctr);
+  this.ctl=labelChip(this.root,'the middle of the piano','#d97706',this.cx+185,top+h+26,30,'6px 22px');
+  this.ar=document.createElement('div');this.ar.className='abs';this.ar.style.cssText=`left:${this.c4-20}px;top:${top-100}px;width:40px;opacity:0`;this.ar.innerHTML=arrowSvg('#0d9488');this.root.appendChild(this.ar);
+  this.mc=labelChip(this.root,'MIDDLE C','#0d9488',this.c4-150,top+h+22,50,'8px 34px');
+  },update(t,L,c){const p=prog(L,0.2,0.6);this.root.style.opacity=String(clamp(p*2));this.root.style.scale=String(lerp(0.96,1,easeOut(p)));
+   const tc=wt('middlenamed','nearest')-0.5,tm=wt('middlenamed','middle')-0.1,tn=wt('middlenamed','middle',1)-0.15;
+   this.ws.forEach((w,i)=>{const on=i===23&&t>=tc;w.style.background=on?mixHex('#f8fafc','#2dd4bf',0.55+0.35*pulse6(t,tc)):'#f8fafc'});
+   const pa=prog(t,tc,0.3);this.ar.style.opacity=String(clamp(pa*2));this.ar.style.translate=`0 ${pa>=1?Math.sin((t-tc)*6)*7:0}px`;
+   fade(this.ctr,t,tm,0.5);pop(this.ctl,t,tm,0.4);pop(this.mc,t,tn,0.4)}};
+
+// "Now find it on the stave." "Middle C sits on its own little line… right between the two staves." "So Middle C is in the middle… of the keyboard… and in the middle of the music."
+const mkV11stave=()=>v11sc({build(r){const h0=this.tr.heads[0];this.mcChip=labelChip(r,'MIDDLE C','#0d9488',this.tr.x0-115,h0.y-20,34,'6px 24px');
+  this.cKb=labelChip(r,'MIDDLE OF THE KEYBOARD','#475569',640,586,28,'6px 22px');this.cSt=labelChip(r,'MIDDLE OF THE STAVES','#475569',this.tr.x1+175,h0.y-20,28,'6px 22px')},
+ state(t,L,c){const tf=wt('findstave','stave')-0.3,tl=wt('littleline','little')-0.1,tb=wt('littleline','between')-0.1,tk=wt('middleboth','keyboard')-0.15,tm=wt('middleboth','music')-0.2;
+  const keys={},links=[];if(t>=tl)keys[7]=['#0d9488',0.5+(t>=tk?0.35*pulse6(t,tk):0)];if(t>=tb)links.push([7,0,tb]);
+  const hh=t>=tm?pulse6(t,tm):(t>=tk?pulse6(t,tk)*0.0:0);
+  return {kb:t<tf?1:0.55,st:1,fadeSt:tf,notes:[t>=tl?tl:null,null,null],keys,links,hh:t>=tl?(t>=tk?0.6+0.4*pulse6(t,tm):0.35):0,tint:null}},
+ after(t,L,c,o){const tl=wt('littleline','little')-0.1,tk=wt('middleboth','keyboard')-0.15,tm=wt('middleboth','music')-0.2;
+  pop(this.mcChip,t,tl+0.3,0.4);pop(this.cKb,t,tk,0.4);pop(this.cSt,t,tm,0.4)}});
+S.v11stave=mkV11stave();S.v11stave2=mkV11stave();
+
+// hands: right hand = treble clef = higher; left hand = bass clef = lower; they meet at Middle C
+function v11hand(r,side,w,x,y){const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x}px;top:${y}px;width:${w}px;opacity:0`;d.innerHTML=handSvg(side,'flat',w);r.appendChild(d);return d}
+const mkV11hands=()=>v11sc({build(r){this.hl=v11hand(r,'L',150,150,236);this.hr=v11hand(r,'R',150,980,236)},
+ state(t,L,c){const tt=wt('trebleis','treble')-0.15,tb=wt('bassis','bass')-0.15,tm=CL.handsmeet.start-0.1;
+  const keys={};let tintTr=t>=tt&&t<tb,tintBs=t>=tb&&t<tm;
+  if(t>=tt&&t<tb)for(let k=7;k<15;k++)keys[k]=[RCOL,0.18+0.12*pulse6(t,tt)];
+  if(t>=tb&&t<tm)for(let k=0;k<7;k++)keys[k]=[LCOL,0.18+0.12*pulse6(t,tb)];
+  if(t>=tm){keys[7]=['#f59e0b',0.35+0.45*pulse6(t,tm+1.6)]}
+  return {kb:1,st:t>=tm?0.25:1,keys,tint:{tr:tintTr,bs:tintBs},cap:t>=tm?null:t>=tb?['BASS · LEFT · LOWER',LCOL,tb]:t>=tt?['TREBLE · RIGHT · HIGHER',RCOL,tt]:null}},
+ after(t,L,c,o){const tt=wt('trebleis','treble')-0.15,tb=wt('bassis','bass')-0.15,tm=CL.handsmeet.start-0.1,tj=tm+0.4,pj=easeOut(prog(t,tj,1.8));
+  const y=lerp(236,300,pj);this.hl.style.top=this.hr.style.top=y+'px';this.hl.style.left=lerp(150,478,pj)+'px';this.hr.style.left=lerp(980,652,pj)+'px';this.hl.style.width=this.hr.style.width='150px';
+  this.hl.style.opacity=String(clamp(prog(t,tb,0.4)*2));this.hr.style.opacity=String(clamp(prog(t,tt,0.4)*2));
+  this.hl.style.filter=t>=tb&&t<tm?`drop-shadow(0 0 14px ${LCOL})`:'';this.hr.style.filter=t>=tt&&t<tb?`drop-shadow(0 0 14px ${RCOL})`:'';
+  if(t>=tj+2.0){this.hl.style.filter=`drop-shadow(0 0 10px ${LCOL})`;this.hr.style.filter=`drop-shadow(0 0 10px ${RCOL})`}
+  if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2]);else if(t>=tj+1.9)c.caption('HANDS MEET AT MIDDLE C','#d97706',tj+1.9)}});
+S.v11hands=mkV11hands();S.v11hands2=mkV11hands();S.v11hands3=mkV11hands();
+
+// "Let's play Middle C." then three piano notes: the key and the note flash together
+S.v11play=v11sc({state(t,L,c){const t0=CL.letsplay.end+0.5,ts=[0,1,2].map(i=>t0+i*1.4);let hit=0,k7=0;ts.forEach(x=>{if(t>=x){const a=Math.exp(-(t-x)*3.2);hit=Math.max(hit,a);k7=Math.max(k7,a)}});
+  return {kb:1,st:1,notes:[CL.letsplay.start+0.2,null,null],keys:{7:['#f59e0b',0.15+0.8*k7]},hh:0.15+0.8*hit,links:[[7,0,CL.letsplay.start+0.5]]}}});
+
+// quiz: where is Middle C on the keyboard? three keys glow, the right one confirms
+S.v11q1=v11sc({build(r){this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q)},
+ state(t,L,c){const ta=CL.a1.start-0.6,t1=ta-4.2;this.t1=t1;this.ta=ta;const keys={},cf={};
+  if(t>=t1&&t<ta)[3,7,10].forEach(k=>{keys[k]=['#f59e0b',0.5+0.2*pulse6(t,t1)]});
+  if(t>=ta){keys[7]=['#16a34a',0.7];cf[7]={b:ta,p:ta,keep:true}}
+  return {kb:1,st:0.18,keys,cf,cap:t>=ta?['MIDDLE C ✓','#16a34a',ta]:null}},
+ after(t,L,c,o){const th=t>=this.t1+0.6&&t<this.ta;this.q.style.opacity=String(th?clamp(prog(t,this.t1+0.6,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}});
+
+// quiz: which hand plays the bass clef?
+S.v11q2=v11sc({build(r){this.hl=v11hand(r,'L',150,150,236);this.hr=v11hand(r,'R',150,980,236);
+  this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q)},
+ state(t,L,c){const ta=CL.a2.start-0.2,t1=CL.q2ask.end+0.4;this.t1=t1;this.ta=ta;
+  return {kb:0.6,st:1,tint:{bs:t>=t1&&t<ta},cap:t>=ta?['THE LEFT HAND',LCOL,ta]:null}},
+ after(t,L,c,o){const p=prog(L,0.3,0.5);this.hl.style.opacity=this.hr.style.opacity=String(clamp(p*2));
+  this.hl.style.filter=t>=this.ta?`drop-shadow(0 0 16px ${LCOL})`:'';this.hr.style.opacity=String(clamp(p*2)*(t>=this.ta?0.35:1));
+  const th=t>=this.t1&&t<this.ta;this.q.style.opacity=String(th?clamp(prog(t,this.t1,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+  if(t>=this.ta)this.tr.box.style.opacity='0.35';
+  if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}});
+
+// quiz: is this note Middle C?
+S.v11q3=v11sc({build(r){this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:104px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+  this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}})},
+ state(t,L,c){const ta=CL.a3.start-0.6,t1=CL.q3ask.end+0.3;this.t1=t1;this.ta=ta;
+  return {kb:0.5,st:1,notes:[CL.q3ask.start+0.3,null,null],keys:t>=ta?{7:['#16a34a',0.7]}:{},links:t>=ta?[[7,0,ta]]:[],hh:t>=ta?0.7:0,cap:t>=ta?['YES · MIDDLE C','#16a34a',ta]:null}},
+ after(t,L,c,o){const th=t>=this.t1&&t<this.ta;this.q.style.opacity=String(th?clamp(prog(t,this.t1,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+  const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`});
+  if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}});
+
+S.outro11=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.d=document.createElement('div');this.d.className='abs big';this.d.style.cssText=`left:${640-40}px;top:290px;width:80px;height:80px;border-radius:50%;background:#0d9488;color:#fff;font-size:50px;line-height:80px;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;this.d.textContent='C';r.appendChild(this.d);
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game11','find')-0.3,q=prog(t,t0,0.45);this.d.style.opacity=String(clamp(q*2));this.d.style.scale=String(lerp(0.3,1,easeBack(q)));this.d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3))*8:0}px`}});
+
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
 function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}
@@ -1232,7 +1365,7 @@ function renderAt(t){
     else if(sp&&sp.id==='well') pose='cheer';
     else if(sc.id==='v5march'||sc.id==='v5clap') pose=pulse(['main'],t,9)>0.3?'cheer':'idle';
     else if(sc.id==='v5heart') pose='idle';
-    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8')||sc.id.startsWith('v9')||sc.id.startsWith('v10')||sc.id.startsWith('vi_'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
+    else if(isSp&&(['stave','clef','bass','note','linespace','ledger'].includes(sc.id)||sc.id.startsWith('v3')||sc.id.startsWith('v4')||sc.id.startsWith('v5')||sc.id.startsWith('v6')||sc.id.startsWith('v7')||sc.id.startsWith('v8')||sc.id.startsWith('v9')||sc.id.startsWith('v10')||sc.id.startsWith('v11')||sc.id.startsWith('vi_'))&&!/^n\d$/.test(sp.id)) pose='point'+side;
     else if(sp&&sp.id==='qwell') pose='cheer';
     const mouth=isSp?Math.round(Math.min(1,lv*1.15)*4)/4:0;
     const ph=(t+ix*1.3)%3.6, blink=ph>3.48?1:0;
