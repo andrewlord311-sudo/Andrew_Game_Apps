@@ -59,6 +59,14 @@
                 comingSoon: false
             },
             {
+                title: "Fill the Bar",
+                description: "A bar (or measure) holds four beats. Fill each bar, and tell when it is full!",
+                emoji: "🥁",
+                color: "#f59e0b", // Amber accent
+                file: "fill_the_bar.html",
+                comingSoon: false
+            },
+            {
                 title: "C Hunt",
                 description: "Find C (just below a group of two black keys) and F (just below a group of three) on the keyboard.",
                 emoji: "🔍",
