@@ -1,0 +1,190 @@
+1
+00:00:00,800 --> 00:00:04,629
+Welcome to Melody and
+Barnaby's Music Nuggets!
+
+2
+00:00:05,629 --> 00:00:11,409
+Today we are going to learn
+about bars and barlines.
+
+3
+00:00:13,409 --> 00:00:17,564
+Remember the beat?
+Music has a steady beat.
+
+4
+00:00:20,064 --> 00:00:22,082
+Let's count the beat.
+
+5
+00:00:22,586 --> 00:00:23,218
+One.
+
+6
+00:00:23,268 --> 00:00:23,945
+Two.
+
+7
+00:00:23,995 --> 00:00:24,725
+Three.
+
+8
+00:00:24,775 --> 00:00:25,536
+Four.
+
+9
+00:00:25,586 --> 00:00:26,218
+One.
+
+10
+00:00:26,268 --> 00:00:26,945
+Two.
+
+11
+00:00:26,995 --> 00:00:27,725
+Three.
+
+12
+00:00:27,775 --> 00:00:28,975
+Four.
+
+13
+00:00:30,818 --> 00:00:34,369
+We count to four,
+and then start again.
+
+14
+00:00:37,169 --> 00:00:41,184
+Let's draw a line
+after every four beats.
+
+15
+00:00:41,684 --> 00:00:44,677
+This is called a bar line.
+
+16
+00:00:47,277 --> 00:00:51,478
+The space between two
+bar lines is a bar.
+
+17
+00:00:54,478 --> 00:00:57,658
+Bars are also called measures.
+
+18
+00:00:58,258 --> 00:01:03,155
+Bar, or measure. They
+mean the same thing.
+
+19
+00:01:05,955 --> 00:01:08,763
+Every bar has four beats.
+
+20
+00:01:10,863 --> 00:01:14,553
+Every measure has four beats too.
+
+21
+00:01:17,553 --> 00:01:21,290
+Remember the stave? Five lines.
+
+22
+00:01:24,290 --> 00:01:27,980
+At the start of the music,
+there are two numbers.
+
+23
+00:01:28,480 --> 00:01:31,798
+They are called the time signature.
+
+24
+00:01:33,998 --> 00:01:38,385
+The top number says
+four beats in every bar.
+
+25
+00:01:38,885 --> 00:01:42,296
+We will learn more about it later.
+
+26
+00:01:44,896 --> 00:01:46,543
+Clap with me!
+
+27
+00:01:47,336 --> 00:01:47,968
+One.
+
+28
+00:01:48,018 --> 00:01:48,695
+Two.
+
+29
+00:01:48,745 --> 00:01:49,475
+Three.
+
+30
+00:01:49,525 --> 00:01:50,286
+Four.
+
+31
+00:01:50,336 --> 00:01:50,968
+One.
+
+32
+00:01:51,018 --> 00:01:51,695
+Two.
+
+33
+00:01:51,745 --> 00:01:52,475
+Three.
+
+34
+00:01:52,525 --> 00:01:53,725
+Four.
+
+35
+00:01:55,568 --> 00:01:58,561
+Your turn! Look at the bars.
+
+36
+00:01:59,061 --> 00:02:02,008
+How many beats in this bar?
+
+37
+00:02:06,308 --> 00:02:07,508
+Four.
+
+38
+00:02:09,151 --> 00:02:11,263
+Is this measure full?
+
+39
+00:02:15,363 --> 00:02:18,449
+No! One beat is missing.
+
+40
+00:02:20,249 --> 00:02:22,964
+How many bars, or measures?
+
+41
+00:02:27,064 --> 00:02:28,264
+Three.
+
+42
+00:02:29,146 --> 00:02:30,468
+You've got it!
+
+43
+00:02:32,168 --> 00:02:33,629
+Now it's your turn!
+
+44
+00:02:33,729 --> 00:02:38,626
+Play Fill the Bar, and
+give every bar four beats!
+
+45
+00:02:38,726 --> 00:02:41,116
+See you for the next Nugget!
+
