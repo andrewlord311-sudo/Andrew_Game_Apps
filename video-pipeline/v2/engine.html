@@ -1140,17 +1140,17 @@ S.outro10=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build
 // ======================================================================== VIDEO 11: Middle C
 // The 15-key keyboard (white key 7 is the C in the exact middle) shrunk under a grand staff: treble stave on top, bass stave below,
 // and Middle C on its own little line between them, straight above key 7.
-const V11={sc:0.62,ty:175,sp:1.5};
+const V11={sc:0.5,ty:220,sp:1.5};
 const k11x=k=>640+V11.sc*(WKX(k)+(KB.w-3)/2-640), k11top=235+V11.ty;
 function v11mk(self,r,o={}){
   const K=kb8Build(self,r);K.root.style.transformOrigin='640px 235px';K.root.style.scale=String(V11.sc);K.root.style.translate=`0 ${V11.ty}px`;
-  self.tr=makeStave(r,{clef:'treble',notes:['c/4','e/4','g/4'],scale:V11.sp,w:330,h:170,cx:640,cy:262});
-  self.bs=makeStave(r,{clef:'bass',notes:[],scale:V11.sp,w:330,h:170,cx:640,cy:262+6*self.tr.sp});
+  self.tr=makeStave(r,{clef:'treble',notes:['c/4','e/4','g/4'],scale:V11.sp,w:330,h:170,cx:640,cy:280});
+  self.bs=makeStave(r,{clef:'bass',notes:['c/4'],scale:V11.sp,w:330,h:170,cx:640,cy:280+9*self.tr.sp});
   [self.tr,self.bs].forEach(st=>st.barlines.forEach(b=>{b.style.opacity=1}));
-  const h0=self.tr.heads[0];self.hh=halo(r,h0.x,h0.y,44,'rgba(245,158,11,.95)');
+  const h0=self.tr.heads[0];self.hh=halo(r,h0.x,h0.y,44,'rgba(245,158,11,.95)');const hb0=self.bs.heads[0];self.hb=halo(r,hb0.x,hb0.y,44,'rgba(245,158,11,.95)');
   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(svg);
   self.lk=[0,1,2].map(()=>{const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('stroke','#f59e0b');l.setAttribute('stroke-width','4');l.setAttribute('stroke-dasharray','2 9');l.setAttribute('stroke-linecap','round');l.style.opacity=0;svg.appendChild(l);return l});
-  self.labKb=labelChip(r,'KEYBOARD','#475569',165,470,32,'6px 22px');self.labSt=labelChip(r,'STAVE','#475569',235,290,32,'6px 22px');
+  self.labKb=labelChip(r,'KEYBOARD','#475569',165,520,32,'6px 22px');self.labSt=labelChip(r,'STAVE','#475569',235,318,32,'6px 22px');
   return K}
 // o: {kb,st: opacity of keyboard / staves; fadeSt: time the staves start to appear; notes:[t0,t1,t2]; keys:{k:[colour,amount]}; cf; links:[[k,head,t0]]; tint:{tr,bs}; hh:glow amount for Middle C note; labKb,labSt: times}
 function v11draw(self,t,L,o){
@@ -1161,12 +1161,14 @@ function v11draw(self,t,L,o){
   K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
   Object.keys(o.keys||{}).forEach(k=>{const [col,a]=o.keys[k];K.whites[k].style.background=mixHex('#f8fafc',col,a);K.whites[k].style.boxShadow=`0 0 0 ${2+3*a}px ${col},0 7px 0 rgba(0,0,0,.14)`});
   kbBadgesBrackets(K,t,{});cfPaint(K,t,o.cf||{});
-  self.tr.heads.forEach((h,i)=>{const at=o.notes&&o.notes[i];const q=prog(t,at==null?1e9:at,0.4);h.sn.style.opacity=String(clamp(q*2.5));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(q))*-28}px)`});
+  self.tr.heads.forEach((h,i)=>{const at=o.notes&&o.notes[i];const q=prog(t,at==null?1e9:at,0.4);h.sn.style.opacity=String(clamp(q*2.5)*(o.trDim??1));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(q))*-28}px)`});
+  self.bs.heads.forEach(h=>{const q=prog(t,o.bsNote==null?1e9:o.bsNote,0.4);h.sn.style.opacity=String(clamp(q*2.5));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(q))*-28}px)`});
+  [self.tr,self.bs].forEach(s=>s.heads.forEach(h=>h.ledger.forEach(l=>{l.style.strokeWidth='3.6'})));
   const tint=(s,col,on)=>{s.lines.forEach(l=>{l.style.stroke=on?col:'';l.style.strokeWidth=on?'2.4':''});s.box.style.filter=on?`drop-shadow(0 0 9px ${col})`:''};
   tint(self.tr,RCOL,!!(o.tint&&o.tint.tr));tint(self.bs,LCOL,!!(o.tint&&o.tint.bs));
-  self.lk.forEach((l,i)=>{const e=o.links&&o.links[i];if(!e){l.style.opacity='0';return}const q=prog(t,e[2],0.5),h=self.tr.heads[e[1]],x1=k11x(e[0]),y1=k11top-4,x2=h.x,y2=h.y+16;
+  self.lk.forEach((l,i)=>{const e=o.links&&o.links[i];if(!e){l.style.opacity='0';return}const q=prog(t,e[2],0.5),h=(e[4]==='b'?self.bs:self.tr).heads[e[1]],x1=k11x(e[0]),y1=k11top-4,x2=h.x,y2=h.y+16;
     l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',lerp(x1,x2,easeOut(q)));l.setAttribute('y2',lerp(y1,y2,easeOut(q)));l.style.opacity=String(clamp(q*2)*(e[3]??1))});
-  self.hh.style.opacity=String((o.hh||0)*0.9);
+  self.hh.style.opacity=String((o.hh||0)*0.9);self.hb.style.opacity=String((o.hb||0)*0.9);
   pop(self.labKb,t,o.labKb??1e9,0.4);pop(self.labSt,t,o.labSt??1e9,0.4);
   if(o.labKb==null)self.labKb.style.opacity='0';if(o.labSt==null)self.labSt.style.opacity='0'}
 const v11sc=(f)=>({ui:V6UI,build(r){v11mk(this,r);if(f.build)f.build.call(this,r)},update(t,L,c){const o=f.state.call(this,t,L,c)||{};v11draw(this,t,L,o);if(f.after)f.after.call(this,t,L,c,o)}});
@@ -1206,26 +1208,28 @@ S.v11mini={ui:V6UI,build(r){
    fade(this.ctr,t,tm,0.5);pop(this.ctl,t,tm,0.4);pop(this.mc,t,tn,0.4)}};
 
 // "Now find it on the stave." "Middle C sits on its own little line… right between the two staves." "So Middle C is in the middle… of the keyboard… and in the middle of the music."
-const mkV11stave=()=>v11sc({build(r){const h0=this.tr.heads[0];this.mcChip=labelChip(r,'MIDDLE C','#0d9488',this.tr.x0-115,h0.y-20,34,'6px 24px');
-  this.cKb=labelChip(r,'MIDDLE OF THE KEYBOARD','#475569',640,586,28,'6px 22px');this.cSt=labelChip(r,'MIDDLE OF THE STAVES','#475569',this.tr.x1+175,h0.y-20,28,'6px 22px')},
- state(t,L,c){const tf=wt('findstave','stave')-0.3,tl=wt('littleline','little')-0.1,tb=wt('littleline','between')-0.1,tk=wt('middleboth','keyboard')-0.15,tm=wt('middleboth','music')-0.2;
-  const keys={},links=[];if(t>=tl)keys[7]=['#0d9488',0.5+(t>=tk?0.35*pulse6(t,tk):0)];if(t>=tb)links.push([7,0,tb]);
-  const hh=t>=tm?pulse6(t,tm):(t>=tk?pulse6(t,tk)*0.0:0);
-  return {kb:t<tf?1:0.55,st:1,fadeSt:tf,notes:[t>=tl?tl:null,null,null],keys,links,hh:t>=tl?(t>=tk?0.6+0.4*pulse6(t,tm):0.35):0,tint:null}},
- after(t,L,c,o){const tl=wt('littleline','little')-0.1,tk=wt('middleboth','keyboard')-0.15,tm=wt('middleboth','music')-0.2;
-  pop(this.mcChip,t,tl+0.3,0.4);pop(this.cKb,t,tk,0.4);pop(this.cSt,t,tm,0.4)}});
-S.v11stave=mkV11stave();S.v11stave2=mkV11stave();
+const mkV11stave=()=>v11sc({build(r){const h0=this.tr.heads[0],hb=this.bs.heads[0];this.mcChip=labelChip(r,'MIDDLE C','#0d9488',this.tr.x0-115,h0.y-20,34,'6px 24px');this.mcChip2=labelChip(r,'MIDDLE C','#0d9488',this.tr.x1+135,hb.y-20,34,'6px 24px');
+  this.cKb=labelChip(r,'MIDDLE OF THE KEYBOARD','#475569',640,606,28,'6px 22px');this.cSt=labelChip(r,'TWO WAYS, ONE KEY','#475569',this.tr.x1+175,hb.y+55,28,'6px 22px')},
+ state(t,L,c){const tf=wt('findstave','stave')-0.3,tl=wt('littleline','little')-0.1,tb=wt('littleline','below')-0.1,tb2=CL.abovebass.start+0.1,tk=wt('middleboth','keyboard')-0.15,tw=wt('middleboth','Two')-0.1;
+  const keys={},links=[];if(t>=tl)keys[7]=['#0d9488',0.5+(t>=tk?0.35*pulse6(t,tk):0)];
+  if(t>=tb)links.push([7,0,tb,t>=tb2&&t<tk?0.3:1]);if(t>=tb2)links.push([7,0,tb2,1,'b']);
+  const two=t>=tb2&&t<tk;
+  return {kb:t<tf?1:0.55,st:1,fadeSt:tf,notes:[t>=tl?tl:null,null,null],bsNote:t>=tb2?tb2:null,trDim:two?0.3:1,keys,links,
+    hh:t>=tl?(t>=tk?0.6+0.4*pulse6(t,tk):(t>=tb2?0.1:0.35)):0,hb:t>=tb2?(t>=tk?0.6+0.4*pulse6(t,tk):0.35):0,tint:null}},
+ after(t,L,c,o){const tl=wt('littleline','little')-0.1,tb2=CL.abovebass.start+0.1,tk=wt('middleboth','keyboard')-0.15,tw=wt('middleboth','Two')-0.1;
+  pop(this.mcChip,t,tl+0.3,0.4);pop(this.mcChip2,t,tb2+0.3,0.4);pop(this.cKb,t,tk,0.4);pop(this.cSt,t,tw,0.4)}});
+S.v11stave=mkV11stave();S.v11stave2=mkV11stave();S.v11stave3=mkV11stave();
 
 // hands: right hand = treble clef = higher; left hand = bass clef = lower; they meet at Middle C
 function v11hand(r,side,w,x,y){const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${x}px;top:${y}px;width:${w}px;opacity:0`;d.innerHTML=handSvg(side,'flat',w);r.appendChild(d);return d}
 const mkV11hands=()=>v11sc({build(r){this.hl=v11hand(r,'L',150,150,236);this.hr=v11hand(r,'R',150,980,236)},
- state(t,L,c){const tt=wt('trebleis','treble')-0.15,tb=wt('bassis','bass')-0.15,tm=CL.handsmeet.start-0.1;
+ state(t,L,c){const tt=wt('trebleis','treble')-0.15,tb=wt('bassis','base')-0.15,tm=CL.handsmeet.start-0.1;
   const keys={};let tintTr=t>=tt&&t<tb,tintBs=t>=tb&&t<tm;
   if(t>=tt&&t<tb)for(let k=7;k<15;k++)keys[k]=[RCOL,0.18+0.12*pulse6(t,tt)];
   if(t>=tb&&t<tm)for(let k=0;k<7;k++)keys[k]=[LCOL,0.18+0.12*pulse6(t,tb)];
   if(t>=tm){keys[7]=['#f59e0b',0.35+0.45*pulse6(t,tm+1.6)]}
   return {kb:1,st:t>=tm?0.25:1,keys,tint:{tr:tintTr,bs:tintBs},cap:t>=tm?null:t>=tb?['BASS · LEFT · LOWER',LCOL,tb]:t>=tt?['TREBLE · RIGHT · HIGHER',RCOL,tt]:null}},
- after(t,L,c,o){const tt=wt('trebleis','treble')-0.15,tb=wt('bassis','bass')-0.15,tm=CL.handsmeet.start-0.1,tj=tm+0.4,pj=easeOut(prog(t,tj,1.8));
+ after(t,L,c,o){const tt=wt('trebleis','treble')-0.15,tb=wt('bassis','base')-0.15,tm=CL.handsmeet.start-0.1,tj=tm+0.4,pj=easeOut(prog(t,tj,1.8));
   const y=lerp(236,300,pj);this.hl.style.top=this.hr.style.top=y+'px';this.hl.style.left=lerp(150,478,pj)+'px';this.hr.style.left=lerp(980,652,pj)+'px';this.hl.style.width=this.hr.style.width='150px';
   this.hl.style.opacity=String(clamp(prog(t,tb,0.4)*2));this.hr.style.opacity=String(clamp(prog(t,tt,0.4)*2));
   this.hl.style.filter=t>=tb&&t<tm?`drop-shadow(0 0 14px ${LCOL})`:'';this.hr.style.filter=t>=tt&&t<tb?`drop-shadow(0 0 14px ${RCOL})`:'';

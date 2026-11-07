@@ -75,16 +75,23 @@
   {
    "id": "littleline",
    "who": "melody",
-   "text": "Middle C sits on its own little line… <break time=\"0.5s\" /> right between the two staves.",
+   "text": "Middle C sits on a little line of its own… <break time=\"0.5s\" /> just below the treble stave.",
    "speed": 0.88,
-   "show": "Middle C sits on its own little line… right between the two staves."
+   "show": "Middle C sits on a little line of its own… just below the treble stave."
+  },
+  {
+   "id": "abovebass",
+   "who": "barnaby",
+   "text": "You can also write it just above the bass stave… <break time=\"0.5s\" /> It is the very same note.",
+   "speed": 0.88,
+   "show": "You can also write it just above the bass stave… It is the very same note."
   },
   {
    "id": "middleboth",
    "who": "barnaby",
-   "text": "So Middle C is in the middle… <break time=\"0.5s\" /> of the keyboard… <break time=\"0.5s\" /> and in the middle of the music.",
+   "text": "Two ways to write it… <break time=\"0.5s\" /> but only one Middle C… <break time=\"0.5s\" /> in the middle of the keyboard.",
    "speed": 0.88,
-   "show": "So Middle C is in the middle… of the keyboard… and in the middle of the music."
+   "show": "Two ways to write it… but only one Middle C… in the middle of the keyboard."
   },
   {
    "id": "trebleis",
@@ -96,7 +103,7 @@
   {
    "id": "bassis",
    "who": "melody",
-   "text": "Down here is the bass clef… <break time=\"0.5s\" /> for the left hand… <break time=\"0.5s\" /> and lower notes.",
+   "text": "Down here is the base clef… <break time=\"0.5s\" /> for the left hand… <break time=\"0.5s\" /> and lower notes.",
    "speed": 0.88,
    "show": "Down here is the bass clef… for the left hand… and lower notes."
   },
@@ -235,6 +242,15 @@
    ],
    "lead": 0.5,
    "gap": 1.0,
+   "tail": 1.6
+  },
+  {
+   "id": "v11stave3",
+   "clips": [
+    "abovebass"
+   ],
+   "lead": 0.5,
+   "gap": 0,
    "tail": 2.4
   },
   {
@@ -359,6 +375,18 @@
    ],
    "step": 1.0,
    "clip": "littleline",
+   "off": 0.25,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4"
+   ],
+   "step": 1.0,
+   "clip": "abovebass",
    "off": 0.25,
    "vol": 0.45,
    "dur": 1.4,
