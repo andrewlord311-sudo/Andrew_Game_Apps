@@ -67,6 +67,14 @@
                 comingSoon: false
             },
             {
+                title: "Note Ladder: Middle C",
+                description: "Rung 1 of the Note Ladder: find Middle C on the stave (just below treble, just above bass) and on the keyboard.",
+                emoji: "🪜",
+                color: "#14b8a6", // Teal accent
+                file: "note_ladder.html",
+                comingSoon: false
+            },
+            {
                 title: "C Hunt",
                 description: "Find C (just below a group of two black keys) and F (just below a group of three) on the keyboard.",
                 emoji: "🔍",
