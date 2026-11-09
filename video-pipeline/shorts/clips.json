@@ -39,5 +39,77 @@
     "end": 41.6,
     "hook": "New here?<br>Start here.",
     "footer": "Watch the full video on YouTube ▶"
+  },
+  {
+    "id": "short06_feel_your_heartbeat",
+    "src": "videos/video5_feel_the_beat.mp4",
+    "srt": "channel/captions/video5.en-GB.srt",
+    "start": 19.8,
+    "end": 39.4,
+    "hook": "Can you feel<br>your <b>beat</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short07_steady_or_wobbly",
+    "src": "videos/video5_feel_the_beat.mp4",
+    "srt": "channel/captions/video5.en-GB.srt",
+    "start": 91.1,
+    "end": 120.5,
+    "hook": "Is this beat<br><b>steady</b> or <b>wobbly</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short08_black_keys_groups",
+    "src": "videos/video6_black_key_groups.mp4",
+    "srt": "channel/captions/video6.en-GB.srt",
+    "start": 31.6,
+    "end": 53.5,
+    "hook": "Piano black keys<br>come in <b>groups</b>",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short09_two_or_three",
+    "src": "videos/video6_black_key_groups.mp4",
+    "srt": "channel/captions/video6.en-GB.srt",
+    "start": 87.5,
+    "end": 116.6,
+    "hook": "A group of <b>two</b><br>or <b>three</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short10_which_is_left",
+    "src": "videos/video7_left_right_high_low.mp4",
+    "srt": "channel/captions/video7.en-GB.srt",
+    "start": 23.5,
+    "end": 47.9,
+    "hook": "Which hand<br>is your <b>left</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short11_high_or_low",
+    "src": "videos/video7_left_right_high_low.mp4",
+    "srt": "channel/captions/video7.en-GB.srt",
+    "start": 134.7,
+    "end": 158.5,
+    "hook": "Is this sound<br><b>high</b> or <b>low</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short12_find_c",
+    "src": "videos/video8_finding_c_and_f.mp4",
+    "srt": "channel/captions/video8.en-GB.srt",
+    "start": 27.7,
+    "end": 44.5,
+    "hook": "Find <b>C</b> on the piano<br>in 15 seconds",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short13_where_is_c",
+    "src": "videos/video8_finding_c_and_f.mp4",
+    "srt": "channel/captions/video8.en-GB.srt",
+    "start": 89.4,
+    "end": 119.2,
+    "hook": "Where is <b>C</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
   }
 ]
