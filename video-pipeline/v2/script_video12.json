@@ -80,11 +80,25 @@
    "show": "Line to space… is a step."
   },
   {
-   "id": "lineline",
+   "id": "spaceline",
    "who": "barnaby",
-   "text": "Line to line… <break time=\"0.5s\" /> misses a space… <break time=\"0.5s\" /> That is a skip.",
+   "text": "And space to line… <break time=\"0.5s\" /> is a step too.",
    "speed": 0.88,
-   "show": "Line to line… misses a space… That is a skip."
+   "show": "And space to line… is a step too."
+  },
+  {
+   "id": "lineline",
+   "who": "melody",
+   "text": "Line to line… <break time=\"0.5s\" /> misses one out… <break time=\"0.5s\" /> That is a skip.",
+   "speed": 0.88,
+   "show": "Line to line… misses one out… That is a skip."
+  },
+  {
+   "id": "spacespace",
+   "who": "barnaby",
+   "text": "And space to space… <break time=\"0.5s\" /> is a skip too.",
+   "speed": 0.88,
+   "show": "And space to space… is a skip too."
   },
   {
    "id": "closefar",
@@ -225,7 +239,8 @@
    "id": "v12stave",
    "clips": [
     "nowstave",
-    "linespace"
+    "linespace",
+    "spaceline"
    ],
    "lead": 0.5,
    "gap": 0.9,
@@ -234,10 +249,11 @@
   {
    "id": "v12stave2",
    "clips": [
-    "lineline"
+    "lineline",
+    "spacespace"
    ],
    "lead": 0.5,
-   "gap": 0,
+   "gap": 0.9,
    "tail": 3.0
   },
   {
@@ -362,11 +378,37 @@
   {
    "kind": "run",
    "notes": [
+    "f4",
+    "g4"
+   ],
+   "step": 1.0,
+   "clip": "spaceline",
+   "off": 0.3,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
     "e4",
     "g4"
    ],
    "step": 1.0,
    "clip": "lineline",
+   "off": 0.3,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4",
+    "a4"
+   ],
+   "step": 1.0,
+   "clip": "spacespace",
    "off": 0.3,
    "vol": 0.45,
    "dur": 1.4,
