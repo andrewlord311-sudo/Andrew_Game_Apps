@@ -1274,6 +1274,124 @@ S.outro11=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build
   this.d=document.createElement('div');this.d.className='abs big';this.d.style.cssText=`left:${640-40}px;top:290px;width:80px;height:80px;border-radius:50%;background:#0d9488;color:#fff;font-size:50px;line-height:80px;box-shadow:0 6px 0 rgba(0,0,0,.15);opacity:0`;this.d.textContent='C';r.appendChild(this.d);
   },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('game11','find')-0.3,q=prog(t,t0,0.45);this.d.style.opacity=String(clamp(q*2));this.d.style.scale=String(lerp(0.3,1,easeBack(q)));this.d.style.translate=`0 ${q>=1?-Math.abs(Math.sin((t-t0)*3))*8:0}px`}});
 
+// ======================================================================== VIDEO 12: steps and skips
+// Step = the next key / next note (line to space, space to line). Skip = one missed out (line to line, space to space).
+const STEPC='#0d9488',SKIPC='#db2777';
+const kx12=i=>WKX(i)+(KB.w-3)/2, ky12=KB.top+KB.h-112;           // where the hopper sits on white key i (0 = C)
+function hop12(el,path,t){let x=kx12(path[0][1]),y=ky12;
+  for(let i=1;i<path.length;i++){const tl=path[i][0],ts=tl-0.5;
+    if(t>=tl){x=kx12(path[i][1]);continue}
+    if(t>=ts){const f=(t-ts)/0.5;x=lerp(kx12(path[i-1][1]),kx12(path[i][1]),easeOut(f));y=ky12-90*Math.sin(Math.PI*f)}
+    break}
+  el.style.left=(x-32)+'px';el.style.top=(y-32)+'px'}
+function kb12paint(K,o){kbPaint(K,{whiteBg:'#f8fafc'});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)';w.style.opacity='1'});
+  Object.keys(o.keys||{}).forEach(k=>{const [col,a]=o.keys[k];K.whites[k].style.background=mixHex('#f8fafc',col,a);K.whites[k].style.boxShadow=`0 0 0 ${2+3*a}px ${col},0 7px 0 rgba(0,0,0,.14)`});
+  Object.keys(o.grey||{}).forEach(k=>{K.whites[k].style.background='#cbd5e1';K.whites[k].style.opacity=String(1-0.65*o.grey[k])})}
+function arc12(r){const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(svg);
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');p.setAttribute('fill','none');p.setAttribute('stroke-width','8');p.setAttribute('stroke-linecap','round');p.style.opacity=0;svg.appendChild(p);
+  const h=document.createElementNS('http://www.w3.org/2000/svg','polygon');h.style.opacity=0;svg.appendChild(h);return {p,h}}
+function drawArc(a,x1,y1,x2,y2,col,q,lift=70){if(q<=0){a.p.style.opacity=0;a.h.style.opacity=0;return}
+  const cx=(x1+x2)/2,cy=Math.min(y1,y2)-lift,mx=(1-q)*(1-q)*x1+2*(1-q)*q*cx+q*q*x2,my=(1-q)*(1-q)*y1+2*(1-q)*q*cy+q*q*y2;
+  a.p.setAttribute('d',`M${x1} ${y1} Q${lerp(x1,cx,q)} ${lerp(y1,cy,q)} ${mx} ${my}`);a.p.setAttribute('stroke',col);a.p.style.opacity=1;
+  let tx=2*((1-q)*(cx-x1)+q*(x2-cx)),ty=2*((1-q)*(cy-y1)+q*(y2-cy));const n=Math.hypot(tx,ty)||1;tx/=n;ty/=n;const nx=-ty,ny=tx;
+  a.h.setAttribute('points',`${mx+tx*10},${my+ty*10} ${mx-tx*18+nx*13},${my-ty*18+ny*13} ${mx-tx*18-nx*13},${my-ty*18-ny*13}`);a.h.setAttribute('fill',col);a.h.style.opacity=q>0.6?1:0}
+function v12kbBuild(self,r){const K=kbBuild(r);self.K=K;
+  self.hop=document.createElement('div');self.hop.className='abs big';self.hop.style.cssText='width:64px;height:64px;border-radius:50%;background:var(--orange);color:#fff;font-size:40px;line-height:64px;border:4px solid #fff;box-shadow:0 6px 0 rgba(0,0,0,.2);opacity:0';self.hop.textContent='♪';r.appendChild(self.hop);
+  self.cs=labelChip(r,'STEP',STEPC,640,522,58,'6px 44px');self.ck=labelChip(r,'SKIP',SKIPC,640,522,58,'6px 44px');
+  self.ars=[0,1,2,3].map(()=>arc12(r));return K}
+// o: {hop:[[tLand,key]..], keys, grey, step:time, skip:time, arcs:[[k1,k2,t0,col]..]}
+function v12k(f){return {ui:V6UI,build(r){v12kbBuild(this,r);if(f.build)f.build.call(this,r)},update(t,L,c){const K=this.K;kbIn(K,L);const o=f.state.call(this,t,L,c)||{};kb12paint(K,o);
+  this.hop.style.opacity=String(clamp(prog(L,0.35,0.4)*2)*(o.hopOp??1));if(o.hop)hop12(this.hop,o.hop,t);
+  pop(this.cs,t,o.step??1e9,0.4);pop(this.ck,t,o.skip??1e9,0.4);if(o.step==null)this.cs.style.opacity=0;if(o.skip==null)this.ck.style.opacity=0;
+  if(o.stepOp!=null)this.cs.style.opacity=String(o.stepOp);if(o.skipOp!=null)this.ck.style.opacity=String(o.skipOp);
+  this.ars.forEach((a,i)=>{const e=o.arcs&&o.arcs[i];if(!e){drawArc(a,0,0,0,0,'#000',0);return}drawArc(a,kx12(e[0]),ky12-44,kx12(e[1]),ky12-44,e[3],easeOut(prog(t,e[2],0.45)),e[4]??60)});
+  if(f.after)f.after.call(this,t,L,c,o)}}}
+// 1. A tune can walk... one step at a time. Each time we move to the next key... That is a step.
+S.v12walk=v12k({state(t,L,c){const t0=CL.walk.start+0.3,dt=0.7,keys={},arcs=[],hop=[];
+  for(let i=0;i<4;i++){const tl=t0+i*dt;hop.push([tl,i]);if(t>=tl)keys[i]=[STEPC,0.5];if(i>0)arcs.push([i-1,i,tl-0.3,STEPC,40])}
+  return {hop,keys,arcs,step:wt('stepis','step')-0.15}}});
+// 2. Or a tune can jump... and miss one out. That is a skip.
+S.v12skip=v12k({state(t,L,c){const t0=CL.jump.start+0.4,t1=t0+1.2,keys={},grey={};
+  if(t>=t0)keys[0]=[SKIPC,0.5];if(t>=t1)keys[2]=[SKIPC,0.5];grey[1]=prog(t,t1-0.35,0.5);
+  return {hop:[[t0,0],[t1,2]],keys,grey,arcs:[[0,2,t1-0.4,SKIPC,100]],skip:wt('skipis','skip')-0.15}}});
+// 3. Step... skip... step... skip.
+S.v12alt=v12k({state(t,L,c){const w=[wt('alt','step',0),wt('alt','skip',0),wt('alt','step',1),wt('alt','skip',1)],P=[0,1,3,4,6],keys={},grey={},arcs=[],hop=[[CL.alt.start,0]];
+  let act=-1;w.forEach((x,i)=>{const tl=x+0.35;hop.push([tl,P[i+1]]);if(t>=x-0.1)act=i;
+    if(t>=tl){keys[P[i+1]]=[i%2?SKIPC:STEPC,0.5];if(i%2)grey[P[i]+1]=1}});keys[0]=[STEPC,0.5];
+  w.forEach((x,i)=>arcs.push([P[i],P[i+1],x-0.1,i%2?SKIPC:STEPC,i%2?100:40]));
+  return {hop,keys,grey,arcs:arcs.slice(Math.max(0,act-3),Math.max(0,act)+1).map(a=>a),step:act>=0&&act%2===0?w[act]-0.1:null,skip:act>=0&&act%2===1?w[act]-0.1:null}}});
+// the stave pictures
+function v12staveBuild(self,r,notes,cfg={}){self.st=makeStave(r,Object.assign({clef:'treble',notes,scale:2.3,w:330,h:170,cx:640,cy:350},cfg));self.st.barlines.forEach(b=>{b.style.opacity=1});
+  self.ar=arc12(r);self.ar2=arc12(r);self.cs=labelChip(r,'STEP',STEPC,640,556,58,'6px 44px');self.ck=labelChip(r,'SKIP',SKIPC,640,556,58,'6px 44px');
+  self.tags=self.st.heads.map(()=>labelChip(r,'LINE','#475569',0,0,26,'4px 20px'));
+  self.q=document.createElement('div');self.q.className='big abs';self.q.style.cssText='left:0;right:0;top:96px;font-size:96px;color:var(--orange);opacity:0';self.q.textContent='?';r.appendChild(self.q)}
+const LS=['line','space']; // E line, F space, G line, A space (treble clef, notes e4 f4 g4 a4)
+function v12tag(self,i,txt,x,y,t,tt){const e=self.tags[i];e.textContent=txt;e.style.left=(x-e.offsetWidth/2)+'px';e.style.top=y+'px';pop(e,tt,t,0.4)}
+function v12head(self,i,at,t,col,dim){const h=self.st.heads[i],q=prog(t,at==null?1e9:at,0.4);h.sn.style.opacity=String(clamp(q*2.5)*(dim??1));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(q))*-28}px)`;h.color(col||'#241f3d')}
+// 4. Now let's see them on the stave. Line to space... is a step. And space to line... is a step too.
+S.v12stave={ui:V6UI,build(r){v12staveBuild(this,r,['e/4','f/4','g/4'])},update(t,L,c){const st=this.st,ts=wt('nowstave','stave')-0.1,s1=CL.linespace.start,s2=CL.spaceline.start;
+  st.box.style.opacity=String(clamp(prog(L,0.2,0.5)*2));const at=[ts+0.4,ts+0.9,ts+1.4],h=st.heads;
+  const on=(i)=>t>=(i===0?s1:s1)&&t<s2?(i<2):(t>=s2&&i>0);
+  [0,1,2].forEach(i=>{const lit=t>=s1&&((t<s2&&i<2)||(t>=s2&&i>0));v12head(this,i,at[i],t,lit?STEPC:null,t>=s1&&!lit?0.35:1);
+    v12tag(this,i,i===1?'SPACE':'LINE',h[i].x,h[i].y+96,at[i]+0.2,t)});
+  const w1=wt('linespace','step')-0.1,w2=wt('spaceline','step')-0.1;
+  drawArc(this.ar,h[0].x+8,h[0].y-16,h[1].x-8,h[1].y-16,STEPC,easeOut(prog(t,w1-0.2,0.5))*(t<s2?1:0),40);
+  drawArc(this.ar2,h[1].x+8,h[1].y-16,h[2].x-8,h[2].y-16,STEPC,easeOut(prog(t,w2-0.2,0.5)),40);
+  pop(this.cs,t,w1,0.4);this.ck.style.opacity=0;if(t>=w2)this.cs.style.scale=String(1+0.14*Math.max(0,1-(t-w2)/0.5))}};
+// 5. Line to line... misses one out... That is a skip. And space to space... is a skip too.
+S.v12stave2={ui:V6UI,build(r){v12staveBuild(this,r,['e/4','f/4','g/4','a/4'],{scale:2.1})},update(t,L,c){const st=this.st,s1=CL.lineline.start,s2=CL.spacespace.start,h=st.heads;
+  st.box.style.opacity=String(clamp(prog(L,0.2,0.5)*2));
+  [0,1,2,3].forEach(i=>{const a=t>=s1&&t<s2?(i===0||i===2):(t>=s2?(i===1||i===3):false);v12head(this,i,L+0.3,t,a?SKIPC:null,t>=s1&&!a?0.35:1);v12tag(this,i,i%2?'SPACE':'LINE',h[i].x,h[i].y+96,L+0.5,t)});
+  const w1=wt('lineline','skip')-0.1,w2=wt('spacespace','skip')-0.1;
+  drawArc(this.ar,h[0].x+8,h[0].y-18,h[2].x-8,h[2].y-18,SKIPC,easeOut(prog(t,w1-0.7,0.6))*(t<s2?1:0),70);
+  drawArc(this.ar2,h[1].x+8,h[1].y-18,h[3].x-8,h[3].y-18,SKIPC,easeOut(prog(t,w2-0.7,0.6)),70);
+  pop(this.ck,t,w1,0.4);this.cs.style.opacity=0;if(t>=w2)this.ck.style.scale=String(1+0.14*Math.max(0,1-(t-w2)/0.5))}};
+// 6. Steps are close together... skips are further apart.
+S.v12gap={ui:V6UI,build(r){this.a=makeStave(r,{clef:'treble',notes:['e/4','f/4'],scale:1.7,w:330,h:170,cx:330,cy:340});this.b=makeStave(r,{clef:'treble',notes:['e/4','g/4'],scale:1.7,w:330,h:170,cx:950,cy:340});
+  [this.a,this.b].forEach(s=>s.barlines.forEach(x=>{x.style.opacity=1}));this.cs=labelChip(r,'STEP',STEPC,330,448,54,'6px 40px');this.ck=labelChip(r,'SKIP',SKIPC,950,448,54,'6px 40px');
+  this.l1=labelChip(r,'close together',STEPC,330,548,34,'6px 24px');this.l2=labelChip(r,'further apart',SKIPC,950,548,34,'6px 24px');
+  this.g1=arc12(r);this.g2=arc12(r)},
+ update(t,L,c){const p=clamp(prog(L,0.2,0.5)*2);this.a.box.style.opacity=this.b.box.style.opacity=String(p);
+  [this.a,this.b].forEach((s,k)=>s.heads.forEach(h=>{h.sn.style.opacity=String(p);h.color(k?SKIPC:STEPC)}));
+  pop(this.cs,t,L+0.4,0.4);pop(this.ck,t,L+0.7,0.4);pop(this.l1,t,wt('closefar','close')-0.1,0.4);pop(this.l2,t,wt('closefar','further')-0.1,0.4);
+  const ha=this.a.heads,hb=this.b.heads;drawArc(this.g1,ha[0].x+8,ha[0].y-16,ha[1].x-8,ha[1].y-16,STEPC,easeOut(prog(t,wt('closefar','close')-0.2,0.5)),30);
+  drawArc(this.g2,hb[0].x+8,hb[0].y-16,hb[1].x-8,hb[1].y-16,SKIPC,easeOut(prog(t,wt('closefar','further')-0.2,0.5)),60)}};
+// 7. Listen. Step... step... step... skip!   (a little tune: c d e g)
+S.v12tune={ui:V6UI,build(r){v12staveBuild(this,r,['c/4','d/4','e/4','g/4'],{scale:2.1});this.tl=[0,1,2].map(()=>labelChip(r,'STEP',STEPC,0,0,34,'6px 22px'));this.tk=labelChip(r,'SKIP',SKIPC,0,0,34,'6px 22px')},
+ update(t,L,c){const st=this.st,h=st.heads,t0=CL.listen.start+0.3,dt=0.7;st.box.style.opacity=String(clamp(prog(L,0.2,0.5)*2));
+  [0,1,2,3].forEach(i=>{const ti=t0+i*dt,age=t-ti,lit=age>=0&&age<0.5;v12head(this,i,ti-0.1,t,lit?(i===3?SKIPC:STEPC):null);this.tags[i].style.opacity=0});
+  [0,1,2].forEach(i=>{const e=i<3?(i===2?this.tk:this.tl[i]):null});
+  const lab=(e,i,col)=>{const x=(h[i].x+h[i+1].x)/2;e.style.left=(x-e.offsetWidth/2)+'px';e.style.top=(st.lineY[4]+80)+'px';pop(e,t,t0+(i+1)*dt-0.05,0.35)};
+  lab(this.tl[0],0);lab(this.tl[1],1);lab(this.tl[2],2);this.tl[2].textContent='STEP';this.tl[2].style.background=STEPC;
+  const x3=(h[2].x+h[3].x)/2;this.tk.style.left=(x3-this.tk.offsetWidth/2)+'px';this.tk.style.top=(st.lineY[4]+80)+'px';pop(this.tk,t,t0+3*dt-0.05,0.35);this.tl[2].style.opacity=0}};
+// quizzes: two notes on the stave
+function v12quiz(o){return {ui:V6UI,build(r){v12staveBuild(this,r,o.notes);if(o.build)o.build.call(this,r)},update(t,L,c){const st=this.st,h=st.heads,ta=CL[o.ans].start-0.6;st.box.style.opacity=String(clamp(prog(L,0.2,0.5)*2));
+  h.forEach((x,i)=>{v12head(this,i,CL[o.ask].start+0.3+i*0.5,t,t>=ta?o.col:null);this.tags[i].style.opacity=0});
+  const th=t>=CL[o.ask].end+0.3&&t<ta;this.q.style.opacity=String(th?clamp(prog(t,CL[o.ask].end+0.3,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+  drawArc(this.ar,h[0].x+8,h[0].y-16,h[1].x-8,h[1].y-16,o.col,easeOut(prog(t,ta,0.5)),o.lift);this.cs.style.opacity=0;this.ck.style.opacity=0;
+  if(t>=ta)c.caption(o.cap,o.col,ta)}}}
+S.v12q1=v12quiz({notes:['e/4','f/4'],ask:'q1ask',ans:'a1',col:STEPC,lift:40,cap:'A STEP ✓'});
+S.v12q2=v12quiz({notes:['f/4','a/4'],ask:'q2ask',ans:'a2',col:SKIPC,lift:70,cap:'A SKIP ✓'});
+// q3: which jump is the skip?  two pairs on the keyboard
+S.v12q3=v12k({build(r){this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:96px;font-size:96px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+  this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}});
+  this.la=labelChip(r,'A','#64748b',(kx12(0)+kx12(1))/2,ky12-190,40,'4px 22px');this.lb=labelChip(r,'B','#64748b',(kx12(2)+kx12(4))/2,ky12-190,40,'4px 22px')},
+ state(t,L,c){const ta=CL.a3.start-0.6,t1=CL.q3ask.start+0.4,keys={},arcs=[[0,1,t1,'#64748b',50],[2,4,t1+0.4,t>=ta?SKIPC:'#64748b',80]];
+  [0,1,2,4].forEach(k=>{keys[k]=[t>=ta&&(k===2||k===4)?SKIPC:'#64748b',t>=ta?(k===2||k===4?0.6:0.1):0.35]});
+  if(t<t1)Object.keys(keys).forEach(k=>delete keys[k]);if(t>=ta)keys[1]=keys[0]=['#64748b',0.08];
+  return {hopOp:0,keys,arcs,cap:t>=ta?['THE SKIP ✓',SKIPC,ta]:null}},
+ after(t,L,c,o){const t1=CL.q3ask.start+0.4,ta=CL.a3.start-0.6;pop(this.la,t,t1,0.4);pop(this.lb,t,t1+0.4,0.4);
+  const th=t>=CL.q3ask.end+0.3&&t<ta;this.q.style.opacity=String(th?clamp(prog(t,CL.q3ask.end+0.3,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
+  const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`});
+  if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}});
+// outro with the spoken subscribe ask
+S.outro12=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  S.outro.build.call(this,r);
+  this.s=document.createElement('div');this.s.className='abs big';this.s.style.cssText='left:50%;top:282px;font-size:56px;background:#dc2626;color:#fff;padding:10px 46px 12px;border-radius:999px;box-shadow:0 9px 0 rgba(0,0,0,.2);white-space:nowrap;opacity:0';this.s.textContent='🔔  Subscribe';r.appendChild(this.s);
+  this.n=document.createElement('div');this.n.className='abs';this.n.style.cssText='left:0;right:0;top:372px;text-align:center;font-weight:700;font-size:30px;opacity:0';this.n.textContent='A new Nugget every Wednesday and Saturday';r.appendChild(this.n);
+  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('sub12','subscribe')-0.2,q=prog(t,t0,0.5);this.s.style.opacity=String(clamp(q*2));this.s.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.abs(Math.sin((t-t0)*4)):1));this.s.style.translate='-50% 0';
+   fade(this.n,t,wt('sub12','new')-0.2,0.5)}});
+
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
 function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}
