@@ -1,0 +1,454 @@
+{
+ "title": "Steps and skips",
+ "titleAt": "steps and skips",
+ "nugget": 12,
+ "game": "Step or Skip",
+ "gameFile": "step_or_skip.html",
+ "todayLead": "Today we are going to learn about",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> learn about steps and skips.",
+   "speed": 0.88,
+   "show": "Today we are going to learn about steps and skips."
+  },
+  {
+   "id": "walk",
+   "who": "melody",
+   "text": "A tune can walk… <break time=\"0.5s\" /> one step at a time.",
+   "speed": 0.88,
+   "show": "A tune can walk… one step at a time."
+  },
+  {
+   "id": "stepis",
+   "who": "barnaby",
+   "text": "Each time, we move to the next key… <break time=\"0.5s\" /> That is a step.",
+   "speed": 0.88,
+   "show": "Each time, we move to the next key… That is a step."
+  },
+  {
+   "id": "jump",
+   "who": "melody",
+   "text": "Or a tune can jump… <break time=\"0.5s\" /> and miss one out.",
+   "speed": 0.88,
+   "show": "Or a tune can jump… and miss one out."
+  },
+  {
+   "id": "skipis",
+   "who": "barnaby",
+   "text": "That is a skip.",
+   "speed": 0.88,
+   "show": "That is a skip."
+  },
+  {
+   "id": "alt",
+   "who": "melody",
+   "text": "Step… <break time=\"0.9s\" /> skip… <break time=\"0.9s\" /> step… <break time=\"0.9s\" /> skip.",
+   "speed": 0.88,
+   "show": "Step… skip… step… skip."
+  },
+  {
+   "id": "nowstave",
+   "who": "barnaby",
+   "text": "Now let's see them <break time=\"0.4s\" /> on the stave.",
+   "speed": 0.88,
+   "show": "Now let's see them on the stave."
+  },
+  {
+   "id": "linespace",
+   "who": "melody",
+   "text": "Line to space… <break time=\"0.5s\" /> is a step.",
+   "speed": 0.88,
+   "show": "Line to space… is a step."
+  },
+  {
+   "id": "lineline",
+   "who": "barnaby",
+   "text": "Line to line… <break time=\"0.5s\" /> misses a space… <break time=\"0.5s\" /> That is a skip.",
+   "speed": 0.88,
+   "show": "Line to line… misses a space… That is a skip."
+  },
+  {
+   "id": "closefar",
+   "who": "melody",
+   "text": "Steps are close together… <break time=\"0.5s\" /> skips are further apart.",
+   "speed": 0.88,
+   "show": "Steps are close together… skips are further apart."
+  },
+  {
+   "id": "listen",
+   "who": "barnaby",
+   "text": "Listen. <break time=\"0.5s\" /> Step… <break time=\"0.6s\" /> step… <break time=\"0.6s\" /> step… <break time=\"0.7s\" /> skip!",
+   "speed": 0.88,
+   "show": "Listen. Step… step… step… skip!"
+  },
+  {
+   "id": "yourturn12",
+   "who": "melody",
+   "text": "Your turn! <break time=\"0.4s\" /> Listen and look.",
+   "speed": 0.88,
+   "show": "Your turn! Listen and look."
+  },
+  {
+   "id": "q1ask",
+   "who": "barnaby",
+   "text": "Is this… <break time=\"0.4s\" /> a step or a skip?",
+   "speed": 0.88,
+   "show": "Is this… a step or a skip?"
+  },
+  {
+   "id": "a1",
+   "who": "melody",
+   "text": "A step.",
+   "speed": 0.85,
+   "quiet": true,
+   "prev": "Is this… a step or a skip?"
+  },
+  {
+   "id": "q2ask",
+   "who": "barnaby",
+   "text": "And this?",
+   "speed": 0.88,
+   "show": "And this?"
+  },
+  {
+   "id": "a2",
+   "who": "melody",
+   "text": "A skip.",
+   "speed": 0.85,
+   "quiet": true,
+   "prev": "And this?"
+  },
+  {
+   "id": "q3ask",
+   "who": "barnaby",
+   "text": "Which jump <break time=\"0.4s\" /> is the skip?",
+   "speed": 0.88,
+   "show": "Which jump is the skip?"
+  },
+  {
+   "id": "a3",
+   "who": "melody",
+   "text": "This one.",
+   "speed": 0.85,
+   "quiet": true,
+   "prev": "Which jump is the skip?"
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "src": "../video2/qwell"
+  },
+  {
+   "id": "game12",
+   "who": "barnaby",
+   "text": "Play Step or Skip <break time=\"0.3s\" /> and hear the difference!",
+   "speed": 0.88,
+   "show": "Play Step or Skip and hear the difference!"
+  },
+  {
+   "id": "sub12",
+   "who": "melody",
+   "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+   "speed": 0.88,
+   "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday."
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0,
+   "tail": 0.8
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.8
+  },
+  {
+   "id": "v12walk",
+   "clips": [
+    "walk",
+    "stepis"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 3.0
+  },
+  {
+   "id": "v12skip",
+   "clips": [
+    "jump",
+    "skipis"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 3.0
+  },
+  {
+   "id": "v12alt",
+   "clips": [
+    "alt"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v12stave",
+   "clips": [
+    "nowstave",
+    "linespace"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 3.0
+  },
+  {
+   "id": "v12stave2",
+   "clips": [
+    "lineline"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v12gap",
+   "clips": [
+    "closefar"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.4
+  },
+  {
+   "id": "v12tune",
+   "clips": [
+    "listen"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v12q1",
+   "clips": [
+    "yourturn12",
+    "q1ask",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 1.6
+  },
+  {
+   "id": "v12q2",
+   "clips": [
+    "q2ask",
+    "a2"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.6
+  },
+  {
+   "id": "v12q3",
+   "clips": [
+    "q3ask",
+    "a3",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro12",
+   "clips": [
+    "game1",
+    "game12",
+    "sub12",
+    "bye"
+   ],
+   "lead": 0.6,
+   "gap": 0.5,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "d4",
+    "e4",
+    "f4"
+   ],
+   "step": 0.9,
+   "clip": "walk",
+   "off": 0.4,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "e4"
+   ],
+   "step": 1.0,
+   "clip": "jump",
+   "off": 0.4,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "d4",
+    "f4",
+    "g4"
+   ],
+   "step": 1.0,
+   "clip": "alt",
+   "off": 0.2,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "e4",
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "linespace",
+   "off": 0.3,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "e4",
+    "g4"
+   ],
+   "step": 1.0,
+   "clip": "lineline",
+   "off": 0.3,
+   "vol": 0.45,
+   "dur": 1.4,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "d4",
+    "e4",
+    "g4"
+   ],
+   "step": 0.7,
+   "clip": "listen",
+   "off": 0.3,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "d4"
+   ],
+   "step": 1.0,
+   "clip": "a1",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "c4",
+    "e4"
+   ],
+   "step": 1.0,
+   "clip": "a2",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "e4",
+    "g4"
+   ],
+   "step": 1.0,
+   "clip": "a3",
+   "off": -0.6,
+   "vol": 0.45,
+   "dur": 1.4
+  },
+  {
+   "kind": "tick",
+   "clip": "a1",
+   "off": -0.2
+  },
+  {
+   "kind": "pop",
+   "clip": "a2",
+   "off": -0.2
+  },
+  {
+   "kind": "tick",
+   "clip": "a3",
+   "off": -0.2
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "off": -0.1
+  }
+ ],
+ "beats": [],
+ "gapOverride": {
+  "q1ask": 0.8,
+  "a1": 4.6,
+  "a2": 4.4,
+  "a3": 4.4,
+  "qwell": 1.2
+ }
+}
