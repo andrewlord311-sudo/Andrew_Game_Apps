@@ -90,7 +90,7 @@
    "id": "lineline",
    "who": "melody",
    "text": "Line to line… <break time=\"0.5s\" /> misses one out… <break time=\"0.5s\" /> That is a skip.",
-   "speed": 0.88,
+   "speed": 0.85,
    "show": "Line to line… misses one out… That is a skip."
   },
   {
@@ -310,12 +310,20 @@
    "id": "outro12",
    "clips": [
     "game1",
-    "game12",
-    "sub12",
-    "bye"
+    "game12"
    ],
    "lead": 0.6,
    "gap": 0.5,
+   "tail": 1.6
+  },
+  {
+   "id": "outro12b",
+   "clips": [
+    "sub12",
+    "bye"
+   ],
+   "lead": 0.5,
+   "gap": 0.6,
    "tail": 3.4
   }
  ],

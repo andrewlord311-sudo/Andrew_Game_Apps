@@ -1384,13 +1384,14 @@ S.v12q3=v12k({build(r){this.q=document.createElement('div');this.q.className='bi
   const th=t>=CL.q3ask.end+0.3&&t<ta;this.q.style.opacity=String(th?clamp(prog(t,CL.q3ask.end+0.3,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));
   const tw=CL.qwell.start;this.conf.forEach(f=>{const q=prog(t,tw+f.ph*0.3,1.7);f.e.style.opacity=q>0&&q<1?String(1-q*q):'0';f.e.style.left=f.x+'px';f.e.style.top=(720-q*760*f.s)+'px';f.e.style.transform=`rotate(${q*360*(f.ph>0.5?1:-1)}deg)`});
   if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}});
-// outro with the spoken subscribe ask
-S.outro12=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
-  S.outro.build.call(this,r);
-  this.s=document.createElement('div');this.s.className='abs big';this.s.style.cssText='left:50%;top:282px;font-size:56px;background:#dc2626;color:#fff;padding:10px 46px 12px;border-radius:999px;box-shadow:0 9px 0 rgba(0,0,0,.2);white-space:nowrap;opacity:0';this.s.textContent='🔔  Subscribe';r.appendChild(this.s);
-  this.n=document.createElement('div');this.n.className='abs';this.n.style.cssText='left:0;right:0;top:372px;text-align:center;font-weight:700;font-size:30px;opacity:0';this.n.textContent='A new Nugget every Wednesday and Saturday';r.appendChild(this.n);
-  },update(t,L,c){S.outro.update.call(this,t,L,c);const t0=wt('sub12','subscribe')-0.2,q=prog(t,t0,0.5);this.s.style.opacity=String(clamp(q*2));this.s.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.abs(Math.sin((t-t0)*4)):1));this.s.style.translate='-50% 0';
-   fade(this.n,t,wt('sub12','new')-0.2,0.5)}});
+// outro, part 1: play the game.  part 2: the spoken subscribe ask and goodbye
+S.outro12=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro12b={ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
+  this.s=document.createElement('div');this.s.className='abs big';this.s.style.cssText='left:50%;top:92px;font-size:84px;background:#dc2626;color:#fff;padding:14px 62px 16px;border-radius:999px;box-shadow:0 10px 0 rgba(0,0,0,.2);white-space:nowrap;opacity:0';this.s.textContent='🔔  Subscribe';r.appendChild(this.s);
+  this.n=document.createElement('div');this.n.className='abs big';this.n.style.cssText='left:0;right:0;top:226px;font-size:40px;opacity:0';this.n.textContent='A new Nugget every Wednesday and Saturday';r.appendChild(this.n);
+  this.b=document.createElement('div');this.b.className='abs big';this.b.style.cssText='left:0;right:0;bottom:30px;font-size:40px;opacity:0';this.b.innerHTML='See you for the next Nugget! 👋';r.appendChild(this.b);
+  },update(t,L,c){const t0=wt('sub12','subscribe')-0.2,q=prog(t,t0,0.5);this.s.style.opacity=String(clamp(q*2));this.s.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.abs(Math.sin((t-t0)*4)):1));this.s.style.translate='-50% 0';
+   fade(this.n,t,wt('sub12','new')-0.2,0.5);this.b.style.opacity=prog(t,CL.bye.start,0.4)}};
 
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
