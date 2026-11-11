@@ -22,6 +22,15 @@
   }
   window.ARCADE_URL = teacherDevice() ? "music_arcade.html" : "arcade.html";
 
+  // Which Nugget game is this? Game N goes with video N (the numbers on the Nuggets dashboard). Games without a number
+  // (the older extras) show no badge. ADD every new paired game here when it is built.
+  const GAME_NUMBERS = {
+    "name_that_part.html": 1, "line_and_space_safari.html": 2, "alphabet_elevator.html": 3, "higher_lower_same.html": 4,
+    "beat_tapper.html": 5, "black_key_patterns.html": 6, "left_right_high_low.html": 7, "c_hunt.html": 8, "octave_hunt.html": 9,
+    "fill_the_bar.html": 10, "note_ladder.html": 11, "step_or_skip.html": 12, "note_lengths.html": 13
+  };
+  function gameNumber() { return GAME_NUMBERS[(location.pathname.split("/").pop() || "").toLowerCase()] || null; }
+
   // Layout lanes. The Arcade pill (top-left) and the reward animal + stars (bottom corners) are fixed on screen, so on
   // phones and tablets they sat on top of the score chips and the answer buttons. Reserve a lane for them instead.
   (function reserveLanes() {
@@ -66,6 +75,12 @@
         border: none; appearance: none; text-decoration: none;
       }
       #back-link-badge:active { transform: translateY(1px); }
+      #game-number-badge {
+        position: fixed; top: 62px; left: 16px; z-index: 10009;
+        background: #ede9fe; color: #5b21b6; border-radius: 999px; padding: 3px 11px;
+        box-shadow: 0 2px 0 rgba(91,33,182,0.15);
+        font-family: 'Trebuchet MS','Segoe UI',sans-serif; font-weight: 800; font-size: 12px; pointer-events: none;
+      }
     `;
     document.head.appendChild(style);
   }
@@ -78,6 +93,15 @@
     link.href = window.ARCADE_URL;
     link.innerHTML = "⬅️ Arcade";
     document.body.appendChild(link);
+    const n = gameNumber();
+    if (n && !document.getElementById("game-number-badge")) {
+      const g = document.createElement("div");
+      g.id = "game-number-badge";
+      g.textContent = "🎮 Game " + n;
+      g.title = "Goes with video " + n;
+      document.body.appendChild(g);
+      if (!/^Game \d+/.test(document.title)) document.title = "Game " + n + ": " + document.title;
+    }
   }
 
   if (document.readyState === "loading") {
