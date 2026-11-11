@@ -1390,8 +1390,114 @@ S.outro12b={ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
   this.s=document.createElement('div');this.s.className='abs big';this.s.style.cssText='left:50%;top:92px;font-size:84px;background:#dc2626;color:#fff;padding:14px 62px 16px;border-radius:999px;box-shadow:0 10px 0 rgba(0,0,0,.2);white-space:nowrap;opacity:0';this.s.textContent='🔔  Subscribe';r.appendChild(this.s);
   this.n=document.createElement('div');this.n.className='abs big';this.n.style.cssText='left:0;right:0;top:226px;font-size:40px;opacity:0';this.n.textContent='A new Nugget every Wednesday and Saturday';r.appendChild(this.n);
   this.b=document.createElement('div');this.b.className='abs big';this.b.style.cssText='left:0;right:0;bottom:30px;font-size:40px;opacity:0';this.b.innerHTML='See you for the next Nugget! 👋';r.appendChild(this.b);
-  },update(t,L,c){const t0=wt('sub12','subscribe')-0.2,q=prog(t,t0,0.5);this.s.style.opacity=String(clamp(q*2));this.s.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.abs(Math.sin((t-t0)*4)):1));this.s.style.translate='-50% 0';
-   fade(this.n,t,wt('sub12','new')-0.2,0.5);this.b.style.opacity=prog(t,CL.bye.start,0.4)}};
+  },update(t,L,c){const t0=wt('sub'+TL.nugget,'subscribe')-0.2,q=prog(t,t0,0.5);this.s.style.opacity=String(clamp(q*2));this.s.style.scale=String(lerp(0.4,1,easeBack(q))*(q>=1?1+0.04*Math.abs(Math.sin((t-t0)*4)):1));this.s.style.translate='-50% 0';
+   fade(this.n,t,wt('sub'+TL.nugget,'new')-0.2,0.5);this.b.style.opacity=prog(t,CL.bye.start,0.4)}};
+
+// ======================================================================== VIDEO 13: long and short notes
+// crotchet (filled, stem) = 1 beat, minim (hollow, stem) = 2 beats, semibreve (hollow, no stem) = 4 beats; one bar of four beats.
+const CROC='#0d9488',MINC='#7c3aed',SBC='#db2777',KC13={cro:CROC,min:MINC,sb:SBC},LEN13={cro:1,min:2,sb:4},BT13=0.75;
+const bx13=i=>190+i*140, SVGNS='http://www.w3.org/2000/svg';
+function el13(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
+function bar13(r,o={}){ // o: notes [{k:'cro'|'min'|'sb', b: first beat 0..3}], slots, scale, top, compact
+  const sc=o.scale||1.25,H=o.compact?150:250,vy=o.compact?40:0;
+  const wrap=document.createElement('div');wrap.className='abs';wrap.style.cssText=`left:${640-400*sc}px;top:${o.top??170}px;width:${800*sc}px;height:${H*sc}px;opacity:0`;r.appendChild(wrap);
+  const svg=el13('svg',{viewBox:`0 ${vy} 800 ${H}`,width:800*sc,height:H*sc},wrap);svg.style.overflow='visible';
+  [88,108,128,148,168].forEach(y=>el13('line',{x1:90,x2:710,y1:y,y2:y,stroke:'#334155','stroke-width':2.4},svg));
+  el13('line',{x1:90,x2:90,y1:88,y2:168,stroke:'#334155','stroke-width':3},svg);
+  ['4','4'].forEach((d,k)=>{const t=el13('text',{x:122,y:k?160:120,'text-anchor':'middle','font-family':'Fredoka One, sans-serif','font-size':44,fill:'#241f3d'},svg);t.textContent=d});
+  const end=el13('line',{x1:705,x2:705,y1:88,y2:168,stroke:'#241f3d','stroke-width':3},svg);
+  const slots=[0,1,2,3].map(i=>{const c=el13('circle',{cx:bx13(i),cy:128,r:15,fill:'none',stroke:'#94a3b8','stroke-width':3,'stroke-dasharray':'5 5'},svg);c.style.opacity=o.slots?1:0;return c});
+  const bands=[];
+  const nums=o.compact?[]:[0,1,2,3].map(i=>{const t=el13('text',{x:bx13(i),y:238,'text-anchor':'middle','font-family':'Fredoka One, sans-serif','font-size':30,fill:BEATCOL[i]},svg);t.textContent=i+1;t.style.opacity=0;return t});
+  const ns=[],hs=[];
+  (o.notes||[]).forEach(n=>{const col=KC13[n.k],cx=bx13(n.b),hollow=n.k!=='cro',rx=n.k==='sb'?20:15;
+    const g=el13('g',{},svg);g.style.transformBox='fill-box';g.style.transformOrigin='50% 50%';g.style.opacity=0;
+    el13('ellipse',{cx,cy:128,rx,ry:11,transform:`rotate(-20 ${cx} 128)`,fill:hollow?'none':col,stroke:col,'stroke-width':hollow?5:2},g);
+    if(n.k!=='sb')el13('line',{x1:cx+rx-2,x2:cx+rx-2,y1:126,y2:52,stroke:col,'stroke-width':4,'stroke-linecap':'round'},g);
+    ns.push(g);
+    const len=LEN13[n.k],x0=cx-32,x1=bx13(n.b+len-1)+32;
+    if(!o.compact){const h=el13('rect',{x:x0,y:184,width:x1-x0,height:14,rx:7,fill:col},svg);h.style.transformBox='fill-box';h.style.transformOrigin='0 50%';h.style.opacity=0;hs.push(h)}});
+  return {wrap,svg,end,slots,nums,ns,hs,bands,o,
+    band(x0,x1,col){const b=el13('rect',{x:x0,y:72,width:x1-x0,height:116,rx:10,fill:col},svg);b.style.opacity=0;b.style.transformBox='fill-box';b.style.transformOrigin='0 50%';svg.insertBefore(b,svg.firstChild);bands.push(b);return b}}}
+function note13(B,i,p,s=1){const g=B.ns[i];g.style.opacity=String(clamp(p*2.5));g.style.transform=`translateY(${(1-easeBack(p))*-26}px) scale(${s})`}
+function hold13(B,i,p){const h=B.hs[i];if(!h)return;h.style.opacity=p>0?'0.9':'0';h.style.transform=`scaleX(${clamp(p)})`}
+function num13(B,i,t,t0){const q=prog(t,t0,0.3);B.nums[i].style.opacity=String(clamp(q*2));B.nums[i].style.transform=`scale(${lerp(0.5,1,easeBack(q))})`;B.nums[i].style.transformBox='fill-box';B.nums[i].style.transformOrigin='50% 50%'}
+function chip13(r,y,fs=40){const c=labelChip(r,'x',KC13.cro,640,y,fs,'8px 34px');c.style.opacity=0;return c}
+function showChip13(c,txt,col,t,t0,x=640){c.textContent=txt;c.style.background=col;c.style.left=(x-c.offsetWidth/2)+'px';pop(c,t,t0,0.4)}
+function v13s(f){return {ui:V6UI,build(r){this.B=bar13(r,f.bar||{});this.c1=chip13(r,f.y1??512);this.c2=chip13(r,f.y2??578,34);this.q=document.createElement('div');this.q.className='big abs';this.q.style.cssText='left:0;right:0;top:92px;font-size:90px;color:var(--orange);opacity:0';this.q.textContent='?';r.appendChild(this.q);
+    this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}});
+    if(f.build)f.build.call(this,r)},
+  update(t,L,c){const B=this.B;B.wrap.style.opacity=String(clamp(prog(L,0.2,0.5)*2));this.q.style.opacity=0;this.c1.style.opacity=this.c2.style.opacity=0;B.slots.forEach(s=>{s.style.opacity=B.o.slots?1:0});
+    f.state.call(this,t,L,c,B);
+    if(this.confAt!=null){this.conf.forEach(q=>{const k=prog(t,this.confAt+q.ph*0.3,1.7);q.e.style.opacity=k>0&&k<1?String(1-k*k):'0';q.e.style.left=q.x+'px';q.e.style.top=(720-k*760*q.s)+'px';q.e.style.transform=`rotate(${k*360*(q.ph>0.5?1:-1)}deg)`})}}}}
+// 1. Remember the beat? We count four beats in every bar.
+S.v13remember=v13s({bar:{slots:true},y1:512,build(r){this.bg=chip(r,'⟲ Remember?','var(--melody-deep)',230,205);this.bg.style.fontSize='26px'},
+ state(t,L,c,B){pop(this.bg,t,L+0.4,0.4);const t0=CL.remember.end+0.5;
+  [0,1,2,3].forEach(i=>{const T=t0+i*BT13,age=t-T;num13(B,i,t,T-0.05);const lit=age>=-0.03&&age<0.45;B.slots[i].style.stroke=lit?BEATCOL[i]:'#94a3b8';B.slots[i].style.strokeDasharray=age>=-0.03?'0':'5 5';B.slots[i].style.fill=lit?BEATCOL[i]:'none';B.slots[i].style.opacity=1});
+  showChip13(this.c1,'4 BEATS IN EVERY BAR','#241f3d',t,t0+3*BT13+0.5)}});
+// 2. Some notes last one beat. This note is called a crotchet. In America it is called a quarter note.
+S.v13cro=v13s({bar:{notes:[{k:'cro',b:0}]},
+ state(t,L,c,B){const tn=CL.one1.start+0.4;note13(B,0,prog(t,tn,0.45));hold13(B,0,easeOut(prog(t,tn,BT13)));num13(B,0,t,tn);
+  showChip13(this.c1,'CROTCHET = 1 BEAT',CROC,t,wt('cro1','crotchet')-0.15);
+  if(t>=wt('cro2','quarter')-0.15)showChip13(this.c2,'= QUARTER NOTE','#0f766e',t,wt('cro2','quarter')-0.15)}});
+// 3. Four crotchets fill the bar.
+S.v13cro2=v13s({bar:{notes:[0,1,2,3].map(b=>({k:'cro',b}))},
+ state(t,L,c,B){const t0=CL.cro3.start+0.5;[0,1,2,3].forEach(i=>{const T=t0+i*BT13,age=t-T;note13(B,i,prog(t,T,0.4),age>=0&&age<0.35?1.25:1);hold13(B,i,easeOut(prog(t,T,BT13)));num13(B,i,t,T)});
+  B.end.style.strokeWidth=t>=t0+3*BT13+0.4?'8':'3';
+  showChip13(this.c1,'4 CROTCHETS = 1 BAR',CROC,t,wt('cro3','fill')-0.1)}});
+// 4. Some notes last longer. Listen. This note lasts two beats. It is called a minim. In America a half note.
+S.v13min=v13s({bar:{notes:[{k:'min',b:0}]},
+ state(t,L,c,B){const tn=CL.min1.end+0.15;note13(B,0,prog(t,tn,0.45));hold13(B,0,easeOut(prog(t,tn,2*BT13)));num13(B,0,t,tn);num13(B,1,t,tn+BT13);
+  showChip13(this.c1,'MINIM = 2 BEATS',MINC,t,wt('min2','minim')-0.15);
+  if(t>=wt('min3','half')-0.15)showChip13(this.c2,'= HALF NOTE','#5b21b6',t,wt('min3','half')-0.15)}});
+// 5. Two minims fill the bar.
+S.v13min2=v13s({bar:{notes:[{k:'min',b:0},{k:'min',b:2}]},
+ state(t,L,c,B){const t0=CL.min4.start+0.5;[0,1].forEach(i=>{const T=t0+i*2*BT13,age=t-T;note13(B,i,prog(t,T,0.4),age>=0&&age<0.35?1.25:1);hold13(B,i,easeOut(prog(t,T,2*BT13)));num13(B,i*2,t,T);num13(B,i*2+1,t,T+BT13)});
+  B.end.style.strokeWidth=t>=t0+2*BT13+0.4?'8':'3';showChip13(this.c1,'2 MINIMS = 1 BAR',MINC,t,wt('min4','fill')-0.1)}});
+// 6. The longest note lasts four beats. It is called a semibreve. In America a whole note.
+S.v13sb=v13s({bar:{notes:[{k:'sb',b:0}]},
+ state(t,L,c,B){const tn=CL.sb1.start+0.7;note13(B,0,prog(t,tn,0.5));hold13(B,0,easeOut(prog(t,tn,4*BT13)));[0,1,2,3].forEach(i=>num13(B,i,t,tn+i*BT13));
+  showChip13(this.c1,'SEMIBREVE = 4 BEATS',SBC,t,wt('sb2','semibreve')-0.15);
+  if(t>=wt('sb3','whole')-0.15)showChip13(this.c2,'= WHOLE NOTE','#9d174d',t,wt('sb3','whole')-0.15)}});
+// 7-9. why the American names are fractions of the bar
+function v13frac(o){return v13s({bar:{notes:o.notes},y1:512,y2:578,
+ build(r){this.bd=o.bands.map(([x0,x1,col])=>this.B.band(x0,x1,col));this.dv=o.divs.map(x=>{const l=el13('line',{x1:x,x2:x,y1:70,y2:190,stroke:'#241f3d','stroke-width':4,'stroke-dasharray':'8 7'},this.B.svg);l.style.opacity=0;return l});
+  this.caps=o.caps.map(([txt,x,col])=>{const c=chip13(r,420,30);c.dataset.x=x;c.dataset.col=col;c.dataset.txt=txt;return c})},
+ state(t,L,c,B){B.ns.forEach((g,i)=>{note13(B,i,1)});B.hs.forEach((h,i)=>hold13(B,i,1));
+  const T=wt(o.clip,o.word)-0.2;this.bd.forEach((b,i)=>{const q=prog(t,T+i*0.35,0.5);b.style.opacity=String(clamp(q*2)*0.38);b.style.transform=`scaleX(${easeOut(q)})`});
+  this.dv.forEach((d,i)=>{d.style.opacity=String(clamp(prog(t,T+i*0.25,0.3)*2))});
+  this.caps.forEach((cp,i)=>showChip13(cp,cp.dataset.txt,cp.dataset.col,t,T+0.2+i*0.35,+cp.dataset.x));
+  showChip13(this.c1,o.chip1,o.col,t,L+0.4);if(o.chip2&&t>=wt(o.clip,o.word2||o.word)-0.2)showChip13(this.c2,o.chip2,o.col2||o.col,t,wt(o.clip,o.word2||o.word)-0.2)}})}
+// bar is 1000 px wide on screen (scale 1.25): stave x 90..710 -> screen 640+(x-400)*1.25
+const sx13=x=>640+(x-400)*1.25;
+S.v13whole=v13frac({notes:[{k:'sb',b:0}],clip:'whole',word:'whole',bands:[[110,700,'#f59e0b']],divs:[],caps:[['WHOLE BAR',640,'#b45309']],chip1:'SEMIBREVE',col:SBC,chip2:'= WHOLE NOTE',col2:'#9d174d'});
+S.v13half=v13frac({notes:[{k:'min',b:0},{k:'min',b:2}],clip:'half',word:'half',bands:[[110,400,'#f59e0b'],[400,700,'#fb7185']],divs:[400],caps:[['HALF A BAR',sx13(255),'#b45309'],['HALF A BAR',sx13(555),'#be123c']],chip1:'MINIM',col:MINC,chip2:'= HALF NOTE',col2:'#5b21b6'});
+S.v13quarter=v13frac({notes:[0,1,2,3].map(b=>({k:'cro',b})),clip:'quarter',word:'quarter',bands:[[110,255,'#f59e0b'],[255,400,'#fb7185'],[400,555,'#60a5fa'],[555,700,'#34d399']],divs:[255,400,555],caps:[['¼ BAR',sx13(182),'#b45309'],['¼ BAR',sx13(327),'#be123c'],['¼ BAR',sx13(477),'#1d4ed8'],['¼ BAR',sx13(627),'#047857']],chip1:'CROTCHET',col:CROC,chip2:'= QUARTER NOTE',col2:'#0f766e'});
+// 10. One bar... three ways.
+S.v13three={ui:V6UI,build(r){const rows=[[{k:'sb',b:0}],[{k:'min',b:0},{k:'min',b:2}],[0,1,2,3].map(b=>({k:'cro',b}))];
+  this.Bs=rows.map((n,i)=>bar13(r,{notes:n,compact:true,scale:0.95,top:150+i*150}));
+  this.lb=[['ONE SEMIBREVE',SBC],['TWO MINIMS',MINC],['FOUR CROTCHETS',CROC]].map(([t,c],i)=>{const e=labelChip(r,t,c,1100,200+i*150,26,'6px 20px');e.style.opacity=0;return e})},
+ update(t,L,c){this.Bs.forEach((B,i)=>{const T=CL.three.start+0.4+i*1.1,p=prog(t,T,0.5);B.wrap.style.opacity=String(clamp(p*2));B.ns.forEach((g,k)=>note13(B,k,1));pop(this.lb[i],t,T+0.3,0.4)})}};
+// 11. Clap and count with me! (crotchets on every beat, minims on 1 and 3, the semibreve once)
+S.v13clap={ui:V6UI,build(r){this.Bs=[[0,1,2,3].map(b=>({k:'cro',b})),[{k:'min',b:0},{k:'min',b:2}],[{k:'sb',b:0}]].map((n,i)=>bar13(r,{notes:n,compact:true,scale:0.95,top:150+i*150}));
+  this.cl=[0,1,2].map(()=>{const e=document.createElement('div');e.className='abs';e.style.cssText='font-size:64px;opacity:0;left:0;top:0';e.textContent='👏';r.appendChild(e);return e})},
+ update(t,L,c){const t0=CL.clapintro.end+0.6,rowT=[t0,t0+3.2,t0+6.4],hits=[[0,1,2,3].map(i=>i*BT13),[0,2*BT13],[0]];
+  this.Bs.forEach((B,i)=>{const p=prog(L,0.2+i*0.25,0.5);B.wrap.style.opacity=String(clamp(p*2));
+   B.ns.forEach((g,k)=>{const T=rowT[i]+hits[i][k],age=t-T;note13(B,k,1,age>=0&&age<0.4?1.3:1)});
+   const hit=hits[i].map(h=>rowT[i]+h).filter(T=>t>=T&&t<T+0.5).pop();const e=this.cl[i];
+   if(hit!=null){const age=t-hit;e.style.opacity=String(1-age/0.5);e.style.left=(sx13(bx13(hits[i].findIndex(h=>Math.abs(rowT[i]+h-hit)<0.01)*(i===1?2:1)))-32)+'px';e.style.top=(150+i*150-50-age*40)+'px';e.style.scale=String(1+0.3*Math.sin(age*8))}else e.style.opacity=0})}};
+// quizzes
+function v13q(o){return v13s({bar:o.bar,y1:512,y2:578,build(r){if(o.build)o.build.call(this,r)},state(t,L,c,B){const ta=CL[o.ans].start-0.6,tk=CL[o.ask].end+0.3;
+  o.state.call(this,t,L,c,B,ta);const th=t>=tk&&t<ta;this.q.style.opacity=String(th?clamp(prog(t,tk,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));if(o.conf)this.confAt=CL.qwell.start}})}
+S.v13q1=v13q({bar:{notes:[{k:'min',b:0}]},ask:'q1ask',ans:'a1',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q1ask.start+0.3,0.45));if(t>=ta){hold13(B,0,easeOut(prog(t,ta,2*BT13)));num13(B,0,t,ta);num13(B,1,t,ta+BT13);showChip13(this.c1,'2 BEATS',MINC,t,ta)}}});
+S.v13q2=v13q({bar:{notes:[{k:'cro',b:0}]},ask:'q2ask',ans:'a2',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q2ask.start+0.3,0.45));if(t>=ta){showChip13(this.c1,'CROTCHET',CROC,t,ta);showChip13(this.c2,'= QUARTER NOTE','#0f766e',t,ta+0.5)}}});
+S.v13q3=v13q({bar:{notes:[{k:'min',b:0},{k:'cro',b:2},{k:'cro',b:3}],slots:false},conf:true,ask:'q3ask',ans:'a3',build(r){this.gp=el13('circle',{cx:bx13(3),cy:128,r:16,fill:'none',stroke:'#f59e0b','stroke-width':4,'stroke-dasharray':'6 6'},this.B.svg);this.gp.style.opacity=0},
+  state(t,L,c,B,ta){const t0=CL.q3ask.start+0.3;note13(B,0,prog(t,t0,0.4));hold13(B,0,1);note13(B,1,prog(t,t0+0.3,0.4));hold13(B,1,1);
+   const tm=CL.a3.end+0.3;note13(B,2,t<tm?0:prog(t,tm,0.4));hold13(B,2,t<tm?0:1);
+   this.gp.style.opacity=t>=t0+0.8&&t<tm?String(0.6+0.4*Math.sin(t*6)):'0';if(t>=ta)showChip13(this.c1,t<tm?'ONE BEAT MISSING':'FOUR BEATS: FULL!',t<tm?'#f59e0b':'#16a34a',t,ta);
+   B.end.style.strokeWidth=t>=tm+0.4?'8':'3'}});
+S.outro13=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro13b=Object.assign({},S.outro12b);
 
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
