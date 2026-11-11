@@ -1,0 +1,24 @@
+name: Wire games to their videos
+# Every 15 minutes: if a Nugget video has gone public, link its game to it and list it in the public arcade.
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check videos and wire games
+        run: python3 channel/release_games.py
+      - name: Commit and push if anything was wired
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "nuggets-release-bot"
+            git config user.email "nuggets-release-bot@users.noreply.github.com"
+            git add -A music channel/release-schedule.json
+            git commit -m "Release job: video public, game wired to it and listed in the public arcade"
+            git push
+          fi
