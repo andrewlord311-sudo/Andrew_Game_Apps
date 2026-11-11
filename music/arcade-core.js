@@ -139,8 +139,8 @@
                 comingSoon: false
             },
             {
-                title: "White Note Step or Skip",
-                description: "Using only the white keys, work out whether you're hearing a step or a skip.",
+                title: "Step or Skip",
+                description: "A step is the very next note; a skip misses one out. Spot them on the keys, then on the stave.",
                 emoji: "👣",
                 color: "#0ea5e9", // Sky accent
                 file: "step_or_skip.html",

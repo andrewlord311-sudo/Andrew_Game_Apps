@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>White Note Step or Skip</title>
+    <title>Step or Skip</title>
     <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="fonts.css">
@@ -62,18 +62,18 @@
             <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
         </div>
 
-        <h1 class="kids-title text-3xl text-purple-600 text-center mb-1">White Note Step or Skip</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Using only the WHITE keys — is it a step or a skip?</p>
+        <h1 class="kids-title text-3xl text-purple-600 text-center mb-1">Step or Skip</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">A step is the very next note. A skip misses one out.</p>
 
         <div class="grid grid-cols-3 gap-2 bg-purple-50 p-2 rounded-2xl mb-2 border border-purple-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-purple-400 text-white border-b-2 border-purple-600 shadow">
-                ☀️ Stage 1: Easy
+                ☀️ Stage 1: Keys
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Medium
+                🌴 Stage 2: Stave
             </button>
             <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
+                🚀 Stage 3: Mixed
             </button>
         </div>
 
@@ -82,17 +82,18 @@
             <div class="relative bg-white border border-purple-100 p-2 rounded-xl shadow-sm w-full">
                 <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-purple-50"></div>
                 <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
-                    Hi, I'm Melody! Are these two glowing keys a step apart, or a skip apart?
+                    Hi, I'm Melody! Are these two notes a step apart, or a skip apart?
                 </p>
             </div>
         </div>
 
         <div class="relative">
-            <div class="bg-slate-100 p-1 rounded-t-2xl border-t-2 border-x-2 border-slate-200 text-xs font-bold text-slate-600 text-center tracking-wide">
+            <div id="watch-label" class="bg-slate-100 p-1 rounded-t-2xl border-t-2 border-x-2 border-slate-200 text-xs font-bold text-slate-600 text-center tracking-wide">
                 Watch the two glowing keys
             </div>
             <div id="piano-container" class="relative flex select-none bg-slate-800 p-2 rounded-b-2xl border-x-2 border-b-4 border-slate-300 h-32 w-full overflow-hidden">
             </div>
+            <canvas id="stave-canvas" width="640" height="190" class="hidden w-full h-auto bg-white rounded-b-2xl border-x-2 border-b-4 border-slate-300"></canvas>
             <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
             <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
                 <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
@@ -112,12 +113,12 @@
             <button onclick="makeGuess('step')" class="bg-gradient-to-b from-teal-400 to-teal-500 hover:from-teal-500 hover:to-teal-600 text-white font-black py-5 rounded-2xl border-b-4 border-teal-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
                 <span class="text-2xl">👣</span>
                 <span class="text-lg">STEP</span>
-                <span class="text-[10px] font-semibold opacity-90">the very next key</span>
+                <span class="text-[10px] font-semibold opacity-90">the very next note</span>
             </button>
-            <button onclick="makeGuess('skip')" class="bg-gradient-to-b from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white font-black py-5 rounded-2xl border-b-4 border-orange-700 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
+            <button onclick="makeGuess('skip')" class="bg-gradient-to-b from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-black py-5 rounded-2xl border-b-4 border-pink-800 active:translate-y-0.5 active:border-b-2 transition-all shadow-md flex flex-col items-center gap-1">
                 <span class="text-2xl">🤸</span>
                 <span class="text-lg">SKIP</span>
-                <span class="text-[10px] font-semibold opacity-90">jumps over a key</span>
+                <span class="text-[10px] font-semibold opacity-90">misses one out</span>
             </button>
         </div>
 
@@ -177,23 +178,17 @@
             });
         }
 
-        // Only ever compare WHITE keys — this nugget is specifically about
-        // spotting steps/skips among the white notes (black keys are a
-        // separate landmark-finding nugget). Distances below are in white-key
-        // steps (whiteIndex), not chromatic semitones — a black key sitting
-        // between two white keys doesn't make them any less "a step apart".
-        const STAGE_CONFIGS = {
-            1: { whiteOnly: true, minDiff: 1, maxDiff: 2 },
-            2: { whiteOnly: true, minDiff: 1, maxDiff: 4 },
-            3: { whiteOnly: true, minDiff: 1, maxDiff: 7 }
-        };
+        // Stage 1: two white keys. Stage 2: two notes on the treble stave. Stage 3: a mix of both.
+        // A STEP is the very next note (next key; line to space or space to line).
+        // A SKIP misses one out (one key missed; line to line or space to space). Nothing bigger.
+        const STAGE_MODE = { 1: 'keys', 2: 'stave', 3: 'mixed' };
 
-        let keyA = null, keyB = null, correctAnswer = null;
+        let keyA = null, keyB = null, correctAnswer = null, roundMode = 'keys', stA = null, stB = null, explain = '';
 
         const dialogs = {
             start: "Hi, I'm Melody! Are these two glowing keys a step apart, or a skip apart?",
             correct: "Yes! Your ear (and eyes) found it! 🎹",
-            incorrect: "Close! Count the keys between the two glowing ones."
+            incorrect: "Not quite! A step is the very next note. A skip misses one out."
         };
 
         let audioCtx = null;
@@ -268,34 +263,86 @@
             RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
         }
 
+        // ---- the stave (treble clef, notes E4 to F5: even positions are lines, odd positions are spaces) ----
+        const ST_MIDI = [64, 65, 67, 69, 71, 72, 74, 76, 77];
+        const ST_NAME = ['E', 'F', 'G', 'A', 'B', 'C', 'D', 'E', 'F'];
+        const T_BOTTOM = 148, ST_GAP = 22, ST_X0 = 24, ST_X1 = 616, ST_XA = 340, ST_XB = 470;
+        const stY = pos => T_BOTTOM - pos * ST_GAP / 2;
+        const stKind = pos => (pos % 2 === 0 ? 'line' : 'space');
+        const midiFreq = m => 440 * Math.pow(2, (m - 69) / 12);
+
         function newRound() {
-            const config = STAGE_CONFIGS[currentStage];
-            const pool = config.whiteOnly ? allKeys.filter(k => !k.isBlack) : allKeys;
-
-            let a, b, diff;
-            let attempts = 0;
-            do {
-                a = pool[Math.floor(Math.random() * pool.length)];
-                b = pool[Math.floor(Math.random() * pool.length)];
-                diff = Math.abs(a.whiteIndex - b.whiteIndex);
-                attempts++;
-            } while ((a.id === b.id || diff < config.minDiff || diff > config.maxDiff) && attempts < 300);
-
-            keyA = a;
-            keyB = b;
-            correctAnswer = diff === 1 ? 'step' : 'skip';
+            const mode = STAGE_MODE[currentStage];
+            roundMode = mode === 'mixed' ? (Math.random() < 0.5 ? 'keys' : 'stave') : mode;
+            correctAnswer = Math.random() < 0.5 ? 'step' : 'skip';
+            const diff = correctAnswer === 'step' ? 1 : 2;
+            const dir = Math.random() < 0.5 ? 1 : -1;
+            if (roundMode === 'keys') {
+                const whites = allKeys.filter(k => !k.isBlack);
+                let i, j, guard = 0;
+                do { i = Math.floor(Math.random() * whites.length); j = i + dir * diff; guard++; } while ((j < 0 || j >= whites.length) && guard < 200);
+                if (j < 0 || j >= whites.length) j = i - dir * diff;
+                keyA = whites[i]; keyB = whites[j];
+                explain = correctAnswer === 'step' ? 'the very next key' : 'one key missed out';
+            } else {
+                let i, j, guard = 0;
+                do { i = Math.floor(Math.random() * 9); j = i + dir * diff; guard++; } while ((j < 0 || j > 8) && guard < 200);
+                if (j < 0 || j > 8) j = i - dir * diff;
+                stA = { pos: i, midi: ST_MIDI[i] }; stB = { pos: j, midi: ST_MIDI[j] };
+                explain = `${stKind(i)} to ${stKind(j)}`;
+            }
             controlLock = false;
-
-            renderPiano();
-
+            document.getElementById('mascot-dialog').innerText = dialogs.start;
+            renderRound();
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
             feedback.innerText = "Is it a step or a skip?";
-
-            // Play both keys right away so the child can hear the interval,
-            // not just see it highlighted.
-            setTimeout(() => playTone(freqForSemitone(keyA.semitone), 'triangle', 0.35), 300);
-            setTimeout(() => playTone(freqForSemitone(keyB.semitone), 'triangle', 0.35), 800);
+            // play both notes right away, so the child hears the two notes as well as seeing them
+            setTimeout(() => playTone(pairFreq(0), 'triangle', 0.35), 300);
+            setTimeout(() => playTone(pairFreq(1), 'triangle', 0.35), 800);
+        }
+        function pairFreq(n) {
+            if (roundMode === 'keys') return freqForSemitone((n ? keyB : keyA).semitone);
+            return midiFreq((n ? stB : stA).midi);
+        }
+        function renderRound() {
+            const piano = document.getElementById('piano-container'), cv = document.getElementById('stave-canvas');
+            const label = document.getElementById('watch-label');
+            if (roundMode === 'keys') {
+                piano.classList.remove('hidden'); cv.classList.add('hidden'); label.innerText = 'Watch the two glowing keys';
+                renderPiano();
+            } else {
+                piano.classList.add('hidden'); cv.classList.remove('hidden'); label.innerText = 'Look at the two notes on the stave';
+                drawStave(null);
+            }
+        }
+        function drawStave(answered) {
+            const cv = document.getElementById('stave-canvas'), ctx = cv.getContext('2d');
+            ctx.clearRect(0, 0, cv.width, cv.height);
+            const line = (x1, y, x2, w, col) => { ctx.strokeStyle = col || '#334155'; ctx.lineWidth = w || 2.5; ctx.beginPath(); ctx.moveTo(x1, y); ctx.lineTo(x2, y); ctx.stroke(); };
+            for (let i = 0; i < 5; i++) line(ST_X0, T_BOTTOM - i * ST_GAP, ST_X1, 2.5);
+            line(ST_X0, T_BOTTOM, ST_X0, T_BOTTOM - 4 * ST_GAP, 2.5); line(ST_X1, T_BOTTOM, ST_X1, T_BOTTOM - 4 * ST_GAP, 2.5);
+            ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left'; ctx.fillStyle = '#1e293b';
+            ctx.font = `${ST_GAP * 4}px "Noto Music", serif`;
+            ctx.fillText('\u{1D11E}', ST_X0 + 12, T_BOTTOM - 0 * ST_GAP);
+            const col = answered ? (correctAnswer === 'step' ? '#0d9488' : '#db2777') : '#2563eb';
+            [[stA, ST_XA], [stB, ST_XB]].forEach(([n, x]) => {
+                const y = stY(n.pos);
+                ctx.save(); ctx.translate(x, y); ctx.rotate(-0.25); ctx.fillStyle = col; ctx.beginPath(); ctx.ellipse(0, 0, 13, 9, 0, 0, 2 * Math.PI); ctx.fill(); ctx.restore();
+                ctx.strokeStyle = '#334155'; ctx.lineWidth = 2.5; ctx.beginPath();
+                if (n.pos < 4) { ctx.moveTo(x + 12, y); ctx.lineTo(x + 12, y - 48); } else { ctx.moveTo(x - 12, y); ctx.lineTo(x - 12, y + 48); }
+                ctx.stroke();
+                if (hintsEnabled || answered) {
+                    ctx.fillStyle = col; ctx.font = 'bold 15px Quicksand, sans-serif'; ctx.textAlign = 'center';
+                    ctx.fillText(stKind(n.pos).toUpperCase(), x, T_BOTTOM + 34);
+                }
+            });
+            if (answered) {
+                const ya = stY(stA.pos) - 18, yb = stY(stB.pos) - 18, xm = (ST_XA + ST_XB) / 2, ym = Math.min(ya, yb) - 28;
+                ctx.strokeStyle = col; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(ST_XA, ya); ctx.quadraticCurveTo(xm, ym, ST_XB - 6, yb); ctx.stroke();
+                ctx.fillStyle = col; ctx.font = 'bold 22px Quicksand, sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(correctAnswer === 'step' ? 'STEP' : 'SKIP', xm, ym - 4);
+            }
         }
 
         function renderPiano() {
@@ -331,7 +378,7 @@
             if (hintsEnabled) {
                 const hint = document.createElement('div');
                 hint.className = "absolute top-1 left-1/2 -translate-x-1/2 bg-white/90 text-purple-700 font-bold text-[10px] px-2 py-0.5 rounded-full z-40";
-                hint.innerText = `${keyA.name}${keyA.octave} → ${keyB.name}${keyB.octave}: ${Math.abs(keyA.semitone - keyB.semitone)} key(s) apart (${correctAnswer.toUpperCase()})`;
+                hint.innerText = `${explain}: a ${correctAnswer.toUpperCase()}`;
                 container.appendChild(hint);
             }
         }
@@ -340,8 +387,8 @@
             if (controlLock) return;
             const feedback = document.getElementById('feedback');
 
-            playTone(freqForSemitone(keyA.semitone), 'triangle', 0.3);
-            setTimeout(() => playTone(freqForSemitone(keyB.semitone), 'triangle', 0.3), 200);
+            playTone(pairFreq(0), 'triangle', 0.3);
+            setTimeout(() => playTone(pairFreq(1), 'triangle', 0.3), 200);
 
             if (answer === correctAnswer) {
                 score += 10;
@@ -352,7 +399,8 @@
                 document.getElementById('streak').innerText = streak;
 
                 feedback.className = "text-center text-lg font-bold text-green-600 mb-3 my-3";
-                feedback.innerText = `⭐ Yes! That's a ${correctAnswer.toUpperCase()}! ⭐`;
+                feedback.innerText = `⭐ Yes! ${explain}: a ${correctAnswer.toUpperCase()}! ⭐`;
+                if (roundMode === 'stave') drawStave(true);
 
                 setTimeout(triggerConfetti, 250);
                 document.getElementById('mascot-dialog').innerText = dialogs.correct;
@@ -362,7 +410,7 @@
                 controlLock = true;
                 setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
-                setTimeout(newRound, 1400);
+                setTimeout(newRound, roundMode === 'stave' ? 2000 : 1400);
             } else {
                 streak = 0;
                 lives--;
@@ -371,7 +419,7 @@
                 updateHearts();
 
                 feedback.className = "text-center text-lg font-bold text-rose-500 my-3";
-                feedback.innerText = "Close! Count the keys between them again.";
+                feedback.innerText = roundMode === 'stave' ? "Close! Line to space is a step. Line to line is a skip." : "Close! The very next key is a step. One key missed out is a skip.";
 
                 setTimeout(playFailBuzz, 450);
                 document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
@@ -428,7 +476,7 @@
                 oBtn.innerText = "Go to Next Stage!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
-                oMsg.innerText = `Outstanding! You can spot steps and skips anywhere on the keyboard!`;
+                oMsg.innerText = `Outstanding! You can spot steps and skips on the keys and on the stave!`;
                 oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
@@ -464,12 +512,16 @@
         function toggleHints() {
             hintsEnabled = !hintsEnabled;
             document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
-            renderPiano();
+            renderRound();
         }
 
-        window.addEventListener('resize', () => { renderPiano(); });
+        window.addEventListener('resize', () => { if (keyA || stA) renderRound(); });
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // set to the video's address once it is published, and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Steps and skips'; document.getElementById('game-card').appendChild(a); }
+            try { const f = new FontFace('Noto Music', 'url(fonts/noto-music.woff2)'); document.fonts.add(f); await f.load(); } catch (e) { console.warn('Noto Music failed to load'); }
             buildKeys();
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             setStage(1);
