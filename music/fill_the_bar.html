@@ -57,9 +57,10 @@
         <h1 class="kids-title text-2xl text-amber-600 text-center mb-1">Fill the Bar</h1>
 
         <!-- Difficulty Stages -->
-        <div class="grid grid-cols-2 gap-2 bg-amber-50 p-2 rounded-2xl mb-2 border border-amber-100">
-            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">☀️ 1: Fill the bar</button>
-            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">🌴 2: Full, or not?</button>
+        <div class="grid grid-cols-3 gap-2 bg-amber-50 p-2 rounded-2xl mb-2 border border-amber-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">☀️ 1: Count in</button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">🌴 2: Missing beat</button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200">🚀 3: Full, or not?</button>
         </div>
 
         <!-- Mascot Dialog -->
@@ -88,12 +89,10 @@
 
         <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-1">&nbsp;</div>
 
-        <!-- Stage 1: add a beat -->
-        <div id="add-area" class="mb-1">
-            <button id="add-btn" onclick="addBeat()" class="big-btn w-full bg-green-500 hover:bg-green-600 text-white text-xl px-8 py-3 rounded-2xl border-b-4 border-green-700 shadow-lg active:brightness-90">＋ Add a beat</button>
-        </div>
+        <!-- Stages 1 and 2: tap the beat numbers -->
+        <div id="num-area" class="grid grid-cols-4 gap-2 mb-1"></div>
 
-        <!-- Stage 2 answers -->
+        <!-- Stage 3 answers -->
         <div id="answers" class="grid gap-3 mb-1 hidden"></div>
 
         <div class="flex justify-between items-center text-xs">
@@ -108,7 +107,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
-    <script>window.GP_TOTAL_STAGES = 2;</script>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
     <script src="hit-counter.js"></script>
     <script src="game-progress.js"></script>
     <script>
@@ -129,8 +128,9 @@
         const AV_BARNABY = MASCOTS.html('barnaby', 'w-12 h-12 drop-shadow-md');
 
         const DIALOG = {
-            1: "Fill the bar! Tap to add a beat. A bar (also called a measure) holds four beats.",
-            2: "Is the bar (measure) full? Count the beats, then choose. And count the bars too!"
+            1: "Count in! Tap the numbers in order, 1, 2, 3, 4, to fill the bar. A bar (also called a measure) holds four beats.",
+            2: "One beat is missing! Count along the bar, then tap the number of the empty place.",
+            3: "Is the bar (measure) full? Count the beats, then choose. And count the bars too!"
         };
 
         // ======================================================================== sound (synthesised, plus Melody's counts from the video)
@@ -184,12 +184,19 @@
                 const x0 = start + bi * w, col = b.colour || COLOURS[bi % COLOURS.length];
                 for (let j = 0; j < b.slots; j++) {
                     const cx = x0 + w * (j + 0.5) / b.slots, cy = top + 2 * gap;     // middle line
-                    if (j < b.notes) {
+                    if (b.mask ? b.mask[j] : j < b.notes) {
                         const pop = (opts.pop && bi === opts.pop.bar && j === opts.pop.note) ? ' note-pop' : '';
                         s += `<g class="${pop}"><ellipse cx="${cx}" cy="${cy}" rx="8" ry="6" transform="rotate(-18 ${cx} ${cy})" fill="${col}"/>` +
                              `<line x1="${cx - 7.4}" x2="${cx - 7.4}" y1="${cy + 1}" y2="${cy + 34}" stroke="${col}" stroke-width="2.4" stroke-linecap="round"/></g>`;
                     } else {
                         s += `<circle cx="${cx}" cy="${cy}" r="9" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>`;
+                    }
+                }
+                if (opts.nums && b.slots === 4) {                // the beat numbers under the four places
+                    for (let j = 0; j < 4; j++) {
+                        const cx = x0 + w * (j + 0.5) / 4, filled = b.mask ? b.mask[j] : j < b.notes, isNext = opts.next === j;
+                        if (isNext) s += `<circle cx="${cx}" cy="${top + 4 * gap + 17}" r="13" fill="#fde68a"/>`;
+                        s += `<text x="${cx}" y="${top + 4 * gap + 23}" text-anchor="middle" font-family="Fredoka One, sans-serif" font-size="18" fill="${filled ? col : (isNext ? '#b45309' : '#94a3b8')}">${j + 1}</text>`;
                     }
                 }
                 s += `<line x1="${x0 + w}" x2="${x0 + w}" y1="${top}" y2="${top + 4 * gap}" stroke="#1f2937" stroke-width="${bi === bars.length - 1 && opts.final ? 4 : 2.4}"/>`;
@@ -223,35 +230,80 @@
             if (lives <= 0) setTimeout(triggerGameOver, 1400);
         }
 
-        // ======================================================================== stage 1: fill the bar
+        // ======================================================================== stage 1: count in (tap the numbers 1, 2, 3, 4 in order)
+        let mround = null;       // stage 2: { g: index of the empty place, 0 to 3 }
+        function buildNumButtons() {
+            const box = $('num-area'); box.innerHTML = '';
+            const grads = ['from-sky-400 to-sky-500', 'from-green-400 to-green-500', 'from-pink-400 to-pink-500', 'from-amber-400 to-amber-500'];
+            [1, 2, 3, 4].forEach((n, i) => {
+                const b = document.createElement('button');
+                b.className = `big-btn bg-gradient-to-b ${grads[i]} text-white text-3xl py-3 rounded-2xl border-b-4 border-black/30 shadow-lg active:brightness-90`;
+                b.innerText = n; b.dataset.n = n; b.onclick = () => tapNumber(n); box.appendChild(b);
+            });
+        }
         function newBar() {
             locked = false;
-            const have = pick([0, 0, 0, 1, 2]);
+            const have = pick([0, 0, 1, 2]);
             bar = { have, need: 4 };
-            $('prompt').innerHTML = 'Fill the bar: four beats!';
+            $('prompt').innerHTML = 'Count in: tap the numbers in order!';
             say('');
             renderBar();
-            $('add-btn').disabled = false; $('add-btn').style.opacity = 1;
-            if (hintsEnabled) $('mascot-dialog').innerText = `Count along: ${bar.have} so far. Add ${bar.need - bar.have} more.`;
+            if (hintsEnabled) $('mascot-dialog').innerText = `Next is ${bar.have + 1}. Tap ${bar.have + 1}!`;
         }
         function renderBar(popNote) {
-            $('stave-holder').innerHTML = staveSvg([{ notes: bar.have, slots: 4, colour: BLUE }], { pop: popNote === undefined ? null : { bar: 0, note: popNote }, final: true });
-            drawDots(bar.have, 4, BLUE);
+            $('stave-holder').innerHTML = staveSvg([{ notes: bar.have, slots: 4, colour: BLUE }], { pop: popNote === undefined ? null : { bar: 0, note: popNote }, final: true, nums: true, next: bar.have < 4 ? bar.have : null });
+            $('beat-dots').innerHTML = '';
         }
-        function addBeat() {
-            if (locked || currentStage !== 1) return;
-            bar.have++; renderBar(bar.have - 1);
-            sayCount(bar.have); playTone(440 + bar.have * 40, 'triangle', 0.15);
-            if (bar.have >= bar.need) {
-                locked = true; $('add-btn').disabled = true; $('add-btn').style.opacity = .5;
-                say('⭐ The bar (measure) is full: four beats! ⭐', 'text-green-600');
-                $('mascot-dialog').innerText = 'One, two, three, four. A full bar has four beats.';
-                setTimeout(() => { scoreUp(); }, 700);
-                setTimeout(newBar, 2600);
+        function tapNumber(n) {
+            if (locked) return;
+            if (currentStage === 1) {
+                if (n === bar.have + 1) {
+                    bar.have++; renderBar(bar.have - 1);
+                    sayCount(bar.have); playTone(440 + bar.have * 40, 'triangle', 0.15);
+                    if (bar.have >= bar.need) {
+                        locked = true;
+                        say('⭐ The bar (measure) is full: four beats! ⭐', 'text-green-600');
+                        $('mascot-dialog').innerText = 'One, two, three, four. A full bar has four beats.';
+                        setTimeout(() => { scoreUp(); }, 700);
+                        setTimeout(newBar, 2600);
+                    } else say(`${n}! Now tap ${bar.have + 1}.`, 'text-green-600');
+                } else {
+                    playTone(180, 'sine', 0.2);
+                    say(n <= bar.have ? `Beat ${n} is already in. Tap ${bar.have + 1} next.` : `Not yet! Count in order: tap ${bar.have + 1} next.`, 'text-amber-600');
+                }
+            } else if (currentStage === 2) answerMissing(n);
+        }
+
+        // ======================================================================== stage 2: which beat is missing? (tap its number)
+        function newMissing() {
+            locked = false; say('');
+            let g; do { g = Math.floor(Math.random() * 4); } while (mround && g === mround.g);
+            mround = { g };
+            $('prompt').innerHTML = 'One beat is missing! Which number?';
+            renderMissing(false);
+            $('beat-dots').innerHTML = '';
+            if (hintsEnabled) $('mascot-dialog').innerText = 'Count along: 1, 2, 3, 4. Which place is empty?';
+        }
+        function renderMissing(revealed, popIt) {
+            const mask = [0, 1, 2, 3].map(i => revealed ? true : i !== mround.g);
+            $('stave-holder').innerHTML = staveSvg([{ mask, slots: 4, colour: BLUE }], { final: true, nums: hintsEnabled || revealed, pop: popIt ? { bar: 0, note: mround.g } : null });
+        }
+        function answerMissing(n) {
+            locked = true;
+            if (n === mround.g + 1) {
+                renderMissing(true, true); sayCount(n); playTone(520 + n * 30, 'triangle', 0.2);
+                say(`⭐ Yes! Beat ${n} was missing! ⭐`, 'text-green-600');
+                $('mascot-dialog').innerText = 'One, two, three, four: now every beat is there, and the bar is full!';
+                setTimeout(scoreUp, 500); setTimeout(newMissing, 2800);
+            } else {
+                renderMissing(false); $('stave-holder').innerHTML = staveSvg([{ mask: [0, 1, 2, 3].map(i => i !== mround.g), slots: 4, colour: BLUE }], { final: true, nums: true, next: mround.g });
+                say(`Count again: 1, 2, 3, 4. The empty place is beat ${mround.g + 1}.`, 'text-rose-500');
+                $('mascot-dialog').innerText = 'Count carefully, then try the next one!';
+                missed(); if (lives > 0) setTimeout(newMissing, 3600);
             }
         }
 
-        // ======================================================================== stage 2: full, too empty or too full? How many bars?
+        // ======================================================================== stage 3: full, too empty or too full? How many bars?
         function newRound() {
             locked = false; say('');
             const kind = Math.random() < 0.65 ? 'full' : 'count';
@@ -310,17 +362,18 @@
         // ======================================================================== stages
         function setStage(n) {
             currentStage = n; locked = false;
-            for (let i = 1; i <= 2; i++) {
+            for (let i = 1; i <= 3; i++) {
                 $('btn-stage-' + i).className = 'py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 ' +
                     (i === n ? 'bg-amber-400 text-white border-b-2 border-amber-600 shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200');
             }
-            $('mascot-avatar').innerHTML = n === 2 ? AV_BARNABY : AV_MELODY;
+            $('mascot-avatar').innerHTML = n >= 2 ? AV_BARNABY : AV_MELODY;
             $('mascot-dialog').innerText = DIALOG[n];
-            $('add-area').classList.toggle('hidden', n !== 1);
-            $('answers').classList.toggle('hidden', n !== 2);
+            $('num-area').classList.toggle('hidden', n === 3);
+            $('answers').classList.toggle('hidden', n !== 3);
             resetStats();
-            $('hearts-container').style.visibility = n === 2 ? 'visible' : 'hidden';   // hearts only matter in stage 2: no harsh losses for filling bars
-            if (n === 1) newBar(); else newRound();
+            $('hearts-container').style.visibility = n >= 2 ? 'visible' : 'hidden';   // hearts only matter from stage 2: no harsh losses while counting in
+            $('beat-dots').innerHTML = '';
+            if (n === 1) newBar(); else if (n === 2) newMissing(); else newRound();
         }
 
         // ======================================================================== common game furniture (same as the other nuggets)
@@ -342,17 +395,17 @@
         }
         function triggerStageComplete() {
             locked = true;
-            GameProgress.stageCleared(currentStage, 2);
+            GameProgress.stageCleared(currentStage, 3);
             playSuccessArpeggio();
             $('overlay-mascot').innerHTML = SVG_MELODY;
             $('overlay-title').innerText = '🌟 Sensational! 🌟';
             const oMsg = $('overlay-msg'), oBtn = $('overlay-btn');
-            if (currentStage < 2) {
+            if (currentStage < 3) {
                 oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
                 oBtn.innerText = 'Go to Next Stage!';
                 oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
             } else {
-                oMsg.innerText = 'Outstanding! You can fill a bar, tell when it is full, and count the bars!';
+                oMsg.innerText = 'Outstanding! You can count in a bar, find the missing beat, tell when it is full, and count the bars!';
                 oBtn.innerText = 'Back to Arcade!';
                 oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || 'music_arcade.html'); };
             }
@@ -373,12 +426,13 @@
         function toggleHints() {
             hintsEnabled = !hintsEnabled;
             $('hint-btn-text').innerText = hintsEnabled ? 'Turn Hints Off' : 'Turn Hints On';
-            if (currentStage === 1) newBar(); else newRound();
+            if (currentStage === 1) newBar(); else if (currentStage === 2) newMissing(); else newRound();
             $('mascot-dialog').innerText = hintsEnabled ? $('mascot-dialog').innerText : DIALOG[currentStage];
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Bars and barlines'; $('game-card').appendChild(a); }
+            buildNumButtons();
             setStage(1);
         });
         // set to the video's address once it is published, and a "Watch the video" link appears

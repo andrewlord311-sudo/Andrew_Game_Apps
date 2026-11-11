@@ -60,7 +60,7 @@
             },
             {
                 title: "Fill the Bar",
-                description: "A bar (or measure) holds four beats. Fill each bar, and tell when it is full!",
+                description: "A bar (or measure) holds four beats. Count in with the numbers, find the missing beat, and tell when a bar is full!",
                 emoji: "🥁",
                 color: "#f59e0b", // Amber accent
                 file: "fill_the_bar.html",
