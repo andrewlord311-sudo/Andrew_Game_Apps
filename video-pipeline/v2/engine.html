@@ -1432,9 +1432,9 @@ function v13s(f){return {ui:V6UI,build(r){this.B=bar13(r,f.bar||{});this.c1=chip
     if(this.confAt!=null){this.conf.forEach(q=>{const k=prog(t,this.confAt+q.ph*0.3,1.7);q.e.style.opacity=k>0&&k<1?String(1-k*k):'0';q.e.style.left=q.x+'px';q.e.style.top=(720-k*760*q.s)+'px';q.e.style.transform=`rotate(${k*360*(q.ph>0.5?1:-1)}deg)`})}}}}
 // 1. Remember the beat? We count four beats in every bar.
 S.v13remember=v13s({bar:{slots:true},y1:512,build(r){this.bg=chip(r,'⟲ Remember?','var(--melody-deep)',230,205);this.bg.style.fontSize='26px'},
- state(t,L,c,B){pop(this.bg,t,L+0.4,0.4);const t0=CL.remember.end+0.5;
-  [0,1,2,3].forEach(i=>{const T=t0+i*BT13,age=t-T;num13(B,i,t,T-0.05);const lit=age>=-0.03&&age<0.45;B.slots[i].style.stroke=lit?BEATCOL[i]:'#94a3b8';B.slots[i].style.strokeDasharray=age>=-0.03?'0':'5 5';B.slots[i].style.fill=lit?BEATCOL[i]:'none';B.slots[i].style.opacity=1});
-  showChip13(this.c1,'4 BEATS IN EVERY BAR','#241f3d',t,t0+3*BT13+0.5)}});
+ state(t,L,c,B){pop(this.bg,t,L+0.4,0.4);
+  [0,1,2,3].forEach(i=>{const T=CL['rc'+(i+1)].start,age=t-T;num13(B,i,t,T-0.05);const lit=age>=-0.03&&age<0.45;B.slots[i].style.stroke=lit?BEATCOL[i]:'#94a3b8';B.slots[i].style.strokeDasharray=age>=-0.03?'0':'5 5';B.slots[i].style.fill=lit?BEATCOL[i]:'none';B.slots[i].style.opacity=1});
+  showChip13(this.c1,'4 BEATS IN EVERY BAR','#241f3d',t,CL.rc4.start+0.5)}});
 // 2. Some notes last one beat. This note is called a crotchet. In America it is called a quarter note.
 S.v13cro=v13s({bar:{notes:[{k:'cro',b:0}]},
  state(t,L,c,B){const tn=CL.one1.start+0.4;note13(B,0,prog(t,tn,0.45));hold13(B,0,easeOut(prog(t,tn,BT13)));num13(B,0,t,tn);
@@ -1451,6 +1451,7 @@ S.v13min=v13s({bar:{notes:[{k:'min',b:0}]},
   showChip13(this.c1,'MINIM = 2 BEATS',MINC,t,wt('min2','minim')-0.15);
   if(t>=wt('min3','half')-0.15)showChip13(this.c2,'= HALF NOTE','#5b21b6',t,wt('min3','half')-0.15)}});
 // 5. Two minims fill the bar.
+S.v13min3=Object.assign({},S.v13min,{update(t,L,c){S.v13min.update.call(this,t,L+5,c)}});
 S.v13min2=v13s({bar:{notes:[{k:'min',b:0},{k:'min',b:2}]},
  state(t,L,c,B){const t0=CL.min4.start+0.5;[0,1].forEach(i=>{const T=t0+i*2*BT13,age=t-T;note13(B,i,prog(t,T,0.4),age>=0&&age<0.35?1.25:1);hold13(B,i,easeOut(prog(t,T,2*BT13)));num13(B,i*2,t,T);num13(B,i*2+1,t,T+BT13)});
   B.end.style.strokeWidth=t>=t0+2*BT13+0.4?'8':'3';showChip13(this.c1,'2 MINIMS = 1 BAR',MINC,t,wt('min4','fill')-0.1)}});
@@ -1481,11 +1482,11 @@ S.v13three={ui:V6UI,build(r){const rows=[[{k:'sb',b:0}],[{k:'min',b:0},{k:'min',
 // 11. Clap and count with me! (crotchets on every beat, minims on 1 and 3, the semibreve once)
 S.v13clap={ui:V6UI,build(r){this.Bs=[[0,1,2,3].map(b=>({k:'cro',b})),[{k:'min',b:0},{k:'min',b:2}],[{k:'sb',b:0}]].map((n,i)=>bar13(r,{notes:n,compact:true,scale:0.95,top:150+i*150}));
   this.cl=[0,1,2].map(()=>{const e=document.createElement('div');e.className='abs';e.style.cssText='font-size:64px;opacity:0;left:0;top:0';e.textContent='👏';r.appendChild(e);return e})},
- update(t,L,c){const t0=CL.clapintro.end+0.6,rowT=[t0,t0+3.2,t0+6.4],hits=[[0,1,2,3].map(i=>i*BT13),[0,2*BT13],[0]];
+ update(t,L,c){const HIT=[[CL.ka1.start,CL.ka2.start,CL.ka3.start,CL.ka4.start],[CL.kb1.start,CL.kb3.start],[CL.kb4.end+1.2]],BEAT=[[0,1,2,3],[0,2],[0]];
   this.Bs.forEach((B,i)=>{const p=prog(L,0.2+i*0.25,0.5);B.wrap.style.opacity=String(clamp(p*2));
-   B.ns.forEach((g,k)=>{const T=rowT[i]+hits[i][k],age=t-T;note13(B,k,1,age>=0&&age<0.4?1.3:1)});
-   const hit=hits[i].map(h=>rowT[i]+h).filter(T=>t>=T&&t<T+0.5).pop();const e=this.cl[i];
-   if(hit!=null){const age=t-hit;e.style.opacity=String(1-age/0.5);e.style.left=(sx13(bx13(hits[i].findIndex(h=>Math.abs(rowT[i]+h-hit)<0.01)*(i===1?2:1)))-32)+'px';e.style.top=(150+i*150-50-age*40)+'px';e.style.scale=String(1+0.3*Math.sin(age*8))}else e.style.opacity=0})}};
+   B.ns.forEach((g,k)=>{const age=t-HIT[i][k];note13(B,k,1,age>=0&&age<0.4?1.3:1)});
+   let hk=-1;HIT[i].forEach((T,k)=>{if(t>=T&&t<T+0.5)hk=k});const e=this.cl[i];
+   if(hk>=0){const age=t-HIT[i][hk];e.style.opacity=String(1-age/0.5);e.style.left=(sx13(bx13(BEAT[i][hk]))-32)+'px';e.style.top=(150+i*150-50-age*40)+'px';e.style.scale=String(1+0.3*Math.sin(age*8))}else e.style.opacity=0})}};
 // quizzes
 function v13q(o){return v13s({bar:o.bar,y1:512,y2:578,build(r){if(o.build)o.build.call(this,r)},state(t,L,c,B){const ta=CL[o.ans].start-0.6,tk=CL[o.ask].end+0.3;
   o.state.call(this,t,L,c,B,ta);const th=t>=tk&&t<ta;this.q.style.opacity=String(th?clamp(prog(t,tk,0.3)*2):0);this.q.style.scale=String(1+0.08*Math.sin(t*7));if(o.conf)this.confAt=CL.qwell.start}})}

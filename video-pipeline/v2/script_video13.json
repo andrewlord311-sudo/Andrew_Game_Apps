@@ -38,6 +38,30 @@
    "show": "Remember the beat? We count four beats in every bar."
   },
   {
+   "id": "rc1",
+   "who": "melody",
+   "text": "One.",
+   "src": "../video5/c1"
+  },
+  {
+   "id": "rc2",
+   "who": "melody",
+   "text": "Two.",
+   "src": "../video5/c2"
+  },
+  {
+   "id": "rc3",
+   "who": "melody",
+   "text": "Three.",
+   "src": "../video5/c3"
+  },
+  {
+   "id": "rc4",
+   "who": "melody",
+   "text": "Four.",
+   "src": "../video5/c4"
+  },
+  {
    "id": "one1",
    "who": "barnaby",
    "text": "Some notes last… <break time=\"0.5s\" /> one beat.",
@@ -103,7 +127,7 @@
   {
    "id": "sb2",
    "who": "melody",
-   "text": "It is called… <break time=\"0.5s\" /> a semibreve.",
+   "text": "It is called… <break time=\"0.5s\" /> a semibreeve.",
    "speed": 0.88,
    "show": "It is called… a semibreve."
   },
@@ -117,9 +141,9 @@
   {
    "id": "whole",
    "who": "melody",
-   "text": "A semibreve fills the whole bar… <break time=\"0.5s\" /> so it is a whole note.",
+   "text": "It fills the whole bar… <break time=\"0.5s\" /> so it is a whole note.",
    "speed": 0.88,
-   "show": "A semibreve fills the whole bar… so it is a whole note."
+   "show": "It fills the whole bar… so it is a whole note."
   },
   {
    "id": "half",
@@ -148,6 +172,54 @@
    "text": "Clap and count with me!",
    "speed": 0.88,
    "show": "Clap and count with me!"
+  },
+  {
+   "id": "ka1",
+   "who": "melody",
+   "text": "One.",
+   "src": "../video5/c1"
+  },
+  {
+   "id": "ka2",
+   "who": "melody",
+   "text": "Two.",
+   "src": "../video5/c2"
+  },
+  {
+   "id": "ka3",
+   "who": "melody",
+   "text": "Three.",
+   "src": "../video5/c3"
+  },
+  {
+   "id": "ka4",
+   "who": "melody",
+   "text": "Four.",
+   "src": "../video5/c4"
+  },
+  {
+   "id": "kb1",
+   "who": "melody",
+   "text": "One.",
+   "src": "../video5/c1"
+  },
+  {
+   "id": "kb2",
+   "who": "melody",
+   "text": "Two.",
+   "src": "../video5/c2"
+  },
+  {
+   "id": "kb3",
+   "who": "melody",
+   "text": "Three.",
+   "src": "../video5/c3"
+  },
+  {
+   "id": "kb4",
+   "who": "melody",
+   "text": "Four.",
+   "src": "../video5/c4"
   },
   {
    "id": "yourturn13",
@@ -242,10 +314,14 @@
   {
    "id": "v13remember",
    "clips": [
-    "remember"
+    "remember",
+    "rc1",
+    "rc2",
+    "rc3",
+    "rc4"
    ],
    "lead": 0.5,
-   "gap": 0,
+   "gap": 0.05,
    "tail": 3.0
   },
   {
@@ -272,11 +348,19 @@
    "id": "v13min",
    "clips": [
     "min1",
-    "min2",
-    "min3"
+    "min2"
    ],
    "lead": 0.5,
    "gap": 0.9,
+   "tail": 2.4
+  },
+  {
+   "id": "v13min3",
+   "clips": [
+    "min3"
+   ],
+   "lead": 0.5,
+   "gap": 0,
    "tail": 2.6
   },
   {
@@ -338,11 +422,19 @@
   {
    "id": "v13clap",
    "clips": [
-    "clapintro"
+    "clapintro",
+    "ka1",
+    "ka2",
+    "ka3",
+    "ka4",
+    "kb1",
+    "kb2",
+    "kb3",
+    "kb4"
    ],
    "lead": 0.5,
-   "gap": 0,
-   "tail": 10.0
+   "gap": 0.05,
+   "tail": 3.6
   },
   {
    "id": "v13q1",
@@ -398,30 +490,6 @@
   }
  ],
  "events": [
-  {
-   "kind": "tick",
-   "clip": "remember",
-   "off": 0.5,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "remember",
-   "off": 1.25,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "remember",
-   "off": 2.0,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "remember",
-   "off": 2.75,
-   "from": "end"
-  },
   {
    "kind": "run",
    "notes": [
@@ -483,48 +551,6 @@
    "dur": 3.0
   },
   {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 0.6,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 1.35,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 2.1,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 2.85,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 3.8,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 5.3,
-   "from": "end"
-  },
-  {
-   "kind": "tick",
-   "clip": "clapintro",
-   "off": 7.0,
-   "from": "end"
-  },
-  {
    "kind": "run",
    "notes": [
     "b4"
@@ -560,6 +586,42 @@
    "kind": "sparkle",
    "clip": "qwell",
    "off": -0.1
+  },
+  {
+   "kind": "tick",
+   "clip": "ka1",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "ka2",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "ka3",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "ka4",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "kb1",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "kb3",
+   "off": -0.12
+  },
+  {
+   "kind": "tick",
+   "clip": "kb4",
+   "off": 1.2,
+   "from": "end"
   }
  ],
  "beats": [],
@@ -568,7 +630,9 @@
   "a1": 4.6,
   "a2": 4.4,
   "a3": 4.4,
-  "qwell": 1.2
- },
- "_todo": "Counts one to four (reused from video 5, free) still to be added in the remember and clap scenes at voicing."
+  "qwell": 1.2,
+  "rc1": 0.5,
+  "ka1": 0.8,
+  "kb1": 1.6
+ }
 }
