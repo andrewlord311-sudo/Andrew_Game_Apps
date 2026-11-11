@@ -212,11 +212,31 @@
         ];
         const OTHER_KEYS = ['B3', 'D4', 'C3', 'C5', 'E4', 'A3', 'G3', 'F4'];
         const pick = a => a[Math.floor(Math.random() * a.length)];
+        // Stages 2 and 3 are Yes/No questions. A plain coin toss gave long runs of "it is Middle C", so the mix is a shuffled bag:
+        // every 8 rounds hold exactly 4 Middle C and 4 other notes, never more than 2 of the same kind in a row, and the
+        // "other" notes cycle through every different note before any repeats.
+        const shuffle = arr => { const x = arr.slice(); for (let i = x.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [x[i], x[j]] = [x[j], x[i]]; } return x; };
+        let kindBag = [], lastKinds = [], bagOther = [], bagMiddle = [];
+        function nextKind() { // true = this round is Middle C
+            if (!kindBag.length) {
+                let tries = 0, bag;
+                do { bag = shuffle([true, true, true, true, false, false, false, false]); tries++; }
+                while (tries < 200 && lastKinds.concat(bag).some((v, i, c) => i >= 2 && v === c[i - 1] && v === c[i - 2]));
+                kindBag = bag;
+            }
+            const k = kindBag.shift(); lastKinds = lastKinds.concat(k).slice(-2); return k;
+        }
+        function nextFrom(bagName, source) {
+            const bag = bagName === 'other' ? bagOther : bagMiddle;
+            if (!bag.length) bag.push(...shuffle(source));
+            return bag.shift();
+        }
         const nameOf = id => id[0];
 
         function setStage(n) {
             currentStage = n;
             for (let i = 1; i <= 3; i++) $(`btn-stage-${i}`).className = 'py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 ' + (i === n ? 'bg-teal-400 text-white border-b-2 border-teal-600 shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200');
+            kindBag = []; lastKinds = []; bagOther = []; bagMiddle = [];
             resetStats(); newRound();
         }
 
@@ -224,11 +244,11 @@
 
         function newRound() {
             clearTimeout(roundTimer); controlLock = false;
-            const wantMiddle = currentStage === 1 ? true : Math.random() < 0.5;
+            const wantMiddle = currentStage === 1 ? true : nextKind();
             let r, tries = 0;
             do {
-                if (currentStage === 3) r = { id: wantMiddle ? MIDDLE : pick(OTHER_KEYS) };
-                else r = Object.assign({}, wantMiddle ? pick(MIDDLE_ROUNDS) : pick(OTHER_ROUNDS));
+                if (currentStage === 3) r = { id: wantMiddle ? MIDDLE : nextFrom('other', OTHER_KEYS) };
+                else r = Object.assign({}, wantMiddle ? nextFrom('middle', MIDDLE_ROUNDS) : nextFrom('other', OTHER_ROUNDS));
             } while (++tries < 8 && (r.id + (r.clef || '')) === lastKey);
             lastKey = r.id + (r.clef || ''); round = r;
 
