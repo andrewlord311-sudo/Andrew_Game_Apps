@@ -1,0 +1,410 @@
+{
+ "title": "Long and short notes",
+ "titleAt": "long and short notes",
+ "nugget": 13,
+ "game": "How Long Is the Note?",
+ "gameFile": "note_lengths.html",
+ "todayLead": "Today we are going to learn about",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> learn about long and short notes.",
+   "speed": 0.88,
+   "show": "Today we are going to learn about long and short notes."
+  },
+  {
+   "id": "remember",
+   "who": "melody",
+   "text": "Remember the beat? <break time=\"0.5s\" /> We count four beats in every bar.",
+   "speed": 0.88,
+   "show": "Remember the beat? We count four beats in every bar."
+  },
+  {
+   "id": "one1",
+   "who": "barnaby",
+   "text": "Some notes last… <break time=\"0.5s\" /> one beat.",
+   "speed": 0.88,
+   "show": "Some notes last… one beat."
+  },
+  {
+   "id": "cro1",
+   "who": "melody",
+   "text": "This note is called… <break time=\"0.5s\" /> a crotchet.",
+   "speed": 0.88,
+   "show": "This note is called… a crotchet."
+  },
+  {
+   "id": "cro2",
+   "who": "barnaby",
+   "text": "In America… <break time=\"0.5s\" /> it is called a quarter note.",
+   "speed": 0.88,
+   "show": "In America… it is called a quarter note."
+  },
+  {
+   "id": "cro3",
+   "who": "melody",
+   "text": "Four crotchets… <break time=\"0.5s\" /> fill the bar.",
+   "speed": 0.88,
+   "show": "Four crotchets… fill the bar."
+  },
+  {
+   "id": "min1",
+   "who": "barnaby",
+   "text": "Some notes last longer… <break time=\"0.5s\" /> Listen.",
+   "speed": 0.88,
+   "show": "Some notes last longer… Listen."
+  },
+  {
+   "id": "min2",
+   "who": "melody",
+   "text": "This note lasts two beats… <break time=\"0.5s\" /> It is called a minim.",
+   "speed": 0.88,
+   "show": "This note lasts two beats… It is called a minim."
+  },
+  {
+   "id": "min3",
+   "who": "barnaby",
+   "text": "In America… <break time=\"0.5s\" /> it is called a half note.",
+   "speed": 0.88,
+   "show": "In America… it is called a half note."
+  },
+  {
+   "id": "min4",
+   "who": "melody",
+   "text": "Two minims… <break time=\"0.5s\" /> fill the bar.",
+   "speed": 0.88,
+   "show": "Two minims… fill the bar."
+  },
+  {
+   "id": "sb1",
+   "who": "barnaby",
+   "text": "The longest note… <break time=\"0.5s\" /> lasts four beats.",
+   "speed": 0.88,
+   "show": "The longest note… lasts four beats."
+  },
+  {
+   "id": "sb2",
+   "who": "melody",
+   "text": "It is called… <break time=\"0.5s\" /> a semibreve.",
+   "speed": 0.88,
+   "show": "It is called… a semibreve."
+  },
+  {
+   "id": "sb3",
+   "who": "barnaby",
+   "text": "In America… <break time=\"0.5s\" /> it is called a whole note.",
+   "speed": 0.88,
+   "show": "In America… it is called a whole note."
+  },
+  {
+   "id": "whole",
+   "who": "melody",
+   "text": "A semibreve fills the whole bar… <break time=\"0.5s\" /> so it is a whole note.",
+   "speed": 0.88,
+   "show": "A semibreve fills the whole bar… so it is a whole note."
+  },
+  {
+   "id": "half",
+   "who": "barnaby",
+   "text": "Two minims… <break time=\"0.5s\" /> are half a bar each… <break time=\"0.5s\" /> so a minim is a half note.",
+   "speed": 0.88,
+   "show": "Two minims… are half a bar each… so a minim is a half note."
+  },
+  {
+   "id": "quarter",
+   "who": "melody",
+   "text": "Four crotchets… <break time=\"0.5s\" /> are a quarter of a bar each… <break time=\"0.5s\" /> so a crotchet is a quarter note.",
+   "speed": 0.88,
+   "show": "Four crotchets… are a quarter of a bar each… so a crotchet is a quarter note."
+  },
+  {
+   "id": "three",
+   "who": "barnaby",
+   "text": "One bar… <break time=\"0.5s\" /> three ways.",
+   "speed": 0.88,
+   "show": "One bar… three ways."
+  },
+  {
+   "id": "clapintro",
+   "who": "melody",
+   "text": "Clap and count with me!",
+   "speed": 0.88,
+   "show": "Clap and count with me!"
+  },
+  {
+   "id": "yourturn13",
+   "who": "barnaby",
+   "text": "Your turn! <break time=\"0.4s\" /> Look at the notes.",
+   "speed": 0.88,
+   "show": "Your turn! Look at the notes."
+  },
+  {
+   "id": "q1ask",
+   "who": "melody",
+   "text": "How many beats… <break time=\"0.4s\" /> does this note last?",
+   "speed": 0.88,
+   "show": "How many beats… does this note last?"
+  },
+  {
+   "id": "a1",
+   "who": "barnaby",
+   "text": "Two.",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "How many beats… does this note last?"
+  },
+  {
+   "id": "q2ask",
+   "who": "barnaby",
+   "text": "What is this note called?",
+   "speed": 0.88,
+   "show": "What is this note called?"
+  },
+  {
+   "id": "a2",
+   "who": "melody",
+   "text": "A crotchet… <break time=\"0.4s\" /> or a quarter note.",
+   "speed": 0.85,
+   "show": "A crotchet… or a quarter note."
+  },
+  {
+   "id": "q3ask",
+   "who": "melody",
+   "text": "Is this bar full?",
+   "speed": 0.88,
+   "show": "Is this bar full?"
+  },
+  {
+   "id": "a3",
+   "who": "barnaby",
+   "text": "No! <break time=\"0.4s\" /> One beat is missing.",
+   "speed": 0.85,
+   "show": "No! One beat is missing."
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "src": "../video2/qwell"
+  },
+  {
+   "id": "game13",
+   "who": "barnaby",
+   "text": "Play How Long Is the Note <break time=\"0.3s\" /> and match the beats!",
+   "speed": 0.88,
+   "show": "Play How Long Is the Note and match the beats!"
+  },
+  {
+   "id": "sub13",
+   "who": "melody",
+   "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+   "speed": 0.88,
+   "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday."
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0,
+   "tail": 0.8
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.8
+  },
+  {
+   "id": "v13remember",
+   "clips": [
+    "remember"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v13cro",
+   "clips": [
+    "one1",
+    "cro1",
+    "cro2"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.6
+  },
+  {
+   "id": "v13cro2",
+   "clips": [
+    "cro3"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v13min",
+   "clips": [
+    "min1",
+    "min2",
+    "min3"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.6
+  },
+  {
+   "id": "v13min2",
+   "clips": [
+    "min4"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v13sb",
+   "clips": [
+    "sb1",
+    "sb2",
+    "sb3"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.6
+  },
+  {
+   "id": "v13whole",
+   "clips": [
+    "whole"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v13half",
+   "clips": [
+    "half"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v13quarter",
+   "clips": [
+    "quarter"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.0
+  },
+  {
+   "id": "v13three",
+   "clips": [
+    "three"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.4
+  },
+  {
+   "id": "v13clap",
+   "clips": [
+    "clapintro"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 6.0
+  },
+  {
+   "id": "v13q1",
+   "clips": [
+    "yourturn13",
+    "q1ask",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 1.6
+  },
+  {
+   "id": "v13q2",
+   "clips": [
+    "q2ask",
+    "a2"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.6
+  },
+  {
+   "id": "v13q3",
+   "clips": [
+    "q3ask",
+    "a3",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro13",
+   "clips": [
+    "game1",
+    "game13"
+   ],
+   "lead": 0.6,
+   "gap": 0.5,
+   "tail": 1.6
+  },
+  {
+   "id": "outro13b",
+   "clips": [
+    "sub13",
+    "bye"
+   ],
+   "lead": 0.5,
+   "gap": 0.6,
+   "tail": 3.4
+  }
+ ],
+ "events": [],
+ "beats": [],
+ "gapOverride": {
+  "q1ask": 0.8,
+  "a1": 4.6,
+  "a2": 4.4,
+  "a3": 4.4,
+  "qwell": 1.2
+ },
+ "_todo": "Scenes not built yet. Still to add: the counts one to four (reused from video 5, free) in the remember and clap scenes, note events, and the hollow and stemless note shapes in the engine."
+}
