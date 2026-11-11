@@ -1482,7 +1482,7 @@ S.v13three={ui:V6UI,build(r){const rows=[[{k:'sb',b:0}],[{k:'min',b:0},{k:'min',
 // 11. Clap and count with me! (crotchets on every beat, minims on 1 and 3, the semibreve once)
 S.v13clap={ui:V6UI,build(r){this.Bs=[[0,1,2,3].map(b=>({k:'cro',b})),[{k:'min',b:0},{k:'min',b:2}],[{k:'sb',b:0}]].map((n,i)=>bar13(r,{notes:n,compact:true,scale:0.95,top:150+i*150}));
   this.cl=[0,1,2].map(()=>{const e=document.createElement('div');e.className='abs';e.style.cssText='font-size:64px;opacity:0;left:0;top:0';e.textContent='👏';r.appendChild(e);return e})},
- update(t,L,c){const HIT=[[CL.ka1.start,CL.ka2.start,CL.ka3.start,CL.ka4.start],[CL.kb1.start,CL.kb3.start],[CL.kb4.end+1.2]],BEAT=[[0,1,2,3],[0,2],[0]];
+ update(t,L,c){const HIT=[[CL.ka1.start,CL.ka2.start,CL.ka3.start,CL.ka4.start],[CL.kb1.start,CL.kb3.start],[CL.kc1.start]],BEAT=[[0,1,2,3],[0,2],[0]];
   this.Bs.forEach((B,i)=>{const p=prog(L,0.2+i*0.25,0.5);B.wrap.style.opacity=String(clamp(p*2));
    B.ns.forEach((g,k)=>{const age=t-HIT[i][k];note13(B,k,1,age>=0&&age<0.4?1.3:1)});
    let hk=-1;HIT[i].forEach((T,k)=>{if(t>=T&&t<T+0.5)hk=k});const e=this.cl[i];

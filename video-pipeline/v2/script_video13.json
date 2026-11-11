@@ -222,6 +222,30 @@
    "src": "../video5/c4"
   },
   {
+   "id": "kc1",
+   "who": "melody",
+   "text": "One.",
+   "src": "../video5/c1"
+  },
+  {
+   "id": "kc2",
+   "who": "melody",
+   "text": "Two.",
+   "src": "../video5/c2"
+  },
+  {
+   "id": "kc3",
+   "who": "melody",
+   "text": "Three.",
+   "src": "../video5/c3"
+  },
+  {
+   "id": "kc4",
+   "who": "melody",
+   "text": "Four.",
+   "src": "../video5/c4"
+  },
+  {
    "id": "yourturn13",
    "who": "barnaby",
    "text": "Your turn! <break time=\"0.4s\" /> Look at the notes.",
@@ -430,11 +454,15 @@
     "kb1",
     "kb2",
     "kb3",
-    "kb4"
+    "kb4",
+    "kc1",
+    "kc2",
+    "kc3",
+    "kc4"
    ],
    "lead": 0.5,
    "gap": 0.05,
-   "tail": 3.6
+   "tail": 3.0
   },
   {
    "id": "v13q1",
@@ -619,9 +647,8 @@
   },
   {
    "kind": "tick",
-   "clip": "kb4",
-   "off": 1.2,
-   "from": "end"
+   "clip": "kc1",
+   "off": -0.12
   }
  ],
  "beats": [],
@@ -633,6 +660,7 @@
   "qwell": 1.2,
   "rc1": 0.5,
   "ka1": 0.8,
-  "kb1": 1.6
+  "kb1": 1.6,
+  "kc1": 1.6
  }
 }
