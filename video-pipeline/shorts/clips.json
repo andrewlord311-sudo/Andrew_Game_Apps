@@ -114,11 +114,11 @@
   },
   {
     "id": "short14_same_note_higher",
-    "src": "videos/video9_octaves.mp4",
-    "srt": "channel/captions/video9.en-GB.srt",
-    "start": 32.6,
-    "end": 52.0,
-    "hook": "Same note,<br><b>higher</b>. What's it called?",
+    "src": "video-pipeline/shorts/out/_src14.mp4",
+    "srt": "video-pipeline/shorts/out/_src14.srt",
+    "start": 0,
+    "end": 24.7,
+    "hook": "Listen!<br>Same note, <b>higher</b>",
     "footer": "Follow: a new Nugget every Wed & Sat ▶"
   },
   {
