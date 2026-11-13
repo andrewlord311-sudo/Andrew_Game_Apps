@@ -111,5 +111,59 @@
     "end": 119.2,
     "hook": "Where is <b>C</b>?",
     "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short14_same_note_higher",
+    "src": "videos/video9_octaves.mp4",
+    "srt": "channel/captions/video9.en-GB.srt",
+    "start": 32.6,
+    "end": 52.0,
+    "hook": "Same note,<br><b>higher</b>. What's it called?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short15_another_c",
+    "src": "videos/video9_octaves.mp4",
+    "srt": "channel/captions/video9.en-GB.srt",
+    "start": 75.4,
+    "end": 99.0,
+    "hook": "Can you find<br>another <b>C</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short16_bar_line",
+    "src": "videos/video10_bars_and_barlines.mp4",
+    "srt": "channel/captions/video10.en-GB.srt",
+    "start": 19.8,
+    "end": 46.0,
+    "hook": "What is a<br><b>bar line</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short17_bar_full",
+    "src": "videos/video10_bars_and_barlines.mp4",
+    "srt": "channel/captions/video10.en-GB.srt",
+    "start": 128.8,
+    "end": 148.6,
+    "hook": "Is this bar<br><b>full</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short18_middle_c",
+    "src": "videos/video11_middle_c.mp4",
+    "srt": "channel/captions/video11.en-GB.srt",
+    "start": 24.0,
+    "end": 46.5,
+    "hook": "Where is<br><b>Middle C</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short19_bass_clef",
+    "src": "videos/video11_middle_c.mp4",
+    "srt": "channel/captions/video11.en-GB.srt",
+    "start": 126.2,
+    "end": 145.6,
+    "hook": "Which hand plays<br>the <b>bass</b> clef?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
   }
 ]
