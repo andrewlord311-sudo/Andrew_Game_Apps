@@ -165,5 +165,23 @@
     "end": 145.6,
     "hook": "Which hand plays<br>the <b>bass</b> clef?",
     "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short20_step_and_skip",
+    "src": "videos/video12_steps_and_skips.mp4",
+    "srt": "channel/captions/video12.en-GB.srt",
+    "start": 12.6,
+    "end": 34.4,
+    "hook": "Step or <b>skip</b>?<br>Learn the difference",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
+  },
+  {
+    "id": "short21_step_or_skip_quiz",
+    "src": "videos/video12_steps_and_skips.mp4",
+    "srt": "channel/captions/video12.en-GB.srt",
+    "start": 92.0,
+    "end": 113.8,
+    "hook": "Is it a <b>step</b><br>or a <b>skip</b>?",
+    "footer": "Follow: a new Nugget every Wed & Sat ▶"
   }
 ]
