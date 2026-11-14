@@ -47,7 +47,7 @@
         </div>
 
         <h1 class="kids-title text-3xl text-rose-600 text-center mb-1">How Long Is the Note?</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Name the note by how long it lasts!</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Name the note by how long it lasts, then count the beats in a bar!</p>
 
         <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
@@ -57,7 +57,7 @@
                 🌴 Stage 2: Medium
             </button>
             <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
+                🚀 Stage 3: Beats and bars
             </button>
         </div>
 
@@ -127,15 +127,17 @@
         // Note duration types this nugget teaches, with both naming systems
         // shown together (Andrew wants both taught, not one or the other).
         const NOTE_TYPES = {
-            crotchet: { label: 'Crotchet', altLabel: 'Quarter Note', filled: true, stem: true },
-            minim: { label: 'Minim', altLabel: 'Half Note', filled: false, stem: true },
-            semibreve: { label: 'Semibreve', altLabel: 'Whole Note', filled: false, stem: false }
+            crotchet: { label: 'Crotchet', altLabel: 'Quarter Note', filled: true, stem: true, beats: 1, color: '#0d9488' },
+            minim: { label: 'Minim', altLabel: 'Half Note', filled: false, stem: true, beats: 2, color: '#7c3aed' },
+            semibreve: { label: 'Semibreve', altLabel: 'Whole Note', filled: false, stem: false, beats: 4, color: '#db2777' }
         };
         const STAGE_TYPES = {
             1: ['crotchet', 'minim'],
             2: ['crotchet', 'minim', 'semibreve'],
             3: ['crotchet', 'minim', 'semibreve']
         };
+        // Stage 3 mixes two question kinds from video 13: "how many beats?" and "is the bar full?".
+        let roundKind = 'name';
 
         let currentType = null;
         let correctAnswer = null;
@@ -214,10 +216,34 @@
         function newRound() {
             const types = STAGE_TYPES[currentStage];
             currentType = types[Math.floor(Math.random() * types.length)];
-            correctAnswer = currentType;
+            roundKind = 'name';
+            if (currentStage === 3) roundKind = (Math.random() < 0.5) ? 'beats' : 'bar';
             controlLock = false;
-
-            drawNoteQuestion(currentType);
+            const qEl = document.getElementById('question-text');
+            if (roundKind === 'bar') {
+                // A bar of four beats made of 1-, 2- and 4-beat notes; full half the time.
+                const bars = [[4], [2, 2], [2, 1, 1], [1, 1, 2], [1, 2, 1], [1, 1, 1, 1]];
+                let notes = bars[Math.floor(Math.random() * bars.length)].slice();
+                const full = Math.random() < 0.5;
+                if (!full) {
+                    // take a beat away: shorten a note or drop the last one so the bar is short by one beat
+                    notes = [[2, 1], [1, 1, 1], [2], [1, 2], [1, 1]][Math.floor(Math.random() * 5)];
+                    const total = notes.reduce((a, b) => a + b, 0);
+                    if (total === 2) notes = [2, 1];
+                }
+                const total = notes.reduce((a, b) => a + b, 0);
+                correctAnswer = total === 4 ? 'full' : 'short';
+                qEl.innerText = 'Is this bar full?';
+                drawBarQuestion(notes);
+            } else if (roundKind === 'beats') {
+                correctAnswer = String(NOTE_TYPES[currentType].beats);
+                qEl.innerText = 'How many beats does this note last?';
+                drawNoteQuestion(currentType);
+            } else {
+                correctAnswer = currentType;
+                qEl.innerText = 'What note is this?';
+                drawNoteQuestion(currentType);
+            }
             renderAnswers();
 
             document.getElementById('mascot-dialog').innerText = dialogs.start;
@@ -259,22 +285,22 @@
             ctx.beginPath();
             ctx.ellipse(0, 0, 11, 8, 0, 0, 2 * Math.PI);
             if (def.filled) {
-                ctx.fillStyle = '#2563eb';
+                ctx.fillStyle = def.color;
                 ctx.fill();
             } else {
                 // Deliberately not filled at all (not even white) - minims
                 // and semibreves are hollow noteheads, so a stave line
                 // passing through should stay visible inside the outline,
                 // not get painted over.
-                ctx.strokeStyle = '#2563eb';
-                ctx.lineWidth = 3;
+                ctx.strokeStyle = def.color;
+                ctx.lineWidth = 4;
                 ctx.stroke();
             }
             ctx.restore();
 
             if (def.stem) {
-                ctx.strokeStyle = '#2563eb';
-                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = def.color;
+                ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.moveTo(x + 10, y);
                 ctx.lineTo(x + 10, y - 40);
@@ -282,9 +308,58 @@
             }
         }
 
+        function drawBarQuestion(notes) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const staffTop = 50, lineGap = 16, startX = 12, endX = 290;
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < 5; i++) {
+                ctx.beginPath();
+                ctx.moveTo(startX, staffTop + i * lineGap);
+                ctx.lineTo(endX, staffTop + i * lineGap);
+                ctx.stroke();
+            }
+            ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(startX, staffTop); ctx.lineTo(startX, staffTop + 4 * lineGap); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(endX, staffTop); ctx.lineTo(endX, staffTop + 4 * lineGap); ctx.stroke();
+            ctx.fillStyle = '#241f3d';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '26px "Fredoka One", sans-serif';
+            ctx.fillText('4', startX + 24, staffTop + lineGap);
+            ctx.fillText('4', startX + 24, staffTop + 3 * lineGap);
+            // each beat gets an equal slot; a note sits at the start of its beats
+            const slotW = (endX - 10 - (startX + 52)) / 4;
+            let beat = 0;
+            notes.forEach(b => {
+                const key = b === 1 ? 'crotchet' : b === 2 ? 'minim' : 'semibreve';
+                drawDurationNote(startX + 52 + beat * slotW + 14, staffTop + 2 * lineGap, key);
+                beat += b;
+            });
+        }
+
         function renderAnswers() {
             const container = document.getElementById('answer-buttons');
             container.innerHTML = '';
+            if (roundKind !== 'name') {
+                const opts = roundKind === 'beats'
+                    ? [['1', '1 beat'], ['2', '2 beats'], ['4', '4 beats']]
+                    : [['full', 'Yes, it is full'], ['short', 'No, a beat is missing']];
+                opts.forEach(([val, text]) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = text;
+                    btn.className = "bg-gradient-to-b from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-base py-4 rounded-2xl border-b-4 border-rose-700 active:translate-y-1 active:border-b-0 transition-all";
+                    btn.onclick = () => makeGuess(val);
+                    container.appendChild(btn);
+                });
+                if (hintsEnabled) {
+                    const hint = document.createElement('div');
+                    hint.className = "text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1 mt-1";
+                    hint.innerText = roundKind === 'beats' ? 'Crotchet 1 beat, minim 2 beats, semibreve 4 beats' : 'A full bar has four beats.';
+                    container.appendChild(hint);
+                }
+                return;
+            }
 
             const keys = [...STAGE_TYPES[currentStage]];
             for (let i = keys.length - 1; i > 0; i--) {
