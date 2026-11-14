@@ -1,187 +1,232 @@
 [
-  {
-    "id": "short01_name_the_stave",
-    "src": "videos/video1_some_musical_names_v2.mp4",
-    "srt": "channel/captions/video1.en-GB.srt",
-    "start": 16.7,
-    "end": 37.9,
-    "hook": "Five lines in a row.<br>What's it called?"
-  },
-  {
-    "id": "short02_line_or_space",
-    "src": "videos/video2_where_notes_live.mp4",
-    "srt": "channel/captions/video2.en-GB.srt",
-    "start": 30.3,
-    "end": 53.8,
-    "hook": "Is the note on a <b>line</b><br>or in a <b>space</b>?"
-  },
-  {
-    "id": "short03_no_h_in_music",
-    "src": "videos/video3_music_alphabet.mp4",
-    "srt": "channel/captions/video3.en-GB.srt",
-    "start": 64.6,
-    "end": 80.4,
-    "hook": "What comes after G?<br>There's no H in music!"
-  },
-  {
-    "id": "short04_higher_lower_same",
-    "src": "videos/video4_higher_lower_same.mp4",
-    "srt": "channel/captions/video4.en-GB.srt",
-    "start": 21.0,
-    "end": 51.2,
-    "hook": "Higher, lower<br>or the same?"
-  },
-  {
-    "id": "short05_start_here",
-    "src": "videos/intro_start_here.mp4",
-    "srt": "channel/captions/intro.en-GB.srt",
-    "start": 5.5,
-    "end": 41.6,
-    "hook": "New here?<br>Start here.",
-    "footer": "Watch the full video on YouTube ▶"
-  },
-  {
-    "id": "short06_feel_your_heartbeat",
-    "src": "videos/video5_feel_the_beat.mp4",
-    "srt": "channel/captions/video5.en-GB.srt",
-    "start": 19.8,
-    "end": 39.4,
-    "hook": "Can you feel<br>your <b>beat</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short07_steady_or_wobbly",
-    "src": "videos/video5_feel_the_beat.mp4",
-    "srt": "channel/captions/video5.en-GB.srt",
-    "start": 91.1,
-    "end": 120.5,
-    "hook": "Is this beat<br><b>steady</b> or <b>wobbly</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short08_black_keys_groups",
-    "src": "videos/video6_black_key_groups.mp4",
-    "srt": "channel/captions/video6.en-GB.srt",
-    "start": 31.6,
-    "end": 53.5,
-    "hook": "Piano black keys<br>come in <b>groups</b>",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short09_two_or_three",
-    "src": "videos/video6_black_key_groups.mp4",
-    "srt": "channel/captions/video6.en-GB.srt",
-    "start": 87.5,
-    "end": 116.6,
-    "hook": "A group of <b>two</b><br>or <b>three</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short10_which_is_left",
-    "src": "videos/video7_left_right_high_low.mp4",
-    "srt": "channel/captions/video7.en-GB.srt",
-    "start": 23.5,
-    "end": 47.9,
-    "hook": "Which hand<br>is your <b>left</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short11_high_or_low",
-    "src": "videos/video7_left_right_high_low.mp4",
-    "srt": "channel/captions/video7.en-GB.srt",
-    "start": 134.7,
-    "end": 158.5,
-    "hook": "Is this sound<br><b>high</b> or <b>low</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short12_find_c",
-    "src": "videos/video8_finding_c_and_f.mp4",
-    "srt": "channel/captions/video8.en-GB.srt",
-    "start": 27.7,
-    "end": 44.5,
-    "hook": "Find <b>C</b> on the piano<br>in 15 seconds",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short13_where_is_c",
-    "src": "videos/video8_finding_c_and_f.mp4",
-    "srt": "channel/captions/video8.en-GB.srt",
-    "start": 89.4,
-    "end": 119.2,
-    "hook": "Where is <b>C</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short14_same_note_higher",
-    "src": "video-pipeline/shorts/out/_src14.mp4",
-    "srt": "video-pipeline/shorts/out/_src14.srt",
-    "start": 0,
-    "end": 27.27,
-    "hook": "Listen!<br>Same note, <b>higher</b>",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short15_another_c",
-    "src": "videos/video9_octaves.mp4",
-    "srt": "channel/captions/video9.en-GB.srt",
-    "start": 75.4,
-    "end": 99.0,
-    "hook": "Can you find<br>another <b>C</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short16_bar_line",
-    "src": "videos/video10_bars_and_barlines.mp4",
-    "srt": "channel/captions/video10.en-GB.srt",
-    "start": 19.8,
-    "end": 46.0,
-    "hook": "What is a<br><b>bar line</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short17_bar_full",
-    "src": "videos/video10_bars_and_barlines.mp4",
-    "srt": "channel/captions/video10.en-GB.srt",
-    "start": 128.8,
-    "end": 148.6,
-    "hook": "Is this bar<br><b>full</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short18_middle_c",
-    "src": "videos/video11_middle_c.mp4",
-    "srt": "channel/captions/video11.en-GB.srt",
-    "start": 24.0,
-    "end": 46.5,
-    "hook": "Where is<br><b>Middle C</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short19_bass_clef",
-    "src": "videos/video11_middle_c.mp4",
-    "srt": "channel/captions/video11.en-GB.srt",
-    "start": 126.2,
-    "end": 145.6,
-    "hook": "Which hand plays<br>the <b>bass</b> clef?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short20_step_and_skip",
-    "src": "videos/video12_steps_and_skips.mp4",
-    "srt": "channel/captions/video12.en-GB.srt",
-    "start": 12.6,
-    "end": 34.4,
-    "hook": "Step or <b>skip</b>?<br>Learn the difference",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  },
-  {
-    "id": "short21_step_or_skip_quiz",
-    "src": "videos/video12_steps_and_skips.mp4",
-    "srt": "channel/captions/video12.en-GB.srt",
-    "start": 92.0,
-    "end": 113.8,
-    "hook": "Is it a <b>step</b><br>or a <b>skip</b>?",
-    "footer": "Follow: a new Nugget every Wed & Sat ▶"
-  }
+ {
+  "id": "short01_name_the_stave",
+  "src": "videos/video1_some_musical_names_v2.mp4",
+  "srt": "channel/captions/video1.en-GB.srt",
+  "start": 16.7,
+  "end": 37.9,
+  "hook": "Five lines in a row.<br>What's it called?"
+ },
+ {
+  "id": "short02_line_or_space",
+  "src": "videos/video2_where_notes_live.mp4",
+  "srt": "channel/captions/video2.en-GB.srt",
+  "start": 30.3,
+  "end": 53.8,
+  "hook": "Is the note on a <b>line</b><br>or in a <b>space</b>?"
+ },
+ {
+  "id": "short03_no_h_in_music",
+  "src": "videos/video3_music_alphabet.mp4",
+  "srt": "channel/captions/video3.en-GB.srt",
+  "start": 64.6,
+  "end": 80.4,
+  "hook": "What comes after G?<br>There's no H in music!"
+ },
+ {
+  "id": "short04_higher_lower_same",
+  "src": "videos/video4_higher_lower_same.mp4",
+  "srt": "channel/captions/video4.en-GB.srt",
+  "start": 21.0,
+  "end": 51.2,
+  "hook": "Higher, lower<br>or the same?"
+ },
+ {
+  "id": "short05_start_here",
+  "src": "videos/intro_start_here.mp4",
+  "srt": "channel/captions/intro.en-GB.srt",
+  "start": 5.5,
+  "end": 41.6,
+  "hook": "New here?<br>Start here.",
+  "footer": "Watch the full video on YouTube ▶"
+ },
+ {
+  "id": "short06_feel_your_heartbeat",
+  "src": "videos/video5_feel_the_beat.mp4",
+  "srt": "channel/captions/video5.en-GB.srt",
+  "start": 19.8,
+  "end": 39.4,
+  "hook": "Can you feel<br>your <b>beat</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short07_steady_or_wobbly",
+  "src": "videos/video5_feel_the_beat.mp4",
+  "srt": "channel/captions/video5.en-GB.srt",
+  "start": 91.1,
+  "end": 120.5,
+  "hook": "Is this beat<br><b>steady</b> or <b>wobbly</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short08_black_keys_groups",
+  "src": "videos/video6_black_key_groups.mp4",
+  "srt": "channel/captions/video6.en-GB.srt",
+  "start": 31.6,
+  "end": 53.5,
+  "hook": "Piano black keys<br>come in <b>groups</b>",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short09_two_or_three",
+  "src": "videos/video6_black_key_groups.mp4",
+  "srt": "channel/captions/video6.en-GB.srt",
+  "start": 87.5,
+  "end": 116.6,
+  "hook": "A group of <b>two</b><br>or <b>three</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short10_which_is_left",
+  "src": "videos/video7_left_right_high_low.mp4",
+  "srt": "channel/captions/video7.en-GB.srt",
+  "start": 23.5,
+  "end": 47.9,
+  "hook": "Which hand<br>is your <b>left</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short11_high_or_low",
+  "src": "videos/video7_left_right_high_low.mp4",
+  "srt": "channel/captions/video7.en-GB.srt",
+  "start": 134.7,
+  "end": 158.5,
+  "hook": "Is this sound<br><b>high</b> or <b>low</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short12_find_c",
+  "src": "videos/video8_finding_c_and_f.mp4",
+  "srt": "channel/captions/video8.en-GB.srt",
+  "start": 27.7,
+  "end": 44.5,
+  "hook": "Find <b>C</b> on the piano<br>in 15 seconds",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short13_where_is_c",
+  "src": "videos/video8_finding_c_and_f.mp4",
+  "srt": "channel/captions/video8.en-GB.srt",
+  "start": 89.4,
+  "end": 119.2,
+  "hook": "Where is <b>C</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short14_same_note_higher",
+  "src": "video-pipeline/shorts/out/_src14.mp4",
+  "srt": "video-pipeline/shorts/out/_src14.srt",
+  "start": 0,
+  "end": 27.27,
+  "hook": "Listen!<br>Same note, <b>higher</b>",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short15_another_c",
+  "src": "videos/video9_octaves.mp4",
+  "srt": "channel/captions/video9.en-GB.srt",
+  "start": 75.4,
+  "end": 99.0,
+  "hook": "Can you find<br>another <b>C</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short16_bar_line",
+  "src": "videos/video10_bars_and_barlines.mp4",
+  "srt": "channel/captions/video10.en-GB.srt",
+  "start": 19.8,
+  "end": 46.0,
+  "hook": "What is a<br><b>bar line</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short17_bar_full",
+  "src": "videos/video10_bars_and_barlines.mp4",
+  "srt": "channel/captions/video10.en-GB.srt",
+  "start": 128.8,
+  "end": 148.6,
+  "hook": "Is this bar<br><b>full</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short18_middle_c",
+  "src": "videos/video11_middle_c.mp4",
+  "srt": "channel/captions/video11.en-GB.srt",
+  "start": 24.0,
+  "end": 46.5,
+  "hook": "Where is<br><b>Middle C</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short19_bass_clef",
+  "src": "videos/video11_middle_c.mp4",
+  "srt": "channel/captions/video11.en-GB.srt",
+  "start": 126.2,
+  "end": 145.6,
+  "hook": "Which hand plays<br>the <b>bass</b> clef?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short20_step_and_skip",
+  "src": "videos/video12_steps_and_skips.mp4",
+  "srt": "channel/captions/video12.en-GB.srt",
+  "start": 12.6,
+  "end": 34.4,
+  "hook": "Step or <b>skip</b>?<br>Learn the difference",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short21_step_or_skip_quiz",
+  "src": "videos/video12_steps_and_skips.mp4",
+  "srt": "channel/captions/video12.en-GB.srt",
+  "start": 92.0,
+  "end": 113.8,
+  "hook": "Is it a <b>step</b><br>or a <b>skip</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short22_crotchet",
+  "src": "videos/video13_long_and_short_notes.mp4",
+  "srt": "channel/captions/video13.en-GB.srt",
+  "start": 27.4,
+  "end": 43.8,
+  "hook": "What is a<br><b>crotchet</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short23_semibreve",
+  "src": "videos/video13_long_and_short_notes.mp4",
+  "srt": "channel/captions/video13.en-GB.srt",
+  "start": 69.8,
+  "end": 90.8,
+  "hook": "Which note lasts<br><b>four beats</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short24_bar_full",
+  "src": "videos/video13_long_and_short_notes.mp4",
+  "srt": "channel/captions/video13.en-GB.srt",
+  "start": 165.8,
+  "end": 177.2,
+  "hook": "Is this bar<br><b>full</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short25_face",
+  "src": "videos/video14_f_on_the_staves.mp4",
+  "srt": "channel/captions/video14.en-GB.srt",
+  "start": 33.6,
+  "end": 52.2,
+  "hook": "A trick for the<br><b>treble spaces</b>",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short26_bass_f",
+  "src": "videos/video14_f_on_the_staves.mp4",
+  "srt": "channel/captions/video14.en-GB.srt",
+  "start": 62.4,
+  "end": 75.8,
+  "hook": "Find <b>F</b> on the<br><b>bass clef</b>",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ }
 ]
