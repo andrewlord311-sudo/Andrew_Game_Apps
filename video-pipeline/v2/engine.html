@@ -1395,7 +1395,7 @@ S.outro12b={ui:{ribbon:0,hosts:'bye',bubble:false},build(r){
 
 // ======================================================================== VIDEO 13: long and short notes
 // crotchet (filled, stem) = 1 beat, minim (hollow, stem) = 2 beats, semibreve (hollow, no stem) = 4 beats; one bar of four beats.
-const CROC='#0d9488',MINC='#7c3aed',SBC='#db2777',KC13={cro:CROC,min:MINC,sb:SBC},LEN13={cro:1,min:2,sb:4},BT13=0.75;
+const CROC='#0d9488',MINC='#7c3aed',SBC='#db2777',QVC='#ea580c',KC13={cro:CROC,min:MINC,sb:SBC},LEN13={cro:1,min:2,sb:4},BT13=0.75;
 const bx13=i=>190+i*140, SVGNS='http://www.w3.org/2000/svg';
 function el13(tag,attrs,parent){const e=document.createElementNS(SVGNS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e}
 function bar13(r,o={}){ // o: notes [{k:'cro'|'min'|'sb', b: first beat 0..3}], slots, scale, top, compact
@@ -1410,7 +1410,15 @@ function bar13(r,o={}){ // o: notes [{k:'cro'|'min'|'sb', b: first beat 0..3}], 
   const bands=[];
   const nums=o.compact?[]:[0,1,2,3].map(i=>{const t=el13('text',{x:bx13(i),y:238,'text-anchor':'middle','font-family':'Fredoka One, sans-serif','font-size':30,fill:BEATCOL[i]},svg);t.textContent=i+1;t.style.opacity=0;return t});
   const ns=[],hs=[];
-  (o.notes||[]).forEach(n=>{const col=KC13[n.k],cx=bx13(n.b),hollow=n.k!=='cro',rx=n.k==='sb'?20:15;
+  (o.notes||[]).forEach(n=>{
+    if(n.k==='qv'||n.k==='q1'){const col=QVC,cx=bx13(n.b),g=el13('g',{},svg);g.style.transformBox='fill-box';g.style.transformOrigin='50% 50%';g.style.opacity=0;
+      const xs=n.k==='qv'?[cx-18,cx+52]:[cx];
+      xs.forEach(x=>{el13('ellipse',{cx:x,cy:128,rx:15,ry:11,transform:`rotate(-20 ${x} 128)`,fill:col,stroke:col,'stroke-width':2},g);el13('line',{x1:x+13,x2:x+13,y1:126,y2:52,stroke:col,'stroke-width':4,'stroke-linecap':'round'},g)});
+      if(n.k==='qv')el13('line',{x1:xs[0]+11,x2:xs[1]+15,y1:58,y2:58,stroke:col,'stroke-width':12},g);else el13('path',{d:`M${cx+13},52 q26,12 14,46`,fill:'none',stroke:col,'stroke-width':5,'stroke-linecap':'round'},g);
+      ns.push(g);const x0=cx-32,x1=n.k==='qv'?cx+68:cx+34;
+      if(!o.compact){const h=el13('rect',{x:x0,y:184,width:x1-x0,height:14,rx:7,fill:col},svg);h.style.transformBox='fill-box';h.style.transformOrigin='0 50%';h.style.opacity=0;hs.push(h)}
+      return}
+    const col=KC13[n.k],cx=bx13(n.b),hollow=n.k!=='cro',rx=n.k==='sb'?20:15;
     const g=el13('g',{},svg);g.style.transformBox='fill-box';g.style.transformOrigin='50% 50%';g.style.opacity=0;
     el13('ellipse',{cx,cy:128,rx,ry:11,transform:`rotate(-20 ${cx} 128)`,fill:hollow?'none':col,stroke:col,'stroke-width':hollow?5:2},g);
     if(n.k!=='sb')el13('line',{x1:cx+rx-2,x2:cx+rx-2,y1:126,y2:52,stroke:col,'stroke-width':4,'stroke-linecap':'round'},g);
@@ -1649,6 +1657,56 @@ S.outro15=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:fal
 S.outro15b=Object.assign({},S.outro12b,{cut:true,
   build(r){S.outro12b.build.call(this,r);this.h=harm15(r,640,441,170)},
   update(t,L,c){S.outro12b.update.call(this,t,L,c);harmShow(this.h,t,CL.sub15.start-0.2,t>=CL.bye.start-0.1?'wave':'cheer')}});
+
+
+// ======================================================================== VIDEO 16: quavers (ti-ti)
+// quaver pair = two beamed orange notes in one beat ('qv'); single quaver with a flag = 'q1'. Every scene is a hard cut (no fade), like video 14.
+const v16s=f=>Object.assign(v13s(f),{cut:true});
+const v16clone=(o,extra)=>Object.assign({},o,{cut:true},extra||{});
+S.v16rem=v16clone(S.v13remember);S.v16cro=v16clone(S.v13cro);S.v16cro2=v16clone(S.v13cro2);
+// "Sometimes we play two sounds in one beat." Listen: ti-ti.
+S.v16two=v16s({bar:{notes:[{k:'cro',b:0},{k:'cro',b:1},{k:'cro',b:3}],slots:true},y1:512,y2:578,
+ state(t,L,c,B){[0,1,3].forEach((b,i)=>{const k=[0,1,2][i];note13(B,k,1);hold13(B,k,1)});[0,1,2,3].forEach(i=>num13(B,i,t,-9));
+  const tg=CL.two.start,ts=CL.ti.start;B.slots[2].style.opacity=1;B.slots[2].style.stroke='#f59e0b';B.slots[2].style.strokeWidth=4;B.slots[2].style.r=String(18+3*Math.sin(t*6));
+  if(t>=wt('two','two')-0.1)showChip13(this.c1,'2 SOUNDS IN 1 BEAT','#f59e0b',t,wt('two','two')-0.1);
+  if(t>=wt('ti','ti')-0.1)showChip13(this.c2,'TI-TI',QVC,t,wt('ti','ti')-0.1);
+  this.cl=this.cl||[];}});
+// "These two notes are quavers. Two quavers fit in one beat."
+S.v16qv=v16s({bar:{notes:[{k:'cro',b:0},{k:'cro',b:1},{k:'qv',b:2},{k:'cro',b:3}]},y1:512,y2:578,
+ state(t,L,c,B){[0,1,3].forEach(i=>{note13(B,i,1);hold13(B,i,1)});const tq=CL.qv1.start+0.2,p=prog(t,tq,0.5);note13(B,2,p);hold13(B,2,easeOut(prog(t,tq,BT13)));
+  [0,1,2,3].forEach(i=>num13(B,i,t,-9));
+  if(t>=wt('qv1','quavers')-0.15)showChip13(this.c1,'QUAVERS (eighth notes)',QVC,t,wt('qv1','quavers')-0.15);
+  if(t>=wt('qv2','fit')-0.5)showChip13(this.c2,'2 QUAVERS = 1 BEAT','#c2410c',t,wt('qv2','fit')-0.5)}});
+// "Eight quavers fill a bar, so a quaver is an eighth note."
+S.v16eight=v16s({bar:{notes:[0,1,2,3].map(b=>({k:'qv',b}))},y1:512,y2:578,
+ state(t,L,c,B){const t0=CL.eight.start+0.5;[0,1,2,3].forEach(i=>{const T=t0+i*0.55,age=t-T;note13(B,i,prog(t,T,0.4),age>=0&&age<0.35?1.2:1);hold13(B,i,easeOut(prog(t,T,0.5)));num13(B,i,t,T)});
+  B.end.style.strokeWidth=t>=t0+4*0.55?'8':'3';showChip13(this.c1,'8 QUAVERS = 1 BAR',QVC,t,wt('eight','eight')-0.1);
+  if(t>=wt('eight','eighth')-0.15)showChip13(this.c2,'= EIGHTH NOTE','#c2410c',t,wt('eight','eighth')-0.15)}});
+// Clap and count with me! (crotchet, crotchet, ti-ti, crotchet) twice, then all ti-ti.
+S.v16clap={ui:V6UI,cut:true,build(r){this.B=bar13(r,{notes:[{k:'cro',b:0},{k:'cro',b:1},{k:'qv',b:2},{k:'cro',b:3}],compact:true,scale:1.15,top:210});
+  this.cl=[0,1,2].map(()=>{const e=document.createElement('div');e.className='abs';e.style.cssText='font-size:70px;opacity:0;left:0;top:0';e.textContent='👏';r.appendChild(e);return e});
+  this.c1=chip13(r,540,40)},
+ update(t,L,c){const B=this.B;B.wrap.style.opacity=String(clamp(prog(L,0.2,0.5)*2));
+  const H=['ka1','ka2','ka3','ka4','kb1','kb2','kb3','kb4'].map(k=>CL[k].start),idx=[0,1,2,3,0,1,2,3],hit=[[0],[1],[2],[3]];
+  let age=[9,9,9,9];H.forEach((T,i)=>{const a=t-T;if(a>=-0.03&&a<age[idx[i]])age[idx[i]]=a});
+  B.ns.forEach((g,k)=>{const a=age[k===3?3:k];note13(B,k,1,a>=0&&a<0.4?1.3:1)});
+  const hk=H.findIndex((T,i)=>t>=T-0.03&&t<T+0.5);const e=this.cl[0];
+  if(hk>=0){const a=t-H[hk];e.style.opacity=String(1-a/0.5);e.style.left=(sx13(bx13(idx[hk]))-35+(idx[hk]===2?35:0))+'px';e.style.top=(210-60-a*40)+'px';e.style.scale=String(1+0.3*Math.sin(a*8))}else e.style.opacity=0;
+  this.cl[1].style.opacity=0;this.cl[2].style.opacity=0;
+  showChip13(this.c1,'ON BEAT 3: TI-TI',QVC,t,CL.ka3.start-0.1)}};
+S.v16allti=v16s({bar:{notes:[0,1,2,3].map(b=>({k:'qv',b}))},y1:512,
+ state(t,L,c,B){const t0=CL.allti.end+0.3;[0,1,2,3].forEach(i=>{const T=t0+i*0.7,age=t-T;note13(B,i,1,age>=0&&age<0.5?1.25:1);hold13(B,i,1);num13(B,i,t,-9)});
+  showChip13(this.c1,'TI-TI TI-TI TI-TI TI-TI',QVC,t,wt('allti','all')-0.1)}});
+// quiz
+function v16q(o){return v13q(o)}
+S.v16q1=Object.assign(v16q({bar:{notes:[{k:'qv',b:0}]},ask:'q1ask',ans:'a1',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q1ask.start+0.3,0.45));if(t>=ta){hold13(B,0,easeOut(prog(t,ta,BT13)));num13(B,0,t,ta);showChip13(this.c1,'1 BEAT',QVC,t,ta)}}}),{cut:true});
+S.v16q2=Object.assign(v16q({bar:{notes:[{k:'q1',b:0}]},ask:'q2ask',ans:'a2',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q2ask.start+0.3,0.45));if(t>=ta){showChip13(this.c1,'QUAVER',QVC,t,ta);showChip13(this.c2,'= EIGHTH NOTE','#c2410c',t,ta+0.5)}}}),{cut:true});
+S.v16q3=Object.assign(v16q({bar:{notes:[{k:'cro',b:0},{k:'qv',b:1},{k:'cro',b:2}],slots:false},conf:true,ask:'q3ask',ans:'a3',build(r){this.gp=el13('circle',{cx:bx13(3),cy:128,r:16,fill:'none',stroke:'#f59e0b','stroke-width':4,'stroke-dasharray':'6 6'},this.B.svg);this.gp.style.opacity=0},
+  state(t,L,c,B,ta){const t0=CL.q3ask.start+0.3;note13(B,0,prog(t,t0,0.4));hold13(B,0,1);note13(B,1,prog(t,t0+0.3,0.4));hold13(B,1,1);note13(B,2,prog(t,t0+0.6,0.4));hold13(B,2,1);
+   const tm=CL.a3.end+0.3;this.gp.style.opacity=t>=t0+1.2&&t<tm?String(0.6+0.4*Math.sin(t*6)):'0';
+   if(t>=ta)showChip13(this.c1,'ONE BEAT MISSING','#f59e0b',t,ta);B.end.style.strokeWidth='3'}}),{cut:true});
+S.outro16=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro16b=Object.assign({},S.outro12b,{cut:true});
 
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.

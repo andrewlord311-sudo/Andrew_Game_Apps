@@ -1,0 +1,603 @@
+{
+  "title": "Quavers",
+  "titleAt": "quavers",
+  "nugget": 16,
+  "game": "Ti-Ti Beats",
+  "gameFile": "ti_ti_beats.html",
+  "todayLead": "Today we are going to learn about",
+  "shared": [
+    {
+      "id": "opener",
+      "who": "melody",
+      "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+    },
+    {
+      "id": "game1",
+      "who": "melody",
+      "text": "Now it's your turn!"
+    },
+    {
+      "id": "bye",
+      "who": "melody",
+      "text": "See you for the next Nugget!"
+    }
+  ],
+  "clips": [
+    {
+      "id": "today",
+      "who": "barnaby",
+      "text": "Today <break time=\"0.3s\" /> we are going to learn about <break time=\"0.3s\" /> quavers.",
+      "speed": 0.88,
+      "show": "Today we are going to learn about quavers."
+    },
+    {
+      "id": "remember",
+      "who": "melody",
+      "text": "Remember the beat? <break time=\"0.5s\" /> We count four beats in every bar.",
+      "speed": 0.88,
+      "show": "Remember the beat? We count four beats in every bar."
+    },
+    {
+      "id": "rc1",
+      "who": "melody",
+      "text": "One.",
+      "src": "../video5/c1"
+    },
+    {
+      "id": "rc2",
+      "who": "melody",
+      "text": "Two.",
+      "src": "../video5/c2"
+    },
+    {
+      "id": "rc3",
+      "who": "melody",
+      "text": "Three.",
+      "src": "../video5/c3"
+    },
+    {
+      "id": "rc4",
+      "who": "melody",
+      "text": "Four.",
+      "src": "../video5/c4"
+    },
+    {
+      "id": "one1",
+      "who": "barnaby",
+      "text": "Some notes last… <break time=\"0.5s\" /> one beat.",
+      "speed": 0.88,
+      "show": "Some notes last… one beat."
+    },
+    {
+      "id": "cro1",
+      "who": "melody",
+      "text": "This note is called… <break time=\"0.5s\" /> a crotchet.",
+      "speed": 0.88,
+      "show": "This note is called… a crotchet."
+    },
+    {
+      "id": "cro2",
+      "who": "barnaby",
+      "text": "In America… <break time=\"0.5s\" /> it is called a quarter note.",
+      "speed": 0.88,
+      "show": "In America… it is called a quarter note."
+    },
+    {
+      "id": "cro3",
+      "who": "melody",
+      "text": "Four crotchets… <break time=\"0.5s\" /> fill the bar.",
+      "speed": 0.88,
+      "show": "Four crotchets… fill the bar."
+    },
+    {
+      "id": "two",
+      "who": "barnaby",
+      "text": "Sometimes… <break time=\"0.4s\" /> we play two sounds in one beat.",
+      "speed": 0.88,
+      "show": "Sometimes… we play two sounds in one beat."
+    },
+    {
+      "id": "ti",
+      "who": "melody",
+      "text": "Listen… <break time=\"0.5s\" /> tee-tee.",
+      "speed": 0.88,
+      "show": "Listen… ti-ti."
+    },
+    {
+      "id": "qv1",
+      "who": "barnaby",
+      "text": "These two notes… <break time=\"0.4s\" /> are quavers.",
+      "speed": 0.88,
+      "show": "These two notes… are quavers."
+    },
+    {
+      "id": "qv2",
+      "who": "melody",
+      "text": "Two quavers… <break time=\"0.4s\" /> fit in one beat.",
+      "speed": 0.88,
+      "show": "Two quavers… fit in one beat."
+    },
+    {
+      "id": "eight",
+      "who": "barnaby",
+      "text": "Eight quavers fill a bar, <break time=\"0.4s\" /> so a quaver is an eighth note.",
+      "speed": 0.88,
+      "show": "Eight quavers fill a bar, so a quaver is an eighth note."
+    },
+    {
+      "id": "clapintro",
+      "who": "melody",
+      "text": "Clap and count with me!",
+      "speed": 0.88,
+      "show": "Clap and count with me!"
+    },
+    {
+      "id": "ka1",
+      "who": "melody",
+      "text": "One.",
+      "src": "../video5/c1"
+    },
+    {
+      "id": "ka2",
+      "who": "melody",
+      "text": "Two.",
+      "src": "../video5/c2"
+    },
+    {
+      "id": "ka3",
+      "who": "melody",
+      "text": "Three.",
+      "src": "../video5/c3"
+    },
+    {
+      "id": "ka4",
+      "who": "melody",
+      "text": "Four.",
+      "src": "../video5/c4"
+    },
+    {
+      "id": "kb1",
+      "who": "melody",
+      "text": "One.",
+      "src": "../video5/c1"
+    },
+    {
+      "id": "kb2",
+      "who": "melody",
+      "text": "Two.",
+      "src": "../video5/c2"
+    },
+    {
+      "id": "kb3",
+      "who": "melody",
+      "text": "Three.",
+      "src": "../video5/c3"
+    },
+    {
+      "id": "kb4",
+      "who": "melody",
+      "text": "Four.",
+      "src": "../video5/c4"
+    },
+    {
+      "id": "allti",
+      "who": "barnaby",
+      "text": "Now… <break time=\"0.4s\" /> all tee-tee!",
+      "speed": 0.88,
+      "show": "Now… all ti-ti!"
+    },
+    {
+      "id": "yourturn16",
+      "who": "barnaby",
+      "text": "Your turn! <break time=\"0.4s\" /> Look at the notes.",
+      "speed": 0.88,
+      "show": "Your turn! Look at the notes."
+    },
+    {
+      "id": "q1ask",
+      "who": "melody",
+      "text": "How many beats… <break time=\"0.4s\" /> do these two quavers last?",
+      "speed": 0.88,
+      "show": "How many beats… do these two quavers last?"
+    },
+    {
+      "id": "a1",
+      "who": "barnaby",
+      "text": "One.",
+      "speed": 0.85,
+      "quiet": true,
+      "prev": "How many beats… do these two quavers last?"
+    },
+    {
+      "id": "q2ask",
+      "who": "barnaby",
+      "text": "What is this note called?",
+      "speed": 0.88,
+      "show": "What is this note called?"
+    },
+    {
+      "id": "a2",
+      "who": "barnaby",
+      "text": "A quaver… <break time=\"0.4s\" /> or an eighth note.",
+      "speed": 0.85,
+      "show": "A quaver… or an eighth note.",
+      "quiet": true,
+      "prev": "What is this note called?"
+    },
+    {
+      "id": "q3ask",
+      "who": "melody",
+      "text": "Is this bar full?",
+      "speed": 0.88,
+      "show": "Is this bar full?"
+    },
+    {
+      "id": "a3",
+      "who": "barnaby",
+      "text": "No! <break time=\"0.4s\" /> One beat is missing.",
+      "speed": 0.85,
+      "show": "No! One beat is missing."
+    },
+    {
+      "id": "qwell",
+      "who": "barnaby",
+      "text": "You've got it!",
+      "src": "../video2/qwell"
+    },
+    {
+      "id": "game16",
+      "who": "barnaby",
+      "text": "Play Tee-Tee Beats <break time=\"0.3s\" /> and clap along!",
+      "speed": 0.88,
+      "show": "Play Ti-Ti Beats and clap along!"
+    },
+    {
+      "id": "sub16",
+      "who": "melody",
+      "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+      "speed": 0.88,
+      "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opener",
+      "clips": [
+        "opener"
+      ],
+      "lead": 0.8,
+      "gap": 0,
+      "tail": 0.8
+    },
+    {
+      "id": "today",
+      "clips": [
+        "today"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.8
+    },
+    {
+      "id": "v16rem",
+      "clips": [
+        "remember",
+        "rc1",
+        "rc2",
+        "rc3",
+        "rc4"
+      ],
+      "lead": 0.5,
+      "gap": 0.05,
+      "tail": 3.0
+    },
+    {
+      "id": "v16cro",
+      "clips": [
+        "one1",
+        "cro1",
+        "cro2"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 2.6
+    },
+    {
+      "id": "v16cro2",
+      "clips": [
+        "cro3"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.0
+    },
+    {
+      "id": "v16two",
+      "clips": [
+        "two",
+        "ti"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 3.6
+    },
+    {
+      "id": "v16qv",
+      "clips": [
+        "qv1",
+        "qv2"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 2.4
+    },
+    {
+      "id": "v16eight",
+      "clips": [
+        "eight"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.0
+    },
+    {
+      "id": "v16clap",
+      "clips": [
+        "clapintro",
+        "ka1",
+        "ka2",
+        "ka3",
+        "ka4",
+        "kb1",
+        "kb2",
+        "kb3",
+        "kb4"
+      ],
+      "lead": 0.5,
+      "gap": 0.05,
+      "tail": 2.4
+    },
+    {
+      "id": "v16allti",
+      "clips": [
+        "allti"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 4.2
+    },
+    {
+      "id": "v16q1",
+      "clips": [
+        "yourturn16",
+        "q1ask",
+        "a1"
+      ],
+      "lead": 0.5,
+      "gap": 0.7,
+      "tail": 1.6
+    },
+    {
+      "id": "v16q2",
+      "clips": [
+        "q2ask",
+        "a2"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.6
+    },
+    {
+      "id": "v16q3",
+      "clips": [
+        "q3ask",
+        "a3",
+        "qwell"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.4
+    },
+    {
+      "id": "outro16",
+      "clips": [
+        "game1",
+        "game16"
+      ],
+      "lead": 0.6,
+      "gap": 0.5,
+      "tail": 1.6
+    },
+    {
+      "id": "outro16b",
+      "clips": [
+        "sub16",
+        "bye"
+      ],
+      "lead": 0.5,
+      "gap": 0.6,
+      "tail": 3.4
+    }
+  ],
+  "events": [
+    {
+      "kind": "run",
+      "notes": [
+        "b4"
+      ],
+      "step": 1,
+      "clip": "one1",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 0.9
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "b4",
+        "b4",
+        "b4",
+        "b4"
+      ],
+      "step": 0.75,
+      "clip": "cro3",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 0.6
+    },
+    {
+      "kind": "tick",
+      "clip": "ka1",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "kb1",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "ka2",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "kb2",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "ka3",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "kb3",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "ka4",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "kb4",
+      "off": -0.12
+    },
+    {
+      "kind": "tick",
+      "clip": "ka3",
+      "off": 0.3
+    },
+    {
+      "kind": "tick",
+      "clip": "kb3",
+      "off": 0.3
+    },
+    {
+      "kind": "tick",
+      "clip": "ti",
+      "off": 0.4,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "ti",
+      "off": 0.75,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "ti",
+      "off": 1.9,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "ti",
+      "off": 2.25,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 0.3,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 0.65,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 1.35,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 1.7,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 2.05,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 2.3999999999999995,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "allti",
+      "off": 2.7499999999999996,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "a1",
+      "off": -0.2
+    },
+    {
+      "kind": "pop",
+      "clip": "a2",
+      "off": -0.2
+    },
+    {
+      "kind": "tick",
+      "clip": "a3",
+      "off": -0.2
+    },
+    {
+      "kind": "sparkle",
+      "clip": "qwell",
+      "off": -0.1
+    }
+  ],
+  "beats": [],
+  "gapOverride": {
+    "q1ask": 0.8,
+    "a1": 4.6,
+    "a2": 4.4,
+    "a3": 4.4,
+    "qwell": 1.2,
+    "rc1": 0.5,
+    "ka1": 0.8,
+    "kb1": 1.6,
+    "kc1": 1.6
+  }
+}
