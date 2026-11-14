@@ -163,6 +163,14 @@
                 comingSoon: false
             },
             {
+                title: "Ti-Ti Beats",
+                description: "Clap along: one clap or ti-ti? Is the bar full? Crotchets and quavers, by ear and by eye.",
+                emoji: "👏",
+                color: "#ea580c", // Orange accent (quavers)
+                file: "ti_ti_beats.html",
+                comingSoon: false
+            },
+            {
                 title: "Moo Clef",
                 description: "All Cows Eat Grass! Name the bass clef's spaces (A-C-E-G), then the lines around them.",
                 emoji: "🐄",

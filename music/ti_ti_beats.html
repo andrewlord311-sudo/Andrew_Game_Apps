@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ti-Ti Beats</title>
+    <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/noto-music.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #ffedd5 0%, #fef3c7 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+        button { touch-action: manipulation; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-rose-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-rose-600 text-center mb-1">Ti-Ti Beats</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Crotchets and quavers: how many beats?</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
+                👂 Stage 1: Ti-ti
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🥁 Stage 2: Full bar?
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🏷️ Stage 3: Names
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-rose-50 p-2 rounded-2xl border border-rose-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-rose-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-rose-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
+                    Listen to the claps. One clap, or two quick claps in the same beat?
+                </p>
+            </div>
+        </div>
+
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex justify-center items-center">
+            <canvas id="canvas" width="300" height="170" class="max-h-40 w-auto rounded-xl bg-white shadow-inner"></canvas>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
+
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-rose-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2">
+            What note is this?
+        </div>
+
+        <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-2">
+            &nbsp;
+        </div>
+
+        <div class="flex justify-center mb-2"><button id="listen-btn" onclick="listen()" class="hidden bg-violet-100 text-violet-700 border-b-2 border-violet-300 font-bold px-5 py-2 rounded-xl hover:bg-violet-200">🔊 Listen again</button></div>
+
+        <div class="grid grid-cols-1 gap-2 mb-3" id="answer-buttons">
+            <!-- injected -->
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
+    <script src="mascots.js"></script>
+    <script src="auth.js"></script>
+    <script src="back-link.js"></script>
+    <script src="reward-system.js"></script>
+    <script src="hit-counter.js"></script>
+    <script src="game-progress.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStage = 1;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+        let round = null;
+
+        const COL = { cro: '#0d9488', min: '#7c3aed', sb: '#db2777', qv: '#ea580c' };   // same colours as videos 13 and 16
+        const BEAT = 0.6;   // seconds per beat (100 beats a minute)
+        const dialogs = {
+            stage1: "Listen to the claps. One clap, or two quick claps in the same beat?",
+            stage2: "Count the beats. A full bar has four. A quaver pair is one beat, ti-ti.",
+            stage3: "A crotchet is one beat. A quaver has a flag on its own, or a beam when two go together.",
+            correct: "Spot on! 🎯",
+            incorrect: "Not quite. Think about the beats."
+        };
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5, vol = 0.3, delay = 0) {
+            try {
+                const ac = getAudioContext();
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                const t0 = ac.currentTime + delay;
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, t0);
+                gain.gain.setValueAtTime(0, t0);
+                gain.gain.linearRampToValueAtTime(vol, t0 + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, t0 + duration);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start(t0);
+                osc.stop(t0 + duration + 0.05);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            playCheer(); setTimeout(playCheer, 450);   // a party sound, not a piano
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // A party sound that is nothing like the piano notes of the questions: a little burst of applause (filtered noise),
+        // glittery high pings, and a bright "ta-da" on a buzzy synth.
+        function playCheer() {
+            try {
+                const ac = getAudioContext();
+                const now = ac.currentTime;
+                // applause: crackly noise through a band-pass filter
+                const len = Math.floor(ac.sampleRate * 0.9);
+                const buf = ac.createBuffer(1, len, ac.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() < 0.18 ? 1 : 0.15);
+                const src = ac.createBufferSource(); src.buffer = buf;
+                const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.7;
+                const ng = ac.createGain();
+                ng.gain.setValueAtTime(0.0001, now);
+                ng.gain.exponentialRampToValueAtTime(0.5, now + 0.05);
+                ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+                src.connect(bp); bp.connect(ng); ng.connect(ac.destination); src.start(now);
+                // glitter: quick high pings
+                [2093, 2637, 3136, 2349, 3520, 2794].forEach((f, k) => playTone(f * (1 + (k % 2) * 0.01), 'sine', 0.25, 0.08, 0.05 + k * 0.07));
+                // ta-da: two buzzy synth hits (sawtooth through a low-pass), not piano-like
+                [[392, 0, 0.16], [523.25, 0.17, 0.5]].forEach(([f, at, dur]) => {
+                    const o = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 1800;
+                    g.gain.setValueAtTime(0.0001, now + at);
+                    g.gain.exponentialRampToValueAtTime(0.16, now + at + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+                    o.connect(lp); lp.connect(g); g.connect(ac.destination); o.start(now + at); o.stop(now + at + dur + 0.05);
+                });
+            } catch (e) {}
+        }
+
+        
+
+        // a clap: a short burst of band-passed noise
+        function playClap(delay = 0, vol = 0.5) {
+            try {
+                const ac = getAudioContext();
+                const t0 = ac.currentTime + delay;
+                const len = Math.floor(ac.sampleRate * 0.18);
+                const buf = ac.createBuffer(1, len, ac.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ac.sampleRate * 0.03));
+                const src = ac.createBufferSource(); src.buffer = buf;
+                const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1700; bp.Q.value = 0.8;
+                const g = ac.createGain(); g.gain.value = vol;
+                src.connect(bp); bp.connect(g); g.connect(ac.destination); src.start(t0);
+            } catch (e) {}
+        }
+        // clap every note of a bar: a crotchet, minim or semibreve is one clap where it starts; a quaver pair is two (ti-ti); a lone quaver is one short clap
+        function clapBar(items) {
+            let last = 0;
+            items.forEach(it => {
+                const t = it.beat * BEAT;
+                playClap(t);
+                if (it.k === 'qv') playClap(t + BEAT / 2);
+                last = Math.max(last, t + (it.k === 'qv' ? BEAT / 2 : 0));
+            });
+            return last + 0.4;
+        }
+        function listen() { if (round && round.items) clapBar(round.items); }
+
+        const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`btn-stage-${i}`);
+                btn.className = i === stageNum
+                    ? "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow"
+                    : "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            }
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${stageNum}`];
+            resetStats();
+            newRound();
+        }
+
+        if (typeof RewardSystem !== 'undefined') {
+            RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
+        }
+
+        // ---- drawing -------------------------------------------------------------------------------------------
+        const STAFF_TOP = 50, GAP = 16;
+        function cx(b) { return 80 + b * 56; }              // x of beat b (0..3) in a bar
+        function drawStave(c, x0, x1, bar) {
+            c.strokeStyle = '#334155';
+            c.lineWidth = 2.5;
+            for (let i = 0; i < 5; i++) { c.beginPath(); c.moveTo(x0, STAFF_TOP + i * GAP); c.lineTo(x1, STAFF_TOP + i * GAP); c.stroke(); }
+            c.beginPath(); c.moveTo(x0, STAFF_TOP); c.lineTo(x0, STAFF_TOP + 4 * GAP); c.stroke();
+            if (bar) { c.beginPath(); c.moveTo(x1, STAFF_TOP); c.lineTo(x1, STAFF_TOP + 4 * GAP); c.lineWidth = 3.5; c.stroke(); }
+        }
+        function head(c, x, y, col, filled, rx = 8.5, ry = 6.5) {
+            c.save(); c.translate(x, y); c.rotate(-0.3); c.beginPath(); c.ellipse(0, 0, rx, ry, 0, 0, 2 * Math.PI);
+            if (filled) { c.fillStyle = col; c.fill(); } else { c.strokeStyle = col; c.lineWidth = 3.5; c.stroke(); }
+            c.restore();
+        }
+        // k: cro | min | sb | qv (a beamed pair) | q1 (one quaver with a flag). (x, y) is the first notehead.
+        function drawNote(c, k, x, y) {
+            const col = COL[k === 'q1' ? 'qv' : k];
+            c.strokeStyle = col; c.lineWidth = 2.6; c.lineCap = 'round';
+            if (k === 'qv') {
+                const x2 = x + 26;
+                head(c, x, y, col, true); head(c, x2, y, col, true);
+                c.beginPath(); c.moveTo(x + 7, y - 2); c.lineTo(x + 7, y - 36); c.moveTo(x2 + 7, y - 2); c.lineTo(x2 + 7, y - 36); c.stroke();
+                c.lineWidth = 5; c.beginPath(); c.moveTo(x + 6, y - 35); c.lineTo(x2 + 8, y - 35); c.stroke();
+                return;
+            }
+            head(c, x, y, col, k === 'cro' || k === 'q1', k === 'sb' ? 11 : 8.5, k === 'sb' ? 7.5 : 6.5);
+            if (k !== 'sb') { c.beginPath(); c.moveTo(x + 7, y - 2); c.lineTo(x + 7, y - 36); c.stroke(); }
+            if (k === 'q1') { c.lineWidth = 3; c.beginPath(); c.moveTo(x + 7, y - 36); c.quadraticCurveTo(x + 24, y - 30, x + 16, y - 14); c.stroke(); }
+        }
+        function drawBar(c, items, withNumbers) {
+            c.clearRect(0, 0, 300, 170);
+            drawStave(c, 24, 288, true);
+            c.fillStyle = '#241f3d'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '19px "Fredoka One", sans-serif';
+            c.fillText('4', 44, STAFF_TOP + GAP); c.fillText('4', 44, STAFF_TOP + 3 * GAP);
+            items.forEach(it => drawNote(c, it.k, cx(it.beat), STAFF_TOP + 2 * GAP));
+            if (withNumbers) {
+                c.font = 'bold 14px Quicksand, sans-serif';
+                ['#2dd4bf', '#6366f1', '#ec4899', '#f59e0b'].forEach((col, i) => { c.fillStyle = col; c.fillText(String(i + 1), cx(i) + (i >= 0 ? 4 : 0), 142); });
+            }
+        }
+        function iconCanvas(k) {
+            const c = document.createElement('canvas'); c.width = 120; c.height = 80; c.className = 'mx-auto';
+            const g = c.getContext('2d'); g.clearRect(0, 0, 120, 80);
+            g.strokeStyle = '#334155'; g.lineWidth = 2;
+            for (let i = 0; i < 5; i++) { g.beginPath(); g.moveTo(6, 18 + i * 9); g.lineTo(114, 18 + i * 9); g.stroke(); }
+            drawNote(g, k, k === 'qv' ? 42 : 56, 36);
+            return c;
+        }
+
+        // ---- rounds --------------------------------------------------------------------------------------------
+        function newRound() {
+            controlLock = false;
+            const listenBtn = document.getElementById('listen-btn');
+            const q = document.getElementById('question-text');
+            const cv = document.getElementById('canvas');
+            const c = cv.getContext('2d');
+            if (currentStage === 1) {
+                const two = Math.random() < 0.5;
+                round = { stage: 1, answer: two ? 'qv' : 'cro', items: [{ k: two ? 'qv' : 'cro', beat: 0 }, { k: 'cro', beat: 1.5 }].slice(0, 1) };
+                // play it on a steady count: a lead-in tick, then the clap(s)
+                q.innerText = 'Which note matches the claps?';
+                listenBtn.classList.remove('hidden');
+                c.clearRect(0, 0, 300, 170); c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '64px serif'; c.fillText('👏', 150, 70);
+                c.fillStyle = '#64748b'; c.font = 'bold 15px Quicksand, sans-serif'; c.fillText('Listen to the claps', 150, 130);
+                setTimeout(listen, 350);
+            } else if (currentStage === 2) {
+                const full = Math.random() < 0.5;
+                const pool = [['cro', 1], ['cro', 1], ['qv', 1], ['qv', 1], ['min', 2]];
+                let items = [], beat = 0, target = full ? 4 : 3;
+                while (beat < target) {
+                    const fits = pool.filter(p => beat + p[1] <= target);
+                    const p = fits[Math.floor(Math.random() * fits.length)];
+                    items.push({ k: p[0], beat }); beat += p[1];
+                }
+                if (full && items.length === 1) items = [{ k: 'sb', beat: 0 }];
+                round = { stage: 2, answer: full ? 'full' : 'short', items };
+                q.innerText = 'Is this bar full?';
+                listenBtn.classList.add('hidden');
+                drawBar(c, items, false);
+            } else {
+                const kinds = ['cro', 'q1', 'qv'];
+                const k = kinds[Math.floor(Math.random() * kinds.length)];
+                round = { stage: 3, answer: k === 'cro' ? 'cro' : 'qv', items: [{ k, beat: 0 }] };
+                q.innerText = 'What is this note called?';
+                listenBtn.classList.add('hidden');
+                c.clearRect(0, 0, 300, 170); drawStave(c, 24, 288, false);
+                drawNote(c, k, 150, STAFF_TOP + 2 * GAP);
+            }
+            renderAnswers();
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${currentStage}`];
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-base font-bold min-h-[24px] text-slate-700 mb-2";
+            feedback.innerHTML = "&nbsp;";
+        }
+
+        const BTN = "bg-gradient-to-b from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-base py-3 rounded-2xl border-b-4 border-rose-700 active:translate-y-1 active:border-b-0 transition-all";
+        function renderAnswers() {
+            const container = document.getElementById('answer-buttons');
+            container.innerHTML = '';
+            container.className = currentStage === 1 ? 'grid grid-cols-2 gap-2 mb-3' : 'grid grid-cols-1 gap-2 mb-3';
+            let opts;
+            if (currentStage === 1) opts = [['cro', 'One clap', 'cro'], ['qv', 'Ti-ti', 'qv']];
+            else if (currentStage === 2) opts = [['full', 'Yes, it is full'], ['short', 'No, a beat is missing']];
+            else opts = [['cro', 'Crotchet (quarter note)'], ['qv', 'Quaver (eighth note)']];
+            opts.forEach(([key, label, icon]) => {
+                const btn = document.createElement('button');
+                btn.className = icon ? "bg-white border-4 border-rose-300 hover:border-rose-500 rounded-2xl py-2 px-2 font-bold text-slate-700 active:scale-95 transition-all" : BTN;
+                if (icon) { btn.appendChild(iconCanvas(icon)); const s = document.createElement('div'); s.innerText = label; btn.appendChild(s); }
+                else btn.innerText = label;
+                btn.onclick = () => makeGuess(key);
+                container.appendChild(btn);
+            });
+            if (hintsEnabled) {
+                const hint = document.createElement('div');
+                hint.className = "col-span-2 text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1 mt-1";
+                hint.innerText = currentStage === 1 ? 'Ti-ti is two quick claps in one beat.' : currentStage === 2 ? 'Crotchet 1, quaver pair 1, minim 2, semibreve 4: a full bar is 4.' : 'Quavers on their own have a flag; two together share a beam.';
+                container.appendChild(hint);
+            }
+        }
+
+        function makeGuess(answer) {
+            if (controlLock) return;
+            const feedback = document.getElementById('feedback');
+            if (answer === round.answer) {
+                score += 10;
+                streak++;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
+                RewardSystem.correct();
+                document.getElementById('score').innerText = score;
+                document.getElementById('streak').innerText = streak;
+                feedback.className = "text-center text-base font-bold text-green-600 mb-2";
+                feedback.innerText = currentStage === 1 ? (round.answer === 'qv' ? "⭐ Ti-ti! Two quavers in one beat. ⭐" : "⭐ One clap: a crotchet! ⭐")
+                    : currentStage === 2 ? (round.answer === 'full' ? "⭐ Four beats: a full bar! ⭐" : "⭐ One beat is missing! ⭐")
+                    : (round.answer === 'cro' ? "⭐ A crotchet: one beat! ⭐" : "⭐ A quaver: two make one beat! ⭐");
+                playCheer();
+                triggerConfetti();
+                document.getElementById('mascot-dialog').innerText = dialogs.correct;
+                controlLock = true;
+                // every picture gets heard: clap what was on the stave (stage 1 clapped before the answer)
+                let wait = 1800;
+                if (currentStage === 1) {
+                    drawBar(document.getElementById('canvas').getContext('2d'), [{ k: round.answer, beat: 0 }], false);
+                } else {
+                    document.getElementById('listen-btn').classList.remove('hidden');
+                    const dur = clapBar(round.items.map(i => ({ ...i, beat: i.beat + 1.8 / BEAT })));
+                    wait = (dur + 0.9) * 1000;
+                }
+                setTimeout(newRound, wait);
+            } else {
+                streak = 0;
+                lives--;
+                Tracking.logAnswer({ correct: false, stage: currentStage });
+                document.getElementById('streak').innerText = streak;
+                updateHearts();
+                feedback.className = "text-center text-base font-bold text-rose-500 mb-2";
+                feedback.innerText = currentStage === 1 ? "Not quite. Press Listen again." : "Not quite. Count the beats again.";
+                if (currentStage !== 1) document.getElementById('listen-btn').classList.remove('hidden');
+                playFailBuzz();
+                document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+                controlLock = true;
+                setTimeout(() => { controlLock = false; }, 700);
+                if (lives <= 0) setTimeout(triggerGameOver, 900);
+            }
+        }
+
+        
+function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                holder.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) container.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+
+        function triggerStageComplete() {
+            GameProgress.stageCleared(currentStage);
+            playSuccessArpeggio();
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
+            const oMsg = document.getElementById('overlay-msg');
+            const oBtn = document.getElementById('overlay-btn');
+
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = "Go to Next Stage!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = `Amazing! You know crotchets, quavers and full bars!`;
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "No More Hearts!";
+            document.getElementById('overlay-msg').innerText = "Let's take another look and try this stage again!";
+            const oBtn = document.getElementById('overlay-btn');
+            oBtn.innerText = "Restart Stage";
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+            controlLock = false;
+        }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            setStage(1);
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            renderAnswers();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const notoMusicFont = new FontFace(
+                    'Noto Music',
+                    'url(fonts/noto-music.woff2)'
+                );
+                document.fonts.add(notoMusicFont);
+                await notoMusicFont.load();
+            } catch (e) {
+                console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
+            }
+            document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
+            setStage(1);
+        });
+
+        // set to the video's address once it is published (the release job does this), and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Quavers'; document.getElementById('game-card').appendChild(a); }
+        });
+    </script>
+</body>
+</html>
