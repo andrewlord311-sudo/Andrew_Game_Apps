@@ -326,7 +326,7 @@
       ],
       "lead": 0.5,
       "gap": 0.9,
-      "tail": 3.6
+      "tail": 3.8
     },
     {
       "id": "v16qv",
@@ -336,7 +336,7 @@
       ],
       "lead": 0.5,
       "gap": 0.9,
-      "tail": 2.4
+      "tail": 7.0
     },
     {
       "id": "v16beam",
@@ -345,7 +345,7 @@
       ],
       "lead": 0.5,
       "gap": 0,
-      "tail": 3.0
+      "tail": 6.0
     },
     {
       "id": "v16eight",
@@ -354,7 +354,7 @@
       ],
       "lead": 0.5,
       "gap": 0,
-      "tail": 3.0
+      "tail": 6.4
     },
     {
       "id": "v16clap",
@@ -380,7 +380,7 @@
       ],
       "lead": 0.5,
       "gap": 0,
-      "tail": 4.2
+      "tail": 7.4
     },
     {
       "id": "v16q1",
@@ -391,7 +391,7 @@
       ],
       "lead": 0.5,
       "gap": 0.7,
-      "tail": 1.6
+      "tail": 2.0
     },
     {
       "id": "v16q2",
@@ -463,128 +463,6 @@
     },
     {
       "kind": "tick",
-      "clip": "ka1",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "kb1",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "ka2",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "kb2",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "ka3",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "kb3",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "ka4",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "kb4",
-      "off": -0.12
-    },
-    {
-      "kind": "tick",
-      "clip": "ka3",
-      "off": 0.3
-    },
-    {
-      "kind": "tick",
-      "clip": "kb3",
-      "off": 0.3
-    },
-    {
-      "kind": "tick",
-      "clip": "ti",
-      "off": 0.4,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "ti",
-      "off": 0.75,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "ti",
-      "off": 1.9,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "ti",
-      "off": 2.25,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 0.3,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 0.65,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 1.0,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 1.35,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 1.7,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 2.05,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 2.3999999999999995,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
-      "clip": "allti",
-      "off": 2.7499999999999996,
-      "from": "end"
-    },
-    {
-      "kind": "tick",
       "clip": "a1",
       "off": -0.2
     },
@@ -604,13 +482,302 @@
       "off": -0.1
     }
   ],
-  "beats": [],
+  "beats": [
+    {
+      "track": "t1",
+      "sound": "clap",
+      "at": {
+        "clip": "ti",
+        "from": "end",
+        "off": 0.4
+      },
+      "offsets": [
+        0,
+        0.375
+      ]
+    },
+    {
+      "track": "t2",
+      "sound": "clap",
+      "at": {
+        "clip": "ti",
+        "from": "end",
+        "off": 1.9
+      },
+      "offsets": [
+        0,
+        0.375
+      ]
+    },
+    {
+      "track": "b1",
+      "sound": "clap",
+      "at": {
+        "clip": "qv2",
+        "from": "end",
+        "off": 0.6
+      },
+      "offsets": [
+        0,
+        0.75,
+        1.5,
+        1.875,
+        2.25
+      ]
+    },
+    {
+      "track": "b2",
+      "sound": "clap",
+      "at": {
+        "clip": "qv2",
+        "from": "end",
+        "off": 4.4
+      },
+      "offsets": [
+        0,
+        0.75,
+        1.5,
+        1.875,
+        2.25
+      ]
+    },
+    {
+      "track": "f1",
+      "sound": "clap",
+      "at": {
+        "clip": "beam",
+        "from": "end",
+        "off": 0.5
+      },
+      "offsets": [
+        0,
+        0.375,
+        1.6
+      ]
+    },
+    {
+      "track": "f2",
+      "sound": "clap",
+      "at": {
+        "clip": "beam",
+        "from": "end",
+        "off": 4.1
+      },
+      "offsets": [
+        0,
+        0.375,
+        1.6
+      ]
+    },
+    {
+      "track": "e1",
+      "sound": "clap",
+      "at": {
+        "clip": "eight",
+        "from": "end",
+        "off": 0.4
+      },
+      "offsets": [
+        0,
+        0.275,
+        0.55,
+        0.825,
+        1.1,
+        1.375,
+        1.65,
+        1.925
+      ]
+    },
+    {
+      "track": "e2",
+      "sound": "clap",
+      "at": {
+        "clip": "eight",
+        "from": "end",
+        "off": 3.6
+      },
+      "offsets": [
+        0,
+        0.275,
+        0.55,
+        0.825,
+        1.1,
+        1.375,
+        1.65,
+        1.925
+      ]
+    },
+    {
+      "track": "ka1",
+      "sound": "clap",
+      "at": {
+        "clip": "ka1",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0
+      ]
+    },
+    {
+      "track": "ka2",
+      "sound": "clap",
+      "at": {
+        "clip": "ka2",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0
+      ]
+    },
+    {
+      "track": "ka3",
+      "sound": "clap",
+      "at": {
+        "clip": "ka3",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0,
+        0.37
+      ]
+    },
+    {
+      "track": "ka4",
+      "sound": "clap",
+      "at": {
+        "clip": "ka4",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0
+      ]
+    },
+    {
+      "track": "kb1",
+      "sound": "clap",
+      "at": {
+        "clip": "kb1",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0
+      ]
+    },
+    {
+      "track": "kb2",
+      "sound": "clap",
+      "at": {
+        "clip": "kb2",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0
+      ]
+    },
+    {
+      "track": "kb3",
+      "sound": "clap",
+      "at": {
+        "clip": "kb3",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0,
+        0.37
+      ]
+    },
+    {
+      "track": "kb4",
+      "sound": "clap",
+      "at": {
+        "clip": "kb4",
+        "from": "start",
+        "off": -0.12
+      },
+      "offsets": [
+        0
+      ]
+    },
+    {
+      "track": "a1t",
+      "sound": "clap",
+      "at": {
+        "clip": "allti",
+        "from": "end",
+        "off": 0.3
+      },
+      "offsets": [
+        0.0,
+        0.35,
+        0.7,
+        1.0499999999999998,
+        1.4,
+        1.75,
+        2.0999999999999996,
+        2.4499999999999997
+      ]
+    },
+    {
+      "track": "a2t",
+      "sound": "clap",
+      "at": {
+        "clip": "allti",
+        "from": "end",
+        "off": 4.1
+      },
+      "offsets": [
+        0.0,
+        0.35,
+        0.7,
+        1.0499999999999998,
+        1.4,
+        1.75,
+        2.0999999999999996,
+        2.4499999999999997
+      ]
+    },
+    {
+      "track": "q1c",
+      "sound": "clap",
+      "at": {
+        "clip": "a1",
+        "from": "end",
+        "off": 0.3
+      },
+      "offsets": [
+        0,
+        0.375
+      ]
+    },
+    {
+      "track": "q3c",
+      "sound": "clap",
+      "at": {
+        "clip": "a3",
+        "from": "end",
+        "off": 0.4
+      },
+      "offsets": [
+        0,
+        0.75,
+        1.125,
+        1.5
+      ]
+    }
+  ],
   "gapOverride": {
     "q1ask": 0.8,
     "a1": 4.6,
     "a2": 4.4,
     "a3": 4.4,
-    "qwell": 1.2,
+    "qwell": 2.6,
     "rc1": 0.5,
     "ka1": 0.8,
     "kb1": 1.6,

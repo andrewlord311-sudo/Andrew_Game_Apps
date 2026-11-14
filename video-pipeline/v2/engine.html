@@ -1662,6 +1662,9 @@ S.outro15b=Object.assign({},S.outro12b,{cut:true,
 // ======================================================================== VIDEO 16: quavers (ti-ti)
 // quaver pair = two beamed orange notes in one beat ('qv'); single quaver with a flag = 'q1'. Every scene is a hard cut (no fade), like video 14.
 const v16s=f=>Object.assign(v13s(f),{cut:true});
+// age of the most recent hit on each target: hits = [[time, target], ...]
+function hitAge16(hits,t,n){const a=Array(n).fill(9);hits.forEach(([T,k])=>{const g=t-T;if(g>=-0.03&&g<a[k])a[k]=g});return a}
+const fl16=a=>a>=0&&a<0.35?1.2+0.15*Math.sin(a*9):1;
 const v16clone=(o,extra)=>Object.assign({},o,{cut:true},extra||{});
 S.v16rem=v16clone(S.v13remember);S.v16cro=v16clone(S.v13cro);S.v16cro2=v16clone(S.v13cro2);
 // "Sometimes we play two sounds in one beat." Listen: ti-ti.
@@ -1675,7 +1678,9 @@ S.v16two=v16s({bar:{notes:[{k:'cro',b:0},{k:'cro',b:1},{k:'cro',b:3}],slots:true
 S.v16qv=v16s({bar:{notes:[{k:'cro',b:0},{k:'cro',b:1},{k:'qv',b:2},{k:'cro',b:3}]},y1:512,y2:578,
  state(t,L,c,B){[0,1,3].forEach(i=>{note13(B,i,1);hold13(B,i,1)});const tq=CL.qv1.start+0.2,p=prog(t,tq,0.5);note13(B,2,p);hold13(B,2,easeOut(prog(t,tq,BT13)));
   [0,1,2,3].forEach(i=>num13(B,i,t,-9));
-  if(t>=wt('qv1','quavers')-0.15)showChip13(this.c1,'QUAVERS (eighth notes)',QVC,t,wt('qv1','quavers')-0.15);
+  const b0=CL.qv2.end+0.6,H=[];[0,3.8].forEach(o=>[[0,0],[0.75,1],[1.5,2],[1.875,2],[2.25,3]].forEach(([dt,k])=>H.push([b0+o+dt,k])));const ag=hitAge16(H,t,4);[0,1,2,3].forEach(i=>note13(B,i,1,fl16(ag[i])));
+  if(t>=b0-0.1&&t<CL.qv2.end+3.0)showChip13(this.c1,'CLAP IT',QVC,t,b0-0.1);
+  if(t>=wt('qv1','quavers')-0.15&&t<b0-0.1)showChip13(this.c1,'QUAVERS (eighth notes)',QVC,t,wt('qv1','quavers')-0.15);
   if(t>=wt('qv2','fit')-0.5)showChip13(this.c2,'2 QUAVERS = 1 BEAT','#c2410c',t,wt('qv2','fit')-0.5)}});
 // "Quavers together are joined by a beam. A quaver on its own has a flag."
 function qshape16(svg,kind,x,y,k){const g=el13('g',{transform:`translate(${x} ${y}) scale(${k})`},svg),col=QVC,xs=kind==='pair'?[-35,35]:[0];
@@ -1687,10 +1692,12 @@ S.v16beam={ui:V6UI,cut:true,build(r){const svg=document.createElementNS(SVGNS,'s
     el13('rect',{x:cx-230,y:228,width:460,height:262,rx:34,fill:'#ffffff','fill-opacity':0.85,stroke:'#fed7aa','stroke-width':6},w);
     const sh=qshape16(w,kind,cx,440,1.9);const lb=labelChip(r,txt,QVC,cx,522,34,'8px 28px');lb.style.opacity=0;return {w,sh,lb}})},
  update(t,L,c){const T=[wt('beam','beam')-0.4,wt('beam','flag')-0.9];this.P.forEach((p,i)=>{const q=prog(t,T[i],0.5);p.w.style.opacity=String(clamp(q*2));p.w.style.scale=String(lerp(0.7,1,easeBack(q)));pop(p.lb,t,T[i]+0.3,0.4);
-   const hi=0.5+0.5*Math.sin(t*5);p.sh.mark.setAttribute('stroke-width',String(t>=T[i]+0.8&&t<T[i]+2.4?(i===0?12+5*hi:5+3*hi):(i===0?12:5)))})}};
+   const hi=0.5+0.5*Math.sin(t*5);p.sh.mark.setAttribute('stroke-width',String(t>=T[i]+0.8&&t<T[i]+2.4?(i===0?12+5*hi:5+3*hi):(i===0?12:5)));
+   const b0=CL.beam.end+0.5,H=[];[0,3.6].forEach(o=>(i===0?[0,0.375]:[1.6]).forEach(dt=>H.push([b0+o+dt,0])));const a=hitAge16(H,t,1)[0];p.w.style.scale=String(q>=1?fl16(a):lerp(0.7,1,easeBack(q)))})}};
 // "Eight quavers fill a bar, so a quaver is an eighth note."
 S.v16eight=v16s({bar:{notes:[0,1,2,3].map(b=>({k:'qv',b}))},y1:512,y2:578,
- state(t,L,c,B){const t0=CL.eight.start+0.5;[0,1,2,3].forEach(i=>{const T=t0+i*0.55,age=t-T;note13(B,i,prog(t,T,0.4),age>=0&&age<0.35?1.2:1);hold13(B,i,easeOut(prog(t,T,0.5)));num13(B,i,t,T)});
+ state(t,L,c,B){const t0=CL.eight.end+0.4,H=[];[0,3.2].forEach(o=>[0,1,2,3].forEach(i=>{H.push([t0+o+i*0.55,i]);H.push([t0+o+i*0.55+0.275,i])}));const ag=hitAge16(H,t,4);
+  [0,1,2,3].forEach(i=>{const T=t0+i*0.55;note13(B,i,prog(t,T,0.4),fl16(ag[i]));hold13(B,i,easeOut(prog(t,T,0.5)));num13(B,i,t,T)});
   B.end.style.strokeWidth=t>=t0+4*0.55?'8':'3';showChip13(this.c1,'8 QUAVERS = 1 BAR',QVC,t,wt('eight','eight')-0.1);
   if(t>=wt('eight','eighth')-0.15)showChip13(this.c2,'= EIGHTH NOTE','#c2410c',t,wt('eight','eighth')-0.15)}});
 // Clap and count with me! (crotchet, crotchet, ti-ti, crotchet) twice, then all ti-ti.
@@ -1706,15 +1713,17 @@ S.v16clap={ui:V6UI,cut:true,build(r){this.B=bar13(r,{notes:[{k:'cro',b:0},{k:'cr
   this.cl[1].style.opacity=0;this.cl[2].style.opacity=0;
   showChip13(this.c1,'ON BEAT 3: TI-TI',QVC,t,CL.ka3.start-0.1)}};
 S.v16allti=v16s({bar:{notes:[0,1,2,3].map(b=>({k:'qv',b}))},y1:512,
- state(t,L,c,B){const t0=CL.allti.end+0.3;[0,1,2,3].forEach(i=>{const T=t0+i*0.7,age=t-T;note13(B,i,1,age>=0&&age<0.5?1.25:1);hold13(B,i,1);num13(B,i,t,-9)});
+ state(t,L,c,B){const t0=CL.allti.end+0.3,H=[];[0,4.1].forEach(o=>[0,1,2,3].forEach(i=>{H.push([t0+o+i*0.7,i]);H.push([t0+o+i*0.7+0.35,i])}));const ag=hitAge16(H,t,4);
+  [0,1,2,3].forEach(i=>{note13(B,i,1,fl16(ag[i]));hold13(B,i,1);num13(B,i,t,-9)});
   showChip13(this.c1,'TI-TI TI-TI TI-TI TI-TI',QVC,t,wt('allti','all')-0.1)}});
 // quiz
 function v16q(o){return v13q(o)}
-S.v16q1=Object.assign(v16q({bar:{notes:[{k:'qv',b:0}]},ask:'q1ask',ans:'a1',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q1ask.start+0.3,0.45));if(t>=ta){hold13(B,0,easeOut(prog(t,ta,BT13)));num13(B,0,t,ta);showChip13(this.c1,'1 BEAT',QVC,t,ta)}}}),{cut:true});
+S.v16q1=Object.assign(v16q({bar:{notes:[{k:'qv',b:0}]},ask:'q1ask',ans:'a1',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q1ask.start+0.3,0.45));if(t>=ta){hold13(B,0,easeOut(prog(t,ta,BT13)));num13(B,0,t,ta);showChip13(this.c1,'1 BEAT',QVC,t,ta);const H=[[CL.a1.end+0.3,0],[CL.a1.end+0.675,0]];note13(B,0,1,fl16(hitAge16(H,t,1)[0]))}}}),{cut:true});
 S.v16q2=Object.assign(v16q({bar:{notes:[{k:'q1',b:0}]},ask:'q2ask',ans:'a2',state(t,L,c,B,ta){note13(B,0,prog(t,CL.q2ask.start+0.3,0.45));if(t>=ta){showChip13(this.c1,'QUAVER',QVC,t,ta);showChip13(this.c2,'= EIGHTH NOTE','#c2410c',t,ta+0.5)}}}),{cut:true});
 S.v16q3=Object.assign(v16q({bar:{notes:[{k:'cro',b:0},{k:'qv',b:1},{k:'cro',b:2}],slots:false},conf:true,ask:'q3ask',ans:'a3',build(r){this.gp=el13('circle',{cx:bx13(3),cy:128,r:16,fill:'none',stroke:'#f59e0b','stroke-width':4,'stroke-dasharray':'6 6'},this.B.svg);this.gp.style.opacity=0},
   state(t,L,c,B,ta){const t0=CL.q3ask.start+0.3;note13(B,0,prog(t,t0,0.4));hold13(B,0,1);note13(B,1,prog(t,t0+0.3,0.4));hold13(B,1,1);note13(B,2,prog(t,t0+0.6,0.4));hold13(B,2,1);
-   const tm=CL.a3.end+0.3;this.gp.style.opacity=t>=t0+1.2&&t<tm?String(0.6+0.4*Math.sin(t*6)):'0';
+   const tm=CL.a3.end+0.3;const H=[[tm+0.1,0],[tm+0.85,1],[tm+1.225,1],[tm+1.6,2]];const ag=hitAge16(H,t,3);[0,1,2].forEach(i=>note13(B,i,1,fl16(ag[i])));
+   this.gp.style.opacity=t>=t0+1.2?String(0.6+0.4*Math.sin(t*6)):'0';
    if(t>=ta)showChip13(this.c1,'ONE BEAT MISSING','#f59e0b',t,ta);B.end.style.strokeWidth='3'}}),{cut:true});
 S.outro16=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro16b=Object.assign({},S.outro12b,{cut:true});
