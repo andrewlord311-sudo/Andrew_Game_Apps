@@ -28,6 +28,10 @@
         @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
 
         .finger.active-finger { fill: #fbbf24 !important; stroke: #b45309 !important; }
+        .fbadge { position:absolute; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; color:#fff; font-weight:900; font-size:19px; line-height:34px; text-align:center; border:3px solid #fff; box-shadow:0 3px 0 rgba(0,0,0,.25); transition: transform .2s; }
+        .fbadge.on { transform: scale(1.35); animation: fb-pulse 0.9s ease-in-out infinite alternate; }
+        .fbadge.dim { opacity: .3; }
+        @keyframes fb-pulse { from { box-shadow: 0 0 0 4px rgba(251,191,36,.8); } to { box-shadow: 0 0 0 10px rgba(251,191,36,.25); } }
         .white-key {
             box-shadow: inset 0 -8px 0 #e2e8f0, 0 4px 6px rgba(0,0,0,0.05);
             transition: background-color 0.15s, transform 0.05s, box-shadow 0.05s;
@@ -54,17 +58,17 @@
         </div>
 
         <h1 class="kids-title text-3xl text-fuchsia-600 text-center mb-1">Finger Number Fun</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Thumb is 1, pinky is 5 — find the right key!</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Right hand, thumb on C: thumb is 1, little finger is 5.</p>
 
         <div class="grid grid-cols-3 gap-2 bg-fuchsia-50 p-2 rounded-2xl mb-2 border border-fuchsia-100">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-fuchsia-400 text-white border-b-2 border-fuchsia-600 shadow">
-                ☀️ Stage 1: Easy
+                🎹 Stage 1: Find the key
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌴 Stage 2: Medium
+                🔤 Stage 2: Notes
             </button>
             <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🚀 Stage 3: Hard
+                ↕️ Stage 3: Step or skip?
             </button>
         </div>
 
@@ -73,7 +77,7 @@
             <div class="relative bg-white border border-fuchsia-100 p-2 rounded-xl shadow-sm w-full">
                 <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-fuchsia-50"></div>
                 <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
-                    Hi, I'm Melody! Rest your hand in the C position: thumb on C, pinky on G!
+                    Hi, I'm Melody! Right hand: thumb on Middle C, and your five fingers sit on C, D, E, F, G!
                 </p>
             </div>
         </div>
@@ -102,6 +106,8 @@
             <div id="hand-svg-wrap" class="w-full max-w-[180px]"></div>
         </div>
 
+        <div id="answer-buttons" class="grid grid-cols-5 gap-2 mb-2 hidden"></div>
+
         <div id="feedback" class="text-center text-lg font-bold min-h-[28px] text-slate-700 my-3">
             Tap the matching piano key!
         </div>
@@ -116,6 +122,7 @@
         </div>
 
     </div>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
     <script src="mascots.js"></script>
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
@@ -206,80 +213,63 @@
         // palm/wrist at the top) — not a palm-up handprint. The thumb is
         // drawn short, wide and offset to one side so it reads as a thumb
         // at a glance, never mistaken for a fifth finger.
-        function handSvgMarkup(hand) {
-            // Four straight fingers (index, middle, ring, pinky), positioned
-            // left-to-right on screen. For the right hand the thumb is on the
-            // left (nearest Middle C, which is to the right of it); for the
-            // left hand everything mirrors so the thumb is on the right.
-            const straight = hand === 'right'
-                ? [ { finger: 2, cx: 100, top: 58, bot: 150, rx: 16 },
-                    { finger: 3, cx: 145, top: 53, bot: 165, rx: 16 },
-                    { finger: 4, cx: 190, top: 58, bot: 155, rx: 16 },
-                    { finger: 5, cx: 230, top: 65, bot: 133, rx: 13 } ]
-                : [ { finger: 5, cx: 70,  top: 65, bot: 133, rx: 13 },
-                    { finger: 4, cx: 110, top: 58, bot: 155, rx: 16 },
-                    { finger: 3, cx: 155, top: 53, bot: 165, rx: 16 },
-                    { finger: 2, cx: 200, top: 58, bot: 150, rx: 16 } ];
-            const thumbCx = hand === 'right' ? 55 : 245;
-
-            // Fingers and thumb are drawn FIRST, then the palm is drawn on
-            // TOP of them last — so the palm visually covers each digit's
-            // base/root, and only the part extending below the palm's edge
-            // is visible, like a real hand (fingers emerging from under the
-            // palm) instead of each fingertip poking out through it. The
-            // thumb sits with a deep overlap into the palm (not just a
-            // sliver) so it reads as properly attached, not a separate blob
-            // floating near the edge.
-            let handParts = '';
-
-            // Text inside a scale(1,-1) group renders upside down, so each
-            // label gets its own local counter-flip (translate(0,2Y) scale(1,-1))
-            // around its own y — the two flips cancel for orientation while
-            // still landing the label in the right (flipped) spot.
-            const uprightText = (x, y, size, fill, char) =>
-                `<g transform="translate(0,${2 * y}) scale(1,-1)"><text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" font-weight="900" fill="${fill}">${char}</text></g>`;
-
-            straight.forEach(f => {
-                const cy = (f.top + f.bot) / 2;
-                const ry = (f.bot - f.top) / 2;
-                handParts += `<g id="finger-${f.finger}" class="finger" fill="#fcd9b6" stroke="#b45309" stroke-width="2">
-                    <ellipse cx="${f.cx}" cy="${cy}" rx="${f.rx}" ry="${ry}" />
-                    ${uprightText(f.cx, cy + 7, 20, '#7c2d12', f.finger)}
-                </g>`;
-            });
-
-            // Thumb: short, wide, and set lower/to the side — deliberately NOT
-            // shaped like the other fingers so it's unmistakable. cy is much
-            // closer to the palm than the straight fingers so it overlaps
-            // the palm's edge by a solid margin rather than barely touching.
-            handParts += `<g id="finger-1" class="finger" fill="#f5c99b" stroke="#b45309" stroke-width="3">
-                <ellipse cx="${thumbCx}" cy="100" rx="28" ry="38" />
-                ${uprightText(thumbCx, 112, 22, '#7c2d12', 1)}
-            </g>`;
-
-            // Palm drawn last, on top of the fingers/thumb it was built
-            // after above.
-            handParts += `<ellipse cx="150" cy="48" rx="102" ry="46" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
-
-            const forearm = `<rect x="115" y="185" width="70" height="115" rx="32" fill="#fcd9b6" stroke="#b45309" stroke-width="2" />`;
-
-            let svg = `<svg id="hand-svg" viewBox="0 0 300 280" class="w-full">
-                ${forearm}
-                <g transform="translate(0,200) scale(1,-1)">${handParts}</g>
-            </svg>`;
-            return svg;
+        // ---- the hand: the proper right hand from video 7 / game 7 (the style chosen on 19 Oct 2026), with a numbered badge on each fingertip
+        function handSvg(side, mode, w) {
+          const LCOL = '#0d9488', RCOL = '#7c3aed';
+          const skin = '#f6cfac', edge = '#7a4a2a', sw = 3.2;
+          const sleeve = side === 'L' ? LCOL : RCOL, sleeveEdge = side === 'L' ? '#115e59' : '#5b21b6';
+          const parts = [];      // every piece of the hand; drawn twice (outline, then fill) so only the outer edge shows
+          const marks = [];      // nail curves and joint dashes, drawn on top
+          // a finger: base (bx,by), length L, width W, tilt a degrees (0 = straight up)
+          const finger = (bx, by, L, W, a, joints = 2) => {
+            const tr = `rotate(${a} ${bx} ${by})`;
+            parts.push(`<rect x="${bx - W / 2}" y="${by - L}" width="${W}" height="${L + 30}" rx="${W / 2}" transform="${tr}"/>`);
+            const tip = by - L;
+            marks.push(`<path d="M${bx - W * 0.22},${tip + 13} q${W * 0.22},${5} ${W * 0.44},0" transform="${tr}"/>`);            // the nail: a small smile near the tip
+            if (joints >= 1) marks.push(`<path d="M${bx - W * 0.2},${tip + L * 0.36} h${W * 0.4} M${bx - W * 0.14},${tip + L * 0.36 + 5} h${W * 0.28}" transform="${tr}"/>`);   // top joint
+            if (joints >= 2) marks.push(`<path d="M${bx - W * 0.22},${tip + L * 0.66} h${W * 0.44} M${bx - W * 0.16},${tip + L * 0.66 + 5} h${W * 0.32}" transform="${tr}"/>`); // middle joint
+          };
+          if (mode === 'L') {
+            finger(122, 132, 112, 22, 0);                                                                                  // index straight up
+            parts.push(`<rect x="128" y="158" width="78" height="25" rx="12.5" transform="rotate(-6 134 170)"/>`);          // thumb straight out
+            marks.push(`<path d="M196,163 q-5,6 0,12" transform="rotate(-6 134 170)"/><path d="M168,162 v8 M174,163 v7" transform="rotate(-6 134 170)"/>`);
+            [[62, 104, 20], [82, 98, 21], [102, 96, 21]].forEach(([x, y, r]) => parts.push(`<rect x="${x - r / 2}" y="${y}" width="${r}" height="50" rx="${r / 2}"/>`));   // curled fingers
+            marks.push(`<path d="M56,112 q6,4 12,0 M76,106 q6,4 12,0 M96,104 q6,4 12,0"/>`);
+          } else {
+            finger(58, 146, 70, 20, -24, 1);     // little finger
+            finger(80, 132, 94, 21, -10);        // ring
+            finger(102, 126, 102, 22, 2);        // middle
+            finger(124, 132, 90, 21, 15);        // index
+            // thumb: leaves the hand low down and angles in towards the other hand
+            parts.push(`<rect x="117" y="118" width="26" height="96" rx="13" transform="rotate(44 130 206)"/>`);
+            marks.push(`<path d="M124,128 q6,4 12,0" transform="rotate(44 130 206)"/><path d="M122,160 h12 M124,165 h8" transform="rotate(44 130 206)"/>`);
+            parts.push(`<path d="M151,202 Q133,216 126,242 L108,242 L118,196 Z"/>`);   // the thumb sweeps smoothly down into the wrist
+          }
+          // the back of the hand, tapering to a narrow wrist
+          parts.push(`<path d="M48,154 C44,132 62,120 82,118 L124,120 C132,123 135,133 133,148 C131,172 129,202 128,228 L78,228 C70,206 52,182 48,154 Z"/>`);
+          parts.push(`<path d="M78,222 L128,222 L125,264 L81,264 Z"/>`);                                                            // wrist
+          const P = parts.join('');
+          let g = `<ellipse cx="102" cy="250" rx="70" ry="13" fill="rgba(0,0,0,.18)" filter="url(#bl)"/>`;
+          g += `<rect x="58" y="256" width="90" height="50" rx="10" fill="${sleeve}" stroke="${sleeveEdge}" stroke-width="${sw}"/>`;    // sleeve
+          g += `<g fill="${skin}" stroke="${edge}" stroke-width="${sw * 2}" stroke-linejoin="round">${P}</g>`;        // outline of the whole hand
+          g += `<g fill="${skin}" stroke="none">${P}</g>`;                                                          // fill on top: only the outer edge remains
+          g += `<g fill="none" stroke="${edge}" stroke-width="2.4" stroke-linecap="round">${marks.join('')}</g>`;
+          const tr = side === 'R' ? ' transform="translate(204,0) scale(-1,1)"' : '';
+          return `<svg viewBox="0 0 214 304" width="${w}" style="overflow:visible"><defs><filter id="bl" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="5"/></filter></defs><g${tr}>${g}</g></svg>`;
         }
-
-        function renderHand(hand) {
-            document.getElementById('hand-svg-wrap').innerHTML = handSvgMarkup(hand);
+        const FNOTE = ['C', 'D', 'E', 'F', 'G'];
+        const FCOL = ['#7c3aed', '#6366f1', '#db2777', '#f59e0b', '#0d9488'];
+        const TIPS = [[13, 143], [57, 45], [98, 24], [140, 39], [175, 82]];   // thumb, index, middle, ring, little: fingertips in the 214 x 304 drawing
+        function renderHand() {
+            const wrap = document.getElementById('hand-svg-wrap');
+            let badges = '';
+            TIPS.forEach(([x, y], i) => {
+                badges += `<div class="fbadge" id="fb-${i + 1}" style="left:${x / 214 * 100}%; top:${(y + (i === 0 ? -22 : 20)) / 304 * 100}%; background:${FCOL[i]}">${i + 1}</div>`;
+            });
+            wrap.innerHTML = `<div style="position:relative; width:100%; aspect-ratio: 214 / 304;">${handSvg('R', 'flat', '100%')}${badges}</div>`;
             const label = document.getElementById('hand-label');
-            if (hand === 'right') {
-                label.innerText = '👉 RIGHT HAND';
-                label.className = 'font-black text-sm px-3 py-1 rounded-full mb-1 bg-blue-100 text-blue-700';
-            } else {
-                label.innerText = '👈 LEFT HAND';
-                label.className = 'font-black text-sm px-3 py-1 rounded-full mb-1 bg-orange-100 text-orange-700';
-            }
+            label.innerText = '👉 RIGHT HAND ONLY';
+            label.className = 'font-black text-sm px-3 py-1 rounded-full mb-1 bg-blue-100 text-blue-700';
         }
 
         function setStage(stageNum) {
@@ -304,86 +294,142 @@
             RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
         }
 
+        // ---- sound: the right hand notes, and a party sound for right answers ----
+function playCheer() {
+            try {
+                const ac = getAudioContext();
+                const now = ac.currentTime;
+                // applause: crackly noise through a band-pass filter
+                const len = Math.floor(ac.sampleRate * 0.9);
+                const buf = ac.createBuffer(1, len, ac.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() < 0.18 ? 1 : 0.15);
+                const src = ac.createBufferSource(); src.buffer = buf;
+                const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.7;
+                const ng = ac.createGain();
+                ng.gain.setValueAtTime(0.0001, now);
+                ng.gain.exponentialRampToValueAtTime(0.5, now + 0.05);
+                ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+                src.connect(bp); bp.connect(ng); ng.connect(ac.destination); src.start(now);
+                // glitter: quick high pings
+                [2093, 2637, 3136, 2349, 3520, 2794].forEach((f, k) => playTone(f * (1 + (k % 2) * 0.01), 'sine', 0.25, 0.08, 0.05 + k * 0.07));
+                // ta-da: two buzzy synth hits (sawtooth through a low-pass), not piano-like
+                [[392, 0, 0.16], [523.25, 0.17, 0.5]].forEach(([f, at, dur]) => {
+                    const o = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 1800;
+                    g.gain.setValueAtTime(0.0001, now + at);
+                    g.gain.exponentialRampToValueAtTime(0.16, now + at + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+                    o.connect(lp); lp.connect(g); g.connect(ac.destination); o.start(now + at); o.stop(now + at + dur + 0.05);
+                });
+            } catch (e) {}
+        }
+
+        function playFinger(f, delay = 0) {
+            const note = HAND_KEYS.right[f - 1];
+            setTimeout(() => playTone(NOTE_FREQS[note], 'triangle', 0.6), delay * 1000);
+        }
+
+        // ---- rounds --------------------------------------------------------------------------------------------
+        let round = null;
+        function showBadges(on, dimOthers) {
+            for (let i = 1; i <= 5; i++) {
+                const e = document.getElementById(`fb-${i}`);
+                e.classList.toggle('on', on.includes(i));
+                e.classList.toggle('dim', !!dimOthers && !on.includes(i));
+            }
+        }
         function newRound() {
             controlLock = false;
             sequenceIndex = 0;
-
-            // Stage 1 = right hand only, Stage 2 = left hand only,
-            // Stage 3 = both hands, alternating each round.
-            if (currentStage === 1) currentHand = 'right';
-            else if (currentStage === 2) currentHand = 'left';
-            else currentHand = Math.random() < 0.5 ? 'right' : 'left';
-
-            renderHand(currentHand);
+            currentHand = 'right';
+            renderHand();
             renderPiano();
-
-            if (currentStage === 1) {
-                lastAscendFinger = (lastAscendFinger % 5) + 1;
-                sequence = [lastAscendFinger];
-            } else if (currentStage === 2) {
-                sequence = [1 + Math.floor(Math.random() * 5)];
-            } else {
-                const len = 3 + Math.floor(Math.random() * 3); // 3-5
-                sequence = [];
-                for (let i = 0; i < len; i++) sequence.push(1 + Math.floor(Math.random() * 5));
-            }
-
-            updateQuestionText();
-            highlightFinger(sequence[0]);
-
+            const ab = document.getElementById('answer-buttons');
+            ab.innerHTML = '';
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-slate-700 my-3";
-            feedback.innerText = "Tap the matching piano key!";
+
+            if (currentStage === 1) {
+                ab.classList.add('hidden');
+                lastAscendFinger = (lastAscendFinger % 5) + 1;
+                // mostly in order at first, then random
+                sequence = [Math.random() < 0.5 ? lastAscendFinger : 1 + Math.floor(Math.random() * 5)];
+                round = { stage: 1 };
+                updateQuestionText();
+                highlightFinger(sequence[0]);
+                feedback.innerText = "Tap the matching piano key!";
+            } else if (currentStage === 2) {
+                // which note does finger N play?   or   which finger plays note X?
+                const f = 1 + Math.floor(Math.random() * 5);
+                const toNote = Math.random() < 0.5;
+                round = { stage: 2, f, toNote, answer: toNote ? FNOTE[f - 1] : String(f) };
+                document.getElementById('question-text').innerText = toNote ? `Which note does finger ${f} play?` : `Which finger plays ${FNOTE[f - 1]}?`;
+                showBadges(toNote ? [f] : [], false);
+                if (!toNote) for (let i = 1; i <= 5; i++) document.getElementById(`fb-${i}`).style.opacity = '1';
+                ab.classList.remove('hidden');
+                (toNote ? FNOTE : ['1', '2', '3', '4', '5']).forEach((lab, i) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = lab;
+                    btn.className = "bg-gradient-to-b from-fuchsia-400 to-fuchsia-500 hover:from-fuchsia-500 hover:to-fuchsia-600 text-white font-black text-2xl py-3 rounded-2xl border-b-4 border-fuchsia-700 active:translate-y-1 active:border-b-0 transition-all";
+                    btn.onclick = () => answerRound(lab);
+                    ab.appendChild(btn);
+                });
+                feedback.innerText = "Pick the answer.";
+            } else {
+                // step (next finger) or skip (miss a finger)?
+                const step = Math.random() < 0.5;
+                const gap = step ? 1 : 2;
+                const from = 1 + Math.floor(Math.random() * (5 - gap));
+                const up = Math.random() < 0.7;
+                const a = up ? from : from + gap, b = up ? from + gap : from;
+                round = { stage: 3, a, b, answer: step ? 'step' : 'skip' };
+                document.getElementById('question-text').innerText = `From finger ${a} to finger ${b}: step or skip?`;
+                showBadges([a, b], true);
+                ab.classList.remove('hidden');
+                ab.className = 'grid grid-cols-2 gap-2 mb-2';
+                [['step', 'A step'], ['skip', 'A skip']].forEach(([key, lab]) => {
+                    const btn = document.createElement('button');
+                    btn.innerText = lab;
+                    btn.className = "bg-gradient-to-b from-fuchsia-400 to-fuchsia-500 hover:from-fuchsia-500 hover:to-fuchsia-600 text-white font-black text-xl py-3 rounded-2xl border-b-4 border-fuchsia-700 active:translate-y-1 active:border-b-0 transition-all";
+                    btn.onclick = () => answerRound(key);
+                    ab.appendChild(btn);
+                });
+                feedback.innerText = "Next finger is a step. Miss a finger is a skip.";
+            }
+            if (currentStage !== 3) document.getElementById('answer-buttons').className = 'grid grid-cols-5 gap-2 mb-2' + (currentStage === 1 ? ' hidden' : '');
         }
 
         function updateQuestionText() {
-            const handWord = currentHand === 'right' ? 'right' : 'left';
-            if (sequence.length === 1) {
-                document.getElementById('question-text').innerText = `Play finger ${sequence[0]} (${handWord} hand)!`;
-            } else {
-                const parts = sequence.map((f, i) => i === sequenceIndex ? `[${f}]` : f).join(' - ');
-                document.getElementById('question-text').innerText = `Play in order (${handWord} hand): ${parts}`;
-            }
+            document.getElementById('question-text').innerText = `Play finger ${sequence[0]} (right hand)!`;
         }
 
-        function highlightFinger(n) {
-            for (let i = 1; i <= 5; i++) {
-                document.getElementById(`finger-${i}`).classList.remove('active-finger');
-            }
-            document.getElementById(`finger-${n}`).classList.add('active-finger');
-        }
+        function highlightFinger(n) { showBadges([n], false); }
 
         function renderPiano() {
             const container = document.getElementById('piano-container');
             container.innerHTML = '';
-            const notes = HAND_KEYS[currentHand];
+            const notes = HAND_KEYS.right;
             notes.forEach(note => {
                 const keyDiv = document.createElement('div');
-                keyDiv.className = 'white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none cursor-pointer flex items-end justify-center pb-2 text-xs font-black text-slate-400';
+                keyDiv.className = 'white-key flex-1 min-w-0 bg-white border-r-2 border-slate-200 rounded-b-xl h-full relative select-none cursor-pointer flex items-end justify-center pb-2 text-xs font-black text-slate-500';
                 keyDiv.dataset.note = note;
-                keyDiv.innerText = hintsEnabled ? note.replace(/[0-9]/, '') : '';
+                // the letters show in stages 2 and 3, or with hints on
+                keyDiv.innerText = (hintsEnabled || currentStage > 1) ? note.replace(/[0-9]/, '') : '';
                 keyDiv.addEventListener('mousedown', () => handleKeyClick(note, keyDiv));
                 container.appendChild(keyDiv);
             });
         }
 
+        // stage 1: tap the key for the finger
         function handleKeyClick(note, keyElement) {
-            if (controlLock) return;
-            const expectedFinger = sequence[sequenceIndex];
-            const expectedNote = FINGER_NOTES[currentHand][expectedFinger];
-
+            if (controlLock || currentStage !== 1) return;
+            const expectedNote = FINGER_NOTES.right[sequence[0]];
             if (note === expectedNote) {
                 keyElement.classList.add('correct-flash');
                 setTimeout(() => keyElement.classList.remove('correct-flash'), 400);
                 playTone(NOTE_FREQS[note], 'triangle', 0.4);
-
-                sequenceIndex++;
-                if (sequenceIndex >= sequence.length) {
-                    onSequenceComplete();
-                } else {
-                    highlightFinger(sequence[sequenceIndex]);
-                    updateQuestionText();
-                }
+                onSequenceComplete(`⭐ Finger ${sequence[0]} plays ${note.replace(/[0-9]/, '')}! ⭐`);
             } else {
                 keyElement.classList.add('wrong-flash');
                 setTimeout(() => keyElement.classList.remove('wrong-flash'), 400);
@@ -391,8 +437,25 @@
             }
         }
 
-        function onSequenceComplete() {
-            score += 10 * sequence.length;
+        // stages 2 and 3: pick an answer; then hear what was on the hand
+        function answerRound(ans) {
+            if (controlLock) return;
+            if (ans === round.answer) {
+                let msg, wait = 1800;
+                if (round.stage === 2) { msg = `⭐ Finger ${round.f} plays ${FNOTE[round.f - 1]}! ⭐`; playFinger(round.f, 0.9); wait = 2600; }
+                else {
+                    const step = round.answer === 'step';
+                    msg = step ? "⭐ A step: the very next finger! ⭐" : "⭐ A skip: one finger missed out! ⭐";
+                    playFinger(round.a, 0.9); playFinger(round.b, 1.6); wait = 3000;
+                }
+                onSequenceComplete(msg, wait);
+            } else {
+                onIncorrect();
+            }
+        }
+
+        function onSequenceComplete(msg, wait = 1500) {
+            score += 10;
             streak++;
             Tracking.logAnswer({ correct: true, stage: currentStage });
             RewardSystem.correct();
@@ -401,8 +464,9 @@
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-green-600 my-3";
-            feedback.innerText = `⭐ Perfect! ⭐`;
+            feedback.innerText = msg || `⭐ Perfect! ⭐`;
 
+            playCheer();
             triggerConfetti();
             document.getElementById('mascot-dialog').innerText = dialogs.correct;
 
@@ -411,7 +475,7 @@
             controlLock = true;
             setTimeout(() => { avatar.className = "mascot-bounce shrink-0"; }, 600);
 
-            setTimeout(newRound, 1200);
+            setTimeout(newRound, wait);
         }
 
         function onIncorrect() {
@@ -423,7 +487,7 @@
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-lg font-bold text-rose-500 my-3";
-            feedback.innerText = "Not quite — check the finger number!";
+            feedback.innerText = currentStage === 1 ? "Not quite — check the finger number!" : currentStage === 2 ? "Not quite — think about which finger sits on which key." : "Not quite — count the fingers between them.";
 
             playFailBuzz();
             document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
@@ -438,10 +502,6 @@
 
             if (lives <= 0) {
                 setTimeout(triggerGameOver, 1000);
-            } else {
-                sequenceIndex = 0;
-                highlightFinger(sequence[0]);
-                updateQuestionText();
             }
         }
 
@@ -528,6 +588,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             setStage(1);
+        });
+
+        // set to the video's address once it is published (the release job does this), and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Thumb on C'; document.getElementById('game-card').appendChild(a); }
         });
     </script>
 </body>
