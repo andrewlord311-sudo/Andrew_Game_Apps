@@ -1,40 +1,41 @@
 {
- "_help": "One entry per game waiting for its video to go public. videoId null = not uploaded yet (fill it in when the upload is scheduled). The release job (channel/release_games.py, run every 15 minutes by .github/workflows/release-games.yml) checks YouTube; when the video is public it sets VIDEO_URL in the game file and adds the game to PUBLISHED in music/arcade-core.js, then marks the entry done.",
- "games": [
-  {
-   "game": "fill_the_bar.html",
-   "video": 10,
-   "videoId": "qfpomW09eVQ",
-   "publishAfter": "2026-11-14T08:00:00Z",
-   "done": false
-  },
-  {
-   "game": "note_ladder.html",
-   "video": 11,
-   "videoId": "MIm0v0ckAzk",
-   "publishAfter": "2026-11-18T15:00:00Z",
-   "done": false
-  },
-  {
-   "game": "step_or_skip.html",
-   "video": 12,
-   "videoId": "W7inSAtI3Ng",
-   "publishAfter": "2026-11-21T08:00:00Z",
-   "done": false
-  },
-  {
-   "game": "note_lengths.html",
-   "video": 13,
-   "videoId": null,
-   "publishAfter": "2026-11-25T15:00:00Z",
-   "done": false
-  },
-  {
-   "game": "space_face.html",
-   "video": 14,
-   "videoId": null,
-   "publishAfter": "2026-11-28T08:00:00Z",
-   "done": false
-  }
- ]
+  "_help": "One entry per game waiting for its video to go public. videoId null = not uploaded yet (fill it in when the upload is scheduled). The release job (channel/release_games.py, run every 15 minutes by .github/workflows/release-games.yml) checks YouTube; when the video is public it sets VIDEO_URL in the game file and adds the game to PUBLISHED in music/arcade-core.js, then marks the entry done.",
+  "games": [
+    {
+      "game": "fill_the_bar.html",
+      "video": 10,
+      "videoId": "qfpomW09eVQ",
+      "publishAfter": "2026-11-14T08:00:00Z",
+      "done": true,
+      "wiredAt": "2026-11-14T10:06:15Z"
+    },
+    {
+      "game": "note_ladder.html",
+      "video": 11,
+      "videoId": "MIm0v0ckAzk",
+      "publishAfter": "2026-11-18T15:00:00Z",
+      "done": false
+    },
+    {
+      "game": "step_or_skip.html",
+      "video": 12,
+      "videoId": "W7inSAtI3Ng",
+      "publishAfter": "2026-11-21T08:00:00Z",
+      "done": false
+    },
+    {
+      "game": "note_lengths.html",
+      "video": 13,
+      "videoId": null,
+      "publishAfter": "2026-11-25T15:00:00Z",
+      "done": false
+    },
+    {
+      "game": "space_face.html",
+      "video": 14,
+      "videoId": null,
+      "publishAfter": "2026-11-28T08:00:00Z",
+      "done": false
+    }
+  ]
 }

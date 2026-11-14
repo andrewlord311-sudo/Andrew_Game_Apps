@@ -7,7 +7,7 @@
         // Games that have a published video. The PUBLIC arcade (arcade.html) lists only these; the full
         // arcade (music_arcade.html, for teacher/testing devices) lists everything. Add a file name here
         // the day its video goes live.
-        const PUBLISHED = ['name_that_part.html', 'line_and_space_safari.html', 'alphabet_elevator.html', 'higher_lower_same.html', 'beat_tapper.html', 'black_key_patterns.html', 'left_right_high_low.html', 'c_hunt.html', 'octave_hunt.html'];
+        const PUBLISHED = ['name_that_part.html', 'line_and_space_safari.html', 'alphabet_elevator.html', 'higher_lower_same.html', 'beat_tapper.html', 'black_key_patterns.html', 'left_right_high_low.html', 'c_hunt.html', 'octave_hunt.html', 'fill_the_bar.html'];
 
         const GAMES = [
             {
