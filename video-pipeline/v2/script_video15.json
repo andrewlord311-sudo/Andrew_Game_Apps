@@ -66,6 +66,13 @@
       "show": "Notes played together… make harmony."
     },
     {
+      "id": "chord",
+      "who": "barnaby",
+      "text": "A group of notes played together <break time=\"0.3s\" /> has a name… <break time=\"0.5s\" /> a chord.",
+      "speed": 0.88,
+      "show": "A group of notes played together has a name… a chord."
+    },
+    {
       "id": "meet",
       "who": "barnaby",
       "text": "And this is our friend… <break time=\"0.5s\" /> Harmony! <break time=\"0.5s\" /> She loves notes that play together.",
@@ -211,11 +218,19 @@
     {
       "id": "v15one",
       "clips": [
-        "three",
+        "three"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 2.6
+    },
+    {
+      "id": "v15one2",
+      "clips": [
         "mel"
       ],
       "lead": 0.5,
-      "gap": 0.9,
+      "gap": 0,
       "tail": 2.4
     },
     {
@@ -226,6 +241,15 @@
       ],
       "lead": 0.5,
       "gap": 0.9,
+      "tail": 1.0
+    },
+    {
+      "id": "v15tog2",
+      "clips": [
+        "chord"
+      ],
+      "lead": 0.5,
+      "gap": 0,
       "tail": 2.4
     },
     {
@@ -241,21 +265,37 @@
       "id": "v15lis",
       "clips": [
         "l1",
-        "l2",
-        "hug"
+        "l2"
       ],
       "lead": 0.5,
       "gap": 0.9,
+      "tail": 1.6
+    },
+    {
+      "id": "v15lis2",
+      "clips": [
+        "hug"
+      ],
+      "lead": 0.5,
+      "gap": 0,
       "tail": 2.4
     },
     {
       "id": "v15st",
       "clips": [
-        "st1",
+        "st1"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 2.6
+    },
+    {
+      "id": "v15st2",
+      "clips": [
         "st2"
       ],
       "lead": 0.5,
-      "gap": 0.9,
+      "gap": 0,
       "tail": 2.8
     },
     {
@@ -473,11 +513,8 @@
   ],
   "beats": [],
   "gapOverride": {
-    "mel": 3.0,
     "harm": 2.2,
     "l2": 3.0,
-    "hug": 2.2,
-    "st2": 3.0,
     "a1": 4.4,
     "a2": 4.6,
     "a3": 4.4,

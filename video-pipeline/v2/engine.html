@@ -1595,7 +1595,7 @@ function harmShow(e,t,t0,pose){const q=prog(t,t0,0.5);e.style.opacity=String(cla
 // seq: [[key, from, to, colour?]]
 function k15keys(seq,t){const keys={};seq.forEach(([k,a,b,col])=>{if(t>=a&&t<b)keys[k]=[col||C15[k]||'#f59e0b',1]});return keys}
 function head15(r,col,sp){const d=document.createElement('div');d.className='abs';const w=Math.round(sp*1.5),h=Math.round(sp*0.95);d.style.cssText=`width:${w}px;height:${h}px;border-radius:50%;background:${col}33;border:6px solid ${col};transform:rotate(-18deg);opacity:0`;d.dataset.w=w;d.dataset.h=h;r.appendChild(d);return d}
-function v15s(f){return {ui:V6UI,cut:true,build(r){
+function v15s(f){return {f,ui:V6UI,cut:true,build(r){
   if(f.kb!==false){v14kb(this,r,true);this.K.root.style.opacity='1'}
   this.c1=chip13(r,f.chipY??545,40);
   if(f.build)f.build.call(this,r)},
@@ -1618,7 +1618,7 @@ S.v15one=v15s({build(r){const svg=document.createElementNS(SVGNS,'svg');svg.setA
     this.cv.style.opacity=String(prog(t,wt('mel','tune')-0.1,0.5)*0.9)}});
 S.v15tog=v15s({
   keys(t){const a=T15('tog1',0.4);const k=k15keys([[7,a,a+1.6],[9,a,a+1.6],[11,a,a+1.6]],t);if(t>=a+1.6){[7,9,11].forEach(i=>{k[i]=[C15[i],0.35]})}return k},
-  update(t,L){const a=T15('tog1',0.4);if(t<CL.harm.start)showChip13(this.c1,'ALL AT THE SAME TIME','#0d9488',t,a);else showChip13(this.c1,'TOGETHER = HARMONY','#db2777',t,wt('harm','harmony')-0.1)}});
+  update(t,L){const a=T15('tog1',0.4);if(t<CL.harm.start)showChip13(this.c1,'ALL AT THE SAME TIME','#0d9488',t,a);else if(t<CL.chord.start)showChip13(this.c1,'TOGETHER = HARMONY','#db2777',t,wt('harm','harmony')-0.1);else showChip13(this.c1,'A GROUP OF NOTES = A CHORD','#7c3aed',t,wt('chord','chord')-0.15)}});
 S.v15meet={ui:V6UI,cut:true,build(r){this.h=harm15(r,640,212,300);
   this.dots=[11,9,7].map((k,i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:870px;top:${280+i*74}px;width:62px;height:62px;border-radius:50%;background:${C15[k]};border:4px solid #fff;box-shadow:0 5px 0 rgba(0,0,0,.2);opacity:0`;r.appendChild(d);return d});
   this.nm=labelChip(r,'HARMONY','#db2777',640,628,40,'6px 30px');this.nm.style.opacity='0'},
@@ -1642,6 +1642,7 @@ S.v15q3=v15s({kb:false,chipY:560,build(r){v15stave(this,r,2);this.h=harm15(r,117
     this.hd.forEach(h=>{const q=prog(t,t0,0.4);head15At(h,this.xm,h.y,q);h.e.style.scale=String(lerp(0.5,1,easeBack(q)))});this.led.style.opacity='0';
     if(t>=ta)showChip13(this.c1,'TOGETHER = STACKED','#16a34a',t,ta);else this.c1.style.opacity='0';
     harmShow(this.h,t,CL.qwell.start-0.1,'cheer')}});
+S.v15one2=v15s(S.v15one.f);S.v15tog2=v15s(S.v15tog.f);S.v15lis2=v15s(S.v15lis.f);S.v15st2=v15s(S.v15st.f);
 S.outro15=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false},
   build(r){S.outro.build.call(this,r);this.h=harm15(r,640,441,170)},
   update(t,L,c){S.outro.update.call(this,t,L,c);harmShow(this.h,t,CL.game1.start,'wave')}});
