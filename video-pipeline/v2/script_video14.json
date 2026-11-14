@@ -1,0 +1,412 @@
+{
+ "title": "F on the staves",
+ "titleAt": "F on the stave",
+ "nugget": 14,
+ "game": "Space Face",
+ "gameFile": "space_face.html",
+ "todayLead": "Today we are going to find",
+ "shared": [
+  {
+   "id": "opener",
+   "who": "melody",
+   "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+  },
+  {
+   "id": "game1",
+   "who": "melody",
+   "text": "Now it's your turn!"
+  },
+  {
+   "id": "bye",
+   "who": "melody",
+   "text": "See you for the next Nugget!"
+  }
+ ],
+ "clips": [
+  {
+   "id": "today",
+   "who": "barnaby",
+   "text": "Today <break time=\"0.3s\" /> we are going to <break time=\"0.3s\" /> find F on the stave.",
+   "speed": 0.88,
+   "show": "Today we are going to find F on the stave."
+  },
+  {
+   "id": "rem",
+   "who": "melody",
+   "text": "Remember F on the keyboard? <break time=\"0.5s\" /> Just left of the three black keys.",
+   "speed": 0.88,
+   "show": "Remember F on the keyboard? Just left of the three black keys."
+  },
+  {
+   "id": "treb1",
+   "who": "barnaby",
+   "text": "Now let's find it… <break time=\"0.4s\" /> on the stave. First… <break time=\"0.4s\" /> the treble stave.",
+   "speed": 0.88,
+   "show": "Now let's find it… on the stave. First… the treble stave."
+  },
+  {
+   "id": "sp4",
+   "who": "melody",
+   "text": "The treble stave has four spaces.",
+   "speed": 0.88,
+   "show": "The treble stave has four spaces."
+  },
+  {
+   "id": "trick",
+   "who": "barnaby",
+   "text": "Here is a trick to remember them… <break time=\"0.5s\" /> The four spaces spell a word.",
+   "speed": 0.88,
+   "show": "Here is a trick to remember them… The four spaces spell a word."
+  },
+  {
+   "id": "fa",
+   "who": "melody",
+   "text": "F… <break time=\"0.9s\" /> A… <break time=\"0.9s\" /> C… <break time=\"0.9s\" /> E.",
+   "speed": 0.88,
+   "show": "F… A… C… E."
+  },
+  {
+   "id": "face",
+   "who": "barnaby",
+   "text": "The spaces spell… <break time=\"0.6s\" /> FACE.",
+   "speed": 0.88,
+   "show": "The spaces spell… FACE."
+  },
+  {
+   "id": "lowf",
+   "who": "melody",
+   "text": "The lowest space is F… <break time=\"0.5s\" /> the first letter of FACE.",
+   "speed": 0.88,
+   "show": "The lowest space is F… the first letter of FACE."
+  },
+  {
+   "id": "bass1",
+   "who": "barnaby",
+   "text": "Now the bass stave.",
+   "speed": 0.88,
+   "show": "Now the bass stave."
+  },
+  {
+   "id": "dots",
+   "who": "melody",
+   "text": "The base clef has two little dots… <break time=\"0.5s\" /> one above, and one below.",
+   "speed": 0.88,
+   "show": "The bass clef has two little dots… one above, and one below."
+  },
+  {
+   "id": "dotsF",
+   "who": "barnaby",
+   "text": "The line between the dots… <break time=\"0.5s\" /> is F.",
+   "speed": 0.88,
+   "show": "The line between the dots… is F."
+  },
+  {
+   "id": "two",
+   "who": "melody",
+   "text": "Two F's… <break time=\"0.5s\" /> one on each stave… <break time=\"0.5s\" /> the same note name.",
+   "speed": 0.88,
+   "show": "Two F's… one on each stave… the same note name."
+  },
+  {
+   "id": "yourturn14",
+   "who": "barnaby",
+   "text": "Your turn! <break time=\"0.4s\" /> Look and listen.",
+   "speed": 0.88,
+   "show": "Your turn! Look and listen."
+  },
+  {
+   "id": "q1ask",
+   "who": "melody",
+   "text": "Which space is F… <break time=\"0.4s\" /> on the treble stave?",
+   "speed": 0.88,
+   "show": "Which space is F… on the treble stave?"
+  },
+  {
+   "id": "a1",
+   "who": "barnaby",
+   "text": "This one.",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "Which space is F… on the treble stave?"
+  },
+  {
+   "id": "q2ask",
+   "who": "barnaby",
+   "text": "What word do the four spaces spell?",
+   "speed": 0.88,
+   "show": "What word do the four spaces spell?"
+  },
+  {
+   "id": "a2",
+   "who": "melody",
+   "text": "FACE.",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "What word do the four spaces spell?"
+  },
+  {
+   "id": "q3ask",
+   "who": "melody",
+   "text": "Is this note… <break time=\"0.4s\" /> F?",
+   "speed": 0.88,
+   "show": "Is this note… F?"
+  },
+  {
+   "id": "a3",
+   "who": "barnaby",
+   "text": "Yes!",
+   "quiet": true,
+   "speed": 0.85,
+   "prev": "Is this note… F?"
+  },
+  {
+   "id": "qwell",
+   "who": "barnaby",
+   "text": "You've got it!",
+   "src": "../video2/qwell"
+  },
+  {
+   "id": "game14",
+   "who": "barnaby",
+   "text": "Play Space Face <break time=\"0.3s\" /> and learn the spaces!",
+   "speed": 0.88,
+   "show": "Play Space Face and learn the spaces!"
+  },
+  {
+   "id": "sub14",
+   "who": "melody",
+   "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+   "speed": 0.88,
+   "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday."
+  }
+ ],
+ "scenes": [
+  {
+   "id": "opener",
+   "clips": [
+    "opener"
+   ],
+   "lead": 0.8,
+   "gap": 0,
+   "tail": 0.8
+  },
+  {
+   "id": "today",
+   "clips": [
+    "today"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.8
+  },
+  {
+   "id": "v14rem",
+   "clips": [
+    "rem"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.4
+  },
+  {
+   "id": "v14t1",
+   "clips": [
+    "treb1",
+    "sp4"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.8
+  },
+  {
+   "id": "v14t2",
+   "clips": [
+    "trick",
+    "fa"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.4
+  },
+  {
+   "id": "v14t3",
+   "clips": [
+    "face",
+    "lowf"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 3.0
+  },
+  {
+   "id": "v14b1",
+   "clips": [
+    "bass1",
+    "dots"
+   ],
+   "lead": 0.5,
+   "gap": 0.9,
+   "tail": 2.8
+  },
+  {
+   "id": "v14b2",
+   "clips": [
+    "dotsF"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.2
+  },
+  {
+   "id": "v14two",
+   "clips": [
+    "two"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 3.6
+  },
+  {
+   "id": "v14q1",
+   "clips": [
+    "yourturn14",
+    "q1ask",
+    "a1"
+   ],
+   "lead": 0.5,
+   "gap": 0.7,
+   "tail": 1.6
+  },
+  {
+   "id": "v14q2",
+   "clips": [
+    "q2ask",
+    "a2"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.6
+  },
+  {
+   "id": "v14q3",
+   "clips": [
+    "q3ask",
+    "a3",
+    "qwell"
+   ],
+   "lead": 0.5,
+   "gap": 0,
+   "tail": 1.4
+  },
+  {
+   "id": "outro14",
+   "clips": [
+    "game1",
+    "game14"
+   ],
+   "lead": 0.6,
+   "gap": 0.5,
+   "tail": 1.6
+  },
+  {
+   "id": "outro14b",
+   "clips": [
+    "sub14",
+    "bye"
+   ],
+   "lead": 0.5,
+   "gap": 0.6,
+   "tail": 3.4
+  }
+ ],
+ "events": [
+  {
+   "kind": "run",
+   "notes": [
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "rem",
+   "off": 0.6,
+   "vol": 0.45,
+   "dur": 1.2,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "lowf",
+   "off": 0.4,
+   "vol": 0.45,
+   "dur": 1.2,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f3"
+   ],
+   "step": 1.0,
+   "clip": "dotsF",
+   "off": 0.5,
+   "vol": 0.45,
+   "dur": 1.2,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f3"
+   ],
+   "step": 1.0,
+   "clip": "two",
+   "off": 0.4,
+   "vol": 0.45,
+   "dur": 1.0,
+   "from": "end"
+  },
+  {
+   "kind": "run",
+   "notes": [
+    "f4"
+   ],
+   "step": 1.0,
+   "clip": "two",
+   "off": 1.6,
+   "vol": 0.45,
+   "dur": 1.0,
+   "from": "end"
+  },
+  {
+   "kind": "tick",
+   "clip": "a1",
+   "off": -0.2
+  },
+  {
+   "kind": "pop",
+   "clip": "a2",
+   "off": -0.2
+  },
+  {
+   "kind": "tick",
+   "clip": "a3",
+   "off": -0.2
+  },
+  {
+   "kind": "sparkle",
+   "clip": "qwell",
+   "off": -0.1
+  }
+ ],
+ "beats": [],
+ "gapOverride": {
+  "q1ask": 0.8,
+  "a1": 4.6,
+  "a2": 4.4,
+  "a3": 4.4,
+  "qwell": 1.2
+ }
+}

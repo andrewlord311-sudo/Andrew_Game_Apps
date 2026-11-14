@@ -1500,6 +1500,89 @@ S.v13q3=v13q({bar:{notes:[{k:'min',b:0},{k:'cro',b:2},{k:'cro',b:3}],slots:false
 S.outro13=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro13b=Object.assign({},S.outro12b);
 
+// ======================================================================== VIDEO 14: F on the staves (and the word FACE)
+// Treble spaces from the bottom: F A C E (the lowest space is F4, the F above Middle C). Bass F3 is the line between the clef's two dots.
+const SPC14=['F','A','C','E'],SCOL14=['#0d9488','#7c3aed','#db2777','#f59e0b'];
+const V14={sc:0.5,ty:220},k14x=k=>640+V14.sc*(WKX(k)+(KB.w-3)/2-640),k14top=235+V14.ty;
+function v14kb(self,r,big){const K=kb8Build(self,r);K.root.style.transformOrigin='640px 235px';if(!big){K.root.style.scale=String(V14.sc);K.root.style.translate=`0 ${V14.ty}px`}self.K=K;self.bigKb=!!big;return K}
+function v14links(self,r){const svg=document.createElementNS(SVGNS,'svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(svg);
+  self.lk=[0,1].map(()=>{const l=el13('line',{stroke:'#f59e0b','stroke-width':4,'stroke-dasharray':'2 9','stroke-linecap':'round'},svg);l.style.opacity=0;return l})}
+function v14link(self,i,key,head,t,t0){const l=self.lk[i],q=prog(t,t0,0.5),x1=k14x(key),y1=k14top-4,x2=head.x,y2=head.y+16;
+  l.setAttribute('x1',x1);l.setAttribute('y1',y1);l.setAttribute('x2',lerp(x1,x2,easeOut(q)));l.setAttribute('y2',lerp(y1,y2,easeOut(q)));l.style.opacity=String(clamp(q*2))}
+function v14note(h,t,t0,col){const q=prog(t,t0,0.4);h.sn.style.opacity=String(clamp(q*2.5));h.sn.style.transformBox='fill-box';h.sn.style.transformOrigin='50% 50%';h.sn.style.transform=`translateY(${(1-easeBack(q))*-28}px)`;h.color(col||'#241f3d')}
+function v14kpaint(K,keys,t){kbPaint(K,{whiteBg:'#f8fafc'});K.blacks.forEach(b=>{b.style.translate='0 0'});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});
+  Object.keys(keys||{}).forEach(k=>{const [col,a]=keys[k];K.whites[k].style.background=mixHex('#f8fafc',col,a);K.whites[k].style.boxShadow=`0 0 0 ${2+3*a}px ${col},0 7px 0 rgba(0,0,0,.14)`})}
+function v14stv(r,clef,notes,o={}){const st=makeStave(r,Object.assign({clef,notes,scale:3.2,w:260,h:170,cx:640,cy:215},o));st.barlines.forEach(b=>{b.style.opacity=1});st.heads.forEach(h=>h.ledger.forEach(l=>{l.style.strokeWidth='3.6'}));return st}
+function v14sc(f){return {ui:V6UI,build(r){
+    const mid=f.mid; if(f.kb!==false)v14kb(this,r,f.bigKb);
+    this.tr=v14stv(r,'treble',['f/4'],f.tr||{});this.bs=v14stv(r,'bass',['f/3'],f.bs||{});
+    this.sp=[0,1,2,3].map(i=>band(r,this.tr.x0+(this.tr.x1-this.tr.x0)*0.16,this.tr.x1,this.tr.lineY[3-i]+3,this.tr.lineY[4-i]-3,SCOL14[i]));this.sl=[0,1,2,3].map(i=>{const e=document.createElement('div');e.className='big abs';const yc=(this.tr.lineY[3-i]+this.tr.lineY[4-i])/2,sz=Math.round(this.tr.sp*0.9),xc=this.tr.x0+(this.tr.x1-this.tr.x0)*(0.38+0.14*i);e.style.cssText=`left:${xc-sz/2}px;top:${yc-sz/2}px;width:${sz}px;height:${sz}px;border-radius:50%;background:${SCOL14[i]};color:#fff;font-size:${Math.round(sz*0.68)}px;line-height:${sz+2}px;box-shadow:0 3px 0 rgba(0,0,0,.2);border:3px solid #fff;opacity:0`;e.textContent=SPC14[i];r.appendChild(e);return e});
+    const sy=this.bs.lineY[1],dx=this.bs.clefX+(f.dotDx??this.bs.sp*1.6),sp=this.bs.sp;
+    this.dots=[-1,1].map(s=>{const d=document.createElement('div');d.className='abs';const dz=Math.round(sp*0.5);d.style.cssText=`left:${dx-dz/2}px;top:${sy+s*sp*0.5-dz/2}px;width:${dz}px;height:${dz}px;border-radius:50%;border:5px solid #f59e0b;opacity:0`;r.appendChild(d);return d});
+    this.fl=band(r,this.bs.x0,this.bs.x1,sy-7,sy+7,'rgba(245,158,11,.55)');
+    this.word=document.createElement('div');this.word.className='big abs';this.word.style.cssText='left:0;right:0;top:298px;font-size:78px;letter-spacing:12px;opacity:0';this.word.innerHTML=SPC14.map((l,i)=>`<span style="color:${SCOL14[i]};opacity:0;display:inline-block">${l}</span>`).join('');r.appendChild(this.word);this.wl=[...this.word.querySelectorAll('span')];
+    this.face=document.createElement('div');this.face.className='abs';this.face.style.cssText='left:840px;top:300px;font-size:76px;opacity:0';this.face.textContent='😀';r.appendChild(this.face);
+    this.qm=document.createElement('div');this.qm.className='big abs';this.qm.style.cssText='left:0;right:0;top:292px;font-size:84px;color:var(--orange);opacity:0';this.qm.textContent='?';r.appendChild(this.qm);
+    this.c1=chip13(r,392,32);this.c2=chip13(r,448,28);v14links(this,r);
+    this.rb=chip(r,'⟲ Remember?','var(--melody-deep)',200,150);this.rb.style.fontSize='26px';
+    this.conf=Array.from({length:22},(_,i)=>{const e=document.createElement('div');e.className='fl';e.textContent=['★','♪','♫','✦'][i%4];e.style.color=['#f59e0b','#ec4899','#2dd4bf','#6366f1'][i%4];r.appendChild(e);return {e,x:90+((i*173)%1100),ph:(i*0.31)%1,s:0.7+((i*7)%5)/6}});
+    if(f.build)f.build.call(this,r)},
+  update(t,L,c){const p=clamp(prog(L,0.2,0.5)*2);
+    if(this.K){const k=this.K;k.root.style.opacity=String(p*(f.kbOp??1));k.root.style.translate=this.bigKb?`0 ${(1-easeBack(prog(L,0.2,0.5)))*40}px`:`0 ${V14.ty}px`}
+    this.tr.box.style.opacity=String(p*0);this.bs.box.style.opacity=String(p*0);this.sp.forEach(b=>b.style.opacity=0);this.sl.forEach(e=>e.style.opacity=0);this.dots.forEach(d=>d.style.opacity=0);this.fl.style.opacity=0;this.word.style.opacity=0;this.wl.forEach(x=>x.style.opacity=0);this.face.style.opacity=0;this.qm.style.opacity=0;this.lk.forEach(l=>l.style.opacity=0);this.rb.style.opacity=0;this.c1.style.opacity=this.c2.style.opacity=0;this.conf.forEach(q=>q.e.style.opacity=0);
+    this.tr.heads.forEach(h=>{h.sn.style.opacity=0});this.bs.heads.forEach(h=>{h.sn.style.opacity=0});
+    const o=f.state.call(this,t,L,c,p)||{};
+    if(this.K)v14kpaint(this.K,o.keys,t);if(o.cap)c.caption(o.cap[0],o.cap[1],o.cap[2])}}}
+const SHOWTR=(self,p)=>{self.tr.box.style.opacity=String(p)},SHOWBS=(self,p)=>{self.bs.box.style.opacity=String(p)};
+// 1. Remember F on the keyboard? Just left of the three black keys.
+S.v14rem=v14sc({bigKb:true,state(t,L,c,p){pop(this.rb,t,L+0.4,0.4);const tg=wt('rem','three')-0.1,tf=wt('rem','left')-0.1;const keys={};
+  if(t>=tg){[2,3,4].forEach(k=>{const b=this.K.blacks[k];b.style.background='#14b8a6';b.style.boxShadow='0 0 0 4px #fff,0 0 22px 6px #14b8a6'})}
+  if(t>=tf){keys[3]=['#f59e0b',0.6];keys[10]=['#f59e0b',0.35]}
+  cfPaint(this.K,t,t>=tf?{3:{b:tf,a:1e9,p:tf,keep:true}}:{});
+  return {keys}},kbOp:1});
+// 2. Now the treble stave. The treble stave has four spaces.
+S.v14t1=v14sc({state(t,L,c,p){SHOWTR(this,p);const ts=wt('sp4','four')-0.1;this.sp.forEach((b,i)=>{const q=prog(t,ts+0.3+i*0.35,0.4);b.style.opacity=String(clamp(q*2)*0.4);b.style.transform=`scaleX(${easeOut(q)})`});return {}}});
+// 3. The four spaces spell a word. F... A... C... E.
+S.v14t2=v14sc({state(t,L,c,p){SHOWTR(this,p);this.sp.forEach(b=>{b.style.opacity='0.4';b.style.transform='scaleX(1)'});
+  const tw=wt('trick','word')-0.1;const q=prog(t,tw,0.4);this.qm.style.opacity=String(clamp(q*2)*(t<CL.fa.start?1:0));this.qm.style.scale=String(1+0.08*Math.sin(t*7));
+  const ws=[0,1,2,3].map(i=>wt('fa',SPC14[i].toLowerCase(),0)-0.12);
+  // the word is F A C E: take each letter from the line's spoken times (single letters: use even spacing from the clip start as a fallback)
+  const t0=CL.fa.start+0.3;this.sl.forEach((e,i)=>{const T=t0+i*1.3;pop(e,t,T,0.4);this.sp[i].style.opacity=String(t>=T?0.65:0.4)});
+  this.word.style.opacity=1;this.wl.forEach((x,i)=>{const T=t0+i*1.3,q=prog(t,T,0.35);x.style.opacity=String(clamp(q*2));x.style.transform=`scale(${lerp(0.5,1,easeBack(q))})`});
+  return {}}});
+// 4. The spaces spell FACE. The lowest space is F, the first letter of FACE.
+S.v14t3=v14sc({state(t,L,c,p){SHOWTR(this,p);this.sp.forEach((b,i)=>{b.style.opacity=String(i===0&&t>=wt('lowf','lowest')-0.1?0.75:0.4);b.style.transform='scaleX(1)'});this.sl.forEach(e=>{e.style.opacity=1});
+  this.word.style.opacity=1;this.wl.forEach(x=>{x.style.opacity=1});pop(this.face,t,wt('face','face')-0.1,0.5);
+  const tl=wt('lowf','lowest')-0.1,tn=CL.lowf.end+0.2;v14note(this.tr.heads[0],t,tn,t>=tn?SCOL14[0]:null);
+  v14link(this,0,10,this.tr.heads[0],t,tn+0.6);const keys={};if(t>=tn)keys[10]=['#f59e0b',0.55];
+  showChip13(this.c1,'THE LOWEST SPACE IS F',SCOL14[0],t,tl);return {keys}}});
+// 5. Now the bass stave. The bass clef has two little dots, one above and one below.
+S.v14b1=v14sc({state(t,L,c,p){SHOWBS(this,p);const td=wt('dots','dots')-0.1;this.dots.forEach((d,i)=>{const q=prog(t,td+i*0.45,0.4);d.style.opacity=String(clamp(q*2));d.style.transform=`scale(${lerp(0.4,1,easeBack(q))})`});
+  showChip13(this.c1,'THE BASS CLEF HAS TWO DOTS','#6366f1',t,td);return {}}});
+// 6. The line between the dots is F.
+S.v14b2=v14sc({state(t,L,c,p){SHOWBS(this,p);this.dots.forEach(d=>{d.style.opacity=1});const tl=wt('dotsF','line')-0.1,tn=CL.dotsF.end+0.2;
+  this.fl.style.opacity=String(clamp(prog(t,tl,0.4)*2)*0.9);v14note(this.bs.heads[0],t,tn,t>=tn?SCOL14[0]:null);v14link(this,0,3,this.bs.heads[0],t,tn+0.6);
+  const keys={};if(t>=tn)keys[3]=['#f59e0b',0.55];showChip13(this.c1,'THE LINE BETWEEN THE DOTS IS F',SCOL14[0],t,tl);return {keys}}});
+// 7. Two F's, one on each stave, the same note name.
+S.v14two=v14sc({kb:true,tr:{scale:1.5,cy:170},bs:{scale:1.5,cy:315},dotDx:36,state(t,L,c,p){SHOWTR(this,p);SHOWBS(this,p);const tw=wt('two','one')-0.1;
+  [this.tr,this.bs].forEach((st,i)=>v14note(st.heads[0],t,L+0.5+i*0.3,SCOL14[0]));
+  v14link(this,0,10,this.tr.heads[0],t,L+1.2);v14link(this,1,3,this.bs.heads[0],t,L+1.5);
+  const keys={3:['#f59e0b',0.55],10:['#f59e0b',0.55]};pop(this.c1,t,tw,0.4);showChip13(this.c1,"TWO F'S, ONE NAME",SCOL14[0],t,tw);
+  return {keys}}});
+// quizzes
+S.v14q1=v14sc({kb:false,state(t,L,c,p){SHOWTR(this,p);const ta=CL.a1.start-0.6,tk=CL.q1ask.end+0.3;this.sp.forEach((b,i)=>{const q=prog(t,CL.q1ask.start+0.3+i*0.3,0.4);b.style.opacity=String(clamp(q*2)*(t>=ta?(i===0?0.8:0.15):0.4));b.style.transform=`scaleX(${easeOut(q)})`});
+  const th=t>=tk&&t<ta;this.qm.style.opacity=String(th?clamp(prog(t,tk,0.3)*2):0);this.qm.style.scale=String(1+0.08*Math.sin(t*7));
+  if(t>=ta){pop(this.sl[0],t,ta,0.4);v14note(this.tr.heads[0],t,ta,SCOL14[0]);return {cap:['THE LOWEST SPACE: F ✓',SCOL14[0],ta]}}return {}}});
+S.v14q2=v14sc({kb:false,state(t,L,c,p){SHOWTR(this,p);const ta=CL.a2.start-0.6,tk=CL.q2ask.end+0.3;this.sp.forEach((b,i)=>{b.style.opacity='0.4';b.style.transform='scaleX(1)'});
+  const th=t>=tk&&t<ta;this.qm.style.opacity=String(th?clamp(prog(t,tk,0.3)*2):0);this.qm.style.scale=String(1+0.08*Math.sin(t*7));
+  if(t>=ta){this.word.style.opacity=1;this.wl.forEach((x,i)=>{const q=prog(t,ta+i*0.3,0.3);x.style.opacity=String(clamp(q*2));x.style.transform=`scale(${lerp(0.5,1,easeBack(q))})`});this.sl.forEach((e,i)=>pop(e,t,ta+i*0.3,0.35));pop(this.face,t,ta+1.3,0.5);return {cap:['FACE ✓',SCOL14[2],ta]}}return {}}});
+S.v14q3=v14sc({kb:false,state(t,L,c,p){SHOWBS(this,p);this.dots.forEach(d=>{d.style.opacity=0.6});const ta=CL.a3.start-0.6,tk=CL.q3ask.end+0.3;v14note(this.bs.heads[0],t,CL.q3ask.start+0.3,null);
+  const th=t>=tk&&t<ta;this.qm.style.opacity=String(th?clamp(prog(t,tk,0.3)*2):0);this.qm.style.scale=String(1+0.08*Math.sin(t*7));
+  this.confAt=CL.qwell.start;this.conf.forEach(q=>{const k=prog(t,this.confAt+q.ph*0.3,1.7);q.e.style.opacity=k>0&&k<1?String(1-k*k):'0';q.e.style.left=q.x+'px';q.e.style.top=(720-k*760*q.s)+'px';q.e.style.transform=`rotate(${k*360*(q.ph>0.5?1:-1)}deg)`});
+  if(t>=ta){this.fl.style.opacity=0.9;v14note(this.bs.heads[0],t,CL.q3ask.start+0.3,SCOL14[0]);return {cap:['YES · F ✓',SCOL14[0],ta]}}return {}}});
+S.outro14=Object.assign({},S.outro,{ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro14b=Object.assign({},S.outro12b);
+
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
 function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}
