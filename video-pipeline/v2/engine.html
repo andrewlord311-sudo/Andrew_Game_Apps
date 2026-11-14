@@ -1728,6 +1728,88 @@ S.v16q3=Object.assign(v16q({bar:{notes:[{k:'cro',b:0},{k:'qv',b:1},{k:'cro',b:2}
 S.outro16=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro16b=Object.assign({},S.outro12b,{cut:true});
 
+
+// ======================================================================== VIDEO 17: thumb on C (right hand, five-finger position)
+// Right hand only. Fingers 1 to 5 sit on the white keys C D E F G (keys 7 to 11 of the 15-key keyboard; 7 is Middle C).
+const N17=[['C','#7c3aed',7],['D','#6366f1',8],['E','#db2777',9],['F','#f59e0b',10],['G','#0d9488',11]],KX17=i=>WKX(7+i)+(KB.w-3)/2;
+const FTIP17=[342,288,266,292,330],FBOT17=440,FW17=52;
+function hand17(r){const svg=document.createElementNS(SVGNS,'svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible;opacity:0';r.appendChild(svg);
+  const skin='#fbd3b0',skinD='#e9a979',ink='#241f3d';
+  const wrap=el13('g',{},svg);
+  const palm=el13('rect',{x:KX17(0)-36,y:FBOT17-30,width:KX17(4)-KX17(0)+72,height:96,rx:44,fill:skin,stroke:ink,'stroke-width':4},wrap);
+  const fg=[0,1,2,3,4].map(i=>{const g=el13('g',{},wrap);const x=KX17(i),y=FTIP17[i];
+    el13('rect',{x:x-FW17/2,y,width:FW17,height:FBOT17-y+10,rx:FW17/2,fill:skin,stroke:ink,'stroke-width':4},g);
+    el13('ellipse',{cx:x,cy:y+22,rx:15,ry:11,fill:'#fff','fill-opacity':0.55},g);
+    const bd=el13('circle',{cx:x,cy:y+36,r:19,fill:N17[i][1],stroke:'#fff','stroke-width':3},g);const tx=el13('text',{x,y:y+44,'text-anchor':'middle','font-family':'Fredoka One, sans-serif','font-size':24,fill:'#fff'},g);tx.textContent=i+1;
+    bd.style.opacity=0;tx.style.opacity=0;g.style.transformBox='fill-box';return {g,bd,tx,x,y}});
+  // draw the palm on top of the finger roots
+  wrap.appendChild(palm);
+  return {svg,wrap,palm,fg}}
+function hand17show(H,op,drop){H.svg.style.opacity=String(op);H.wrap.style.transform=`translateY(${drop}px)`}
+function hand17badge(H,i,q){const f=H.fg[i];f.bd.style.opacity=String(clamp(q*2));f.tx.style.opacity=String(clamp(q*2));f.bd.style.transformBox='fill-box';f.bd.style.transformOrigin='50% 50%';f.bd.style.transform=`scale(${lerp(0.4,1,easeBack(q))})`}
+function press17(H,i,a){H.fg[i].g.style.transform=`translateY(${a>=0&&a<0.5?14*Math.sin(a/0.5*Math.PI):0}px)`}
+function arc17(svg,i,j,col){const x1=KX17(i),x2=KX17(j),y=290;const p=el13('path',{d:`M${x1},${FTIP17[i]-8} Q${(x1+x2)/2},${y-90} ${x2},${FTIP17[j]-8}`,fill:'none',stroke:col,'stroke-width':8,'stroke-linecap':'round','stroke-dasharray':'2 14'},svg);p.style.opacity=0;return p}
+function v17s(f){return {ui:V6UI,cut:true,build(r){
+  v14kb(this,r,true);this.K.root.style.opacity='1';
+  this.H=hand17(r);this.c1=chip13(r,f.chipY??585,38);
+  this.rc=chip(r,'RIGHT HAND','var(--melody-deep)',1085,148);this.rc.style.fontSize='24px';
+  this.ls=N17.map(([L,col],i)=>{const e=document.createElement('div');e.className='big abs';e.style.cssText=`left:${KX17(i)-30}px;top:518px;width:60px;height:60px;border-radius:50%;background:${col};color:#fff;font-size:40px;line-height:62px;box-shadow:0 5px 0 rgba(0,0,0,.2);border:4px solid #fff;opacity:0`;e.textContent=L;r.appendChild(e);return e});
+  this.arcs=[];
+  if(f.build)f.build.call(this,r)},
+ update(t,L,c){this.rc.style.opacity='1';const keys=f.keys?f.keys.call(this,t,L,c):{};v14kpaint(this.K,keys,t);
+  this.H.fg.forEach((x,i)=>{x.g.style.transform='';});
+  f.update.call(this,t,L,c)}}}
+// sound: key colour while pressed
+const kk17=(i,col)=>({[7+i]:[col||N17[i][1],1]});
+S.v17only=v17s({chipY:560,
+ update(t,L,c){const q=prog(t,CL.only.start+0.2,0.6);hand17show(this.H,clamp(q*1.4),(1-easeOut(q))*-40);this.H.fg.forEach(x=>{x.bd.style.opacity=0;x.tx.style.opacity=0});
+  showChip13(this.c1,'RIGHT HAND ONLY','#0d9488',t,CL.only.start+0.3);
+  if(t>=CL.showr.start-0.1){const b=0.5+0.5*Math.sin(t*5);this.H.palm.setAttribute('stroke-width',String(4+3*b))}else this.H.palm.setAttribute('stroke-width','4')}});
+S.v17mid=v17s({keys(t){return t>=CL.midnamed.start+0.2?{7:['#7c3aed',1]}:{}},
+ update(t,L,c){hand17show(this.H,0,0);showChip13(this.c1,'MIDDLE C','#7c3aed',t,wt('midnamed','middle',1)-0.2);
+  const e=this.ls[0];pop(e,t,CL.midnamed.start+0.2,0.4)}});
+S.v17thumb=v17s({keys(t){return t>=CL.thumb.end-0.6?{7:['#7c3aed',1]}:{}},
+ update(t,L,c){const q=prog(t,CL.thumb.start+0.1,0.9);hand17show(this.H,clamp(q*2),(1-easeOut(q))*-70);this.ls[0].style.opacity=1;
+  const bq=prog(t,CL.thumb.end-0.4,0.4);hand17badge(this.H,0,bq);press17(this.H,0,t-(CL.thumb.end-0.6));showChip13(this.c1,'THUMB ON MIDDLE C','#7c3aed',t,CL.thumb.end-0.5)}});
+S.v17nums=v17s({keys(t){const k={};[...Array(5)].forEach((_,i)=>{const T=CL[i<4?'c'+(i+1):'c5'].start;if(t>=T&&t<T+0.5)Object.assign(k,kk17(i))});return k},
+ update(t,L,c){hand17show(this.H,1,0);N17.forEach((_,i)=>{const id='c'+(i+1),T=CL[id].start-0.05;hand17badge(this.H,i,prog(t,T,0.35));press17(this.H,i,t-T)});this.ls[0].style.opacity=1;
+  showChip13(this.c1,'THUMB = 1 · LITTLE FINGER = 5','#0f766e',t,CL.num.start+0.3)}});
+S.v17notes=v17s({keys(t){const k={};N17.forEach(([l],i)=>{const T=CL['l'+l].start-0.05;if(t>=T&&t<T+0.9)Object.assign(k,kk17(i))});return k},
+ update(t,L,c){hand17show(this.H,1,0);N17.forEach(([l],i)=>{const T=CL['l'+l].start-0.05;hand17badge(this.H,i,1);press17(this.H,i,t-T);const e=this.ls[i];if(i===0)e.style.opacity=1;else pop(e,t,T,0.4)});
+  showChip13(this.c1,'ONE FINGER, ONE NOTE','#0f766e',t,CL.notes.start+0.3)}});
+S.v17e=v17s({keys(t){return t>=wt('e3','three')-0.2?kk17(2):{}},
+ update(t,L,c){hand17show(this.H,1,0);N17.forEach((_,i)=>{hand17badge(this.H,i,1);this.ls[i].style.opacity=1});
+  const T=wt('e3','three')-0.2;press17(this.H,2,t-T-0.2);showChip13(this.c1,'THUMB ON C: FINGER 3 = E','#db2777',t,T)}});
+S.v17step=v17s({build(r){this.A=[[0,1],[1,2],[2,3]].map(([i,j])=>arc17(this.H.svg,i,j,'#0d9488'))},
+ keys(t){const b=CL.stepis.end+0.5,k={};[[0,1],[1,2],[2,3]].forEach(([i,j],n)=>{const T=b+n*1.7;if(t>=T&&t<T+0.6)Object.assign(k,kk17(i));else if(t>=T+0.6&&t<T+1.2)Object.assign(k,kk17(j))});return k},
+ update(t,L,c){hand17show(this.H,1,0);N17.forEach((_,i)=>{hand17badge(this.H,i,1);this.ls[i].style.opacity=1});const b=CL.stepis.end+0.5;
+  this.A.forEach((a,n)=>{const T=b+n*1.7;a.style.opacity=String(clamp(prog(t,T,0.3)*2)*(t<T+1.6?1:0.25))});
+  [[0,1],[1,2],[2,3]].forEach(([i,j],n)=>{const T=b+n*1.7;press17(this.H,i,t-T);press17(this.H,j,t-T-0.6)});
+  showChip13(this.c1,'NEXT FINGER = A STEP','#0d9488',t,wt('stepis','step',0)-0.1)}});
+S.v17skip=v17s({build(r){this.A=arc17(this.H.svg,0,2,'#f59e0b');this.xm=el13('text',{x:KX17(1),y:FTIP17[1]-24,'text-anchor':'middle','font-family':'Fredoka One, sans-serif','font-size':46,fill:'#dc2626'},this.H.svg);this.xm.textContent='✕';this.xm.style.opacity=0},
+ keys(t){const b=CL.skipis.end+0.5,k={};if(t>=b&&t<b+0.6)Object.assign(k,kk17(0));else if(t>=b+0.6&&t<b+1.4)Object.assign(k,kk17(2));return k},
+ update(t,L,c){hand17show(this.H,1,0);N17.forEach((_,i)=>{hand17badge(this.H,i,1);this.ls[i].style.opacity=1});const b=CL.skipis.end+0.5,T=CL.miss.start+0.3;
+  this.xm.style.opacity=String(clamp(prog(t,T,0.4)*2));this.H.fg[1].g.style.opacity=t>=T?0.45:1;this.A.style.opacity=String(clamp(prog(t,b,0.3)*2));
+  press17(this.H,0,t-b);press17(this.H,2,t-b-0.6);showChip13(this.c1,'MISS A FINGER = A SKIP','#f59e0b',t,CL.miss.start+0.2)}});
+S.v17stave=v17s({kb:false,chipY:560,build(r){this.K&&0;this.st=v14stv(r,'treble',[],{scale:2.9,cy:360});const st=this.st,sp=st.sp;
+  this.hd=N17.map(([l,col],i)=>{const y=[st.lineY[4]+sp,st.lineY[4]+sp/2,st.lineY[4],st.lineY[4]-sp/2,st.lineY[3]][i];return {e:head15(r,col,sp),y,x:st.x0+(st.x1-st.x0)*(0.30+i*0.14),col}});
+  this.led=document.createElement('div');this.led.className='abs';this.led.style.cssText=`width:${Math.round(sp*2.5)}px;height:5px;background:#241f3d;border-radius:3px;opacity:0`;r.appendChild(this.led);
+  this.nums=this.hd.map((h,i)=>{const e=document.createElement('div');e.className='big abs';e.style.cssText=`left:${h.x-24}px;top:${st.lineY[4]+sp*2.2}px;width:48px;height:48px;border-radius:50%;background:${h.col};color:#fff;font-size:30px;line-height:50px;opacity:0;border:3px solid #fff`;e.textContent=i+1;r.appendChild(e);return e})},
+ update(t,L,c){this.H.svg.style.opacity=0;this.K.root.style.opacity='0';const b=CL.stave.end+0.6;
+  this.hd.forEach((h,i)=>{const T=b+i*0.9,q=prog(t,T,0.4),a=t-T;head15At(h,h.x,h.y,clamp(q*2));h.e.style.scale=String(lerp(0.5,1,easeBack(q))*(a>=0&&a<0.4?1.2:1));pop(this.nums[i],t,T+0.1,0.4)});
+  this.led.style.left=(this.hd[0].x-this.led.offsetWidth/2)+'px';this.led.style.top=(this.hd[0].y-2)+'px';this.led.style.opacity=this.hd[0].e.style.opacity;
+  showChip13(this.c1,'THE SAME FIVE NOTES: C D E F G','#7c3aed',t,CL.stave.start+0.3)}});
+S.v17play=v17s({keys(t){const k={};N17.forEach((_,i)=>{const T=CL['p'+(i+1)].start-0.05;if(t>=T&&t<T+0.5)Object.assign(k,kk17(i))});const b=CL.p5.end+0.9;[4,3,2,1,0].forEach((i,n)=>{const T=b+n*0.6;if(t>=T&&t<T+0.5)Object.assign(k,kk17(i))});return k},
+ update(t,L,c){hand17show(this.H,1,0);N17.forEach((_,i)=>{hand17badge(this.H,i,1);this.ls[i].style.opacity=1;press17(this.H,i,t-(CL['p'+(i+1)].start-0.05))});const b=CL.p5.end+0.9;[4,3,2,1,0].forEach((i,n)=>press17(this.H,i,t-(b+n*0.6)));
+  showChip13(this.c1,t<b-0.3?'UP: 1 2 3 4 5':'DOWN: 5 4 3 2 1','#0f766e',t,t<b-0.3?CL.play.start+0.3:b-0.1)}});
+function v17q(o){return v17s({chipY:585,keys:o.keys,build(r){if(o.build)o.build.call(this,r)},update(t,L,c){const ta=CL[o.ans].start-0.1,tk=CL[o.ask].end+0.3;hand17show(this.H,1,0);o.state.call(this,t,L,c,ta,tk)}})}
+S.v17q1=Object.assign(v17q({keys(t){return t>=CL.a1.start-0.1?kk17(2):{}},ask:'q1ask',ans:'a1',state(t,L,c,ta,tk){N17.forEach((_,i)=>{this.H.fg[i].bd.style.opacity=0;this.H.fg[i].tx.style.opacity=0});if(t>=ta){hand17badge(this.H,2,prog(t,ta,0.3));press17(this.H,2,t-ta);showChip13(this.c1,'FINGER 3 = E','#db2777',t,ta);pop(this.ls[2],t,ta+0.2,0.4)}}}),{cut:true});
+S.v17q2=Object.assign(v17q({keys(t){return t>=CL.a2.start-0.1?kk17(4):{}},ask:'q2ask',ans:'a2',state(t,L,c,ta,tk){N17.forEach((_,i)=>{hand17badge(this.H,i,1)});this.H.fg[4].g.style.opacity=1;if(t>=ta){press17(this.H,4,t-ta);showChip13(this.c1,'FINGER 5 = G','#0d9488',t,ta);pop(this.ls[4],t,ta+0.2,0.4)}}}),{cut:true});
+S.v17q3=Object.assign(v17q({build(r){this.A=arc17(this.H.svg,1,3,'#f59e0b')},ask:'q3ask',ans:'a3',state(t,L,c,ta,tk){N17.forEach((_,i)=>{hand17badge(this.H,i,1);this.ls[i].style.opacity=1});const t0=CL.q3ask.start+0.3;this.A.style.opacity=String(clamp(prog(t,t0,0.4)*2));this.H.fg[2].g.style.opacity=t>=t0?0.45:1;
+  if(t>=ta)showChip13(this.c1,'SKIP: FINGER 3 IS MISSED','#f59e0b',t,ta)}}),{cut:true});
+S.outro17=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro17b=Object.assign({},S.outro12b,{cut:true});
+
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
 function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}

@@ -1,0 +1,812 @@
+{
+  "title": "Thumb on C",
+  "titleAt": "thumb",
+  "nugget": 17,
+  "game": "Finger Number Fun",
+  "gameFile": "finger_numbers.html",
+  "todayLead": "Today we are going to learn about",
+  "shared": [
+    {
+      "id": "opener",
+      "who": "melody",
+      "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+    },
+    {
+      "id": "game1",
+      "who": "melody",
+      "text": "Now it's your turn!"
+    },
+    {
+      "id": "bye",
+      "who": "melody",
+      "text": "See you for the next Nugget!"
+    }
+  ],
+  "clips": [
+    {
+      "id": "today",
+      "who": "barnaby",
+      "text": "Today <break time=\"0.3s\" /> we are going to learn about <break time=\"0.3s\" /> thumb on C.",
+      "speed": 0.88,
+      "show": "Today we are going to learn about thumb on C."
+    },
+    {
+      "id": "only",
+      "who": "melody",
+      "text": "Just the right hand… <break time=\"0.5s\" /> the left hand comes later.",
+      "speed": 0.88,
+      "show": "Just the right hand… the left hand comes later."
+    },
+    {
+      "id": "showr",
+      "who": "barnaby",
+      "text": "Show me your right hand.",
+      "speed": 0.85,
+      "src": "../video7/showr"
+    },
+    {
+      "id": "midnamed",
+      "who": "melody",
+      "text": "This is the C nearest <break time=\"0.5s\" /> the middle of the piano… <break time=\"0.5s\" /> so it is called Middle C.",
+      "speed": 0.88,
+      "show": "This is the C nearest the middle of the piano… so it is called Middle C.",
+      "src": "../video11/middlenamed"
+    },
+    {
+      "id": "thumb",
+      "who": "barnaby",
+      "text": "Put your thumb… <break time=\"0.4s\" /> on Middle C.",
+      "speed": 0.88,
+      "show": "Put your thumb… on Middle C."
+    },
+    {
+      "id": "num",
+      "who": "melody",
+      "text": "Each finger has a number.",
+      "speed": 0.88,
+      "show": "Each finger has a number."
+    },
+    {
+      "id": "c1",
+      "who": "melody",
+      "text": "One.",
+      "quiet": true,
+      "src": "../video5/c1"
+    },
+    {
+      "id": "c2",
+      "who": "melody",
+      "text": "Two.",
+      "quiet": true,
+      "prev": "One.",
+      "src": "../video5/c2"
+    },
+    {
+      "id": "c3",
+      "who": "melody",
+      "text": "Three.",
+      "quiet": true,
+      "prev": "One. Two.",
+      "src": "../video5/c3"
+    },
+    {
+      "id": "c4",
+      "who": "melody",
+      "text": "Four.",
+      "quiet": true,
+      "prev": "One. Two. Three.",
+      "src": "../video5/c4"
+    },
+    {
+      "id": "c5",
+      "who": "melody",
+      "text": "Five.",
+      "src": "../video1/n5"
+    },
+    {
+      "id": "notes",
+      "who": "barnaby",
+      "text": "Each finger plays a note.",
+      "speed": 0.88,
+      "show": "Each finger plays a note."
+    },
+    {
+      "id": "lC",
+      "who": "melody",
+      "text": "C.",
+      "show": "C",
+      "prev": "B.",
+      "quiet": true,
+      "src": "../video3/lC"
+    },
+    {
+      "id": "lD",
+      "who": "melody",
+      "text": "D.",
+      "show": "D",
+      "prev": "C.",
+      "quiet": true,
+      "src": "../video3/lD"
+    },
+    {
+      "id": "lE",
+      "who": "melody",
+      "text": "E.",
+      "show": "E",
+      "prev": "D.",
+      "quiet": true,
+      "src": "../video3/lE"
+    },
+    {
+      "id": "lF",
+      "who": "melody",
+      "text": "F.",
+      "show": "F",
+      "prev": "E.",
+      "quiet": true,
+      "src": "../video3/lF"
+    },
+    {
+      "id": "lG",
+      "who": "melody",
+      "text": "G.",
+      "show": "G",
+      "prev": "F.",
+      "quiet": true,
+      "src": "../video3/lG"
+    },
+    {
+      "id": "e3",
+      "who": "melody",
+      "text": "When your thumb is on C… <break time=\"0.4s\" /> finger three plays E.",
+      "speed": 0.88,
+      "show": "When your thumb is on C… finger three plays E."
+    },
+    {
+      "id": "stepis",
+      "who": "barnaby",
+      "text": "Each time, we move to the next key… <break time=\"0.5s\" /> That is a step.",
+      "speed": 0.88,
+      "show": "Each time, we move to the next key… That is a step.",
+      "src": "../video12/stepis"
+    },
+    {
+      "id": "miss",
+      "who": "barnaby",
+      "text": "Miss out a finger…",
+      "speed": 0.88,
+      "show": "Miss out a finger…"
+    },
+    {
+      "id": "skipis",
+      "who": "barnaby",
+      "text": "That is a skip.",
+      "speed": 0.88,
+      "show": "That is a skip.",
+      "src": "../video12/skipis"
+    },
+    {
+      "id": "stave",
+      "who": "melody",
+      "text": "Here are the same five notes… <break time=\"0.4s\" /> on the stave.",
+      "speed": 0.88,
+      "show": "Here are the same five notes… on the stave."
+    },
+    {
+      "id": "play",
+      "who": "barnaby",
+      "text": "Play with me!",
+      "speed": 0.88,
+      "show": "Play with me!"
+    },
+    {
+      "id": "p1",
+      "who": "melody",
+      "text": "One.",
+      "quiet": true,
+      "src": "../video5/c1"
+    },
+    {
+      "id": "p2",
+      "who": "melody",
+      "text": "Two.",
+      "quiet": true,
+      "prev": "One.",
+      "src": "../video5/c2"
+    },
+    {
+      "id": "p3",
+      "who": "melody",
+      "text": "Three.",
+      "quiet": true,
+      "prev": "One. Two.",
+      "src": "../video5/c3"
+    },
+    {
+      "id": "p4",
+      "who": "melody",
+      "text": "Four.",
+      "quiet": true,
+      "prev": "One. Two. Three.",
+      "src": "../video5/c4"
+    },
+    {
+      "id": "p5",
+      "who": "melody",
+      "text": "Five.",
+      "src": "../video1/n5"
+    },
+    {
+      "id": "yourturn17",
+      "who": "barnaby",
+      "text": "Your turn! <break time=\"0.4s\" /> Look and listen.",
+      "speed": 0.88,
+      "show": "Your turn! Look and listen.",
+      "src": "../video14/yourturn14"
+    },
+    {
+      "id": "q1ask",
+      "who": "melody",
+      "text": "Which finger plays E?",
+      "speed": 0.88,
+      "show": "Which finger plays E?"
+    },
+    {
+      "id": "a1",
+      "who": "melody",
+      "text": "Three.",
+      "quiet": true,
+      "prev": "One. Two.",
+      "src": "../video5/c3"
+    },
+    {
+      "id": "q2ask",
+      "who": "barnaby",
+      "text": "Which note does finger five play?",
+      "speed": 0.88,
+      "show": "Which note does finger five play?"
+    },
+    {
+      "id": "a2",
+      "who": "melody",
+      "text": "G.",
+      "show": "G",
+      "prev": "F.",
+      "quiet": true,
+      "src": "../video3/lG"
+    },
+    {
+      "id": "q3ask",
+      "who": "barnaby",
+      "text": "Is this… <break time=\"0.4s\" /> a step or a skip?",
+      "speed": 0.88,
+      "show": "Is this… a step or a skip?",
+      "src": "../video12/q1ask"
+    },
+    {
+      "id": "a3",
+      "who": "melody",
+      "text": "A skip.",
+      "speed": 0.85,
+      "quiet": true,
+      "prev": "And this?",
+      "src": "../video12/a2"
+    },
+    {
+      "id": "qwell",
+      "who": "barnaby",
+      "text": "You've got it!",
+      "prev": "Line.",
+      "src": "../video2/qwell"
+    },
+    {
+      "id": "game17",
+      "who": "barnaby",
+      "text": "Play Finger Number Fun <break time=\"0.3s\" /> and find the notes!",
+      "speed": 0.88,
+      "show": "Play Finger Number Fun and find the notes!"
+    },
+    {
+      "id": "sub17",
+      "who": "melody",
+      "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+      "speed": 0.88,
+      "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday.",
+      "src": "../video12/sub12"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opener",
+      "clips": [
+        "opener"
+      ],
+      "lead": 0.8,
+      "gap": 0,
+      "tail": 0.8
+    },
+    {
+      "id": "today",
+      "clips": [
+        "today"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.8
+    },
+    {
+      "id": "v17only",
+      "clips": [
+        "only",
+        "showr"
+      ],
+      "lead": 0.5,
+      "gap": 0.8,
+      "tail": 2.6
+    },
+    {
+      "id": "v17mid",
+      "clips": [
+        "midnamed"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 2.6
+    },
+    {
+      "id": "v17thumb",
+      "clips": [
+        "thumb"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.0
+    },
+    {
+      "id": "v17nums",
+      "clips": [
+        "num",
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
+      "lead": 0.5,
+      "gap": 0.05,
+      "tail": 3.0
+    },
+    {
+      "id": "v17notes",
+      "clips": [
+        "notes",
+        "lC",
+        "lD",
+        "lE",
+        "lF",
+        "lG"
+      ],
+      "lead": 0.5,
+      "gap": 0.05,
+      "tail": 2.6
+    },
+    {
+      "id": "v17e",
+      "clips": [
+        "e3"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.0
+    },
+    {
+      "id": "v17step",
+      "clips": [
+        "stepis"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 6.5
+    },
+    {
+      "id": "v17skip",
+      "clips": [
+        "miss",
+        "skipis"
+      ],
+      "lead": 0.5,
+      "gap": 0.6,
+      "tail": 3.4
+    },
+    {
+      "id": "v17stave",
+      "clips": [
+        "stave"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 6.6
+    },
+    {
+      "id": "v17play",
+      "clips": [
+        "play",
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5"
+      ],
+      "lead": 0.5,
+      "gap": 0.05,
+      "tail": 6.4
+    },
+    {
+      "id": "v17q1",
+      "clips": [
+        "yourturn17",
+        "q1ask",
+        "a1"
+      ],
+      "lead": 0.5,
+      "gap": 0.7,
+      "tail": 1.8
+    },
+    {
+      "id": "v17q2",
+      "clips": [
+        "q2ask",
+        "a2"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.8
+    },
+    {
+      "id": "v17q3",
+      "clips": [
+        "q3ask",
+        "a3",
+        "qwell"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.4
+    },
+    {
+      "id": "outro17",
+      "clips": [
+        "game1",
+        "game17"
+      ],
+      "lead": 0.6,
+      "gap": 0.5,
+      "tail": 1.6
+    },
+    {
+      "id": "outro17b",
+      "clips": [
+        "sub17",
+        "bye"
+      ],
+      "lead": 0.5,
+      "gap": 0.6,
+      "tail": 3.4
+    }
+  ],
+  "events": [
+    {
+      "kind": "run",
+      "notes": [
+        "c4"
+      ],
+      "step": 1,
+      "clip": "lC",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4"
+      ],
+      "step": 1,
+      "clip": "lD",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "e4"
+      ],
+      "step": 1,
+      "clip": "lE",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "f4"
+      ],
+      "step": 1,
+      "clip": "lF",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "g4"
+      ],
+      "step": 1,
+      "clip": "lG",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "d4"
+      ],
+      "step": 0.6,
+      "clip": "stepis",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4",
+        "e4"
+      ],
+      "step": 0.6,
+      "clip": "stepis",
+      "off": 2.2,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "e4",
+        "f4"
+      ],
+      "step": 0.6,
+      "clip": "stepis",
+      "off": 3.9,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4"
+      ],
+      "step": 0.6,
+      "clip": "skipis",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4"
+      ],
+      "step": 1,
+      "clip": "stave",
+      "off": 0.6,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4"
+      ],
+      "step": 1,
+      "clip": "stave",
+      "off": 1.5,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "e4"
+      ],
+      "step": 1,
+      "clip": "stave",
+      "off": 2.4,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "f4"
+      ],
+      "step": 1,
+      "clip": "stave",
+      "off": 3.3000000000000003,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "g4"
+      ],
+      "step": 1,
+      "clip": "stave",
+      "off": 4.2,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4"
+      ],
+      "step": 1,
+      "clip": "p1",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4"
+      ],
+      "step": 1,
+      "clip": "p2",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "e4"
+      ],
+      "step": 1,
+      "clip": "p3",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "f4"
+      ],
+      "step": 1,
+      "clip": "p4",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "g4"
+      ],
+      "step": 1,
+      "clip": "p5",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.0
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "g4"
+      ],
+      "step": 1,
+      "clip": "p5",
+      "off": 0.9,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "f4"
+      ],
+      "step": 1,
+      "clip": "p5",
+      "off": 1.5,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "e4"
+      ],
+      "step": 1,
+      "clip": "p5",
+      "off": 2.1,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4"
+      ],
+      "step": 1,
+      "clip": "p5",
+      "off": 2.6999999999999997,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4"
+      ],
+      "step": 1,
+      "clip": "p5",
+      "off": 3.3,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "a1",
+      "off": -0.2
+    },
+    {
+      "kind": "pop",
+      "clip": "a2",
+      "off": -0.2
+    },
+    {
+      "kind": "tick",
+      "clip": "a3",
+      "off": -0.2
+    },
+    {
+      "kind": "sparkle",
+      "clip": "qwell",
+      "off": -0.1
+    }
+  ],
+  "beats": [],
+  "gapOverride": {
+    "c1": 0.5,
+    "p1": 0.5,
+    "a1": 4.4,
+    "a2": 4.4,
+    "a3": 4.4,
+    "qwell": 1.2,
+    "lC": 0.4,
+    "miss": 0.6
+  }
+}
