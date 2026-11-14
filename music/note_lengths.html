@@ -522,6 +522,12 @@
             document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
             setStage(1);
         });
+
+        // set to the video's address once it is published (the release job does this), and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Long and short notes'; document.getElementById('game-card').appendChild(a); }
+        });
     </script>
 </body>
 </html>

@@ -155,6 +155,14 @@
                 comingSoon: false
             },
             {
+                title: "Together or One by One?",
+                description: "Do the notes play at the same time, or one after another? Hear it, see it, then learn melody and harmony.",
+                emoji: "🐰",
+                color: "#db2777", // Pink accent (Harmony)
+                file: "together_or_one_by_one.html",
+                comingSoon: false
+            },
+            {
                 title: "Moo Clef",
                 description: "All Cows Eat Grass! Name the bass clef's spaces (A-C-E-G), then the lines around them.",
                 emoji: "🐄",

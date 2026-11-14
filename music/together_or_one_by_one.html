@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Together or One by One?</title>
+    <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/noto-music.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fce7f3 0%, #ede9fe 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+        button { touch-action: manipulation; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-rose-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-rose-600 text-center mb-1">Together or One by One?</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Do the notes play at the same time, or one after another?</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
+                👂 Stage 1: Listen
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                👀 Stage 2: Look
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🎶 Stage 3: Melody or harmony?
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-rose-50 p-2 rounded-2xl border border-rose-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-rose-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-rose-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
+                    Harmony loves notes that play together. Can you tell which is which?
+                </p>
+            </div>
+        </div>
+
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex justify-center items-center">
+            <canvas id="canvas" width="300" height="170" class="max-h-40 w-auto rounded-xl bg-white shadow-inner"></canvas>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
+
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-rose-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2">
+            What note is this?
+        </div>
+
+        <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-2">
+            &nbsp;
+        </div>
+
+        <div class="flex justify-center mb-2"><button id="listen-btn" onclick="listen()" class="hidden bg-violet-100 text-violet-700 border-b-2 border-violet-300 font-bold px-5 py-2 rounded-xl hover:bg-violet-200">🔊 Listen again</button></div>
+
+        <div class="grid grid-cols-1 gap-2 mb-3" id="answer-buttons">
+            <!-- injected -->
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
+    <script src="mascots.js"></script>
+    <script src="auth.js"></script>
+    <script src="back-link.js"></script>
+    <script src="reward-system.js"></script>
+    <script src="hit-counter.js"></script>
+    <script src="game-progress.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStage = 1;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+        let round = null;
+
+        // C D E F G A B, one octave from Middle C, as 0..6. Notes in a round are a third apart, so a stacked group never overlaps.
+        const PITCH = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
+        // lowest note purple, middle pink, top teal: the same colours as Harmony's chord and video 15
+        const HEADCOL = ['#7c3aed', '#db2777', '#0d9488'];
+
+        const dialogs = {
+            stage1: "Listen to the notes. Do they play at the same time, or one after another?",
+            stage2: "Look at the notes. Are they stacked together, or side by side?",
+            stage3: "Melody is one by one. Harmony is together. Which one is this?",
+            correct: "Spot on! 🎯",
+            incorrect: "Not quite. Do the notes start at the same moment?"
+        };
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5, vol = 0.3, delay = 0) {
+            try {
+                const ac = getAudioContext();
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                const t0 = ac.currentTime + delay;
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, t0);
+                gain.gain.setValueAtTime(0, t0);
+                gain.gain.linearRampToValueAtTime(vol, t0 + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, t0 + duration);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start(t0);
+                osc.stop(t0 + duration + 0.05);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            [261.63, 329.63, 392.00, 523.25].forEach((f, k) => playTone(f, 'sine', 0.3, 0.15, k * 0.08));
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // one after another: 0.7 s apart. together: all at the same instant.
+        function playRound() {
+            if (!round) return;
+            round.idxs.forEach((p, k) => {
+                if (round.together) playTone(PITCH[p], 'triangle', 1.4, 0.2, 0);
+                else playTone(PITCH[p], 'triangle', 0.8, 0.3, k * 0.7);
+            });
+        }
+        function listen() { playRound(); }
+
+        const SVG_HARMONY = MASCOTS.html('harmony', 'w-16 h-16 drop-shadow-md');
+        const SVG_MELODY = SVG_HARMONY;
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`btn-stage-${i}`);
+                btn.className = i === stageNum
+                    ? "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow"
+                    : "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            }
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${stageNum}`];
+            resetStats();
+            newRound();
+        }
+
+        // Completing an animal (8 correct answers, see reward-system.js) is what completes a stage.
+        if (typeof RewardSystem !== 'undefined') {
+            RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
+        }
+
+        function newRound() {
+            const together = Math.random() < 0.5;
+            const three = Math.random() < 0.5;
+            const root = Math.floor(Math.random() * (three ? 3 : 5));
+            const idxs = three ? [root, root + 2, root + 4] : [root, root + 2];
+            let kind = currentStage === 1 ? 'sound' : currentStage === 2 ? 'picture' : (Math.random() < 0.5 ? 'sound' : 'picture');
+            round = { kind, together, idxs };
+            controlLock = false;
+
+            const q = document.getElementById('question-text');
+            q.innerText = currentStage === 3
+                ? 'Is this a melody or harmony?'
+                : (kind === 'sound' ? 'Together, or one by one?' : 'Together, or one by one?');
+            document.getElementById('listen-btn').classList.toggle('hidden', kind !== 'sound');
+
+            if (kind === 'sound') {
+                drawSpeaker();
+                setTimeout(playRound, 350);
+            } else {
+                drawPicture();
+            }
+            renderAnswers();
+
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${currentStage}`];
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-base font-bold min-h-[24px] text-slate-700 mb-2";
+            feedback.innerHTML = "&nbsp;";
+        }
+
+        function drawSpeaker() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '64px serif';
+            ctx.fillText('🔊', canvas.width / 2, 70);
+            ctx.fillStyle = '#64748b';
+            ctx.font = 'bold 15px Quicksand, sans-serif';
+            ctx.fillText('Listen to the notes', canvas.width / 2, 130);
+        }
+
+        // Treble stave with Middle C on a ledger line below it. Heads are hollow so the stave lines show through them.
+        function drawPicture() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const startY = 50, lineGap = 16, x0 = 28, x1 = 280;
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2.5;
+            for (let i = 0; i < 5; i++) {
+                const y = startY + i * lineGap;
+                ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+            }
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#1e293b';
+            ctx.font = `${lineGap * 4}px "Noto Music", serif`;
+            ctx.fillText("\u{1D11E}", x0 + 6, startY + 4 * lineGap);
+
+            const n = round.idxs.length;
+            const yOf = p => startY + 4 * lineGap - (p - 2) * (lineGap / 2);   // E (2) sits on the bottom line
+            const xs = round.together ? round.idxs.map(() => 160) : (n === 2 ? [130, 220] : [112, 172, 232]);
+            const cols = n === 2 ? [HEADCOL[0], HEADCOL[2]] : HEADCOL;
+            round.idxs.forEach((p, k) => {
+                const x = xs[k], y = yOf(p);
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(-0.3);
+                ctx.beginPath();
+                ctx.ellipse(0, 0, 11, 8, 0, 0, 2 * Math.PI);
+                ctx.strokeStyle = cols[k];
+                ctx.lineWidth = 4.5;
+                ctx.stroke();
+                ctx.restore();
+                if (p === 0) {   // Middle C: its own little line
+                    ctx.strokeStyle = '#334155';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.moveTo(x - 17, y); ctx.lineTo(x + 17, y); ctx.stroke();
+                }
+            });
+            if (hintsEnabled) {
+                ctx.fillStyle = '#7c3aed';
+                ctx.font = 'bold 13px Quicksand, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(round.together ? 'Stacked in one column = together' : 'Side by side = one by one', canvas.width / 2, canvas.height - 10);
+            }
+        }
+
+        function renderAnswers() {
+            const container = document.getElementById('answer-buttons');
+            container.innerHTML = '';
+            const opts = currentStage === 3
+                ? [['together', 'Harmony (together)'], ['one', 'Melody (one by one)']]
+                : [['together', 'Together'], ['one', 'One by one']];
+            opts.forEach(([key, label]) => {
+                const btn = document.createElement('button');
+                btn.innerText = label;
+                btn.className = "bg-gradient-to-b from-rose-400 to-rose-500 hover:from-rose-500 hover:to-rose-600 text-white font-bold text-base py-4 rounded-2xl border-b-4 border-rose-700 active:translate-y-1 active:border-b-0 transition-all";
+                btn.onclick = () => makeGuess(key);
+                container.appendChild(btn);
+            });
+            if (hintsEnabled) {
+                const hint = document.createElement('div');
+                hint.className = "text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1 mt-1";
+                hint.innerText = 'Together = at the same moment. One by one = one after another.';
+                container.appendChild(hint);
+            }
+        }
+
+        function makeGuess(answer) {
+            if (controlLock) return;
+            const feedback = document.getElementById('feedback');
+            const right = round.together ? 'together' : 'one';
+
+            if (answer === right) {
+                score += 10;
+                streak++;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
+                RewardSystem.correct();
+                document.getElementById('score').innerText = score;
+                document.getElementById('streak').innerText = streak;
+
+                feedback.className = "text-center text-base font-bold text-green-600 mb-2";
+                feedback.innerText = round.together
+                    ? "⭐ Together! That is harmony (a group of notes together is a chord). ⭐"
+                    : "⭐ One by one! That is a tune: a melody. ⭐";
+
+                playTone(523.25, 'triangle', 0.4, 0.25, round.kind === 'sound' ? 0 : 0);
+                triggerConfetti();
+                if (round.kind === 'sound') drawPicture();   // show what you just heard
+                document.getElementById('mascot-dialog').innerText = dialogs.correct;
+                controlLock = true;
+                setTimeout(newRound, 2000);
+            } else {
+                streak = 0;
+                lives--;
+                Tracking.logAnswer({ correct: false, stage: currentStage });
+                document.getElementById('streak').innerText = streak;
+                updateHearts();
+
+                feedback.className = "text-center text-base font-bold text-rose-500 mb-2";
+                feedback.innerText = round.kind === 'sound' ? "Not quite. Press Listen again." : "Not quite. Look at where the notes sit.";
+
+                playFailBuzz();
+                document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+                controlLock = true;
+                setTimeout(() => { controlLock = false; }, 700);
+                if (lives <= 0) setTimeout(triggerGameOver, 900);
+            }
+        }
+
+        
+function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                holder.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) container.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+
+        function triggerStageComplete() {
+            GameProgress.stageCleared(currentStage);
+            playSuccessArpeggio();
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_HARMONY;
+            document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
+            const oMsg = document.getElementById('overlay-msg');
+            const oBtn = document.getElementById('overlay-btn');
+
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = "Go to Next Stage!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = `Amazing! You can hear and see the difference between a melody and harmony!`;
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_HARMONY;
+            document.getElementById('overlay-title').innerText = "No More Hearts!";
+            document.getElementById('overlay-msg').innerText = "Let's take another look and try this stage again!";
+            const oBtn = document.getElementById('overlay-btn');
+            oBtn.innerText = "Restart Stage";
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+            controlLock = false;
+        }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            setStage(1);
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            renderAnswers();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const notoMusicFont = new FontFace(
+                    'Noto Music',
+                    'url(fonts/noto-music.woff2)'
+                );
+                document.fonts.add(notoMusicFont);
+                await notoMusicFont.load();
+            } catch (e) {
+                console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
+            }
+            document.getElementById('mascot-avatar').innerHTML = SVG_HARMONY;
+            setStage(1);
+        });
+
+        // set to the video's address once it is published (the release job does this), and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Notes together'; document.getElementById('game-card').appendChild(a); }
+        });
+    </script>
+</body>
+</html>
