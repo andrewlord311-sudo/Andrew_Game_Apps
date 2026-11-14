@@ -1733,7 +1733,7 @@ S.outro16b=Object.assign({},S.outro12b,{cut:true});
 // Right hand only. Fingers 1 to 5 sit on the white keys C D E F G (keys 7 to 11 of the 15-key keyboard; 7 is Middle C).
 const N17=[['C','#7c3aed',7],['D','#6366f1',8],['E','#db2777',9],['F','#f59e0b',10],['G','#0d9488',11]],KX17=i=>WKX(7+i)+(KB.w-3)/2;
 // the proper hand from video 7 (handSvg), right hand, at 1.6x so the fingertips land on the keys C D E F G
-const HS17=1.6,HL17=617,HT17=270,HW17=214*HS17;
+const HS17=1.68,HL17=616.5,HT17=268,HW17=214*HS17;   // little finger exactly on G, thumb on C
 const TIP17=[[13,143],[57,45],[98,24],[140,39],[175,82]].map(([x,y])=>[HL17+x*HS17,HT17+y*HS17]);   // thumb, index, middle, ring, little (screen px)
 function hand17(r){const wrap=document.createElement('div');wrap.className='abs';wrap.style.cssText=`left:${HL17}px;top:${HT17}px;width:${HW17}px;opacity:0;pointer-events:none`;wrap.innerHTML=handSvg('R','flat',HW17);r.appendChild(wrap);
   const fg=TIP17.map(([x,y],i)=>{const bd=document.createElement('div');bd.className='big abs';const yy=y+(i===0?-34:26);bd.style.cssText=`left:${x-20}px;top:${yy-20}px;width:40px;height:40px;border-radius:50%;background:${N17[i][1]};color:#fff;font-size:26px;line-height:42px;border:3px solid #fff;box-shadow:0 3px 0 rgba(0,0,0,.25);opacity:0;pointer-events:none`;bd.textContent=i+1;r.appendChild(bd);return {bd,x,y}});
@@ -1798,8 +1798,12 @@ S.v17play=v17s({keys(t){const k={};N17.forEach((_,i)=>{const T=CL['p'+(i+1)].sta
 function v17q(o){return v17s({chipY:585,keys:o.keys,build(r){if(o.build)o.build.call(this,r)},update(t,L,c){const ta=CL[o.ans].start-0.1,tk=CL[o.ask].end+0.3;hand17show(this.H,1,0);o.state.call(this,t,L,c,ta,tk)}})}
 S.v17q1=Object.assign(v17q({keys(t){return t>=CL.a1.start-0.1?kk17(2):{}},ask:'q1ask',ans:'a1',state(t,L,c,ta,tk){N17.forEach((_,i)=>{this.H.fg[i].bd.style.opacity=0});if(t>=ta){hand17badge(this.H,2,prog(t,ta,0.3));press17(this.H,2,t-ta);showChip13(this.c1,'FINGER 3 = E','#db2777',t,ta);pop(this.ls[2],t,ta+0.2,0.4)}}}),{cut:true});
 S.v17q2=Object.assign(v17q({keys(t){return t>=CL.a2.start-0.1?kk17(4):{}},ask:'q2ask',ans:'a2',state(t,L,c,ta,tk){N17.forEach((_,i)=>{hand17badge(this.H,i,1)});if(t>=ta){press17(this.H,4,t-ta);showChip13(this.c1,'FINGER 5 = G','#0d9488',t,ta);pop(this.ls[4],t,ta+0.2,0.4)}}}),{cut:true});
-S.v17q3=Object.assign(v17q({build(r){this.A=arc17(this.ov,1,3,'#f59e0b')},ask:'q3ask',ans:'a3',state(t,L,c,ta,tk){N17.forEach((_,i)=>{hand17badge(this.H,i,1);this.ls[i].style.opacity=1});const t0=CL.q3ask.start+0.3;this.A.style.opacity=String(clamp(prog(t,t0,0.4)*2));this.H.fg[2].dim=t>=t0;hand17badge(this.H,2,1);
-  if(t>=ta)showChip13(this.c1,'SKIP: FINGER 3 IS MISSED','#f59e0b',t,ta)}}),{cut:true});
+S.v17q3=Object.assign(v17q({keys(t){return t>=CL.q3ask.start+0.3?Object.assign({},kk17(1,'#6366f1'),kk17(3,'#f59e0b')):{}},build(r){this.A=arc17(this.ov,1,3,'#f59e0b');this.A.setAttribute('stroke-width','12');this.A.setAttribute('stroke-dasharray','3 16')},ask:'q3ask',ans:'a3',state(t,L,c,ta,tk){const t0=CL.q3ask.start+0.3;
+  // the two fingers in the question (2 and 4) are big and bright; the others fade
+  N17.forEach((_,i)=>{this.H.fg[i].dim=![1,3].includes(i);hand17badge(this.H,i,1);this.ls[i].style.opacity=[1,3].includes(i)?1:0.25});
+  [1,3].forEach(i=>{const q=prog(t,t0,0.4),k=0.5+0.5*Math.sin(t*6);this.H.fg[i].bd.style.scale=String(lerp(1,1.45,easeBack(q)));this.H.fg[i].bd.style.boxShadow=`0 0 0 ${6+5*k}px ${i===1?'#6366f1':'#f59e0b'}77`});
+  this.A.style.opacity=String(clamp(prog(t,t0+0.4,0.4)*2));
+  if(t<ta)showChip13(this.c1,'FINGER 2  TO  FINGER 4','#f59e0b',t,t0);else showChip13(this.c1,'SKIP: FINGER 3 IS MISSED','#f59e0b',t,ta)}}),{cut:true});
 S.outro17=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro17b=Object.assign({},S.outro12b,{cut:true});
 
