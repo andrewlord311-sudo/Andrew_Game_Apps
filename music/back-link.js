@@ -27,7 +27,7 @@
   const GAME_NUMBERS = {
     "name_that_part.html": 1, "line_and_space_safari.html": 2, "alphabet_elevator.html": 3, "higher_lower_same.html": 4,
     "beat_tapper.html": 5, "black_key_patterns.html": 6, "left_right_high_low.html": 7, "c_hunt.html": 8, "octave_hunt.html": 9,
-    "fill_the_bar.html": 10, "note_ladder.html": 11, "step_or_skip.html": 12, "note_lengths.html": 13
+    "fill_the_bar.html": 10, "note_ladder.html": 11, "step_or_skip.html": 12, "note_lengths.html": 13, "space_face.html": 14
   };
   function gameNumber() { return GAME_NUMBERS[(location.pathname.split("/").pop() || "").toLowerCase()] || null; }
 

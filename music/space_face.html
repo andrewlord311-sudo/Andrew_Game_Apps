@@ -46,14 +46,17 @@
         </div>
 
         <h1 class="kids-title text-3xl text-violet-600 text-center mb-1">Space Face</h1>
-        <p class="text-slate-500 text-center text-sm font-semibold mb-2">The treble clef spaces spell a word — can you name the notes?</p>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-2">The treble spaces spell a word — can you name the notes, and find F on both staves?</p>
 
-        <div class="grid grid-cols-2 gap-3 mb-2" id="stage-buttons">
+        <div class="grid grid-cols-3 gap-2 mb-2" id="stage-buttons">
             <button id="btn-stage-1" onclick="setStage(1)" class="py-2 px-2 rounded-2xl font-bold text-sm transition-all duration-200 bg-violet-400 text-white border-b-4 border-violet-600 shadow">
                 ☀️ Stage 1: The Spaces
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-2 px-2 rounded-2xl font-bold text-sm transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
                 🌟 Stage 2: The Lines
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-2 px-2 rounded-2xl font-bold text-sm transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🎯 Stage 3: Two F's
             </button>
         </div>
 
@@ -109,7 +112,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
-    <script>window.GP_TOTAL_STAGES = 2;</script> <!-- this game has 2 stages: spaces, then lines -->
+    <script>window.GP_TOTAL_STAGES = 3;</script> <!-- this game has 3 stages: spaces, lines, then the two F's on both staves -->
     <script src="hit-counter.js"></script>
     <script src="game-progress.js"></script>
     <script>
@@ -139,14 +142,24 @@
             D5: { letter: 'D', lineStep: 6, freq: 587.33 },
             F5: { letter: 'F', lineStep: 8, freq: 698.46 },
         };
-        const STAGE_WORDS = { 1: 'FACE', 2: 'EGBDF' };
+        // Stage 3: find F on both staves (treble F = lowest space; bass F = the line between the two dots), with E and G as neighbours.
+        const FIND_F_NOTES = {
+            T_E4: { letter: 'E', lineStep: 0, freq: 329.63, clef: 'treble' },
+            T_F4: { letter: 'F', lineStep: 1, freq: 349.23, clef: 'treble' },
+            T_G4: { letter: 'G', lineStep: 2, freq: 392.00, clef: 'treble' },
+            B_E3: { letter: 'E', lineStep: 5, freq: 164.81, clef: 'bass' },
+            B_F3: { letter: 'F', lineStep: 6, freq: 174.61, clef: 'bass' },
+            B_G3: { letter: 'G', lineStep: 7, freq: 196.00, clef: 'bass' },
+        };
+        const STAGE_WORDS = { 1: 'FACE', 2: 'EGBDF', 3: 'EFG' };
 
-        function currentDatabase() { return currentStage === 1 ? SPACE_NOTES : LINE_NOTES; }
+        function currentDatabase() { return currentStage === 1 ? SPACE_NOTES : currentStage === 2 ? LINE_NOTES : FIND_F_NOTES; }
         function currentLetters() { return STAGE_WORDS[currentStage].split(''); }
 
         const dialogs = {
             stage1: "Read the treble spaces bottom to top and they spell F-A-C-E!",
             stage2: "Now for the five lines around those spaces — E, G, B, D, F.",
+            stage3: "Two F's! Treble: the lowest space. Bass: the line between the two dots.",
             correct: "That's it! Great note-naming! 🎵",
             incorrect: "Not quite — check which space or line it's sitting in.",
         };
@@ -197,7 +210,7 @@
 
         function setStage(stageNum) {
             currentStage = stageNum;
-            for (let i = 1; i <= 2; i++) {
+            for (let i = 1; i <= 3; i++) {
                 const btn = document.getElementById(`btn-stage-${i}`);
                 btn.className = i === stageNum
                     ? "py-2 px-2 rounded-2xl font-bold text-sm transition-all duration-200 bg-violet-400 text-white border-b-4 border-violet-600 shadow"
@@ -262,10 +275,14 @@
             ctx.textAlign = 'left';
             ctx.fillStyle = '#1e293b';
             ctx.font = `${lineGap * 4}px "Noto Music", serif`;
-            ctx.fillText("\u{1D11E}", startX + 6, startY + 4 * lineGap);
-
             const db = currentDatabase();
             const note = db[currentNoteId];
+            if (note.clef === 'bass') {
+                ctx.font = `${lineGap * 3}px "Noto Music", serif`;
+                ctx.fillText("\u{1D122}", startX + 6, startY + 1 * lineGap);
+            } else {
+                ctx.fillText("\u{1D11E}", startX + 6, startY + 4 * lineGap);
+            }
             const noteX = canvas.width / 2 + 40;
             const noteY = startY + (8 - note.lineStep) * (lineGap / 2);
 
@@ -410,7 +427,7 @@
         }
 
         function triggerStageComplete() {
-            GameProgress.stageCleared(currentStage, 2);
+            GameProgress.stageCleared(currentStage, 3);
             playSuccessArpeggio();
             const overlay = document.getElementById('overlay');
             document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
@@ -418,12 +435,16 @@
             const oMsg = document.getElementById('overlay-msg');
             const oBtn = document.getElementById('overlay-btn');
 
-            if (currentStage < 2) {
+            if (currentStage === 1) {
                 oMsg.innerText = `You've mastered the spaces — F, A, C, E! Ready for the lines?`;
                 oBtn.innerText = "Go to Stage 2!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(2); };
+            } else if (currentStage === 2) {
+                oMsg.innerText = `You know the lines too! Now find the F on both staves.`;
+                oBtn.innerText = "Go to Stage 3!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(3); };
             } else {
-                oMsg.innerText = `Amazing! You can name every space and line on the treble clef!`;
+                oMsg.innerText = `Amazing! You can find F on the treble stave and the bass stave, and name every space and line on the treble clef!`;
                 oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
