@@ -165,9 +165,41 @@
             } catch (e) {}
         }
         function playSuccessArpeggio() {
-            [261.63, 329.63, 392.00, 523.25].forEach((f, k) => playTone(f, 'sine', 0.3, 0.15, k * 0.08));
+            playCheer(); setTimeout(playCheer, 450);   // a party sound, not a piano
         }
         function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // A party sound that is nothing like the piano notes of the questions: a little burst of applause (filtered noise),
+        // glittery high pings, and a bright "ta-da" on a buzzy synth.
+        function playCheer() {
+            try {
+                const ac = getAudioContext();
+                const now = ac.currentTime;
+                // applause: crackly noise through a band-pass filter
+                const len = Math.floor(ac.sampleRate * 0.9);
+                const buf = ac.createBuffer(1, len, ac.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() < 0.18 ? 1 : 0.15);
+                const src = ac.createBufferSource(); src.buffer = buf;
+                const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.7;
+                const ng = ac.createGain();
+                ng.gain.setValueAtTime(0.0001, now);
+                ng.gain.exponentialRampToValueAtTime(0.5, now + 0.05);
+                ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+                src.connect(bp); bp.connect(ng); ng.connect(ac.destination); src.start(now);
+                // glitter: quick high pings
+                [2093, 2637, 3136, 2349, 3520, 2794].forEach((f, k) => playTone(f * (1 + (k % 2) * 0.01), 'sine', 0.25, 0.08, 0.05 + k * 0.07));
+                // ta-da: two buzzy synth hits (sawtooth through a low-pass), not piano-like
+                [[392, 0, 0.16], [523.25, 0.17, 0.5]].forEach(([f, at, dur]) => {
+                    const o = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 1800;
+                    g.gain.setValueAtTime(0.0001, now + at);
+                    g.gain.exponentialRampToValueAtTime(0.16, now + at + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+                    o.connect(lp); lp.connect(g); g.connect(ac.destination); o.start(now + at); o.stop(now + at + dur + 0.05);
+                });
+            } catch (e) {}
+        }
 
         // one after another: 0.7 s apart. together: all at the same instant.
         function playRound() {
@@ -324,12 +356,21 @@
                     ? "⭐ Together! That is harmony (a group of notes together is a chord). ⭐"
                     : "⭐ One by one! That is a tune: a melody. ⭐";
 
-                playTone(523.25, 'triangle', 0.4, 0.25, round.kind === 'sound' ? 0 : 0);
+                playCheer();
                 triggerConfetti();
-                if (round.kind === 'sound') drawPicture();   // show what you just heard
                 document.getElementById('mascot-dialog').innerText = dialogs.correct;
                 controlLock = true;
-                setTimeout(newRound, 2000);
+                if (round.kind === 'sound') {
+                    drawPicture();   // show what you just heard
+                    setTimeout(newRound, 2200);
+                } else {
+                    // a picture question: now play what is on the stave, so every picture is heard once
+                    document.getElementById('listen-btn').classList.remove('hidden');
+                    const n = round.idxs.length;
+                    const dur = round.together ? 1.4 : (n - 1) * 0.7 + 0.8;
+                    setTimeout(playRound, 1100);
+                    setTimeout(newRound, 1100 + dur * 1000 + 800);
+                }
             } else {
                 streak = 0;
                 lives--;
@@ -338,7 +379,8 @@
                 updateHearts();
 
                 feedback.className = "text-center text-base font-bold text-rose-500 mb-2";
-                feedback.innerText = round.kind === 'sound' ? "Not quite. Press Listen again." : "Not quite. Look at where the notes sit.";
+                if (round.kind === 'picture') document.getElementById('listen-btn').classList.remove('hidden');
+                feedback.innerText = round.kind === 'sound' ? "Not quite. Press Listen again." : "Not quite. Look at where the notes sit, then press Listen.";
 
                 playFailBuzz();
                 document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
