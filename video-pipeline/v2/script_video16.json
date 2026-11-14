@@ -118,6 +118,13 @@
       "show": "Two quavers… fit in one beat."
     },
     {
+      "id": "beam",
+      "who": "barnaby",
+      "text": "Quavers together are joined by a beam. <break time=\"0.5s\" /> A quaver on its own has a flag.",
+      "speed": 0.88,
+      "show": "Quavers together are joined by a beam. A quaver on its own has a flag."
+    },
+    {
       "id": "eight",
       "who": "barnaby",
       "text": "Eight quavers fill a bar, <break time=\"0.4s\" /> so a quaver is an eighth note.",
@@ -330,6 +337,15 @@
       "lead": 0.5,
       "gap": 0.9,
       "tail": 2.4
+    },
+    {
+      "id": "v16beam",
+      "clips": [
+        "beam"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.0
     },
     {
       "id": "v16eight",
