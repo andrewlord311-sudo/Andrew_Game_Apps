@@ -1,0 +1,486 @@
+{
+  "title": "Notes together",
+  "titleAt": "notes together",
+  "nugget": 15,
+  "game": "Together or One by One",
+  "gameFile": "together_or_one_by_one.html",
+  "todayLead": "Today we are going to learn about",
+  "shared": [
+    {
+      "id": "opener",
+      "who": "melody",
+      "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+    },
+    {
+      "id": "game1",
+      "who": "melody",
+      "text": "Now it's your turn!"
+    },
+    {
+      "id": "bye",
+      "who": "melody",
+      "text": "See you for the next Nugget!"
+    }
+  ],
+  "clips": [
+    {
+      "id": "today",
+      "who": "barnaby",
+      "text": "Today <break time=\"0.3s\" /> we are going to learn about <break time=\"0.3s\" /> notes together.",
+      "speed": 0.88,
+      "show": "Today we are going to learn about notes together."
+    },
+    {
+      "id": "rem",
+      "who": "melody",
+      "text": "Remember? <break time=\"0.5s\" /> Every note is a sound… <break time=\"0.4s\" /> we can play one note… <break time=\"0.4s\" /> and then another.",
+      "speed": 0.88,
+      "show": "Remember? Every note is a sound… we can play one note… and then another."
+    },
+    {
+      "id": "three",
+      "who": "barnaby",
+      "text": "Let's play three notes… <break time=\"0.4s\" /> one… <break time=\"0.4s\" /> after another.",
+      "speed": 0.88,
+      "show": "Let's play three notes… one… after another."
+    },
+    {
+      "id": "mel",
+      "who": "melody",
+      "text": "Notes one after another make a tune. <break time=\"0.5s\" /> A tune is also called… <break time=\"0.4s\" /> a melody. <break time=\"0.4s\" /> Just like me!",
+      "speed": 0.88,
+      "show": "Notes one after another make a tune. A tune is also called… a melody. Just like me!"
+    },
+    {
+      "id": "tog1",
+      "who": "barnaby",
+      "text": "Now let's play the same notes… <break time=\"0.4s\" /> all at the same time.",
+      "speed": 0.88,
+      "show": "Now let's play the same notes… all at the same time."
+    },
+    {
+      "id": "harm",
+      "who": "melody",
+      "text": "Notes played together… <break time=\"0.5s\" /> make harmony.",
+      "speed": 0.88,
+      "show": "Notes played together… make harmony."
+    },
+    {
+      "id": "meet",
+      "who": "barnaby",
+      "text": "And this is our friend… <break time=\"0.5s\" /> Harmony! <break time=\"0.5s\" /> She loves notes that play together.",
+      "speed": 0.88,
+      "show": "And this is our friend… Harmony! She loves notes that play together."
+    },
+    {
+      "id": "l1",
+      "who": "barnaby",
+      "text": "Listen again. <break time=\"0.5s\" /> One by one… <break time=\"0.4s\" /> a melody.",
+      "speed": 0.88,
+      "show": "Listen again. One by one… a melody."
+    },
+    {
+      "id": "l2",
+      "who": "melody",
+      "text": "Together… <break time=\"0.4s\" /> harmony.",
+      "speed": 0.88,
+      "show": "Together… harmony."
+    },
+    {
+      "id": "hug",
+      "who": "melody",
+      "text": "Harmony sounds fuller… <break time=\"0.5s\" /> like a hug of notes.",
+      "speed": 0.88,
+      "show": "Harmony sounds fuller… like a hug of notes."
+    },
+    {
+      "id": "st1",
+      "who": "barnaby",
+      "text": "On the stave… <break time=\"0.4s\" /> notes one after another… <break time=\"0.4s\" /> go side by side.",
+      "speed": 0.88,
+      "show": "On the stave… notes one after another… go side by side."
+    },
+    {
+      "id": "st2",
+      "who": "melody",
+      "text": "Notes together… <break time=\"0.4s\" /> stack on top of each other.",
+      "speed": 0.88,
+      "show": "Notes together… stack on top of each other."
+    },
+    {
+      "id": "yourturn15",
+      "who": "barnaby",
+      "text": "Your turn! <break time=\"0.4s\" /> Look and listen.",
+      "speed": 0.88,
+      "show": "Your turn! Look and listen."
+    },
+    {
+      "id": "q1ask",
+      "who": "barnaby",
+      "text": "Together… <break time=\"0.4s\" /> or one by one?",
+      "speed": 0.88,
+      "show": "Together… or one by one?"
+    },
+    {
+      "id": "a1",
+      "who": "barnaby",
+      "text": "Together!",
+      "speed": 0.85,
+      "quiet": true,
+      "prev": "Together… or one by one?"
+    },
+    {
+      "id": "q2ask",
+      "who": "barnaby",
+      "text": "Together… <break time=\"0.4s\" /> or one by one?",
+      "speed": 0.88,
+      "show": "Together… or one by one?"
+    },
+    {
+      "id": "a2",
+      "who": "barnaby",
+      "text": "One by one!",
+      "speed": 0.85,
+      "quiet": true,
+      "prev": "Together… or one by one?"
+    },
+    {
+      "id": "q3ask",
+      "who": "barnaby",
+      "text": "Look at the stave. <break time=\"0.4s\" /> Together… <break time=\"0.4s\" /> or one by one?",
+      "speed": 0.88,
+      "show": "Look at the stave. Together… or one by one?"
+    },
+    {
+      "id": "a3",
+      "who": "barnaby",
+      "text": "Together!",
+      "speed": 0.85,
+      "quiet": true,
+      "prev": "Look at the stave. Together… or one by one?"
+    },
+    {
+      "id": "qwell",
+      "who": "barnaby",
+      "text": "You've got it!",
+      "src": "../video2/qwell"
+    },
+    {
+      "id": "game15",
+      "who": "barnaby",
+      "text": "Play Together or One by One <break time=\"0.3s\" /> and hear the difference!",
+      "speed": 0.88,
+      "show": "Play Together or One by One and hear the difference!"
+    },
+    {
+      "id": "sub15",
+      "who": "melody",
+      "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+      "speed": 0.88,
+      "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday."
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opener",
+      "clips": [
+        "opener"
+      ],
+      "lead": 0.8,
+      "gap": 0,
+      "tail": 0.8
+    },
+    {
+      "id": "today",
+      "clips": [
+        "today"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.8
+    },
+    {
+      "id": "v15rem",
+      "clips": [
+        "rem"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.0
+    },
+    {
+      "id": "v15one",
+      "clips": [
+        "three",
+        "mel"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 2.4
+    },
+    {
+      "id": "v15tog",
+      "clips": [
+        "tog1",
+        "harm"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 2.4
+    },
+    {
+      "id": "v15meet",
+      "clips": [
+        "meet"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 3.2
+    },
+    {
+      "id": "v15lis",
+      "clips": [
+        "l1",
+        "l2",
+        "hug"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 2.4
+    },
+    {
+      "id": "v15st",
+      "clips": [
+        "st1",
+        "st2"
+      ],
+      "lead": 0.5,
+      "gap": 0.9,
+      "tail": 2.8
+    },
+    {
+      "id": "v15q1",
+      "clips": [
+        "yourturn15",
+        "q1ask",
+        "a1"
+      ],
+      "lead": 0.5,
+      "gap": 0.7,
+      "tail": 1.6
+    },
+    {
+      "id": "v15q2",
+      "clips": [
+        "q2ask",
+        "a2"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.6
+    },
+    {
+      "id": "v15q3",
+      "clips": [
+        "q3ask",
+        "a3",
+        "qwell"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.6
+    },
+    {
+      "id": "outro15",
+      "clips": [
+        "game1",
+        "game15"
+      ],
+      "lead": 0.6,
+      "gap": 0.5,
+      "tail": 1.6
+    },
+    {
+      "id": "outro15b",
+      "clips": [
+        "sub15",
+        "bye"
+      ],
+      "lead": 0.5,
+      "gap": 0.6,
+      "tail": 3.4
+    }
+  ],
+  "events": [
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "d4"
+      ],
+      "step": 0.9,
+      "clip": "rem",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.0,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0.8,
+      "clip": "three",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 0.9,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0,
+      "clip": "tog1",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 1.6,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0,
+      "clip": "meet",
+      "off": 0.3,
+      "vol": 0.45,
+      "dur": 1.4,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0.8,
+      "clip": "l1",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 0.9,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0,
+      "clip": "l2",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 1.6,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0.8,
+      "clip": "st1",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 0.9,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0,
+      "clip": "st2",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 1.6,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "g4"
+      ],
+      "step": 0,
+      "clip": "q1ask",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 1.6,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "e4",
+        "g4"
+      ],
+      "step": 0.7,
+      "clip": "q2ask",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 0.8,
+      "from": "end"
+    },
+    {
+      "kind": "tick",
+      "clip": "a1",
+      "off": -0.2
+    },
+    {
+      "kind": "pop",
+      "clip": "a2",
+      "off": -0.2
+    },
+    {
+      "kind": "tick",
+      "clip": "a3",
+      "off": -0.2
+    },
+    {
+      "kind": "sparkle",
+      "clip": "qwell",
+      "off": -0.1
+    }
+  ],
+  "beats": [],
+  "gapOverride": {
+    "mel": 3.0,
+    "harm": 2.2,
+    "l2": 3.0,
+    "hug": 2.2,
+    "st2": 3.0,
+    "a1": 4.4,
+    "a2": 4.6,
+    "a3": 4.4,
+    "qwell": 1.2
+  }
+}

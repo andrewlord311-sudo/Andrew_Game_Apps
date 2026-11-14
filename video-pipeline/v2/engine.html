@@ -1586,6 +1586,65 @@ S.v14q3=v14sc({kb:false,state(t,L,c,p){SHOWBS(this,p);this.dots.forEach(d=>{d.st
 S.outro14=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro14b=Object.assign({},S.outro12b,{cut:true});
 
+
+// ======================================================================== VIDEO 15: notes together (melody and harmony)
+// C, E, G in the same three colours as the chord on Harmony's tummy (bottom note purple, middle pink, top teal).
+const C15={7:'#7c3aed',9:'#db2777',11:'#0d9488'},KX15=i=>WKX(i)+(KB.w-3)/2,T15=(id,off=0)=>CL[id].end+off;
+function harm15(r,x,y,w){const e=document.createElement('div');e.className='abs';e.style.cssText=`left:${x-w/2}px;top:${y}px;width:${w}px;opacity:0;pointer-events:none`;r.appendChild(e);return e}
+function harmShow(e,t,t0,pose){const q=prog(t,t0,0.5);e.style.opacity=String(clamp(q*2));e.style.scale=String(lerp(0.5,1,easeBack(q)));e.style.translate=`0 ${q>=1?-Math.abs(Math.sin(t*2.4))*7:0}px`;setHost(e,'harmony',pose||'idle',0,(t%3.6)>3.45?1:0)}
+// seq: [[key, from, to, colour?]]
+function k15keys(seq,t){const keys={};seq.forEach(([k,a,b,col])=>{if(t>=a&&t<b)keys[k]=[col||C15[k]||'#f59e0b',1]});return keys}
+function head15(r,col,sp){const d=document.createElement('div');d.className='abs';const w=Math.round(sp*1.5),h=Math.round(sp*0.95);d.style.cssText=`width:${w}px;height:${h}px;border-radius:50%;background:${col};border:4px solid #241f3d;transform:rotate(-18deg);opacity:0;box-shadow:0 4px 0 rgba(0,0,0,.18)`;d.dataset.w=w;d.dataset.h=h;r.appendChild(d);return d}
+function v15s(f){return {ui:V6UI,cut:true,build(r){
+  if(f.kb!==false){v14kb(this,r,true);this.K.root.style.opacity='1'}
+  this.c1=chip13(r,f.chipY??545,40);
+  if(f.build)f.build.call(this,r)},
+ update(t,L,c){if(this.K){const keys=f.keys?f.keys.call(this,t,L,c):{};v14kpaint(this.K,keys,t)}
+  if(f.update)f.update.call(this,t,L,c)}}}
+function v15stave(self,r,n){self.st=v14stv(r,'treble',[],{scale:2.9,cy:365});const st=self.st,sp=st.sp;
+  self.yC=st.lineY[4]+sp;self.yE=st.lineY[4];self.yG=st.lineY[3];
+  self.hd=[['#7c3aed',self.yC],['#db2777',self.yE],['#0d9488',self.yG]].slice(3-n).map(([col,y])=>({e:head15(r,col,sp),y}));
+  self.led=document.createElement('div');self.led.className='abs';self.led.style.cssText=`width:${Math.round(sp*2.5)}px;height:5px;background:#241f3d;border-radius:3px;opacity:0`;r.appendChild(self.led);
+  self.xs=[0.42,0.58,0.74].map(q=>st.x0+(st.x1-st.x0)*q);self.xm=st.x0+(st.x1-st.x0)*0.58}
+function head15At(h,x,y,op){const w=+h.e.dataset.w,hh=+h.e.dataset.h;h.e.style.left=(x-w/2)+'px';h.e.style.top=(y-hh/2)+'px';h.e.style.opacity=String(op)}
+
+S.v15rem=v15s({build(r){this.rb=chip(r,'⟲ Remember?','var(--melody-deep)',200,150);this.rb.style.fontSize='26px'},
+  keys(t){const a=T15('rem',0.5);return k15keys([[7,a,a+0.8],[8,a+0.9,a+1.7,'#f59e0b']],t)},
+  update(t,L){pop(this.rb,t,L+0.4,0.4)}});
+S.v15one=v15s({build(r){const svg=document.createElementNS(SVGNS,'svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(svg);
+    this.cv=el13('path',{d:`M${KX15(7)},330 Q${(KX15(7)+KX15(9))/2},262 ${KX15(9)},330 Q${(KX15(9)+KX15(11))/2},262 ${KX15(11)},330`,fill:'none',stroke:'#f59e0b','stroke-width':7,'stroke-dasharray':'3 14','stroke-linecap':'round'},svg);this.cv.style.opacity=0},
+  keys(t){const a=T15('three',0.4);return k15keys([[7,a,a+0.75],[9,a+0.8,a+1.55],[11,a+1.6,a+2.35]],t)},
+  update(t,L){const ta=wt('three','after')-0.1;if(t<CL.mel.start)showChip13(this.c1,'ONE BY ONE','#0d9488',t,ta);else showChip13(this.c1,'A TUNE = A MELODY','#7c3aed',t,wt('mel','melody',0)-0.1);
+    this.cv.style.opacity=String(prog(t,wt('mel','tune')-0.1,0.5)*0.9)}});
+S.v15tog=v15s({
+  keys(t){const a=T15('tog1',0.4);const k=k15keys([[7,a,a+1.6],[9,a,a+1.6],[11,a,a+1.6]],t);if(t>=a+1.6){[7,9,11].forEach(i=>{k[i]=[C15[i],0.35]})}return k},
+  update(t,L){const a=T15('tog1',0.4);if(t<CL.harm.start)showChip13(this.c1,'ALL AT THE SAME TIME','#0d9488',t,a);else showChip13(this.c1,'TOGETHER = HARMONY','#db2777',t,wt('harm','harmony')-0.1)}});
+S.v15meet={ui:V6UI,cut:true,build(r){this.h=harm15(r,640,212,300);
+  this.dots=[11,9,7].map((k,i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:870px;top:${280+i*74}px;width:62px;height:62px;border-radius:50%;background:${C15[k]};border:4px solid #fff;box-shadow:0 5px 0 rgba(0,0,0,.2);opacity:0`;r.appendChild(d);return d});
+  this.nm=labelChip(r,'HARMONY','#db2777',640,628,40,'6px 30px');this.nm.style.opacity='0'},
+ update(t,L){const a=T15('meet',0.3);harmShow(this.h,t,L+0.3,t>=a?'cheer':'wave');pop(this.nm,t,wt('meet','harmony')-0.1,0.4);this.dots.forEach(d=>pop(d,t,a,0.45))}};
+S.v15lis=v15s({build(r){this.ring=document.createElement('div');this.ring.className='abs';const x0=KX15(7)-60,x1=KX15(11)+60;this.ring.style.cssText=`left:${x0}px;top:${KB.top-18}px;width:${x1-x0}px;height:${KB.h*0.7}px;border-radius:40px;border:7px solid #ec4899;box-shadow:0 0 38px 8px rgba(236,72,153,.45);opacity:0`;r.appendChild(this.ring)},
+  keys(t){const a=T15('l1',0.4),b=T15('l2',0.4);const k=k15keys([[7,a,a+0.75],[9,a+0.8,a+1.55],[11,a+1.6,a+2.35],[7,b,b+1.6],[9,b,b+1.6],[11,b,b+1.6]],t);if(t>=b+1.6){[7,9,11].forEach(i=>{k[i]=[C15[i],0.4]})}return k},
+  update(t,L){if(t<CL.l2.start)showChip13(this.c1,'ONE BY ONE = MELODY','#7c3aed',t,wt('l1','one')-0.1);else if(t<CL.hug.start)showChip13(this.c1,'TOGETHER = HARMONY','#db2777',t,wt('l2','together')-0.1);else showChip13(this.c1,'A HUG OF NOTES','#ec4899',t,wt('hug','hug')-0.1);
+    const q=prog(t,wt('hug','hug')-0.1,0.5);this.ring.style.opacity=String(q*(0.6+0.4*Math.sin(t*4)));this.ring.style.scale=String(lerp(0.9,1,easeOut(q)))}});
+S.v15st=v15s({kb:false,chipY:560,build(r){v15stave(this,r,3)},
+  update(t,L){const a=T15('st1',0.4),gl=prog(t,wt('st2','stack')-0.1,0.9),b=T15('st2',0.4);
+    this.hd.forEach((h,i)=>{const x=lerp(this.xs[i],this.xm,easeOut(gl)),tn=a+i*0.8;const op=clamp((t-tn+0.05)/0.25);const pb=t>=tn&&t<tn+0.5?0.18*Math.sin((t-tn)*Math.PI/0.5):0;
+      const pb2=t>=b&&t<b+1.6?0.12*Math.sin((t-b)*7):0;head15At(h,x,h.y,op);h.e.style.scale=String(1+pb+pb2)});
+    const hc=this.hd[0];const lx=parseFloat(hc.e.style.left)+(+hc.e.dataset.w)/2;this.led.style.left=(lx-this.led.offsetWidth/2)+'px';this.led.style.top=(this.yC-2)+'px';this.led.style.opacity=hc.e.style.opacity;
+    if(t<CL.st2.start)showChip13(this.c1,'SIDE BY SIDE','#0d9488',t,wt('st1','side')-0.1);else showChip13(this.c1,'TOGETHER = STACKED','#db2777',t,wt('st2','stack')-0.1)}});
+S.v15q1=v15s({keys(t){const a=T15('q1ask',0.4);const k=k15keys([[7,a,a+1.6],[11,a,a+1.6]],t);if(t>=a+1.6){k[7]=[C15[7],0.35];k[11]=[C15[11],0.35]}return k},
+  update(t,L){const ta=wt('a1','together')-0.15;if(t>=ta)showChip13(this.c1,'TOGETHER','#16a34a',t,ta);else this.c1.style.opacity='0'}});
+S.v15q2=v15s({keys(t){const a=T15('q2ask',0.4);return k15keys([[7,a,a+0.65],[9,a+0.7,a+1.35],[11,a+1.4,a+2.05]],t)},
+  update(t,L){const ta=wt('a2','one')-0.15;if(t>=ta)showChip13(this.c1,'ONE BY ONE','#16a34a',t,ta);else this.c1.style.opacity='0'}});
+S.v15q3=v15s({kb:false,chipY:560,build(r){v15stave(this,r,2);this.h=harm15(r,1170,250,150)},
+  update(t,L){const t0=CL.q3ask.start+0.4,ta=wt('a3','together')-0.15;
+    this.hd.forEach(h=>{const q=prog(t,t0,0.4);head15At(h,this.xm,h.y,q);h.e.style.scale=String(lerp(0.5,1,easeBack(q)))});this.led.style.opacity='0';
+    if(t>=ta)showChip13(this.c1,'TOGETHER = STACKED','#16a34a',t,ta);else this.c1.style.opacity='0';
+    harmShow(this.h,t,CL.qwell.start-0.1,'cheer')}});
+S.outro15=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro15b=Object.assign({},S.outro12b,{cut:true});
+
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
 function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}

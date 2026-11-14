@@ -117,13 +117,66 @@
     return svg(body, bust);
   }
 
+
+  // ============================================================ HARMONY (a rabbit; she does not speak; her emblem is a chord: three notes stacked)
+  function harmony({ pose = "idle", mouth = 0, blink = 0, bust = false } = {}) {
+    const P = POSES[pose] || POSES.idle, m = Math.max(0, Math.min(1, mouth));
+    const pink = "#f472b6", dark = "#d6458f", light = "#fff0f6", inner = "#ffc2dc", gold = "#fbbf24", goldD = "#e19a0b";
+    const arm = (side, ang) => {
+      const sx = 50 + side * 25, sy = 72;
+      return `<g transform="rotate(${ang} ${sx} ${sy})"><path d="M${sx - side * 4},${sy - 7} Q${sx + side * 12},${sy - 4} ${sx + side * 11},${sy + 14} Q${sx + side * 10},${sy + 24} ${sx + side * 3},${sy + 22} Q${sx - side * 4},${sy + 14} ${sx - side * 4},${sy - 7} Z" fill="${pink}" ${o}/>
+        <ellipse cx="${sx + side * 4.5}" cy="${sy + 20}" rx="4.6" ry="4" fill="${light}" ${noS}/></g>`;
+    };
+    const open = 1.5 + 6 * m;
+    // three stacked note heads (a chord) on a tiny stave, used on the tummy and the hair bow
+    const chord = (cx, cy, k) => `<g transform="translate(${cx} ${cy}) scale(${k})">
+        <g stroke="${dark}" stroke-width="1.1" opacity=".8" stroke-linecap="round"><path d="M-11,-8 h22 M-11,-4 h22 M-11,0 h22 M-11,4 h22 M-11,8 h22"/></g>
+        <g fill="#7c3aed" ${o} stroke-width="1.3"><ellipse cx="0" cy="6" rx="4.6" ry="3.3" transform="rotate(-20 0 6)"/></g>
+        <g fill="#db2777" ${o} stroke-width="1.3"><ellipse cx="0" cy="-2" rx="4.6" ry="3.3" transform="rotate(-20 0 -2)"/></g>
+        <g fill="#0d9488" ${o} stroke-width="1.3"><ellipse cx="0" cy="-10" rx="4.6" ry="3.3" transform="rotate(-20 0 -10)"/></g>
+        <path d="M4.2,6 V-20" stroke="${INK}" stroke-width="1.5" stroke-linecap="round"/></g>`;
+    const body = `
+      <!-- little fluffy tail -->
+      <circle cx="76" cy="98" r="9" fill="${light}" ${o}/>
+      <!-- feet -->
+      <ellipse cx="35" cy="103" rx="12" ry="6.4" fill="${pink}" ${o}/><ellipse cx="65" cy="103" rx="12" ry="6.4" fill="${pink}" ${o}/>
+      <ellipse cx="35" cy="104" rx="6" ry="3" fill="${inner}" ${noS}/><ellipse cx="65" cy="104" rx="6" ry="3" fill="${inner}" ${noS}/>
+      <!-- body with the chord on her tummy -->
+      <ellipse cx="50" cy="80" rx="27" ry="24" fill="${pink}" ${o}/>
+      <path d="M64,102 Q86,92 78,70 Q84,96 58,103 Z" fill="${dark}" opacity=".4" ${noS}/>
+      <ellipse cx="50" cy="83" rx="16.5" ry="15.5" fill="${light}" ${noS}/>
+      ${chord(48, 85, 1.12)}
+      ${arm(-1, P.l)}${arm(1, P.r)}
+      <!-- long ears, one slightly bent -->
+      <g>
+        <path d="M33,22 Q21,-2 29,-7 Q41,-5 42,18 Z" fill="${pink}" ${o}/><path d="M33,17 Q27,1 30,-2 Q37,-1 38,15 Z" fill="${inner}" ${noS}/>
+        <path d="M67,22 Q80,-1 72,-7 Q60,-5 58,18 Z" fill="${pink}" ${o}/><path d="M66,17 Q73,1 71,-2 Q63,-1 62,15 Z" fill="${inner}" ${noS}/>
+      </g>
+      <!-- head -->
+      <ellipse cx="50" cy="38" rx="29" ry="26" fill="${pink}" ${o}/>
+      <path d="M52,64 Q81,57 79,36 Q85,61 54,65 Z" fill="${dark}" opacity=".4" ${noS}/>
+      <ellipse cx="37" cy="21" rx="9" ry="4.2" fill="#fff" opacity=".3" transform="rotate(-22 37 21)" ${noS}/>
+      <!-- hair bow made of two note heads -->
+      <g transform="translate(66 14) rotate(18)"><ellipse cx="-5.5" cy="0" rx="6.2" ry="4.4" fill="${gold}" ${o} stroke-width="1.9"/><ellipse cx="5.5" cy="0" rx="6.2" ry="4.4" fill="${gold}" ${o} stroke-width="1.9"/><circle cx="0" cy="0" r="3" fill="${goldD}" ${o} stroke-width="1.7"/></g>
+      <!-- face -->
+      <ellipse cx="50" cy="49" rx="15" ry="12" fill="${light}" ${o} stroke-width="1.7"/>
+      ${eye(38, 36, 5.2, blink)}${eye(62, 36, 5.2, blink)}${cheek(29, 46)}${cheek(71, 46)}
+      <path d="M31,27 Q37,23 44,26 M69,27 Q63,23 56,26" stroke="${INK}" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"/>
+      <path d="M46,43 Q50,40.5 54,43 Q52,47 50,47.4 Q48,47 46,43 Z" fill="#e0457f" ${o} stroke-width="1.5"/>
+      ${m > 0.05
+        ? `<path d="M43.5,49.5 Q50,${49.5 + open * 1.9} 56.5,49.5 Q50,48 43.5,49.5 Z" fill="#6e1f3a" ${o} stroke-width="1.6"/>`
+        : `<path d="M50,47.4 v2.2 M50,49.6 Q46,53.6 42.5,51.2 M50,49.6 Q54,53.6 57.5,51.2" stroke="${INK}" stroke-width="2" fill="none" stroke-linecap="round"/>`}
+      <path d="M44.5,52.5 l-1.2,3.2 h2.6 l-0.4,-3.2 M55.5,52.5 l1.2,3.2 h-2.6 l0.4,-3.2" fill="#fff" ${noS} opacity="0"/>`;
+    return svg(body, bust);
+  }
+
   function svg(inner, bust) {
     return `<svg viewBox="${bust ? "8 -9 84 85" : "0 -9 100 123"}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
   }
   // convenience for pages: an inline bust (head and shoulders) with the page's own CSS classes on the <svg>
   function html(name, cls = "", opts = {}) {
-    const f = name === "barnaby" ? barnaby : melody;
+    const f = name === "barnaby" ? barnaby : name === "harmony" ? harmony : melody;
     return f({ bust: true, ...opts }).replace("<svg ", `<svg class="${cls}" `);
   }
-  window.MASCOTS = { melody, barnaby, POSES, html };
+  window.MASCOTS = { melody, barnaby, harmony, POSES, html };
 })();
