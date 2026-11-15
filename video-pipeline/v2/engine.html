@@ -1887,11 +1887,13 @@ S.v19rem=v19s({build(r){this.rb=chip(r,'⟲ Remember?','var(--melody-deep)',200,
 S.v19semi=v19s({state(t,L){const b0=CL.semi.end+0.5,H=[[{w:7},{b:5}],[{b:6},{w:9}],[{w:10},{b:7}]],w=[],b=[],arcs=[];
   H.forEach(([p,q],n)=>{const T=b0+n*1.8;[p,q].forEach((k,j)=>{if(t>=T+j*0.6&&t<T+1.5){if('w' in k)w.push([k.w,P19]);else b.push([k.b,P19])}});
    if(t>=T+0.6&&t<T+1.7){const x1=('w' in p)?WX19(p.w):BX19(p.b),x2=('w' in q)?WX19(q.w):BX19(q.b);arcs.push({x1,x2,h:50,col:O19,op:1})}});
-  const last=b0+2*1.8+1.5;return {w,b,arcs:arcs.slice(0,4),l1:['THE VERY NEXT KEY = A SEMITONE',P19,wt('semi','semitone')-0.2],l2:t>=last?['BLACK KEYS HAVE NAMES TOO: COMING SOON','#db2777',last]:null}}});
+  const last=b0+2*1.8+0.3;return {w,b,arcs:arcs.slice(0,4),l1:['THE VERY NEXT KEY = A SEMITONE',P19,wt('semi','semitone')-0.2],l2:t>=last?['BLACK KEYS HAVE NAMES TOO: COMING SOON','#db2777',last]:null}}});
 S.v19tone=v19s({state(t,L){const b0=CL.tone.end+0.5,E=[[7,5,8],[8,6,9]],w=[],b=[],arcs=[];
-  E.forEach(([a,k,z],n)=>{const T=b0+n*2.4;if(t>=T&&t<T+0.55)w.push([a,P19]);else if(t>=T+0.55&&t<T+1.1)b.push([k,P19]);else if(t>=T+1.1&&t<T+2.0)w.push([z,P19]);
-   if(t>=T+0.55&&t<T+2.1)arcs.push({x1:WX19(a),x2:BX19(k),h:44,col:O19});if(t>=T+1.1&&t<T+2.1)arcs.push({x1:BX19(k),x2:WX19(z),h:44,col:O19});if(t>=T+1.1&&t<T+2.1)arcs.push({x1:WX19(a),x2:WX19(z),h:100,col:P19})});
-  return {w,b,arcs:arcs.slice(0,4),l1:['TWO SEMITONES = ONE TONE',P19,wt('tone','tone')-0.2],l2:['SEMITONE + SEMITONE',O19,CL.tone.start+0.3]}}});
+  // the two notes that make the tone (purple) and the note in between (orange) stay lit once played, so the whole tone is clear
+  E.forEach(([a,k,z],n)=>{const T=b0+n*3.4,End=T+3.0;if(t<T||t>=End)return;
+   w.push([a,P19]);if(t>=T+0.6)b.push([k,O19]);if(t>=T+1.2)w.push([z,P19]);
+   if(t>=T+0.6)arcs.push({x1:WX19(a),x2:BX19(k),h:44,col:O19});if(t>=T+1.2)arcs.push({x1:BX19(k),x2:WX19(z),h:44,col:O19});if(t>=T+1.4)arcs.push({x1:WX19(a),x2:WX19(z),h:110,col:P19})});
+  return {w,b,arcs:arcs.slice(0,4),l1:['TWO SEMITONES = ONE TONE',P19,wt('tone','tone')-0.2],l2:['PURPLE: THE TONE   ORANGE: IN BETWEEN',O19,CL.tone.start+0.3]}}});
 function v19pair(a,z,ids,L1,L2){return v19s({build(r){this.nb=chip(r,'NO BLACK KEY HERE',O19,0,330,24);this.nb.style.left=(KB.x0+(a+1)*KB.w-1.5-this.nb.offsetWidth/2)+'px'},
  state(t,L,c){const b0=CL[L2[2]].end+0.5,w=[],arcs=[],T1=CL[ids[0]].start,T2=CL[ids[1]].start;
   if(t>=T1&&t<T1+0.9)w.push([a,P19]);if(t>=T2&&t<T2+0.9)w.push([z,P19]);
