@@ -1742,7 +1742,7 @@ function hand17show(H,op,drop){H.wrap.style.opacity=String(op);H.wrap.style.tran
 function hand17badge(H,i,q){const f=H.fg[i];f.bd.style.opacity=String(clamp(q*2)*(f.dim?0.3:1));f.bd.style.scale=String(lerp(0.4,1,easeBack(q)))}
 function press17(H,i,a){const f=H.fg[i];if(a>=0&&a<0.5){const k=Math.sin(a/0.5*Math.PI);f.bd.style.translate=`0 ${8*k}px`;f.bd.style.boxShadow=`0 0 0 ${6*k}px ${N17[i][1]}88`}else{f.bd.style.translate='0 0';f.bd.style.boxShadow='0 3px 0 rgba(0,0,0,.25)'}}
 function arc17(svg,i,j,col){const [x1,y1]=TIP17[i],[x2,y2]=TIP17[j];const p=el13('path',{d:`M${x1},${y1-44} Q${(x1+x2)/2},${Math.min(y1,y2)-130} ${x2},${y2-44}`,fill:'none',stroke:col,'stroke-width':8,'stroke-linecap':'round','stroke-dasharray':'2 14'},svg);p.style.opacity=0;return p}
-function v17s(f){return {ui:V6UI,cut:true,build(r){
+function v17s(f){return {f,ui:V6UI,cut:true,build(r){
   v14kb(this,r,true);this.K.root.style.opacity='1';
   this.H=hand17(r);this.ov=document.createElementNS(SVGNS,'svg');this.ov.setAttribute('width','1280');this.ov.setAttribute('height','720');this.ov.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(this.ov);this.c1=chip13(r,f.chipY??600,38);
   this.rc=chip(r,'RIGHT HAND','var(--melody-deep)',1085,148);this.rc.style.fontSize='24px';
@@ -1859,7 +1859,8 @@ S.v18q3=v17s({kb:false,chipY:575,build(r){v15stave(this,r,3)},keys(){return {}},
  update(t,L,c){this.H.wrap.style.opacity=0;this.H.fg.forEach(x=>{x.bd.style.opacity=0});this.K.root.style.opacity='0';this.ls.forEach(e=>e.style.opacity=0);
   const t0=CL.q3ask.start+0.3;this.hd.forEach((h,i)=>{const T=t0+i*0.3,q=prog(t,T,0.4);head15At(h,this.xm,h.y,clamp(q*2));h.e.style.scale=String(lerp(0.5,1,easeBack(q)))});
   this.led.style.left=(this.xm-this.led.offsetWidth/2)+'px';this.led.style.top=(this.hd[0].y-2)+'px';this.led.style.opacity=this.hd[0].e.style.opacity;
-  if(t>=CL.a3.start-0.15)showChip13(this.c1,'YES: C  E  G','#16a34a',t,CL.a3.start-0.15);else this.c1.style.opacity='0'}});
+  if(t>=CL.a3.start-0.15)showChip13(this.c1,'YES: C  E  G','#16a34a',t,CL.a3.start-0.15);else showChip13(this.c1,'IS THIS THE C MAJOR CHORD?','#7c3aed',t,CL.q3ask.start+0.1)}});
+S.v18press2=v17s(S.v18press.f);S.v18q1b=Object.assign(v17s(S.v18q1.f),{cut:true});
 S.outro18=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro18b=Object.assign({},S.outro12b,{cut:true});
 

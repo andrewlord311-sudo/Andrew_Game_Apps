@@ -285,7 +285,15 @@
       "id": "v18press",
       "clips": [
         "press",
-        "cmaj",
+        "cmaj"
+      ],
+      "lead": 0.5,
+      "gap": 0.05,
+      "tail": 0.9
+    },
+    {
+      "id": "v18press2",
+      "clips": [
         "lC",
         "lE",
         "lG"
@@ -328,13 +336,21 @@
       "id": "v18q1",
       "clips": [
         "yourturn18",
-        "q1ask",
+        "q1ask"
+      ],
+      "lead": 0.5,
+      "gap": 0.7,
+      "tail": 4.2
+    },
+    {
+      "id": "v18q1b",
+      "clips": [
         "a1a",
         "a1b",
         "a1c"
       ],
       "lead": 0.5,
-      "gap": 0.7,
+      "gap": 0.8,
       "tail": 2.2
     },
     {
@@ -540,7 +556,6 @@
     "miss": 0.6,
     "stack": 0.5,
     "hart": 2.4,
-    "a1a": 4.4,
     "a2": 4.4,
     "a3": 4.4,
     "qwell": 1.2,
