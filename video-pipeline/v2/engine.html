@@ -1864,6 +1864,51 @@ S.v18press2=v17s(S.v18press.f);S.v18q1b=Object.assign(v17s(S.v18q1.f),{cut:true}
 S.outro18=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro18b=Object.assign({},S.outro12b,{cut:true});
 
+
+// ======================================================================== VIDEO 19: next-door notes (semitones and tones)
+// The 15-key keyboard from C: white index 7 = Middle C. A black key sits after white keys 0,1,3,4,5,7,8,10,11,12; there is none between E and F (9,10) or B and C (13,14).
+const WX19=i=>WKX(i)+(KB.w-3)/2,BX19=k=>KB.x0+(BLK[k]+1)*KB.w-1.5;
+const KP19={w:i=>({x:WX19(i),kind:'w',i}),b:k=>({x:BX19(k),kind:'b',k})};
+function paint19(K,wl,bl){kbPaint(K,{whiteBg:'#f8fafc',lit:Object.fromEntries(bl.map(([k,c])=>[k,c]))});K.whites.forEach(w=>{w.style.boxShadow='0 7px 0 rgba(0,0,0,.14)'});wl.forEach(([i,col])=>{K.whites[i].style.background=mixHex('#f8fafc',col,0.7);K.whites[i].style.boxShadow=`0 0 0 5px ${col},0 7px 0 rgba(0,0,0,.14)`})}
+function v19s(f){return {ui:V6UI,cut:true,build(r){v14kb(this,r,true);this.K.root.style.opacity='1';
+  const svg=document.createElementNS(SVGNS,'svg');svg.setAttribute('width','1280');svg.setAttribute('height','720');svg.style.cssText='position:absolute;left:0;top:0;pointer-events:none;overflow:visible';r.appendChild(svg);
+  this.arcs=[0,1,2,3].map(()=>{const p=el13('path',{fill:'none','stroke-width':9,'stroke-linecap':'round','stroke-dasharray':'2 15'},svg);p.style.opacity=0;return p});
+  this.c1=chip13(r,585,40);this.c2=chip13(r,645,30);this.lt=[0,1].map(()=>{const e=document.createElement('div');e.className='big abs';e.style.cssText='width:60px;height:60px;border-radius:50%;background:#7c3aed;color:#fff;font-size:40px;line-height:62px;border:4px solid #fff;box-shadow:0 5px 0 rgba(0,0,0,.2);opacity:0;top:512px';r.appendChild(e);return e});
+  if(f.build)f.build.call(this,r)},
+ update(t,L,c){const st=f.state.call(this,t,L,c)||{};paint19(this.K,st.w||[],st.b||[]);
+  this.arcs.forEach((a,i)=>{const o=(st.arcs||[])[i];if(!o){a.style.opacity=0;return}const y=506;a.setAttribute('d',`M${o.x1},${y} Q${(o.x1+o.x2)/2},${y+o.h} ${o.x2},${y}`);a.setAttribute('stroke',o.col||'#f59e0b');a.style.opacity=String(o.op??1)});
+  (st.letters||[]).forEach((l,i)=>{const e=this.lt[i];e.textContent=l.t;e.style.left=(l.x-30)+'px';e.style.background=l.col||'#7c3aed';pop(e,t,l.T,0.4)});if(!(st.letters||[]).length)this.lt.forEach(e=>e.style.opacity=0);
+  if(st.l1)showChip13(this.c1,st.l1[0],st.l1[1],t,st.l1[2]);if(st.l2)showChip13(this.c2,st.l2[0],st.l2[1],t,st.l2[2])}}}
+const G19='#2dd4bf',O19='#f59e0b',P19='#7c3aed',R19='#db2777';
+S.v19rem=v19s({build(r){this.rb=chip(r,'⟲ Remember?','var(--melody-deep)',200,150);this.rb.style.fontSize='26px'},
+ state(t,L){pop(this.rb,t,L+0.4,0.4);const wl=[],bl=[];if(t>=CL.wb1.start+0.2)[...Array(15).keys()].forEach(i=>wl.push([i,G19]));if(t>=CL.wb2.start+0.2)[...Array(10).keys()].forEach(k=>bl.push([k,O19]));
+  return {w:t>=CL.wb2.start-0.2?[]:wl,b:bl,l1:t<CL.wb2.start-0.2?['WHITE KEYS',G19,CL.wb1.start+0.2]:['BLACK KEYS',O19,CL.wb2.start+0.2]}}});
+// the very next key: three hops (white to black, black to white, white to black)
+S.v19semi=v19s({state(t,L){const b0=CL.semi.end+0.5,H=[[{w:7},{b:5}],[{b:6},{w:9}],[{w:10},{b:7}]],w=[],b=[],arcs=[];
+  H.forEach(([p,q],n)=>{const T=b0+n*1.8;[p,q].forEach((k,j)=>{if(t>=T+j*0.6&&t<T+1.5){if('w' in k)w.push([k.w,P19]);else b.push([k.b,P19])}});
+   if(t>=T+0.6&&t<T+1.7){const x1=('w' in p)?WX19(p.w):BX19(p.b),x2=('w' in q)?WX19(q.w):BX19(q.b);arcs.push({x1,x2,h:50,col:O19,op:1})}});
+  const last=b0+2*1.8+1.5;return {w,b,arcs:arcs.slice(0,4),l1:['THE VERY NEXT KEY = A SEMITONE',P19,wt('semi','semitone')-0.2],l2:t>=last?['BLACK KEYS HAVE NAMES TOO: COMING SOON','#db2777',last]:null}}});
+S.v19tone=v19s({state(t,L){const b0=CL.tone.end+0.5,E=[[7,5,8],[8,6,9]],w=[],b=[],arcs=[];
+  E.forEach(([a,k,z],n)=>{const T=b0+n*2.4;if(t>=T&&t<T+0.55)w.push([a,P19]);else if(t>=T+0.55&&t<T+1.1)b.push([k,P19]);else if(t>=T+1.1&&t<T+2.0)w.push([z,P19]);
+   if(t>=T+0.55&&t<T+2.1)arcs.push({x1:WX19(a),x2:BX19(k),h:44,col:O19});if(t>=T+1.1&&t<T+2.1)arcs.push({x1:BX19(k),x2:WX19(z),h:44,col:O19});if(t>=T+1.1&&t<T+2.1)arcs.push({x1:WX19(a),x2:WX19(z),h:100,col:P19})});
+  return {w,b,arcs:arcs.slice(0,4),l1:['TWO SEMITONES = ONE TONE',P19,wt('tone','tone')-0.2],l2:['SEMITONE + SEMITONE',O19,CL.tone.start+0.3]}}});
+function v19pair(a,z,ids,L1,L2){return v19s({build(r){this.nb=chip(r,'NO BLACK KEY HERE',O19,0,330,24);this.nb.style.left=(KB.x0+(a+1)*KB.w-1.5-this.nb.offsetWidth/2)+'px'},
+ state(t,L,c){const b0=CL[L2[2]].end+0.5,w=[],arcs=[],T1=CL[ids[0]].start,T2=CL[ids[1]].start;
+  if(t>=T1&&t<T1+0.9)w.push([a,P19]);if(t>=T2&&t<T2+0.9)w.push([z,P19]);
+  [0,1.9].forEach(o=>{if(t>=b0+o&&t<b0+o+0.6)w.push([a,P19]);else if(t>=b0+o+0.6&&t<b0+o+1.3)w.push([z,P19]);if(t>=b0+o+0.6&&t<b0+o+1.5)arcs.push({x1:WX19(a),x2:WX19(z),h:46,col:O19})});
+  pop(this.nb,t,CL[L2[2]].start,0.4);
+  return {w,arcs,letters:[{t:L1[0],x:WX19(a),col:P19,T:T1},{t:L1[1],x:WX19(z),col:P19,T:T2}],l1:['SEMITONE: NEXT-DOOR KEYS',P19,CL[L2[2]].start+0.3]}}})}
+S.v19ef=v19pair(9,10,['lE','lF'],['E','F'],['E','F','nokey']);
+S.v19bc=v19pair(13,14,['lB','lC'],['B','C'],['B','C','samehere']);
+S.v19q1=Object.assign(v19s({state(t,L){const a=CL.q1ask.end+0.4,w=[],b=[],arcs=[];if(t>=a&&t<a+0.55)w.push([7,P19]);else if(t>=a+0.55&&t<a+1.1)b.push([5,O19]);else if(t>=a+1.1&&t<a+2)w.push([8,P19]);
+  const tk=CL.q1ask.end+0.3,ta=CL.a1.start-0.15;if(t>=ta){w.push([7,P19],[8,P19]);b.push([5,O19]);arcs.push({x1:WX19(7),x2:WX19(8),h:80,col:P19})}
+  return {w,b,arcs,l1:t>=ta?['A TONE: 2 SEMITONES',P19,ta]:(t>=tk?['SEMITONE OR TONE?','#f59e0b',tk]:null)}}}),{cut:true});
+S.v19q2=Object.assign(v19s({state(t,L){const a=CL.q2ask.end+0.4,w=[],arcs=[];if(t>=a&&t<a+0.6)w.push([9,P19]);else if(t>=a+0.6&&t<a+1.3)w.push([10,P19]);
+  const tk=CL.q2ask.end+0.3,ta=CL.a2.start-0.15;if(t>=ta){w.push([9,P19],[10,P19]);arcs.push({x1:WX19(9),x2:WX19(10),h:46,col:P19})}
+  return {w,arcs,l1:t>=ta?['A SEMITONE: NEXT-DOOR KEYS',P19,ta]:(t>=tk?['SEMITONE OR TONE?','#f59e0b',tk]:null)}}}),{cut:true});
+S.outro19=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro19b=Object.assign({},S.outro12b,{cut:true});
+
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
 function viPill(r,txt,bg,x,y,fs){const c=chip(r,txt,bg,x,y);c.style.fontSize=(fs||44)+'px';c.style.padding='8px 34px 10px';c.style.left=(x-c.offsetWidth/2)+'px';return c}
