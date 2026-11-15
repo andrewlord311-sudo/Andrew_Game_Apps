@@ -158,6 +158,27 @@
       "show": "Same key… two names!"
     },
     {
+      "id": "signs",
+      "who": "barnaby",
+      "text": "These are the signs.",
+      "speed": 0.88,
+      "show": "These are the signs."
+    },
+    {
+      "id": "sharp4",
+      "who": "melody",
+      "text": "Sharp.",
+      "show": "Sharp.",
+      "src": "sharp"
+    },
+    {
+      "id": "flat4",
+      "who": "melody",
+      "text": "Flat.",
+      "show": "Flat.",
+      "src": "flat"
+    },
+    {
       "id": "yourturn20",
       "who": "melody",
       "text": "Your turn! <break time=\"0.4s\" /> Listen and look.",
@@ -300,6 +321,17 @@
       "lead": 0.5,
       "gap": 0,
       "tail": 6.0
+    },
+    {
+      "id": "v20signs",
+      "clips": [
+        "signs",
+        "sharp4",
+        "flat4"
+      ],
+      "lead": 0.5,
+      "gap": 0.8,
+      "tail": 4.5
     },
     {
       "id": "v20q1",

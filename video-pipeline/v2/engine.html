@@ -1934,9 +1934,12 @@ S.v20same=v20s({state(t,L){const b0=CL.same.end+0.5,w=[],b=[],arcs=[],tags=[];
   if(t>=b0+2.9){arcs.push({x1:WX19(8),x2:BX19(5),h:50,col:FL20});tags.push({txt:'D♭',x:BX19(5)+95,col:FL20,T:b0+2.9})}
   return {w,b,arcs,tags,l1:['ONE KEY, TWO NAMES',R19,CL.same.start+0.2],l2:t>=b0+2.9?['C♯  =  D♭',R19,b0+2.9]:null}}});
 function v20q(askId,ansId,w,k,txt,col,chipTxt,n){return Object.assign(v20s({state(t,L){const a=CL[askId].end+0.4,tk=CL[askId].end+0.3,ta=CL[ansId].start-0.15,ws=[],bs=[],arcs=[],tags=[];
-  if(t>=a&&t<a+0.6)ws.push([w,G19]);else if(t>=a+0.6&&t<a+1.5){bs.push([k,'#f59e0b']);tags.push({txt:'?',x:BX19(k),col:'#f59e0b',T:a+0.6})}
+  if(t>=a){ws.push([w,G19]);bs.push([k,'#f59e0b']);tags.push({txt:'?',x:BX19(k),col:'#f59e0b',T:a+0.6})}
   if(t>=ta){ws.push([w,G19]);bs.push([k,col]);arcs.push({x1:WX19(w),x2:BX19(k),h:50,col});tags.push({txt,x:BX19(k),col,T:ta})}
   return {w:ws,b:bs,arcs,tags,l1:t>=ta?[chipTxt,col,ta]:(t>=tk?['SHARP OR FLAT?','#f59e0b',tk]:null)}}}),{cut:true})}
+S.v20signs={ui:V6UI,cut:true,build(r){this.c=[['♯','SHARP',SH20],['♭','FLAT',FL20]].map(([s,w,col],i)=>{const d=document.createElement('div');d.className='abs';d.style.cssText=`left:${170+i*500}px;top:120px;width:440px;height:420px;border-radius:40px;background:#fff;box-shadow:0 12px 0 rgba(0,0,0,.14);text-align:center;opacity:0`;d.innerHTML=`<div style="font-size:320px;line-height:320px;color:${col};font-family:Arial,Helvetica,sans-serif;font-weight:700;margin-top:6px">${s}</div><div style="font-family:'Fredoka One';font-size:68px;color:${col}">${w}</div>`;r.appendChild(d);return d});
+  this.ch=chip(r,'THE SIGNS',R19,640,575);this.ch.style.fontSize='38px'},
+ update(t,L){pop(this.c[0],t,CL.signs.start+0.3,0.5);pop(this.c[1],t,CL.flat4.start-0.15,0.5);pop(this.ch,t,CL.signs.start+0.3,0.4)}};
 S.v20q1=v20q('q1ask','a1',8,6,'D♯',SH20,'A SHARP ♯: ONE SEMITONE HIGHER');
 S.v20q2=v20q('q2ask','a2',12,8,'A♭',FL20,'A FLAT ♭: ONE SEMITONE LOWER');
 S.outro20=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
