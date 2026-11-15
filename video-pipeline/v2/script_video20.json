@@ -1,0 +1,644 @@
+{
+  "title": "Sharps and flats",
+  "titleAt": "sharps",
+  "nugget": 20,
+  "game": "Sharp or Flat",
+  "gameFile": "sharp_or_flat.html",
+  "todayLead": "Today we are going to learn about",
+  "shared": [
+    {
+      "id": "opener",
+      "who": "melody",
+      "text": "Welcome to Melody and Barnaby's Music Nuggets!"
+    },
+    {
+      "id": "game1",
+      "who": "melody",
+      "text": "Now it's your turn!"
+    },
+    {
+      "id": "bye",
+      "who": "melody",
+      "text": "See you for the next Nugget!"
+    }
+  ],
+  "clips": [
+    {
+      "id": "today",
+      "who": "barnaby",
+      "text": "Today <break time=\"0.3s\" /> we are going to learn about <break time=\"0.3s\" /> sharps and flats.",
+      "speed": 0.88,
+      "show": "Today we are going to learn about sharps and flats."
+    },
+    {
+      "id": "semi",
+      "who": "barnaby",
+      "text": "The very next key… <break time=\"0.4s\" /> is called a semitone.",
+      "speed": 0.88,
+      "show": "The very next key… is called a semitone.",
+      "src": "../video19/semi"
+    },
+    {
+      "id": "sharpdef",
+      "who": "barnaby",
+      "text": "One semitone higher… <break time=\"0.4s\" /> is a sharp.",
+      "speed": 0.88,
+      "show": "One semitone higher… is a sharp."
+    },
+    {
+      "id": "lC",
+      "who": "melody",
+      "text": "C.",
+      "show": "C",
+      "prev": "B.",
+      "quiet": true,
+      "src": "../video3/lC"
+    },
+    {
+      "id": "sharp",
+      "who": "melody",
+      "text": "Sharp.",
+      "speed": 0.85,
+      "show": "Sharp.",
+      "prev": "C."
+    },
+    {
+      "id": "lF",
+      "who": "melody",
+      "text": "F.",
+      "show": "F",
+      "prev": "E.",
+      "quiet": true,
+      "src": "../video3/lF"
+    },
+    {
+      "id": "sharp2",
+      "who": "melody",
+      "text": "Sharp.",
+      "show": "Sharp.",
+      "src": "sharp"
+    },
+    {
+      "id": "lG",
+      "who": "melody",
+      "text": "G.",
+      "show": "G",
+      "prev": "F.",
+      "quiet": true,
+      "src": "../video3/lG"
+    },
+    {
+      "id": "sharp3",
+      "who": "melody",
+      "text": "Sharp.",
+      "show": "Sharp.",
+      "src": "sharp"
+    },
+    {
+      "id": "flatdef",
+      "who": "barnaby",
+      "text": "One semitone lower… <break time=\"0.4s\" /> is a flat.",
+      "speed": 0.88,
+      "show": "One semitone lower… is a flat."
+    },
+    {
+      "id": "lD",
+      "who": "melody",
+      "text": "D.",
+      "show": "D",
+      "prev": "C.",
+      "quiet": true,
+      "src": "../video3/lD"
+    },
+    {
+      "id": "flat",
+      "who": "melody",
+      "text": "Flat.",
+      "speed": 0.85,
+      "show": "Flat.",
+      "prev": "D."
+    },
+    {
+      "id": "lB",
+      "who": "melody",
+      "text": "B.",
+      "show": "B",
+      "prev": "A.",
+      "quiet": true,
+      "src": "../video3/lB"
+    },
+    {
+      "id": "flat2",
+      "who": "melody",
+      "text": "Flat.",
+      "show": "Flat.",
+      "src": "flat"
+    },
+    {
+      "id": "lE",
+      "who": "melody",
+      "text": "E.",
+      "show": "E",
+      "prev": "D.",
+      "quiet": true,
+      "src": "../video3/lE"
+    },
+    {
+      "id": "flat3",
+      "who": "melody",
+      "text": "Flat.",
+      "show": "Flat.",
+      "src": "flat"
+    },
+    {
+      "id": "same",
+      "who": "barnaby",
+      "text": "Same key… <break time=\"0.4s\" /> two names!",
+      "speed": 0.88,
+      "show": "Same key… two names!"
+    },
+    {
+      "id": "yourturn20",
+      "who": "melody",
+      "text": "Your turn! <break time=\"0.4s\" /> Listen and look.",
+      "speed": 0.88,
+      "show": "Your turn! Listen and look.",
+      "src": "../video12/yourturn12"
+    },
+    {
+      "id": "q1ask",
+      "who": "melody",
+      "text": "Sharp… <break time=\"0.4s\" /> or flat?",
+      "speed": 0.88,
+      "show": "Sharp… or flat?"
+    },
+    {
+      "id": "a1",
+      "who": "melody",
+      "text": "Sharp.",
+      "show": "Sharp.",
+      "quiet": true,
+      "src": "sharp"
+    },
+    {
+      "id": "q2ask",
+      "who": "melody",
+      "text": "Sharp… or flat?",
+      "show": "Sharp… or flat?",
+      "src": "q1ask"
+    },
+    {
+      "id": "a2",
+      "who": "melody",
+      "text": "Flat.",
+      "show": "Flat.",
+      "quiet": true,
+      "src": "flat"
+    },
+    {
+      "id": "qwell",
+      "who": "barnaby",
+      "text": "You've got it!",
+      "prev": "Line.",
+      "src": "../video2/qwell"
+    },
+    {
+      "id": "game20",
+      "who": "barnaby",
+      "text": "Play Sharp or Flat <break time=\"0.3s\" /> and name the black keys!",
+      "speed": 0.88,
+      "show": "Play Sharp or Flat and name the black keys!"
+    },
+    {
+      "id": "sub20",
+      "who": "melody",
+      "text": "Grown-ups, <break time=\"0.4s\" /> subscribe so you never miss a Nugget. <break time=\"0.5s\" /> New ones every Wednesday and Saturday.",
+      "speed": 0.88,
+      "show": "Grown-ups, subscribe so you never miss a Nugget. New ones every Wednesday and Saturday.",
+      "src": "../video12/sub12"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "opener",
+      "clips": [
+        "opener"
+      ],
+      "lead": 0.8,
+      "gap": 0,
+      "tail": 0.8
+    },
+    {
+      "id": "today",
+      "clips": [
+        "today"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.8
+    },
+    {
+      "id": "v20rem",
+      "clips": [
+        "semi"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 5.0
+    },
+    {
+      "id": "v20sharp",
+      "clips": [
+        "sharpdef"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 5.2
+    },
+    {
+      "id": "v20sharps",
+      "clips": [
+        "lC",
+        "sharp",
+        "lF",
+        "sharp2",
+        "lG",
+        "sharp3"
+      ],
+      "lead": 0.5,
+      "gap": 0.5,
+      "tail": 3.4
+    },
+    {
+      "id": "v20flat",
+      "clips": [
+        "flatdef"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 5.2
+    },
+    {
+      "id": "v20flats",
+      "clips": [
+        "lD",
+        "flat",
+        "lB",
+        "flat2",
+        "lE",
+        "flat3"
+      ],
+      "lead": 0.5,
+      "gap": 0.5,
+      "tail": 3.4
+    },
+    {
+      "id": "v20same",
+      "clips": [
+        "same"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 6.0
+    },
+    {
+      "id": "v20q1",
+      "clips": [
+        "yourturn20",
+        "q1ask",
+        "a1"
+      ],
+      "lead": 0.5,
+      "gap": 0.7,
+      "tail": 2.6
+    },
+    {
+      "id": "v20q2",
+      "clips": [
+        "q2ask",
+        "a2",
+        "qwell"
+      ],
+      "lead": 0.5,
+      "gap": 0,
+      "tail": 1.4
+    },
+    {
+      "id": "outro20",
+      "clips": [
+        "game1",
+        "game20"
+      ],
+      "lead": 0.6,
+      "gap": 0.5,
+      "tail": 1.6
+    },
+    {
+      "id": "outro20b",
+      "clips": [
+        "sub20",
+        "bye"
+      ],
+      "lead": 0.5,
+      "gap": 0.6,
+      "tail": 3.4
+    }
+  ],
+  "events": [
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "semi",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "semi",
+      "off": 2.6,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "sharpdef",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "sharpdef",
+      "off": 2.6,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4"
+      ],
+      "step": 1,
+      "clip": "lC",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "cs4"
+      ],
+      "step": 1,
+      "clip": "sharp",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "f4"
+      ],
+      "step": 1,
+      "clip": "lF",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "fs4"
+      ],
+      "step": 1,
+      "clip": "sharp2",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "g4"
+      ],
+      "step": 1,
+      "clip": "lG",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "gs4"
+      ],
+      "step": 1,
+      "clip": "sharp3",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "flatdef",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "flatdef",
+      "off": 2.6,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4"
+      ],
+      "step": 1,
+      "clip": "lD",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "cs4"
+      ],
+      "step": 1,
+      "clip": "flat",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "b4"
+      ],
+      "step": 1,
+      "clip": "lB",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "as4"
+      ],
+      "step": 1,
+      "clip": "flat2",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "e4"
+      ],
+      "step": 1,
+      "clip": "lE",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "ds4"
+      ],
+      "step": 1,
+      "clip": "flat3",
+      "off": -0.05,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "start"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "c4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "same",
+      "off": 0.5,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4",
+        "cs4"
+      ],
+      "step": 0.7,
+      "clip": "same",
+      "off": 2.7,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "d4",
+        "ds4"
+      ],
+      "step": 0.6,
+      "clip": "q1ask",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "run",
+      "notes": [
+        "a4",
+        "gs4"
+      ],
+      "step": 0.6,
+      "clip": "q2ask",
+      "off": 0.4,
+      "vol": 0.45,
+      "dur": 1.2,
+      "from": "end"
+    },
+    {
+      "kind": "pop",
+      "clip": "a1",
+      "off": -0.2
+    },
+    {
+      "kind": "tick",
+      "clip": "a2",
+      "off": -0.2
+    },
+    {
+      "kind": "sparkle",
+      "clip": "qwell",
+      "off": -0.1
+    }
+  ],
+  "beats": [],
+  "gapOverride": {
+    "a1": 4.2,
+    "a2": 4.2,
+    "qwell": 1.2
+  }
+}

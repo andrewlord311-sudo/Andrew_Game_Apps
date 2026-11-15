@@ -1910,6 +1910,37 @@ S.v19q2=Object.assign(v19s({state(t,L){const a=CL.q2ask.end+0.4,w=[],arcs=[];if(
   return {w,arcs,l1:t>=ta?['A SEMITONE: NEXT-DOOR KEYS',P19,ta]:(t>=tk?['SEMITONE OR TONE?','#f59e0b',tk]:null)}}}),{cut:true});
 S.outro19=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
 S.outro19b=Object.assign({},S.outro12b,{cut:true});
+// ======================================================================== VIDEO 20: sharps and flats (names for the black keys)
+// Sharp = the black key one semitone up (to the right); flat = one semitone down (to the left). Sharp orange, flat purple. Name tags sit above the key.
+const SH20=O19,FL20=P19,T20='#0d9488';
+function v20s(f){return v19s({build(r){this.tg=[0,1,2].map(()=>{const e=document.createElement('div');e.className='big abs';e.style.cssText='width:150px;height:76px;line-height:80px;border-radius:20px;font-size:46px;color:#fff;text-align:center;border:4px solid #fff;box-shadow:0 6px 0 rgba(0,0,0,.2);opacity:0;top:150px';r.appendChild(e);return e});if(f.build)f.build.call(this,r)},
+ state(t,L,c){const st=f.state.call(this,t,L,c)||{};this.tg.forEach((e,i)=>{const o=(st.tags||[])[i];if(!o){e.style.opacity=0;return}e.textContent=o.txt;e.style.background=o.col;e.style.left=(o.x-75)+'px';pop(e,t,o.T,0.4)});return st}})}
+function v20demo(clip,w,k,col,txt,word,badge){return v20s({build(r){if(badge){this.rb=chip(r,'⟲ Remember?','var(--melody-deep)',200,150);this.rb.style.fontSize='26px'}},
+ state(t,L){if(this.rb)pop(this.rb,t,L+0.4,0.4);const b0=CL[clip].end+0.5,ws=[],bs=[],arcs=[];if(t>=b0)ws.push([w,G19]);if(t>=b0+0.7){bs.push([k,col]);arcs.push({x1:WX19(w),x2:BX19(k),h:50,col})}
+  return {w:ws,b:bs,arcs,l1:[txt,col,wt(clip,word)-0.2]}}})}
+S.v20rem=v20demo('semi',7,5,P19,'THE VERY NEXT KEY = A SEMITONE','semitone',true);
+S.v20sharp=v20demo('sharpdef',7,5,SH20,'SHARP ♯ = ONE SEMITONE HIGHER','sharp');
+S.v20flat=v20demo('flatdef',8,5,FL20,'FLAT ♭ = ONE SEMITONE LOWER','flat');
+function v20pairs(P,txt,col){return v20s({state(t,L){const w=[],b=[],arcs=[],tags=[],letters=[];
+  P.forEach((p,i)=>{const T0=CL[p.L].start,T1=CL[p.W].start,Tn=P[i+1]?CL[P[i+1].L].start-0.05:1e9;
+   if(t>=T0&&t<Tn){w.push([p.w,G19]);letters.push({t:p.n,x:WX19(p.w),col:T20,T:T0});
+    if(t>=T1-0.05){b.push([p.k,col]);arcs.push({x1:WX19(p.w),x2:BX19(p.k),h:50,col});tags.push({txt:p.txt,x:BX19(p.k),col,T:T1})}}});
+  return {w,b,arcs,tags,letters:letters.slice(0,1),l1:[txt,col,CL[P[0].L].start-0.1]}}})}
+S.v20sharps=v20pairs([{L:'lC',W:'sharp',w:7,k:5,n:'C',txt:'C♯'},{L:'lF',W:'sharp2',w:10,k:7,n:'F',txt:'F♯'},{L:'lG',W:'sharp3',w:11,k:8,n:'G',txt:'G♯'}],'SHARP ♯ = ONE SEMITONE HIGHER',SH20);
+S.v20flats=v20pairs([{L:'lD',W:'flat',w:8,k:5,n:'D',txt:'D♭'},{L:'lB',W:'flat2',w:13,k:9,n:'B',txt:'B♭'},{L:'lE',W:'flat3',w:9,k:6,n:'E',txt:'E♭'}],'FLAT ♭ = ONE SEMITONE LOWER',FL20);
+S.v20same=v20s({state(t,L){const b0=CL.same.end+0.5,w=[],b=[],arcs=[],tags=[];
+  if(t>=b0&&t<b0+2.2)w.push([7,G19]);else if(t>=b0+2.2)w.push([8,G19]);
+  if(t>=b0+0.7){b.push([5,O19]);if(t<b0+2.2)arcs.push({x1:WX19(7),x2:BX19(5),h:50,col:SH20});tags.push({txt:'C♯',x:BX19(5)-95,col:SH20,T:b0+0.7})}
+  if(t>=b0+2.9){arcs.push({x1:WX19(8),x2:BX19(5),h:50,col:FL20});tags.push({txt:'D♭',x:BX19(5)+95,col:FL20,T:b0+2.9})}
+  return {w,b,arcs,tags,l1:['ONE KEY, TWO NAMES',R19,CL.same.start+0.2],l2:t>=b0+2.9?['C♯  =  D♭',R19,b0+2.9]:null}}});
+function v20q(askId,ansId,w,k,txt,col,chipTxt,n){return Object.assign(v20s({state(t,L){const a=CL[askId].end+0.4,tk=CL[askId].end+0.3,ta=CL[ansId].start-0.15,ws=[],bs=[],arcs=[],tags=[];
+  if(t>=a&&t<a+0.6)ws.push([w,G19]);else if(t>=a+0.6&&t<a+1.5){bs.push([k,'#f59e0b']);tags.push({txt:'?',x:BX19(k),col:'#f59e0b',T:a+0.6})}
+  if(t>=ta){ws.push([w,G19]);bs.push([k,col]);arcs.push({x1:WX19(w),x2:BX19(k),h:50,col});tags.push({txt,x:BX19(k),col,T:ta})}
+  return {w:ws,b:bs,arcs,tags,l1:t>=ta?[chipTxt,col,ta]:(t>=tk?['SHARP OR FLAT?','#f59e0b',tk]:null)}}}),{cut:true})}
+S.v20q1=v20q('q1ask','a1',8,6,'D♯',SH20,'A SHARP ♯: ONE SEMITONE HIGHER');
+S.v20q2=v20q('q2ask','a2',12,8,'A♭',FL20,'A FLAT ♭: ONE SEMITONE LOWER');
+S.outro20=Object.assign({},S.outro,{cut:true,ui:{ribbon:0,hosts:'bye',bubble:false}});
+S.outro20b=Object.assign({},S.outro12b,{cut:true});
 
 // ======================================================================== CHANNEL INTRO: "Start here"
 // Speaks to the grown-ups: what a Nugget is, how they are ordered, when they arrive, where the games are.
