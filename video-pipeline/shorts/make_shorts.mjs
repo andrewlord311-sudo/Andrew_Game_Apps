@@ -37,11 +37,13 @@ const shot = async (file, show) => { await p.evaluate(s => { for (const id of ['
 
 for (const c of clips) {
   const dur = c.end - c.start, tmp = here + 'out/_' + c.id + '/'; fs.mkdirSync(tmp, { recursive: true });
-  await p.evaluate(([h, f]) => { document.getElementById('hook').innerHTML = h; document.getElementById('ftxt').textContent = f || 'Full lesson + free game ▶'; }, [c.hook, c.footer]);
+  await p.evaluate(([h, f, ct, ft]) => { document.getElementById('hook').innerHTML = h; document.getElementById('ftxt').textContent = f || 'Full lesson + free game ▶'; document.getElementById('cap').style.top = (ct || 1130) + 'px'; document.getElementById('foot').style.top = (ft || 1400) + 'px'; }, [c.hook, c.footer, c.capTop, c.footTop]);
   await shot(tmp + 'static.png', ['hook', 'foot']);
   const cues = parseSrt(fs.readFileSync(repo + c.srt, 'utf8')).filter(q => q.a >= c.start - 0.2 && q.z <= c.end + 0.2);
   const inputs = ['-ss', c.start, '-t', dur, '-i', repo + c.src, '-loop', 1, '-framerate', 30, '-t', dur, '-i', bgf, '-loop', 1, '-framerate', 30, '-t', dur, '-i', tmp + 'static.png'];
-  let chain = `[0:v]crop=1280:656:0:64,scale=1080:-2[fg];[1:v][fg]overlay=0:500[v0];[v0][2:v]overlay=0:0[v1]`;
+  // optional per-clip zoom: crop = [w, h, x, y] of the 1280x720 frame (scaled up to 1080 wide), gy = top of the picture on the 1080x1920 canvas
+  const [cw, ch, cx, cy] = c.crop || [1280, 656, 0, 64];
+  let chain = `[0:v]crop=${cw}:${ch}:${cx}:${cy},scale=1080:-2[fg];[1:v][fg]overlay=0:${c.gy || 500}[v0];[v0][2:v]overlay=0:0[v1]`;
   let last = 'v1', n = 3;
   for (const q of cues) {
     const f = `${tmp}cap${n}.png`;
