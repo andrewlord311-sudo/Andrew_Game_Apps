@@ -1894,11 +1894,12 @@ S.v19tone=v19s({state(t,L){const b0=CL.tone.end+0.5,E=[[7,5,8],[8,6,9]],w=[],b=[
    w.push([a,P19]);if(t>=T+0.6)b.push([k,O19]);if(t>=T+1.2)w.push([z,P19]);
    if(t>=T+0.6)arcs.push({x1:WX19(a),x2:BX19(k),h:44,col:O19});if(t>=T+1.2)arcs.push({x1:BX19(k),x2:WX19(z),h:44,col:O19});if(t>=T+1.4)arcs.push({x1:WX19(a),x2:WX19(z),h:110,col:P19})});
   return {w,b,arcs:arcs.slice(0,4),l1:['TWO SEMITONES = ONE TONE',P19,wt('tone','tone')-0.2],l2:['PURPLE: THE TONE   ORANGE: IN BETWEEN',O19,CL.tone.start+0.3]}}});
-function v19pair(a,z,ids,L1,L2){return v19s({build(r){this.nb=chip(r,'NO BLACK KEY HERE',O19,0,330,24);this.nb.style.left=(KB.x0+(a+1)*KB.w-1.5-this.nb.offsetWidth/2)+'px'},
+function v19pair(a,z,ids,L1,L2){return v19s({build(r){const gx=KB.x0+(a+1)*KB.w-1.5;this.nb=chip(r,'NO BLACK KEY HERE',O19,0,128,26);this.nb.style.left=(gx-this.nb.offsetWidth/2)+'px';
+  this.ar=document.createElement('div');this.ar.className='abs';this.ar.style.cssText=`left:${gx-45}px;top:178px;width:90px;opacity:0`;this.ar.innerHTML=`<svg viewBox="0 0 90 150" width="90" style="overflow:visible"><path d="M30,4 H60 V78 H84 L45,146 L6,78 H30 Z" fill="${O19}" stroke="#fff" stroke-width="7" stroke-linejoin="round"/></svg>`;r.appendChild(this.ar)},
  state(t,L,c){const b0=CL[L2[2]].end+0.5,w=[],arcs=[],T1=CL[ids[0]].start,T2=CL[ids[1]].start;
   if(t>=T1&&t<T1+0.9)w.push([a,P19]);if(t>=T2&&t<T2+0.9)w.push([z,P19]);
   [0,1.9].forEach(o=>{if(t>=b0+o&&t<b0+o+0.6)w.push([a,P19]);else if(t>=b0+o+0.6&&t<b0+o+1.3)w.push([z,P19]);if(t>=b0+o+0.6&&t<b0+o+1.5)arcs.push({x1:WX19(a),x2:WX19(z),h:46,col:O19})});
-  pop(this.nb,t,CL[L2[2]].start,0.4);
+  pop(this.nb,t,CL[L2[2]].start,0.4);pop(this.ar,t,CL[L2[2]].start,0.4);this.ar.style.translate=`0 ${Math.sin(t*6)*9}px`;
   return {w,arcs,letters:[{t:L1[0],x:WX19(a),col:P19,T:T1},{t:L1[1],x:WX19(z),col:P19,T:T2}],l1:['SEMITONE: NEXT-DOOR KEYS',P19,CL[L2[2]].start+0.3]}}})}
 S.v19ef=v19pair(9,10,['lE','lF'],['E','F'],['E','F','nokey']);
 S.v19bc=v19pair(13,14,['lB','lC'],['B','C'],['B','C','samehere']);
