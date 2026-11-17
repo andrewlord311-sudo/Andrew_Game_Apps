@@ -53,10 +53,10 @@
                 ☀️ Stage 1: The Spaces
             </button>
             <button id="btn-stage-2" onclick="setStage(2)" class="py-2 px-2 rounded-2xl font-bold text-sm transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🌟 Stage 2: The Lines
+                🌟 Stage 2: Tap the space
             </button>
             <button id="btn-stage-3" onclick="setStage(3)" class="py-2 px-2 rounded-2xl font-bold text-sm transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
-                🎯 Stage 3: Two F's
+                🎯 Stage 3: F and C
             </button>
         </div>
 
@@ -112,7 +112,7 @@
     <script src="auth.js"></script>
     <script src="back-link.js"></script>
     <script src="reward-system.js"></script>
-    <script>window.GP_TOTAL_STAGES = 3;</script> <!-- this game has 3 stages: spaces, lines, then the two F's on both staves -->
+    <script>window.GP_TOTAL_STAGES = 3;</script> <!-- this game has 3 stages: spaces, tap the space, then F and C on both staves -->
     <script src="hit-counter.js"></script>
     <script src="game-progress.js"></script>
     <script>
@@ -134,32 +134,27 @@
             C5: { letter: 'C', lineStep: 5, freq: 523.25 },
             E5: { letter: 'E', lineStep: 7, freq: 659.25 },
         };
-        // Stage 2: the five lines around those spaces spell E-G-B-D-F.
-        const LINE_NOTES = {
-            E4: { letter: 'E', lineStep: 0, freq: 329.63 },
-            G4: { letter: 'G', lineStep: 2, freq: 392.00 },
-            B4: { letter: 'B', lineStep: 4, freq: 493.88 },
-            D5: { letter: 'D', lineStep: 6, freq: 587.33 },
-            F5: { letter: 'F', lineStep: 8, freq: 698.46 },
-        };
-        // Stage 3: find F on both staves (treble F = lowest space; bass F = the line between the two dots), with E and G as neighbours.
-        const FIND_F_NOTES = {
-            T_E4: { letter: 'E', lineStep: 0, freq: 329.63, clef: 'treble' },
+        // Stage 3: only the notes the videos teach: F and C on both staves.
+        // Treble F = lowest space, treble C = third space, Middle C = the ledger line under the treble stave;
+        // bass F = the line between the two dots, Middle C = the ledger line above the bass stave.
+        const FC_NOTES = {
             T_F4: { letter: 'F', lineStep: 1, freq: 349.23, clef: 'treble' },
-            T_G4: { letter: 'G', lineStep: 2, freq: 392.00, clef: 'treble' },
-            B_E3: { letter: 'E', lineStep: 5, freq: 164.81, clef: 'bass' },
+            T_C5: { letter: 'C', lineStep: 5, freq: 523.25, clef: 'treble' },
+            T_C4: { letter: 'C', lineStep: -2, freq: 261.63, clef: 'treble', middleC: true },
             B_F3: { letter: 'F', lineStep: 6, freq: 174.61, clef: 'bass' },
-            B_G3: { letter: 'G', lineStep: 7, freq: 196.00, clef: 'bass' },
+            B_C4: { letter: 'C', lineStep: 10, freq: 261.63, clef: 'bass', middleC: true },
         };
-        const STAGE_WORDS = { 1: 'FACE', 2: 'EGBDF', 3: 'EFG' };
+        // Stage 2 uses the same four spaces as stage 1, but you tap the space instead of naming the note.
+        const STAGE_WORDS = { 1: 'FACE', 2: 'FACE', 3: 'FC' };
+        let revealed = false;   // stage 2: the note is drawn once you have tapped the right space
 
-        function currentDatabase() { return currentStage === 1 ? SPACE_NOTES : currentStage === 2 ? LINE_NOTES : FIND_F_NOTES; }
+        function currentDatabase() { return currentStage === 3 ? FC_NOTES : SPACE_NOTES; }
         function currentLetters() { return STAGE_WORDS[currentStage].split(''); }
 
         const dialogs = {
             stage1: "Read the treble spaces bottom to top and they spell F-A-C-E!",
-            stage2: "Now for the five lines around those spaces — E, G, B, D, F.",
-            stage3: "Two F's! Treble: the lowest space. Bass: the line between the two dots.",
+            stage2: "Now the other way round: I'll say a letter, you tap its space on the treble stave.",
+            stage3: "F and C on both staves! Middle C sits on its own little line between the staves. Bass F is the line between the two dots.",
             correct: "That's it! Great note-naming! 🎵",
             incorrect: "Not quite — check which space or line it's sitting in.",
         };
@@ -253,7 +248,8 @@
         }
 
         // Draw the 5-line staff, treble clef, and a hollow note head - every
-        // note in this game sits inside the staff, so no ledger lines needed.
+        // note in this game sits in the spaces, except Middle C (stage 3), which gets its own short ledger line.
+        const BASS_SCALE = 4, BASS_BASE = 4.35;   // bass clef: same size as the treble clef; its curl starts on the F line (second line from the top) and its dots sit either side of that line
         function drawStaff() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const startY = 50;
@@ -278,13 +274,18 @@
             const db = currentDatabase();
             const note = db[currentNoteId];
             if (note.clef === 'bass') {
-                ctx.font = `${lineGap * 3}px "Noto Music", serif`;
-                ctx.fillText("\u{1D122}", startX + 6, startY + 1 * lineGap);
+                ctx.font = `${lineGap * BASS_SCALE}px "Noto Music", serif`;
+                ctx.fillText("\u{1D122}", startX + 6, startY + BASS_BASE * lineGap);
             } else {
                 ctx.fillText("\u{1D11E}", startX + 6, startY + 4 * lineGap);
             }
             const noteX = canvas.width / 2 + 40;
             const noteY = startY + (8 - note.lineStep) * (lineGap / 2);
+            if (currentStage === 2 && !revealed) { return; }   // stage 2: tap the space, nothing drawn yet
+            if (note.middleC) {   // Middle C: its own short line
+                ctx.strokeStyle = '#334155'; ctx.lineWidth = 2.5; ctx.beginPath();
+                ctx.moveTo(noteX - 20, noteY); ctx.lineTo(noteX + 20, noteY); ctx.stroke();
+            }
 
             ctx.save();
             ctx.translate(noteX, noteY);
@@ -316,11 +317,24 @@
             }
         }
 
+        // stage 2: tap one of the four treble spaces
+        canvas.addEventListener('pointerdown', e => {
+            if (currentStage !== 2 || controlLock || currentNoteId === null) return;
+            const rc = canvas.getBoundingClientRect();
+            const x = (e.clientX - rc.left) * canvas.width / rc.width, y = (e.clientY - rc.top) * canvas.height / rc.height;
+            if (x < 40 || x > 260 || y < 50 || y > 114) return;
+            const spaces = [{ y: 58, letter: 'E' }, { y: 74, letter: 'C' }, { y: 90, letter: 'A' }, { y: 106, letter: 'F' }];
+            const hit = spaces.reduce((b, s) => Math.abs(s.y - y) < Math.abs(b.y - y) ? s : b, spaces[0]);
+            playTone(SPACE_NOTES[{ F: 'F4', A: 'A4', C: 'C5', E: 'E5' }[hit.letter]].freq, 'triangle', 0.4);
+            makeGuess(hit.letter);
+        });
+
         function renderAnswers() {
             const container = document.getElementById('answer-buttons');
             container.innerHTML = '';
             // Fixed order every round, matching the mnemonic word itself -
             // buttons don't shuffle, so the spelling stays visually anchored.
+            if (currentStage === 2) { return; }   // stage 2: you tap the staff itself
             currentLetters().forEach(letter => {
                 const btn = document.createElement('button');
                 btn.innerText = letter;
@@ -339,9 +353,12 @@
             } while (keys.length > 1 && pickedKey === currentNoteId);
             currentNoteId = pickedKey;
             controlLock = false;
+            revealed = false;
 
             drawStaff();
             renderAnswers();
+            const db2 = currentDatabase();
+            document.getElementById('question-text').innerText = currentStage === 2 ? `Tap the space for ${db2[currentNoteId].letter}.` : currentStage === 3 ? 'Is this note F or C?' : 'What note is this?';
 
             const feedback = document.getElementById('feedback');
             feedback.className = "text-center text-base font-bold min-h-[24px] text-slate-700 mb-2";
@@ -368,6 +385,7 @@
                 playTone(note.freq, 'triangle', 0.4);
                 triggerConfetti();
                 popMnemonicTile(note.letter);
+                if (currentStage === 2) { revealed = true; drawStaff(); }
                 document.getElementById('mascot-dialog').innerText = dialogs.correct;
                 const avatar = document.getElementById('mascot-avatar');
                 avatar.className = "mascot-spin shrink-0";
@@ -436,15 +454,15 @@
             const oBtn = document.getElementById('overlay-btn');
 
             if (currentStage === 1) {
-                oMsg.innerText = `You've mastered the spaces — F, A, C, E! Ready for the lines?`;
+                oMsg.innerText = `You've mastered the spaces — F, A, C, E! Ready to tap them?`;
                 oBtn.innerText = "Go to Stage 2!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(2); };
             } else if (currentStage === 2) {
-                oMsg.innerText = `You know the lines too! Now find the F on both staves.`;
+                oMsg.innerText = `You can find every space! Now F and C on both staves.`;
                 oBtn.innerText = "Go to Stage 3!";
                 oBtn.onclick = () => { dismissOverlay(); setStage(3); };
             } else {
-                oMsg.innerText = `Amazing! You can find F on the treble stave and the bass stave, and name every space and line on the treble clef!`;
+                oMsg.innerText = `Amazing! You know F-A-C-E on the treble stave, and F and Middle C on both staves!`;
                 oBtn.innerText = "Back to Arcade!";
                 oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
             }
