@@ -237,5 +237,149 @@
   "end": 75.8,
   "hook": "Find <b>F</b> on the<br><b>bass clef</b>",
   "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short27_together_or_one",
+  "src": "videos/video15_notes_together.mp4",
+  "srt": "channel/captions/video15.en-GB.srt",
+  "start": 110.39,
+  "end": 123.96,
+  "hook": "Together or<br><b>one by one</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   560,
+   110,
+   140
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short28_what_is_a_chord",
+  "src": "videos/video15_notes_together.mp4",
+  "srt": "channel/captions/video15.en-GB.srt",
+  "start": 42.96,
+  "end": 53.72,
+  "hook": "What is a<br><b>chord</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   560,
+   110,
+   140
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short29_ti_ti",
+  "src": "videos/video16_quavers.mp4",
+  "srt": "channel/captions/video16.en-GB.srt",
+  "start": 45.45,
+  "end": 64.94,
+  "hook": "What is<br><b>ti-ti</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   840,
+   400,
+   220,
+   190
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short30_which_finger",
+  "src": "videos/video17_thumb_on_c.mp4",
+  "srt": "channel/captions/video17.en-GB.srt",
+  "start": 114.78,
+  "end": 132.64,
+  "hook": "Which <b>finger</b><br>plays E?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   545,
+   110,
+   175
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short31_c_major_chord",
+  "src": "videos/video18_c_major_chord.mp4",
+  "srt": "channel/captions/video18.en-GB.srt",
+  "start": 32.44,
+  "end": 54.35,
+  "hook": "Make the<br><b>C major chord</b>",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   545,
+   110,
+   175
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short32_semitone",
+  "src": "videos/video19_next_door_notes.mp4",
+  "srt": "channel/captions/video19.en-GB.srt",
+  "start": 21.68,
+  "end": 39.59,
+  "hook": "What is a<br><b>semitone</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   560,
+   110,
+   140
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short33_no_black_key",
+  "src": "videos/video19_next_door_notes.mp4",
+  "srt": "channel/captions/video19.en-GB.srt",
+  "start": 47.69,
+  "end": 63.78,
+  "hook": "No black key<br><b>between</b> them",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   560,
+   110,
+   140
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short34_sharp",
+  "src": "videos/video20_sharps_and_flats.mp4",
+  "srt": "channel/captions/video20.en-GB.srt",
+  "start": 22.15,
+  "end": 39.28,
+  "hook": "What is a<br><b>sharp</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   560,
+   110,
+   140
+  ],
+  "gy": 450
+ },
+ {
+  "id": "short35_sharp_or_flat",
+  "src": "videos/video20_sharps_and_flats.mp4",
+  "srt": "channel/captions/video20.en-GB.srt",
+  "start": 75.16,
+  "end": 88.37,
+  "hook": "Sharp or <b>flat</b>?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶",
+  "crop": [
+   1060,
+   560,
+   110,
+   140
+  ],
+  "gy": 450
  }
 ]
