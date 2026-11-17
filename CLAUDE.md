@@ -21,5 +21,8 @@
 Lord Family vault (`the-lord-family/obsidian-vault`): no notes for this project live there. Don't add family or Laura material here.
 <!-- key-docs:end -->
 
+## Keep the dashboard current (Andrew, 17 Nov 2026)
+Whenever anything changes on Nuggets (a video, game, Short/Reel, upload, credit reading, decision or an OK from Andrew), update `Nuggets dashboard.md` straight away: the `updated:` date, the State line, Waiting for you, Claude's next steps, Coming up, the tables and the log. Then run `python3 ~/Projects/vault-tools/sync-second-brain.py` so GitHub's copy matches.
+
 ## Video pacing (read before touching a Nugget video)
 Children's videos must never rush. Rules, history of complaints and the workflow are in the `video-pacing` skill (`~/.claude/skills/video-pacing/SKILL.md`). Run `python3 video-pipeline/v2/pacing_check.py <video>` after building any timeline, and use `build_timeline.py <video> --dry` for a free silent preview before voicing.
