@@ -151,13 +151,6 @@
       "src": "flat"
     },
     {
-      "id": "same",
-      "who": "barnaby",
-      "text": "Same key… <break time=\"0.4s\" /> two names!",
-      "speed": 0.88,
-      "show": "Same key… two names!"
-    },
-    {
       "id": "signs",
       "who": "barnaby",
       "text": "These are the signs.",
@@ -312,15 +305,6 @@
       "lead": 0.5,
       "gap": 0.5,
       "tail": 3.4
-    },
-    {
-      "id": "v20same",
-      "clips": [
-        "same"
-      ],
-      "lead": 0.5,
-      "gap": 0,
-      "tail": 6.0
     },
     {
       "id": "v20signs",
@@ -598,32 +582,6 @@
       "vol": 0.45,
       "dur": 1.2,
       "from": "start"
-    },
-    {
-      "kind": "run",
-      "notes": [
-        "c4",
-        "cs4"
-      ],
-      "step": 0.7,
-      "clip": "same",
-      "off": 0.5,
-      "vol": 0.45,
-      "dur": 1.2,
-      "from": "end"
-    },
-    {
-      "kind": "run",
-      "notes": [
-        "d4",
-        "cs4"
-      ],
-      "step": 0.7,
-      "clip": "same",
-      "off": 2.7,
-      "vol": 0.45,
-      "dur": 1.2,
-      "from": "end"
     },
     {
       "kind": "run",
