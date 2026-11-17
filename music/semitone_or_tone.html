@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semitone or Tone?</title>
+    <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/noto-music.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #ccfbf1 0%, #ede9fe 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+        button { touch-action: manipulation; }
+        .sg { font-family: 'Noto Music', 'Fredoka One', serif; font-size: 1.5em; line-height: 1; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-purple-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-purple-600 text-center mb-1">Semitone or Tone?</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Next-door keys and one-key-between: hear it, then name it</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
+                👂 Stage 1: Hear it
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                ⚪ Stage 2: E–F, B–C
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🎹 Stage 3: Find it
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-rose-50 p-2 rounded-2xl border border-rose-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-rose-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-rose-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
+                    Listen to the two purple keys. Is it a semitone or a tone?
+                </p>
+            </div>
+        </div>
+
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex justify-center items-center">
+            <canvas id="canvas" width="300" height="170" class="max-h-40 w-auto rounded-xl bg-white shadow-inner" style="touch-action:manipulation"></canvas>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
+
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-rose-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2">
+            What note is this?
+        </div>
+
+        <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-2">
+            &nbsp;
+        </div>
+
+        <div class="flex justify-center mb-2"><button id="listen-btn" onclick="listen()" class="hidden bg-violet-100 text-violet-700 border-b-2 border-violet-300 font-bold px-5 py-2 rounded-xl hover:bg-violet-200">🔊 Listen again</button></div>
+
+        <div class="grid grid-cols-1 gap-2 mb-3" id="answer-buttons">
+            <!-- injected -->
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
+    <script src="mascots.js"></script>
+    <script src="auth.js"></script>
+    <script src="back-link.js"></script>
+    <script src="reward-system.js"></script>
+    <script src="hit-counter.js"></script>
+    <script src="game-progress.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStage = 1;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+        let round = null;
+
+                const dialogs = {
+            stage1: "The very next key is a semitone. Two semitones make a tone. Listen to the two purple keys.",
+            stage2: "E to F and B to C have no black key between them, so they are a semitone. The other white pairs are a tone.",
+            stage3: "Start on the purple key. A semitone is the very next key, a tone is the key after that.",
+            correct: "Spot on! 🎯",
+            incorrect: "Not quite. Count the keys: next-door is a semitone."
+        };
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5, vol = 0.3, delay = 0) {
+            try {
+                const ac = getAudioContext();
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                const t0 = ac.currentTime + delay;
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, t0);
+                gain.gain.setValueAtTime(0, t0);
+                gain.gain.linearRampToValueAtTime(vol, t0 + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, t0 + duration);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start(t0);
+                osc.stop(t0 + duration + 0.05);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            playCheer(); setTimeout(playCheer, 450);   // a party sound, not a piano
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // A party sound that is nothing like the piano notes of the questions: a little burst of applause (filtered noise),
+        // glittery high pings, and a bright "ta-da" on a buzzy synth.
+        function playCheer() {
+            try {
+                const ac = getAudioContext();
+                const now = ac.currentTime;
+                // applause: crackly noise through a band-pass filter
+                const len = Math.floor(ac.sampleRate * 0.9);
+                const buf = ac.createBuffer(1, len, ac.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() < 0.18 ? 1 : 0.15);
+                const src = ac.createBufferSource(); src.buffer = buf;
+                const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.7;
+                const ng = ac.createGain();
+                ng.gain.setValueAtTime(0.0001, now);
+                ng.gain.exponentialRampToValueAtTime(0.5, now + 0.05);
+                ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+                src.connect(bp); bp.connect(ng); ng.connect(ac.destination); src.start(now);
+                // glitter: quick high pings
+                [2093, 2637, 3136, 2349, 3520, 2794].forEach((f, k) => playTone(f * (1 + (k % 2) * 0.01), 'sine', 0.25, 0.08, 0.05 + k * 0.07));
+                // ta-da: two buzzy synth hits (sawtooth through a low-pass), not piano-like
+                [[392, 0, 0.16], [523.25, 0.17, 0.5]].forEach(([f, at, dur]) => {
+                    const o = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 1800;
+                    g.gain.setValueAtTime(0.0001, now + at);
+                    g.gain.exponentialRampToValueAtTime(0.16, now + at + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+                    o.connect(lp); lp.connect(g); g.connect(ac.destination); o.start(now + at); o.stop(now + at + dur + 0.05);
+                });
+            } catch (e) {}
+        }
+
+        
+
+        const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`btn-stage-${i}`);
+                btn.className = i === stageNum
+                    ? "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow"
+                    : "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            }
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${stageNum}`];
+            resetStats();
+            newRound();
+        }
+
+        if (typeof RewardSystem !== 'undefined') {
+            RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
+        }
+
+        // ---- keyboard: 13 keys from C to C (white keys at 0 2 4 5 7 9 11 12 semitones, black keys at 1 3 6 8 10) ------------
+        const WI = [0, 2, 4, 5, 7, 9, 11, 12], BI = [1, 3, 6, 8, 10];
+        const PUR = '#7c3aed', ORG = '#f59e0b';                   // same colours as video 19: the two notes of a tone purple, the note in between orange
+        const KX0 = 6, KW = 36, KT = 14, KH = 118, BW = 22, BH = 74;
+        const freq = k => 261.63 * Math.pow(2, k / 12);
+        const isBlack = k => BI.includes(k);
+        function kx(k) { return isBlack(k) ? KX0 + (WI.indexOf(k - 1) + 1) * KW : KX0 + WI.indexOf(k) * KW + KW / 2; }   // centre x
+        function playKey(k, delay = 0) { playTone(freq(k), 'triangle', 0.7, 0.3, delay); }
+        function playPair() { if (!round) return; playKey(round.a, 0); playKey(round.b, 0.7); }
+        function listen() { playPair(); }
+        const NAMES = ['C', 'C♯', 'D', 'D♯', 'E', 'F', 'F♯', 'G', 'G♯', 'A', 'A♯', 'B', 'C'];
+
+        // lit: {k: colour}; arcs: [[k1, k2, colour]]
+        function drawKeys(c, lit, arcs, hint) {
+            c.clearRect(0, 0, 300, 170);
+            WI.forEach((k, i) => {
+                const col = lit[k];
+                c.fillStyle = col ? mix(col, 0.4) : '#f8fafc'; c.strokeStyle = col || '#94a3b8'; c.lineWidth = col ? 4 : 2;
+                c.beginPath(); c.roundRect(KX0 + i * KW + 1, KT, KW - 2, KH, 5); c.fill(); c.stroke();
+            });
+            BI.forEach(k => {
+                const col = lit[k];
+                c.fillStyle = col || '#241f3d'; c.strokeStyle = col ? '#fff' : '#241f3d'; c.lineWidth = col ? 3 : 1;
+                c.beginPath(); c.roundRect(kx(k) - BW / 2, KT, BW, BH, 4); c.fill(); c.stroke();
+            });
+            (arcs || []).forEach(([k1, k2, col]) => {
+                const y = KT + KH + 6; c.strokeStyle = col; c.lineWidth = 5; c.lineCap = 'round'; c.setLineDash([1, 9]);
+                c.beginPath(); c.moveTo(kx(k1), y); c.quadraticCurveTo((kx(k1) + kx(k2)) / 2, y + 26, kx(k2), y); c.stroke(); c.setLineDash([]);
+            });
+            if (hint) { c.fillStyle = '#64748b'; c.font = 'bold 13px Quicksand, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'alphabetic'; c.fillText(hint, 150, 166); }
+        }
+        function mix(hex, a) { const n = parseInt(hex.slice(1), 16); const r = n >> 16, g = (n >> 8) & 255, b = n & 255; const f = v => Math.round(255 - (255 - v) * a); return `rgb(${f(r)},${f(g)},${f(b)})`; }
+        // the answer picture: the two notes purple, the note in between (for a tone) orange
+        function answerPic(r) {
+            const lit = {}; lit[r.a] = PUR; lit[r.b] = PUR;
+            if (r.b - r.a === 2) lit[r.a + 1] = ORG;
+            const arcs = r.b - r.a === 2 ? [[r.a, r.a + 1, ORG], [r.a + 1, r.b, ORG], [r.a, r.b, PUR]] : [[r.a, r.b, PUR]];
+            return [lit, arcs];
+        }
+
+        // ---- rounds --------------------------------------------------------------------------------------------
+        let lastKey = '';
+        function pickPair(list) { let p, key; do { p = list[Math.floor(Math.random() * list.length)]; key = p.join(); } while (list.length > 1 && key === lastKey); lastKey = key; return p; }
+        const ANY = []; for (let a = 0; a <= 11; a++) for (const d of [1, 2]) if (a + d <= 12) ANY.push([a, a + d]);
+        const WHITE = []; for (let i = 0; i < 7; i++) WHITE.push([WI[i], WI[i + 1]]);
+        function newRound() {
+            controlLock = false;
+            const q = document.getElementById('question-text');
+            const c = document.getElementById('canvas').getContext('2d');
+            const listenBtn = document.getElementById('listen-btn');
+            if (currentStage === 1) {
+                const [a, b] = pickPair(ANY);
+                round = { stage: 1, a, b, answer: b - a === 1 ? 'semi' : 'tone' };
+                q.innerText = 'Semitone or tone?';
+                listenBtn.classList.remove('hidden');
+                drawKeys(c, { [a]: PUR, [b]: PUR }, [], 'Listen: the two purple keys');
+                setTimeout(playPair, 350);
+            } else if (currentStage === 2) {
+                const [a, b] = pickPair(WHITE);
+                round = { stage: 2, a, b, answer: b - a === 1 ? 'semi' : 'tone' };
+                q.innerText = 'Two white keys. Semitone or tone?';
+                listenBtn.classList.remove('hidden');
+                drawKeys(c, { [a]: PUR, [b]: PUR }, [], 'Is there a black key between them?');
+                setTimeout(playPair, 350);
+            } else {
+                const [a, b] = pickPair(ANY);
+                round = { stage: 3, a, b, start: a, answer: b };
+                q.innerText = b - a === 1 ? 'Tap the key one semitone higher.' : 'Tap the key one tone higher (two semitones).';
+                listenBtn.classList.add('hidden');
+                drawKeys(c, { [a]: PUR }, [], 'Start here, then go up');
+            }
+            renderAnswers();
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${currentStage}`];
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-base font-bold min-h-[24px] text-slate-700 mb-2";
+            feedback.innerHTML = "&nbsp;";
+        }
+
+        const BTN = "bg-gradient-to-b from-purple-400 to-purple-500 hover:from-purple-500 hover:to-purple-600 text-white font-bold text-lg py-3 rounded-2xl border-b-4 border-purple-700 active:translate-y-1 active:border-b-0 transition-all";
+        function renderAnswers() {
+            const container = document.getElementById('answer-buttons');
+            container.innerHTML = '';
+            if (currentStage === 3) {
+                container.className = 'grid grid-cols-1 gap-2 mb-3';
+                if (hintsEnabled) { const h = document.createElement('div'); h.className = "text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1"; h.innerText = 'A semitone is the very next key, black or white. A tone skips one key.'; container.appendChild(h); }
+                return;
+            }
+            container.className = 'grid grid-cols-2 gap-2 mb-3';
+            [['semi', 'Semitone'], ['tone', 'Tone']].forEach(([k, label]) => { const b = document.createElement('button'); b.className = BTN; b.innerText = label; b.onclick = () => makeGuess(k); container.appendChild(b); });
+            if (hintsEnabled) {
+                const h = document.createElement('div'); h.className = "col-span-2 text-center text-xs font-bold text-purple-600 bg-purple-50 rounded-xl py-1 mt-1";
+                h.innerText = currentStage === 1 ? 'Next-door keys are a semitone. One key in between is a tone.' : 'E to F and B to C have no black key between them: semitone!'; container.appendChild(h);
+            }
+        }
+
+        // stage 3: tap the keyboard
+        document.getElementById('canvas').addEventListener('pointerdown', e => {
+            if (currentStage !== 3 || controlLock || !round) return;
+            const cv = e.currentTarget, rc = cv.getBoundingClientRect();
+            const x = (e.clientX - rc.left) * 300 / rc.width, y = (e.clientY - rc.top) * 170 / rc.height;
+            let hit = null;
+            BI.forEach(k => { if (x >= kx(k) - BW / 2 && x <= kx(k) + BW / 2 && y >= KT && y <= KT + BH) hit = k; });
+            if (hit === null) WI.forEach((k, i) => { if (x >= KX0 + i * KW && x < KX0 + (i + 1) * KW && y >= KT && y <= KT + KH) hit = k; });
+            if (hit !== null) { playKey(hit); makeGuess(hit); }
+        });
+
+        function makeGuess(answer) {
+            if (controlLock) return;
+            const feedback = document.getElementById('feedback');
+            const c = document.getElementById('canvas').getContext('2d');
+            if (answer === round.answer) {
+                score += 10; streak++;
+                Tracking.logAnswer({ correct: true, stage: currentStage });
+                RewardSystem.correct();
+                document.getElementById('score').innerText = score; document.getElementById('streak').innerText = streak;
+                feedback.className = "text-center text-base font-bold text-green-600 mb-2";
+                const semi = round.b - round.a === 1;
+                feedback.innerText = semi ? '⭐ A semitone: the very next key! ⭐' : '⭐ A tone: two semitones, one key in between! ⭐';
+                const [lit, arcs] = answerPic(round); drawKeys(c, lit, arcs, semi ? 'SEMITONE' : 'TONE = 2 SEMITONES');
+                playCheer(); triggerConfetti();
+                document.getElementById('mascot-dialog').innerText = dialogs.correct;
+                controlLock = true;
+                document.getElementById('listen-btn').classList.remove('hidden');
+                setTimeout(playPair, 900);               // every answer is heard
+                setTimeout(newRound, 3200);
+            } else {
+                streak = 0; lives--;
+                Tracking.logAnswer({ correct: false, stage: currentStage });
+                document.getElementById('streak').innerText = streak; updateHearts();
+                feedback.className = "text-center text-base font-bold text-rose-500 mb-2";
+                feedback.innerText = currentStage === 3 ? 'Not quite. A semitone is the very next key. A tone skips one key.' : 'Not quite. Press Listen again.';
+                playFailBuzz();
+                document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+                controlLock = true; setTimeout(() => { controlLock = false; }, 700);
+                if (lives <= 0) setTimeout(triggerGameOver, 900);
+            }
+        }
+
+        
+function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                holder.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) container.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+
+        function triggerStageComplete() {
+            GameProgress.stageCleared(currentStage);
+            playSuccessArpeggio();
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
+            const oMsg = document.getElementById('overlay-msg');
+            const oBtn = document.getElementById('overlay-btn');
+
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = "Go to Next Stage!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = `Amazing! You know semitones and tones!`;
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "No More Hearts!";
+            document.getElementById('overlay-msg').innerText = "Let's take another look and try this stage again!";
+            const oBtn = document.getElementById('overlay-btn');
+            oBtn.innerText = "Restart Stage";
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+            controlLock = false;
+        }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            setStage(1);
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            renderAnswers();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const notoMusicFont = new FontFace(
+                    'Noto Music',
+                    'url(fonts/noto-music.woff2)'
+                );
+                document.fonts.add(notoMusicFont);
+                await notoMusicFont.load();
+            } catch (e) {
+                console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
+            }
+            document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
+            setStage(1);
+        });
+
+        // set to the video's address once it is published (the release job does this), and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-purple-600 underline mt-2'; a.innerText = '▶ Watch the video: Next-door notes'; document.getElementById('game-card').appendChild(a); }
+        });
+    </script>
+</body>
+</html>

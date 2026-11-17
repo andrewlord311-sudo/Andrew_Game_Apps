@@ -107,6 +107,14 @@
                 comingSoon: false
             },
             {
+                title: "Semitone or Tone?",
+                description: "Next-door keys are a semitone, one key between is a tone. Listen, spot E-F and B-C, then find the next key.",
+                emoji: "🎹",
+                color: "#7c3aed", // Purple accent (the tone in the video)
+                file: "semitone_or_tone.html",
+                comingSoon: false
+            },
+            {
                 title: "Build the Chord",
                 description: "Harmony's chord: build the C major chord from C, E and G, pick the three notes, then spot the real chord on the stave.",
                 emoji: "🎵",
