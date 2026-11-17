@@ -249,7 +249,7 @@
 
         // Draw the 5-line staff, treble clef, and a hollow note head - every
         // note in this game sits in the spaces, except Middle C (stage 3), which gets its own short ledger line.
-        const BASS_SCALE = 4, BASS_BASE = 4.35;   // bass clef: same size as the treble clef; its curl starts on the F line (second line from the top) and its dots sit either side of that line
+        const BASS_SCALE = 4, BASS_BASE = 3.625;   // bass clef: exactly the size and placement every other game uses (Moo Clef, Note Ladder, Name That Part...)
         function drawStaff() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const startY = 50;
