@@ -1,62 +1,69 @@
 {
- "_help": "One entry per game waiting for its video to go public. videoId null = not uploaded yet (fill it in when the upload is scheduled). The release job (channel/release_games.py, run every 15 minutes by .github/workflows/release-games.yml) checks YouTube; when the video is public it sets VIDEO_URL in the game file and adds the game to PUBLISHED in music/arcade-core.js, then marks the entry done.",
- "games": [
-  {
-   "game": "fill_the_bar.html",
-   "video": 10,
-   "videoId": "qfpomW09eVQ",
-   "publishAfter": "2026-11-14T08:00:00Z",
-   "done": true,
-   "wiredAt": "2026-11-14T10:06:15Z"
-  },
-  {
-   "game": "note_ladder.html",
-   "video": 11,
-   "videoId": "MIm0v0ckAzk",
-   "publishAfter": "2026-11-18T15:00:00Z",
-   "done": false
-  },
-  {
-   "game": "step_or_skip.html",
-   "video": 12,
-   "videoId": "W7inSAtI3Ng",
-   "publishAfter": "2026-11-21T08:00:00Z",
-   "done": false
-  },
-  {
-   "game": "note_lengths.html",
-   "video": 13,
-   "videoId": "yMQNnNaeaYs",
-   "publishAfter": "2026-11-25T15:00:00Z",
-   "done": false
-  },
-  {
-   "game": "space_face.html",
-   "video": 14,
-   "videoId": "d61T7QOYWpE",
-   "publishAfter": "2026-11-28T08:00:00Z",
-   "done": false
-  },
-  {
-   "game": "together_or_one_by_one.html",
-   "video": 15,
-   "videoId": "8O5GYnn1jQo",
-   "publishAfter": "2026-12-02T15:00:00Z",
-   "done": false
-  },
-  {
-   "game": "ti_ti_beats.html",
-   "video": 16,
-   "videoId": "NEbh4BebvPw",
-   "publishAfter": "2026-12-05T08:00:00Z",
-   "done": false
-  },
-  {
-   "game": "finger_numbers.html",
-   "video": 17,
-   "videoId": "DHhlIupc0gE",
-   "publishAfter": "2026-12-09T15:00:00Z",
-   "done": false
-  }
- ]
+  "_help": "One entry per game waiting for its video to go public. videoId null = not uploaded yet (fill it in when the upload is scheduled). The release job (channel/release_games.py, run every 15 minutes by .github/workflows/release-games.yml) checks YouTube; when the video is public it sets VIDEO_URL in the game file and adds the game to PUBLISHED in music/arcade-core.js, then marks the entry done.",
+  "games": [
+    {
+      "game": "fill_the_bar.html",
+      "video": 10,
+      "videoId": "qfpomW09eVQ",
+      "publishAfter": "2026-11-14T08:00:00Z",
+      "done": true,
+      "wiredAt": "2026-11-14T10:06:15Z"
+    },
+    {
+      "game": "note_ladder.html",
+      "video": 11,
+      "videoId": "MIm0v0ckAzk",
+      "publishAfter": "2026-11-18T15:00:00Z",
+      "done": false
+    },
+    {
+      "game": "step_or_skip.html",
+      "video": 12,
+      "videoId": "W7inSAtI3Ng",
+      "publishAfter": "2026-11-21T08:00:00Z",
+      "done": false
+    },
+    {
+      "game": "note_lengths.html",
+      "video": 13,
+      "videoId": "yMQNnNaeaYs",
+      "publishAfter": "2026-11-25T15:00:00Z",
+      "done": false
+    },
+    {
+      "game": "space_face.html",
+      "video": 14,
+      "videoId": "d61T7QOYWpE",
+      "publishAfter": "2026-11-28T08:00:00Z",
+      "done": false
+    },
+    {
+      "game": "together_or_one_by_one.html",
+      "video": 15,
+      "videoId": "8O5GYnn1jQo",
+      "publishAfter": "2026-12-02T15:00:00Z",
+      "done": false
+    },
+    {
+      "game": "ti_ti_beats.html",
+      "video": 16,
+      "videoId": "NEbh4BebvPw",
+      "publishAfter": "2026-12-05T08:00:00Z",
+      "done": false
+    },
+    {
+      "game": "finger_numbers.html",
+      "video": 17,
+      "videoId": "DHhlIupc0gE",
+      "publishAfter": "2026-12-09T15:00:00Z",
+      "done": false
+    },
+    {
+      "game": "sharp_or_flat.html",
+      "video": 20,
+      "videoId": null,
+      "publishAfter": "2026-12-19T08:00:00Z",
+      "done": false
+    }
+  ]
 }

@@ -107,6 +107,14 @@
                 comingSoon: false
             },
             {
+                title: "Sharp or Flat?",
+                description: "Name the black keys: a sharp is one semitone higher, a flat one semitone lower. Listen, name it, then find it.",
+                emoji: "♯",
+                color: "#f59e0b", // Amber accent (sharps; flats are purple)
+                file: "sharp_or_flat.html",
+                comingSoon: false
+            },
+            {
                 title: "Beat Tapper",
                 description: "Feel the beat! Tap along with the drum, keep the beat going when it stops, and decide: steady or wobbly?",
                 emoji: "🥁",
