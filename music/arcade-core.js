@@ -107,6 +107,14 @@
                 comingSoon: false
             },
             {
+                title: "Build the Chord",
+                description: "Harmony's chord: build the C major chord from C, E and G, pick the three notes, then spot the real chord on the stave.",
+                emoji: "🎵",
+                color: "#c026d3", // Fuchsia accent (Harmony)
+                file: "build_the_chord.html",
+                comingSoon: false
+            },
+            {
                 title: "Sharp or Flat?",
                 description: "Name the black keys: a sharp is one semitone higher, a flat one semitone lower. Listen, name it, then find it.",
                 emoji: "♯",

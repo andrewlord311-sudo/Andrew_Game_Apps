@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build the Chord</title>
+    <link rel="preload" href="fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/quicksand.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="fonts/noto-music.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="tailwind.css">
+    <style>
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: radial-gradient(circle, #fce7f3 0%, #ede9fe 100%);
+            min-height: 100vh;
+        }
+        .kids-title {
+            font-family: 'Fredoka One', cursive;
+        }
+        .mascot-bounce { animation: idle-bounce 2s ease-in-out infinite alternate; }
+        @keyframes idle-bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-8px); } }
+        .mascot-spin { animation: happy-spin 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 1; }
+        @keyframes happy-spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.3); } 100% { transform: rotate(360deg) scale(1); } }
+        .mascot-sad { animation: sad-shake 0.5s ease-in-out 1; }
+        @keyframes sad-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-10px) rotate(-5deg); } 40%, 80% { transform: translateX(10px) rotate(5deg); } }
+        .confetti { position: absolute; pointer-events: none; width: 12px; height: 12px; border-radius: 50%; animation: blow-up 1s ease-out forwards; }
+        @keyframes blow-up { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; } }
+        button { touch-action: manipulation; }
+    </style>
+</head>
+<body class="py-2 px-4 flex items-center justify-center">
+
+    <div id="game-card" class="max-w-xl w-full bg-white rounded-3xl shadow-2xl border-4 border-fuchsia-400 p-4 relative overflow-hidden">
+
+        <div class="flex justify-between items-center mb-2">
+            <div class="flex gap-2">
+                <span class="bg-yellow-100 text-yellow-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    ⭐ Score: <span id="score">0</span>
+                </span>
+                <span class="bg-orange-100 text-orange-800 px-3 py-1.5 rounded-full font-bold text-sm shadow-sm flex items-center gap-1">
+                    🔥 Streak: <span id="streak">0</span>
+                </span>
+            </div>
+            <div class="flex items-center gap-1 text-2xl" id="hearts-container">❤️❤️❤️</div>
+        </div>
+
+        <h1 class="kids-title text-3xl text-fuchsia-600 text-center mb-1">Build the Chord</h1>
+        <p class="text-slate-500 text-center text-sm font-semibold mb-3">Make the C major chord: C, E and G together</p>
+
+        <div class="grid grid-cols-3 gap-2 bg-rose-50 p-2 rounded-2xl mb-2 border border-rose-100">
+            <button id="btn-stage-1" onclick="setStage(1)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow">
+                🏗️ Stage 1: Build it
+            </button>
+            <button id="btn-stage-2" onclick="setStage(2)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                🎯 Stage 2: Pick three
+            </button>
+            <button id="btn-stage-3" onclick="setStage(3)" class="py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                ✔ Stage 3: Is it?
+            </button>
+        </div>
+
+        <div class="flex items-center gap-3 bg-rose-50 p-2 rounded-2xl border border-rose-100 mb-2">
+            <div id="mascot-avatar" class="mascot-bounce shrink-0 transition-transform"></div>
+            <div class="relative bg-white border border-rose-100 p-2 rounded-xl shadow-sm w-full">
+                <div class="absolute top-1/2 -left-2 w-4 h-4 -translate-y-1/2 rotate-45 bg-white border-l border-b border-rose-50"></div>
+                <p id="mascot-dialog" class="text-slate-700 font-bold text-sm leading-snug">
+                    A chord is notes played together. Start on C, skip a key, then another.
+                </p>
+            </div>
+        </div>
+
+        <div class="relative bg-slate-50 rounded-2xl p-2 border-2 border-slate-200 mb-2 flex justify-center items-center">
+            <canvas id="canvas" width="300" height="170" class="max-h-40 w-auto rounded-xl bg-white shadow-inner" style="touch-action:manipulation"></canvas>
+            <div id="confetti-holder" class="absolute inset-0 pointer-events-none overflow-hidden rounded-2xl"></div>
+
+            <div id="overlay" class="absolute inset-0 bg-white/95 backdrop-blur-sm rounded-2xl flex flex-col justify-center items-center p-6 text-center hidden transition-opacity duration-300 z-50">
+                <div id="overlay-mascot" class="mb-3 mascot-bounce"></div>
+                <h3 id="overlay-title" class="kids-title text-3xl text-rose-600 mb-2">Stage Passed!</h3>
+                <p id="overlay-msg" class="text-slate-600 font-bold mb-4">Incredible job!</p>
+                <button id="overlay-btn" onclick="dismissOverlay()" class="bg-yellow-400 text-slate-800 font-extrabold px-8 py-3 rounded-full border-b-4 border-yellow-600 hover:brightness-105 active:scale-95 transition-all text-lg">
+                    Next Challenge!
+                </button>
+            </div>
+        </div>
+
+        <div id="question-text" class="text-center text-lg font-black text-slate-800 mb-2">
+            What note is this?
+        </div>
+
+        <div id="feedback" class="text-center text-base font-bold min-h-[24px] text-slate-700 mb-2">
+            &nbsp;
+        </div>
+
+        <div class="flex justify-center mb-2"><button id="listen-btn" onclick="listen()" class="hidden bg-violet-100 text-violet-700 border-b-2 border-violet-300 font-bold px-5 py-2 rounded-xl hover:bg-violet-200">🔊 Listen again</button></div>
+
+        <div class="grid grid-cols-1 gap-2 mb-3" id="answer-buttons">
+            <!-- injected -->
+        </div>
+
+        <div class="flex justify-between items-center text-xs">
+            <button onclick="toggleHints()" class="bg-purple-100 text-purple-700 border-b-2 border-purple-300 font-bold px-4 py-2 rounded-xl hover:bg-purple-200">
+                💡 <span id="hint-btn-text">Turn Hints On</span>
+            </button>
+            <button onclick="resetGame()" class="bg-rose-100 text-rose-700 border-b-2 border-rose-300 font-bold px-4 py-2 rounded-xl hover:bg-rose-200">
+                🔄 Reset Score
+            </button>
+        </div>
+
+    </div>
+    <script>window.GP_TOTAL_STAGES = 3;</script>
+    <script src="mascots.js"></script>
+    <script src="auth.js"></script>
+    <script src="back-link.js"></script>
+    <script src="reward-system.js"></script>
+    <script src="hit-counter.js"></script>
+    <script src="game-progress.js"></script>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let currentStage = 1;
+        let score = 0;
+        let streak = 0;
+        let lives = 3;
+        let hintsEnabled = false;
+        let controlLock = false;
+        let round = null;
+
+                const dialogs = {
+            stage1: "A chord is notes played together. Start on C, skip a key, then another, and play them one by one.",
+            stage2: "A chord skips a key each time. Which three of C D E F G make the C major chord?",
+            stage3: "Same notes, or not? The C major chord is C, E and G, stacked on the stave.",
+            correct: "Spot on! 🎯",
+            incorrect: "Not quite. A chord skips a key each time."
+        };
+
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
+        function playTone(freq, type = 'triangle', duration = 0.5, vol = 0.3, delay = 0) {
+            try {
+                const ac = getAudioContext();
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                const t0 = ac.currentTime + delay;
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, t0);
+                gain.gain.setValueAtTime(0, t0);
+                gain.gain.linearRampToValueAtTime(vol, t0 + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, t0 + duration);
+                osc.connect(gain);
+                gain.connect(ac.destination);
+                osc.start(t0);
+                osc.stop(t0 + duration + 0.05);
+            } catch (e) {}
+        }
+        function playSuccessArpeggio() {
+            playCheer(); setTimeout(playCheer, 450);   // a party sound, not a piano
+        }
+        function playFailBuzz() { playTone(110, 'sawtooth', 0.35); }
+
+        // A party sound that is nothing like the piano notes of the questions: a little burst of applause (filtered noise),
+        // glittery high pings, and a bright "ta-da" on a buzzy synth.
+        function playCheer() {
+            try {
+                const ac = getAudioContext();
+                const now = ac.currentTime;
+                // applause: crackly noise through a band-pass filter
+                const len = Math.floor(ac.sampleRate * 0.9);
+                const buf = ac.createBuffer(1, len, ac.sampleRate);
+                const d = buf.getChannelData(0);
+                for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * (Math.random() < 0.18 ? 1 : 0.15);
+                const src = ac.createBufferSource(); src.buffer = buf;
+                const bp = ac.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 2600; bp.Q.value = 0.7;
+                const ng = ac.createGain();
+                ng.gain.setValueAtTime(0.0001, now);
+                ng.gain.exponentialRampToValueAtTime(0.5, now + 0.05);
+                ng.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+                src.connect(bp); bp.connect(ng); ng.connect(ac.destination); src.start(now);
+                // glitter: quick high pings
+                [2093, 2637, 3136, 2349, 3520, 2794].forEach((f, k) => playTone(f * (1 + (k % 2) * 0.01), 'sine', 0.25, 0.08, 0.05 + k * 0.07));
+                // ta-da: two buzzy synth hits (sawtooth through a low-pass), not piano-like
+                [[392, 0, 0.16], [523.25, 0.17, 0.5]].forEach(([f, at, dur]) => {
+                    const o = ac.createOscillator(), lp = ac.createBiquadFilter(), g = ac.createGain();
+                    o.type = 'sawtooth'; o.frequency.value = f; lp.type = 'lowpass'; lp.frequency.value = 1800;
+                    g.gain.setValueAtTime(0.0001, now + at);
+                    g.gain.exponentialRampToValueAtTime(0.16, now + at + 0.02);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + at + dur);
+                    o.connect(lp); lp.connect(g); g.connect(ac.destination); o.start(now + at); o.stop(now + at + dur + 0.05);
+                });
+            } catch (e) {}
+        }
+
+        
+
+        const SVG_MELODY = MASCOTS.html('harmony', 'w-16 h-16 drop-shadow-md');
+
+        function setStage(stageNum) {
+            currentStage = stageNum;
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`btn-stage-${i}`);
+                btn.className = i === stageNum
+                    ? "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-rose-400 text-white border-b-2 border-rose-600 shadow"
+                    : "py-1.5 px-1 rounded-xl font-bold text-xs transition-all duration-200 bg-slate-100 text-slate-600 hover:bg-slate-200";
+            }
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${stageNum}`];
+            resetStats();
+            newRound();
+        }
+
+        if (typeof RewardSystem !== 'undefined') {
+            RewardSystem.onAnimalComplete(() => { triggerStageComplete(); });
+        }
+
+        // ---- keys ---------------------------------------------------------------------------------------------------
+        const LET = ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'];
+        const WF = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25];
+        const CHORD = [0, 2, 4];                                    // C E G
+        const CCOL = { 0: '#7c3aed', 2: '#db2777', 4: '#0d9488' };   // same colours as video 18: C purple, E pink, G teal
+        function mix(hex, a) { const n = parseInt(hex.slice(1), 16); const r = n >> 16, g = (n >> 8) & 255, b = n & 255; const f = v => Math.round(255 - (255 - v) * a); return `rgb(${f(r)},${f(g)},${f(b)})`; }
+        function playKey(i, delay = 0, dur = 0.8) { playTone(WF[i], 'triangle', dur, 0.3, delay); }
+        function playChord(notes) { notes.forEach(i => playTone(WF[i], 'triangle', 1.4, 0.22, 0)); }
+        function playChordSoon(notes, ms = 600) { setTimeout(() => playChord(notes), ms); }
+
+        function geom(n) { const kw = n === 8 ? 36 : 52; return { n, kw, x0: (300 - n * kw) / 2, kt: 24, kh: 124 }; }
+        // lit: {keyIndex: colour}; sel: array of selected key indices (stage 2)
+        function drawKeys(c, n, lit, sel, hint) {
+            const g = geom(n); c.clearRect(0, 0, 300, 170);
+            for (let i = 0; i < n; i++) {
+                const col = lit[i], on = sel && sel.includes(i);
+                c.fillStyle = col ? mix(col, 0.35) : on ? '#fde68a' : '#f8fafc';
+                c.strokeStyle = col || (on ? '#f59e0b' : '#94a3b8'); c.lineWidth = col || on ? 4 : 2;
+                c.beginPath(); c.roundRect(g.x0 + i * g.kw + 1, g.kt, g.kw - 2, g.kh, 6); c.fill(); c.stroke();
+                c.fillStyle = col || '#64748b'; c.font = 'bold 18px "Fredoka One", sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+                c.fillText(LET[i], g.x0 + i * g.kw + g.kw / 2, g.kt + g.kh - 16);
+            }
+            if (hint) { c.fillStyle = '#64748b'; c.font = 'bold 13px Quicksand, sans-serif'; c.textAlign = 'center'; c.fillText(hint, 150, 12); }
+        }
+
+        // ---- the stave stack (stage 3): treble stave, notes stacked on one beat ------------------------------------
+        const STAFF_TOP = 44, GAP = 16;
+        const yOf = d => STAFF_TOP + 4 * GAP - (d - 2) * GAP / 2;    // d = steps above C4: E4 (d=2) sits on the bottom line
+        function drawStack(c, stack) {
+            c.clearRect(0, 0, 300, 170);
+            c.strokeStyle = '#334155'; c.lineWidth = 2.5;
+            for (let i = 0; i < 5; i++) { c.beginPath(); c.moveTo(24, STAFF_TOP + i * GAP); c.lineTo(288, STAFF_TOP + i * GAP); c.stroke(); }
+            c.fillStyle = '#241f3d'; c.font = '76px "Noto Music", serif'; c.textAlign = 'center'; c.textBaseline = 'alphabetic'; c.fillText('\u{1D11E}', 52, STAFF_TOP + 3 * GAP + 4);
+            const x = 170;
+            const offs = [];
+            stack.forEach((d, k) => { offs[k] = (k > 0 && d - stack[k - 1] === 1 && !offs[k - 1]) ? 17 : 0; });   // a neighbour note sits to the side
+            stack.forEach((d, k) => {
+                const y = yOf(d), col = CCOL[d] || '#64748b';
+                const dx = offs[k];
+                if (d <= 0) { c.strokeStyle = '#334155'; c.lineWidth = 2.5; c.beginPath(); c.moveTo(x - 16 + dx, y); c.lineTo(x + 16 + dx, y); c.stroke(); }
+                c.save(); c.translate(x + dx, y); c.rotate(-0.3); c.beginPath(); c.ellipse(0, 0, 9.5, 7, 0, 0, 2 * Math.PI); c.fillStyle = col; c.fill(); c.restore();
+            });
+            // one stem on the top note
+            const top = stack[stack.length - 1], xs = x + 8;
+            c.strokeStyle = '#241f3d'; c.lineWidth = 2.6; c.beginPath(); c.moveTo(xs, yOf(stack[0])); c.lineTo(xs, yOf(top) - 34); c.stroke();
+        }
+        function stackNotes(s) { return s.slice().sort((a, b) => a - b); }
+        function stackName(s) { return stackNotes(s).map(d => LET[d]).join(' '); }
+
+        // ---- rounds --------------------------------------------------------------------------------------------
+        let picked = [], sel = [], lastStack = '';
+        const OPTIONS = [[0, 2, 4], [0, 1, 2], [1, 3, 4], [2, 4, 6], [0, 2, 5], [1, 2, 4], [0, 3, 4], [1, 3, 5]];   // the first is the C major chord
+        function newRound() {
+            controlLock = false; picked = []; sel = [];
+            const q = document.getElementById('question-text');
+            const c = document.getElementById('canvas').getContext('2d');
+            const listenBtn = document.getElementById('listen-btn');
+            if (currentStage === 1) {
+                round = { stage: 1 };
+                q.innerText = 'Build the C major chord: tap C, then E, then G.';
+                listenBtn.classList.add('hidden');
+                drawKeys(c, 8, {}, null, 'Start on C. Skip D. Play E. Skip F. Play G.');
+            } else if (currentStage === 2) {
+                round = { stage: 2 };
+                q.innerText = 'Pick the three keys of the C major chord, then press Check.';
+                listenBtn.classList.add('hidden');
+                drawKeys(c, 5, {}, sel);
+            } else {
+                let o; do { o = Math.random() < 0.45 ? OPTIONS[0] : OPTIONS[1 + Math.floor(Math.random() * (OPTIONS.length - 1))]; } while (stackName(o) === lastStack);
+                lastStack = stackName(o);
+                round = { stage: 3, stack: stackNotes(o), answer: stackName(o) === 'C E G' ? 'yes' : 'no' };
+                q.innerText = 'Is this the C major chord?';
+                listenBtn.classList.add('hidden');
+                drawStack(c, round.stack);
+            }
+            renderAnswers();
+            document.getElementById('mascot-dialog').innerText = dialogs[`stage${currentStage}`];
+            const feedback = document.getElementById('feedback');
+            feedback.className = "text-center text-base font-bold min-h-[24px] text-slate-700 mb-2";
+            feedback.innerHTML = "&nbsp;";
+        }
+        function listen() { if (currentStage === 3 && round) playChord(round.stack); else if (currentStage === 1 || currentStage === 2) playChord(CHORD); }
+
+        const BTN = "bg-gradient-to-b from-fuchsia-400 to-fuchsia-500 hover:from-fuchsia-500 hover:to-fuchsia-600 text-white font-bold text-lg py-3 rounded-2xl border-b-4 border-fuchsia-700 active:translate-y-1 active:border-b-0 transition-all";
+        function renderAnswers() {
+            const container = document.getElementById('answer-buttons');
+            container.innerHTML = '';
+            container.className = 'grid grid-cols-2 gap-2 mb-3';
+            if (currentStage === 1) {
+                container.className = 'grid grid-cols-1 gap-2 mb-3';
+                if (hintsEnabled) { const h = document.createElement('div'); h.className = "text-center text-xs font-bold text-fuchsia-600 bg-fuchsia-50 rounded-xl py-1"; h.innerText = 'Next: ' + (picked.length < 3 ? LET[CHORD[picked.length]] : 'done'); container.appendChild(h); }
+            } else if (currentStage === 2) {
+                container.className = 'grid grid-cols-1 gap-2 mb-3';
+                const b = document.createElement('button'); b.className = BTN; b.innerText = '✔ Check'; b.onclick = () => makeGuess('check'); container.appendChild(b);
+                if (hintsEnabled) { const h = document.createElement('div'); h.className = "text-center text-xs font-bold text-fuchsia-600 bg-fuchsia-50 rounded-xl py-1"; h.innerText = 'A chord skips a key each time: C, skip D, E, skip F, G.'; container.appendChild(h); }
+            } else {
+                [['yes', 'Yes, it is'], ['no', 'No, it is not']].forEach(([k, label]) => { const b = document.createElement('button'); b.className = BTN; b.innerText = label; b.onclick = () => makeGuess(k); container.appendChild(b); });
+                if (hintsEnabled) { const h = document.createElement('div'); h.className = "col-span-2 text-center text-xs font-bold text-fuchsia-600 bg-fuchsia-50 rounded-xl py-1 mt-1"; h.innerText = 'The C major chord is C, E and G: every note is a skip apart.'; container.appendChild(h); }
+            }
+        }
+
+        // stages 1 and 2: tap the keys
+        document.getElementById('canvas').addEventListener('pointerdown', e => {
+            if ((currentStage !== 1 && currentStage !== 2) || controlLock || !round) return;
+            const cv = e.currentTarget, rc = cv.getBoundingClientRect();
+            const x = (e.clientX - rc.left) * 300 / rc.width, y = (e.clientY - rc.top) * 170 / rc.height;
+            const g = geom(currentStage === 1 ? 8 : 5);
+            if (y < g.kt || y > g.kt + g.kh) return;
+            const i = Math.floor((x - g.x0) / g.kw);
+            if (i < 0 || i >= g.n) return;
+            playKey(i);
+            if (currentStage === 1) tapBuild(i); else tapPick(i);
+        });
+        function lose(msg) {
+            streak = 0; lives--;
+            Tracking.logAnswer({ correct: false, stage: currentStage });
+            document.getElementById('streak').innerText = streak; updateHearts();
+            const f = document.getElementById('feedback'); f.className = "text-center text-base font-bold text-rose-500 mb-2"; f.innerText = msg;
+            playFailBuzz(); document.getElementById('mascot-dialog').innerText = dialogs.incorrect;
+            controlLock = true; setTimeout(() => { controlLock = false; }, 700);
+            if (lives <= 0) setTimeout(triggerGameOver, 900);
+        }
+        function win(msg, notes, drawFn) {
+            score += 10; streak++;
+            Tracking.logAnswer({ correct: true, stage: currentStage });
+            RewardSystem.correct();
+            document.getElementById('score').innerText = score; document.getElementById('streak').innerText = streak;
+            const f = document.getElementById('feedback'); f.className = "text-center text-base font-bold text-green-600 mb-2"; f.innerText = msg;
+            playCheer(); triggerConfetti();
+            document.getElementById('mascot-dialog').innerText = dialogs.correct;
+            controlLock = true;
+            if (drawFn) drawFn();
+            document.getElementById('listen-btn').classList.remove('hidden');
+            playChordSoon(notes, 900);                      // every answer is heard: the three notes together
+            setTimeout(newRound, 3200);
+        }
+        function tapBuild(i) {
+            const c = document.getElementById('canvas').getContext('2d');
+            if (i === CHORD[picked.length]) {
+                picked.push(i);
+                const lit = {}; picked.forEach(k => lit[k] = CCOL[k]);
+                drawKeys(c, 8, lit, null, picked.length < 3 ? 'Next: ' + LET[CHORD[picked.length]] : '');
+                if (picked.length === 3) win('⭐ C, E and G together: the C major chord! ⭐', CHORD, null);
+                else { document.getElementById('feedback').className = "text-center text-base font-bold text-green-600 mb-2"; document.getElementById('feedback').innerText = picked.length === 1 ? 'C! Now skip D and play E.' : 'E! Now skip F and play G.'; }
+                renderAnswers();
+            } else {
+                lose(i === CHORD[picked.length - 1] ? 'You have played that one. Skip a key and go on.' : 'Not that one. Skip a key each time: C, E, G.');
+            }
+        }
+        function tapPick(i) {
+            const c = document.getElementById('canvas').getContext('2d');
+            const at = sel.indexOf(i); if (at >= 0) sel.splice(at, 1); else if (sel.length < 3) sel.push(i);
+            drawKeys(c, 5, {}, sel);
+        }
+
+        function makeGuess(answer) {
+            if (controlLock) return;
+            const c = document.getElementById('canvas').getContext('2d');
+            if (currentStage === 2) {
+                if (sel.length !== 3) { const f = document.getElementById('feedback'); f.className = "text-center text-base font-bold text-slate-600 mb-2"; f.innerText = 'Pick three keys first.'; return; }
+                const ok = stackNotes(sel).join() === CHORD.join();
+                if (ok) { const lit = {}; CHORD.forEach(k => lit[k] = CCOL[k]); win('⭐ C, E and G: one skip between each! ⭐', CHORD, () => drawKeys(c, 5, lit, null)); }
+                else { lose('Not quite. A chord skips a key each time: C, E, G.'); setTimeout(() => { sel = []; drawKeys(c, 5, {}, sel); }, 800); }
+            } else if (currentStage === 3) {
+                if (answer === round.answer) {
+                    win(round.answer === 'yes' ? '⭐ Yes! C, E and G is the C major chord! ⭐' : `⭐ No: that is ${stackName(round.stack)}, not C E G! ⭐`, round.stack, null);
+                } else {
+                    lose(round.answer === 'yes' ? 'Look again: C, E and G, a skip apart. Press Listen.' : `Not quite: that is ${stackName(round.stack)}, not C E G.`);
+                    document.getElementById('listen-btn').classList.remove('hidden');
+                }
+            }
+        }
+
+        
+function triggerConfetti() {
+            const holder = document.getElementById('confetti-holder');
+            const colors = ['#f43f5e', '#3b82f6', '#10b981', '#eab308', '#a855f7', '#ff7849'];
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 120;
+                particle.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                particle.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                holder.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        function updateHearts() {
+            const container = document.getElementById('hearts-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 3; i++) container.innerHTML += i < lives ? '❤️' : '🖤';
+        }
+
+        function triggerStageComplete() {
+            GameProgress.stageCleared(currentStage);
+            playSuccessArpeggio();
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "🌟 Sensational! 🌟";
+            const oMsg = document.getElementById('overlay-msg');
+            const oBtn = document.getElementById('overlay-btn');
+
+            if (currentStage < 3) {
+                oMsg.innerText = `You completed Stage ${currentStage}! Ready for Stage ${currentStage + 1}?`;
+                oBtn.innerText = "Go to Next Stage!";
+                oBtn.onclick = () => { dismissOverlay(); setStage(currentStage + 1); };
+            } else {
+                oMsg.innerText = `Amazing! You can build the C major chord!`;
+                oBtn.innerText = "Back to Arcade!";
+                oBtn.onclick = () => { dismissOverlay(); location.href = (window.ARCADE_URL || "music_arcade.html"); };
+            }
+            overlay.classList.remove('hidden');
+        }
+
+        function triggerGameOver() {
+            const overlay = document.getElementById('overlay');
+            document.getElementById('overlay-mascot').innerHTML = SVG_MELODY;
+            document.getElementById('overlay-title').innerText = "No More Hearts!";
+            document.getElementById('overlay-msg').innerText = "Let's take another look and try this stage again!";
+            const oBtn = document.getElementById('overlay-btn');
+            oBtn.innerText = "Restart Stage";
+            oBtn.onclick = () => { dismissOverlay(); resetStats(); newRound(); };
+            overlay.classList.remove('hidden');
+        }
+
+        function dismissOverlay() {
+            document.getElementById('overlay').classList.add('hidden');
+            controlLock = false;
+        }
+
+        function resetStats() {
+            streak = 0;
+            lives = 3;
+            document.getElementById('streak').innerText = streak;
+            updateHearts();
+        }
+
+        function resetGame() {
+            score = 0;
+            document.getElementById('score').innerText = score;
+            setStage(1);
+        }
+
+        function toggleHints() {
+            hintsEnabled = !hintsEnabled;
+            document.getElementById('hint-btn-text').innerText = hintsEnabled ? "Turn Hints Off" : "Turn Hints On";
+            renderAnswers();
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const notoMusicFont = new FontFace(
+                    'Noto Music',
+                    'url(fonts/noto-music.woff2)'
+                );
+                document.fonts.add(notoMusicFont);
+                await notoMusicFont.load();
+            } catch (e) {
+                console.warn('Noto Music font failed to load; clef will use fallback serif glyph.', e);
+            }
+            document.getElementById('mascot-avatar').innerHTML = SVG_MELODY;
+            setStage(1);
+        });
+
+        // set to the video's address once it is published (the release job does this), and a "Watch the video" link appears
+        const VIDEO_URL = '';
+        document.addEventListener('DOMContentLoaded', () => {
+            if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-fuchsia-600 underline mt-2'; a.innerText = '▶ Watch the video: The C major chord'; document.getElementById('game-card').appendChild(a); }
+        });
+    </script>
+</body>
+</html>
