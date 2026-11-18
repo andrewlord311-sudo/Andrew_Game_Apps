@@ -14,7 +14,8 @@
       "video": 11,
       "videoId": "MIm0v0ckAzk",
       "publishAfter": "2026-11-18T15:00:00Z",
-      "done": false
+      "done": true,
+      "wiredAt": "2026-11-18T18:40:42Z"
     },
     {
       "game": "step_or_skip.html",

@@ -345,7 +345,7 @@
         }
         window.addEventListener('resize', () => { if (round && !controlLock) renderPiano(currentStage === 3 ? round.id : null, null); });
 
-        const VIDEO_URL = '';
+        const VIDEO_URL = 'https://youtu.be/MIm0v0ckAzk';
         document.addEventListener('DOMContentLoaded', async () => {
             $('mascot-avatar').innerHTML = SVG_MELODY;
             if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Middle C'; $('game-card').appendChild(a); }
