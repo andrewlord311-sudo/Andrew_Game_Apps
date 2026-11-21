@@ -22,7 +22,8 @@
       "video": 12,
       "videoId": "W7inSAtI3Ng",
       "publishAfter": "2026-11-21T08:00:00Z",
-      "done": false
+      "done": true,
+      "wiredAt": "2026-11-21T10:16:19Z"
     },
     {
       "game": "note_lengths.html",

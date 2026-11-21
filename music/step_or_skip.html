@@ -518,7 +518,7 @@
         window.addEventListener('resize', () => { if (keyA || stA) renderRound(); });
 
         // set to the video's address once it is published, and a "Watch the video" link appears
-        const VIDEO_URL = '';
+        const VIDEO_URL = 'https://youtu.be/W7inSAtI3Ng';
         document.addEventListener('DOMContentLoaded', async () => {
             if (VIDEO_URL) { const a = document.createElement('a'); a.href = VIDEO_URL; a.target = '_blank'; a.rel = 'noopener'; a.className = 'block text-center text-xs font-bold text-orange-600 underline mt-2'; a.innerText = '▶ Watch the video: Steps and skips'; document.getElementById('game-card').appendChild(a); }
             try { const f = new FontFace('Noto Music', 'url(fonts/noto-music.woff2)'); document.fonts.add(f); await f.load(); } catch (e) { console.warn('Noto Music failed to load'); }
