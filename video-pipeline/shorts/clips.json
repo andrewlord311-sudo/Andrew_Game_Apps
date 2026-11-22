@@ -244,7 +244,7 @@
   "srt": "channel/captions/video15.en-GB.srt",
   "start": 110.39,
   "end": 123.96,
-  "hook": "Together or<br><b>one by one</b>?",
+  "hook": "Notes can play<br><b>at the same time!</b>",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -260,7 +260,7 @@
   "srt": "channel/captions/video15.en-GB.srt",
   "start": 42.96,
   "end": 53.72,
-  "hook": "What is a<br><b>chord</b>?",
+  "hook": "Notes played together<br>make a <b>chord</b>!",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -276,7 +276,7 @@
   "srt": "channel/captions/video16.en-GB.srt",
   "start": 45.45,
   "end": 64.94,
-  "hook": "What is<br><b>ti-ti</b>?",
+  "hook": "One beat can hold<br><b>TWO</b> notes!",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    840,
@@ -292,7 +292,7 @@
   "srt": "channel/captions/video17.en-GB.srt",
   "start": 114.78,
   "end": 132.64,
-  "hook": "Which <b>finger</b><br>plays E?",
+  "hook": "Your thumb plays C.<br>Which finger plays <b>E</b>?",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -308,7 +308,7 @@
   "srt": "channel/captions/video18.en-GB.srt",
   "start": 32.44,
   "end": 54.35,
-  "hook": "Make the<br><b>C major chord</b>",
+  "hook": "Three keys.<br>One <b>chord</b>.",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -324,7 +324,7 @@
   "srt": "channel/captions/video19.en-GB.srt",
   "start": 21.68,
   "end": 39.59,
-  "hook": "What is a<br><b>semitone</b>?",
+  "hook": "The <b>smallest step</b><br>on a piano",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -340,7 +340,7 @@
   "srt": "channel/captions/video19.en-GB.srt",
   "start": 47.69,
   "end": 63.78,
-  "hook": "No black key<br><b>between</b> them",
+  "hook": "Two white keys with<br><b>NO</b> black key between!",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -356,7 +356,7 @@
   "srt": "channel/captions/video20.en-GB.srt",
   "start": 22.15,
   "end": 39.28,
-  "hook": "What is a<br><b>sharp</b>?",
+  "hook": "A black key's<br>secret name: <b>sharp</b>",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -372,7 +372,7 @@
   "srt": "channel/captions/video20.en-GB.srt",
   "start": 75.16,
   "end": 88.37,
-  "hook": "Sharp or <b>flat</b>?",
+  "hook": "Sharp… or <b>flat</b>?<br>Listen to the key!",
   "footer": "Follow: a new Nugget every Wed & Sat ▶",
   "crop": [
    1060,
@@ -381,5 +381,50 @@
    140
   ],
   "gy": 450
+ },
+ {
+  "id": "short37_seven_letters",
+  "src": "videos/video3_music_alphabet.mp4",
+  "srt": "channel/captions/video3.en-GB.srt",
+  "start": 19.4,
+  "end": 37.5,
+  "hook": "Music only has<br><b>7 letters</b>!",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short38_one_bar_three_ways",
+  "src": "videos/video13_long_and_short_notes.mp4",
+  "srt": "channel/captions/video13.en-GB.srt",
+  "start": 93.5,
+  "end": 119.5,
+  "hook": "One bar.<br><b>Three ways</b> to fill it!",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short39_every_c_same",
+  "src": "videos/video9_octaves.mp4",
+  "srt": "channel/captions/video9.en-GB.srt",
+  "start": 62.0,
+  "end": 72.8,
+  "hook": "Every <b>C</b> is<br>the same note!",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short40_two_ways_middle_c",
+  "src": "videos/video11_middle_c.mp4",
+  "srt": "channel/captions/video11.en-GB.srt",
+  "start": 58.5,
+  "end": 77.5,
+  "hook": "One note.<br><b>Two ways</b> to write it!",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
+ },
+ {
+  "id": "short41_hands_meet",
+  "src": "videos/video11_middle_c.mp4",
+  "srt": "channel/captions/video11.en-GB.srt",
+  "start": 80.0,
+  "end": 101.0,
+  "hook": "Where do your<br>two <b>hands</b> meet?",
+  "footer": "Follow: a new Nugget every Wed & Sat ▶"
  }
 ]
