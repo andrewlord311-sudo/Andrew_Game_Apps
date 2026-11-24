@@ -226,7 +226,63 @@
             });
             return last + 0.4;
         }
-        function listen() { if (round && round.items) clapBar(round.items); }
+        // clap times (seconds from now) for a list of items, as clapBar plays them
+        function clapTimes(items) {
+            const ts = [];
+            items.forEach(it => { ts.push(it.beat * BEAT); if (it.k === 'qv') ts.push(it.beat * BEAT + BEAT / 2); });
+            return ts;
+        }
+        function listen() {
+            if (!round || !round.items) return;
+            if (round.stage === 1) { clapBar(round.items); animateHands(clapTimes(round.items)); return; }
+            if (round.stage === 2 && round.answer === 'short' && round.revealed) { playBarWithRest(round.items, 0); return; }
+            clapBar(round.items);
+        }
+        // stage 2 clap-back of a bar that is not full: a soft tick on every beat, so the silent last beat (the rest) can be felt
+        function playBarWithRest(items, offset) {
+            for (let b = 0; b < 4; b++) playTone(1250, 'sine', 0.06, 0.07, offset + b * BEAT);
+            return clapBar(items.map(i => ({ ...i, beat: i.beat + offset / BEAT })));
+        }
+
+        // ---- stage 1: two hands that really clap, in time with the sound --------------------------------------
+        let handsAnim = 0;   // bumped to stop an animation that is running
+        function drawHands(c, gap, hit) {
+            c.clearRect(0, 0, 300, 170);
+            const cxm = 150, cy = 72;
+            c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '62px serif';
+            // left hand: a raised hand mirrored so its palm faces right; right hand: palm faces left
+            c.save(); c.translate(cxm - gap - 24, cy); c.rotate(0.25); c.scale(-1, 1); c.fillText('🤚', 0, 0); c.restore();
+            c.save(); c.translate(cxm + gap + 24, cy); c.rotate(-0.25); c.fillText('🤚', 0, 0); c.restore();
+            if (hit > 0) {   // a little burst where the hands meet
+                c.strokeStyle = `rgba(234, 88, 12, ${hit})`; c.lineWidth = 3; c.lineCap = 'round';
+                for (let k = 0; k < 6; k++) {
+                    const a = -Math.PI / 2 + (k - 2.5) * 0.45, r0 = 40, r1 = 40 + 16 * hit;
+                    c.beginPath(); c.moveTo(cxm + Math.cos(a) * r0, cy - 6 + Math.sin(a) * r0); c.lineTo(cxm + Math.cos(a) * r1, cy - 6 + Math.sin(a) * r1); c.stroke();
+                }
+            }
+            c.fillStyle = '#64748b'; c.font = 'bold 15px Quicksand, sans-serif'; c.fillText('Listen to the claps', 150, 142);
+        }
+        function animateHands(times) {
+            const id = ++handsAnim;
+            const c = document.getElementById('canvas').getContext('2d');
+            const t0 = performance.now() / 1000;
+            const end = (times.length ? Math.max(...times) : 0) + 0.6;
+            const OPEN = 46, CLOSE = 0.11;   // gap when open (px); seconds either side of a clap for the hands to swing in and out
+            function frame() {
+                if (id !== handsAnim) return;
+                const t = performance.now() / 1000 - t0;
+                let d = Infinity;
+                times.forEach(tc => { d = Math.min(d, Math.abs(t - tc)); });
+                const k = Math.min(1, d / CLOSE);                 // 0 at the clap, 1 when wide open
+                const gap = OPEN * Math.sin(k * Math.PI / 2);     // eases shut at the clap
+                const nearest = times.reduce((m, tc) => (t >= tc && t - tc < 0.18 ? t - tc : m), -1);
+                drawHands(c, Math.max(0, gap), nearest >= 0 ? 1 - nearest / 0.18 : 0);
+                if (t < end) requestAnimationFrame(frame);
+                else drawHands(c, OPEN, 0);
+            }
+            frame();
+        }
+        function stopHands() { handsAnim++; }
 
         const SVG_MELODY = MASCOTS.html('melody', 'w-16 h-16 drop-shadow-md');
 
@@ -288,6 +344,26 @@
                 ['#2dd4bf', '#6366f1', '#ec4899', '#f59e0b'].forEach((col, i) => { c.fillStyle = col; c.fillText(String(i + 1), cx(i) + (i >= 0 ? 4 : 0), 142); });
             }
         }
+        // a crotchet rest (one silent beat), drawn by hand so it never depends on a music font, with a "rest" label
+        function drawRest(c, x) {
+            const y = STAFF_TOP + 2 * GAP;
+            c.save();
+            c.fillStyle = 'rgba(250, 204, 21, 0.35)';      // soft yellow highlight on the silent beat
+            c.beginPath(); c.roundRect(x - 20, STAFF_TOP - 10, 40, 4 * GAP + 20, 10); c.fill();
+            c.fillStyle = '#0f172a'; c.strokeStyle = '#0f172a'; c.lineCap = 'round'; c.lineJoin = 'round';
+            c.lineWidth = 5.5;
+            c.beginPath();
+            c.moveTo(x - 4, y - 24);      // top
+            c.lineTo(x + 5, y - 13);
+            c.lineTo(x - 4, y - 3);       // zig
+            c.lineTo(x + 5, y + 8);       // zag
+            c.stroke();
+            c.lineWidth = 4.5;            // the curl at the bottom
+            c.beginPath(); c.moveTo(x + 5, y + 8); c.quadraticCurveTo(x - 9, y + 5, x - 1, y + 22); c.stroke();
+            c.fillStyle = '#b45309'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = 'bold 14px Quicksand, sans-serif';
+            c.fillText('rest: shh!', x - 6, 142);
+            c.restore();
+        }
         function iconCanvas(k) {
             const c = document.createElement('canvas'); c.width = 120; c.height = 80; c.className = 'mx-auto';
             const g = c.getContext('2d'); g.clearRect(0, 0, 120, 80);
@@ -300,6 +376,7 @@
         // ---- rounds --------------------------------------------------------------------------------------------
         function newRound() {
             controlLock = false;
+            stopHands();
             const listenBtn = document.getElementById('listen-btn');
             const q = document.getElementById('question-text');
             const cv = document.getElementById('canvas');
@@ -310,8 +387,7 @@
                 // play it on a steady count: a lead-in tick, then the clap(s)
                 q.innerText = 'Which note matches the claps?';
                 listenBtn.classList.remove('hidden');
-                c.clearRect(0, 0, 300, 170); c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = '64px serif'; c.fillText('👏', 150, 70);
-                c.fillStyle = '#64748b'; c.font = 'bold 15px Quicksand, sans-serif'; c.fillText('Listen to the claps', 150, 130);
+                drawHands(c, 46, 0);
                 setTimeout(listen, 350);
             } else if (currentStage === 2) {
                 const full = Math.random() < 0.5;
@@ -380,7 +456,7 @@
                 document.getElementById('streak').innerText = streak;
                 feedback.className = "text-center text-base font-bold text-green-600 mb-2";
                 feedback.innerText = currentStage === 1 ? (round.answer === 'qv' ? "⭐ Ti-ti! Two quavers in one beat. ⭐" : "⭐ One clap: a crotchet! ⭐")
-                    : currentStage === 2 ? (round.answer === 'full' ? "⭐ Four beats: a full bar! ⭐" : "⭐ One beat is missing! ⭐")
+                    : currentStage === 2 ? (round.answer === 'full' ? "⭐ Four beats: a full bar! ⭐" : "⭐ One beat is missing! A rest fills it: shh! ⭐")
                     : (round.answer === 'cro' ? "⭐ A crotchet: one beat! ⭐" : "⭐ A quaver: two make one beat! ⭐");
                 playCheer();
                 triggerConfetti();
@@ -390,6 +466,15 @@
                 let wait = 1800;
                 if (currentStage === 1) {
                     drawBar(document.getElementById('canvas').getContext('2d'), [{ k: round.answer, beat: 0 }], false);
+                } else if (currentStage === 2 && round.answer === 'short') {
+                    // fill the missing beat with a rest, then clap the bar back with the rest as a silent beat
+                    const c2 = document.getElementById('canvas').getContext('2d');
+                    drawBar(c2, round.items, false);
+                    drawRest(c2, cx(3));
+                    round.revealed = true;
+                    document.getElementById('listen-btn').classList.remove('hidden');
+                    const dur = playBarWithRest(round.items, 1.8);
+                    wait = (Math.max(dur, 1.8 + 4 * BEAT) + 0.9) * 1000;
                 } else {
                     document.getElementById('listen-btn').classList.remove('hidden');
                     const dur = clapBar(round.items.map(i => ({ ...i, beat: i.beat + 1.8 / BEAT })));
