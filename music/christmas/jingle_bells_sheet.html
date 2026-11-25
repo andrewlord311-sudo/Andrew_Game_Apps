@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jingle Bells – print and play</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700;6..96,800&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Carol sheet style guide (vault: Music teaching/Characters and art/Carol sheet style guide):
+     lots of white space, 4 bars a line, big music, Didone title + quiet sans, colour only in the pictures. */
+  :root { --ink: #1d1a17; --soft: #5b5650; --red: #c8102e; --green: #1f7a4d; --paper: #ffffff; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #e9e6e1; font-family: Nunito, system-ui, sans-serif; color: var(--ink); }
+  #fit { margin: 0 auto; transform-origin: top left; }
+  .printbar { text-align: center; padding: 14px 12px; }
+  .printbar button { font: 700 18px Nunito, sans-serif; background: #1f7a4d; color: #fff; border: 0; border-radius: 30px; padding: 10px 26px; cursor: pointer; }
+  .printbar a { margin-left: 14px; color: #5b5650; font-size: 16px; }
+  @media print {
+    @page { size: A4; margin: 0; }
+    body { background: #fff; }
+    .printbar { display: none; }
+    #fit { transform: none !important; width: auto !important; height: auto !important; zoom: 0.64; }
+  }
+  .page { width: 1240px; height: 1754px; margin: 0 auto; background: var(--paper); padding: 90px 100px 70px; position: relative; overflow: hidden; }
+  header { display: grid; grid-template-columns: 430px 1fr; gap: 40px; align-items: center; }
+  header svg.banner { width: 430px; height: 190px; display: block; }
+  h1 { font-family: "Bodoni Moda", Didot, serif; font-weight: 800; font-size: 92px; line-height: 1; white-space: nowrap; margin: 0; letter-spacing: -1px; }
+  .credits { text-align: right; font-size: 25px; line-height: 1.45; color: var(--soft); margin-top: 22px; }
+  .lesson { margin: 22px 0 0; display: flex; gap: 18px; align-items: baseline; font-size: 24px; color: var(--soft); }
+  .lesson b { color: var(--green); font-weight: 700; letter-spacing: .5px; text-transform: uppercase; font-size: 19px; }
+  #music { margin-top: 18px; }
+  #music svg text.lyric { font-family: Academico, "Century Schoolbook", serif; font-weight: bold; font-size: 11.5px; fill: var(--ink); }
+  #music svg text.tempo { font-family: Academico, "Century Schoolbook", serif; font-weight: bold; font-size: 14px; fill: var(--ink); }
+  #music svg text.ital { font-family: Academico, "Century Schoolbook", serif; font-style: italic; font-size: 11.5px; fill: var(--ink); }
+  #music svg text.hand { fill: var(--green); }
+  #music svg text.finger { font-family: Academico, serif; font-weight: bold; font-size: 11px; fill: var(--ink); }
+  #music svg text.puzzle { font-family: Academico, serif; font-weight: bold; font-size: 11.5px; fill: var(--red); }
+  #music svg text.barno { font-family: Academico, serif; font-size: 8.5px; fill: var(--ink); }
+  #music svg text.dyn { font-family: Bravura; font-size: 30px; fill: var(--ink); }
+  .look { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 12px; }
+  .look div { border: 2.5px solid #e4ded5; border-radius: 18px; padding: 12px 18px 14px; font-size: 18px; line-height: 1.3; color: var(--soft); }
+  .look b { display: block; color: var(--ink); font-size: 21px; margin-bottom: 4px; }
+  .look i { font-style: normal; color: var(--red); font-weight: 700; }
+  footer { position: absolute; left: 100px; right: 100px; bottom: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start; }
+  .hand { border-top: 3px solid var(--ink); padding-top: 18px; }
+  .hand h2, .friends h2 { margin: 0 0 12px; font-size: 19px; text-transform: uppercase; letter-spacing: 1px; color: var(--green); }
+  .hand p { margin: 12px 0 0; font-size: 21px; color: var(--soft); line-height: 1.4; }
+  .friends { display: flex; align-items: flex-end; gap: 10px; border-top: 3px solid var(--ink); padding-top: 18px; }
+  .friends .pals { display: flex; align-items: flex-end; }
+  .friends .pals svg { width: 120px; height: 150px; }
+  .bubble { position: relative; background: #fff6e8; border: 2.5px solid var(--ink); border-radius: 22px; padding: 16px 20px; font-size: 22px; font-weight: 700; line-height: 1.3; margin-bottom: 60px; }
+  .bubble small { display: block; font-weight: 400; font-size: 18px; color: var(--soft); margin-top: 6px; }
+  .bubble:after { content: ""; position: absolute; left: -16px; bottom: 26px; border: 14px solid transparent; border-right-color: var(--ink); border-left: 0; }
+  .brand { position: absolute; left: 100px; right: 100px; bottom: 26px; display: flex; justify-content: space-between; font-size: 16px; color: #9a948c; }
+</style>
+</head>
+<body>
+<div class="printbar"><button onclick="print()">🖨 Print this page</button><a href="./">← Christmas activities</a></div>
+<div id="fit"><div class="page">
+  <header>
+    <svg class="banner" viewBox="0 0 430 190" aria-hidden="true" id="banner"></svg>
+    <div>
+      <h1>Jingle Bells</h1>
+      <div class="credits">Words and music by James Lord Pierpont<br>Arranged by Andrew Lord</div>
+    </div>
+  </header>
+  <div class="lesson"><b>Right hand</b> Thumb on Middle C · five fingers, five notes</div>
+  <div id="music"></div>
+  <div class="look">
+    <div><b>Spot the twins</b>Bars <i>1</i> and <i>2</i> are exactly the same. Can you find them?</div>
+    <div><b>The longest note</b>Which note lasts for <i>four</i> beats? Hold it while you count 1, 2, 3, 4.</div>
+    <div><b>Step or skip?</b>In bar <i>3</i>, E to G is a skip. D to E is a step. Find another step!</div>
+  </div>
+  <footer>
+    <div class="hand">
+      <h2>Ready, steady…</h2>
+      <svg id="keys" viewBox="0 0 470 150" width="470" height="150" aria-label="Right hand on C D E F G, fingers 1 to 5"></svg>
+      <p>Thumb on Middle C. Each finger has its own key.</p>
+    </div>
+    <div class="friends">
+      <div class="pals" id="pals"></div>
+      <div class="bubble">Play it with me!<small>The numbers above the notes tell you which finger to use.</small></div>
+    </div>
+  </footer>
+  <div class="brand"><span>Melody &amp; Barnaby's Music Nuggets · Christmas</span><span>Traditional carol · this arrangement © Andrew Lord 2026</span></div>
+</div></div>
+
+<script src="../mascots.js"></script>
+<script src="../../video-pipeline/vendor/vexflow.js"></script>
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const el = (parent, tag, attrs = {}, text) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; parent.appendChild(e); return e; };
+
+// ---------- Santa hat, the same one as the advent calendar ----------
+const HAT = `<g transform="translate(50 6) rotate(-8)"><path d="M-27,12 C-22,-12 6,-30 30,-26 L27,-16 C16,-16 12,-6 27,12 Z" fill="#e8392c" stroke="#2b2250" stroke-width="2.3" stroke-linejoin="round"/>
+  <rect x="-31" y="6" width="62" height="13" rx="6.5" fill="#fff" stroke="#2b2250" stroke-width="2.3"/><circle cx="31" cy="-25" r="7" fill="#fff" stroke="#2b2250" stroke-width="2.3"/></g>`;
+const withHat = svg => svg.replace(/<\/svg>$/, HAT + "</svg>");
+
+// ---------- banner: a flat, cut-paper snowy village at night, with Melody and Barnaby ----------
+(function banner() {
+  const b = document.getElementById("banner");
+  b.innerHTML = `
+  <defs><clipPath id="bc"><path d="M0,34 Q0,8 26,8 L150,8 Q190,-6 240,10 L404,10 Q430,10 430,36 L430,190 L0,190 Z"/></clipPath></defs>
+  <g clip-path="url(#bc)">
+    <rect width="430" height="190" fill="#2e2a6b"/>
+    <path d="M0,70 Q120,40 230,62 T430,52 L430,190 L0,190Z" fill="#3d3a86"/>
+    ${[[30,30],[75,22],[120,40],[178,18],[262,28],[300,16],[350,34],[395,24],[215,44],[60,54]].map(([x,y],i)=>`<circle cx="${x}" cy="${y}" r="${i%3?1.6:2.4}" fill="#fff6c9"/>`).join("")}
+    <path d="M330,20 a13,13 0 1,0 12,18 a10,10 0 1,1 -12,-18z" fill="#fff1b0"/>
+    <path d="M0,118 Q100,92 210,110 T430,98 L430,190 L0,190Z" fill="#5a5fb0"/>
+    <!-- houses -->
+    <g stroke="none">
+      <rect x="22" y="104" width="46" height="40" fill="#28356f"/><path d="M16,106 L45,82 L74,106Z" fill="#fff"/>
+      <rect x="36" y="116" width="10" height="11" fill="#ffd25a"/><rect x="52" y="116" width="10" height="11" fill="#ffd25a"/>
+      <rect x="80" y="96" width="34" height="48" fill="#1f2a5c"/><path d="M75,98 L97,76 L119,98Z" fill="#fff"/><rect x="91" y="110" width="12" height="14" fill="#ffd25a"/>
+      <rect x="128" y="74" width="20" height="70" fill="#28356f"/><path d="M124,76 L138,40 L152,76Z" fill="#fff"/><rect x="133" y="88" width="10" height="16" rx="5" fill="#ffd25a"/>
+      <rect x="146" y="102" width="44" height="42" fill="#1f2a5c"/><path d="M142,104 L168,86 L194,104Z" fill="#fff"/><rect x="160" y="116" width="12" height="13" fill="#ffd25a"/>
+    </g>
+    <path d="M0,146 Q110,126 220,142 T430,134 L430,190 L0,190Z" fill="#ffffff"/>
+    <path d="M0,166 Q140,150 260,164 T430,160 L430,190 L0,190Z" fill="#e6ecfb"/>
+    ${[...Array(34)].map((_,i)=>`<circle cx="${(i*53)%430}" cy="${(i*37)%140+6}" r="${1.2+(i%3)*.7}" fill="#fff" opacity=".85"/>`).join("")}
+    <!-- star over the village -->
+    <path d="M232,40 l4,10 l11,1 l-8,7 l3,11 l-10,-6 l-10,6 l3,-11 l-8,-7 l11,-1z" fill="#ffd25a"/>
+  </g>
+  <svg x="232" y="40" width="110" height="140">${withHat(MASCOTS.melody({ pose: "cheer" })).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg>
+  <svg x="318" y="34" width="118" height="150">${withHat(MASCOTS.barnaby({ pose: "wave" })).replace(/^<svg[^>]*>|<\/svg>$/g, "")}</svg>`;
+  // keep each character's own viewBox
+  const svgs = b.querySelectorAll(":scope > svg");
+  svgs[0].setAttribute("viewBox", "0 -40 100 163"); svgs[1].setAttribute("viewBox", "0 -40 100 163");
+})();
+
+// ---------- footer friends and the hand-position keyboard ----------
+document.getElementById("pals").innerHTML = withHat(MASCOTS.barnaby({ pose: "point" })).replace("<svg ", '<svg viewBox="0 -40 100 163" ').replace(/viewBox="0 -9 100 123" /, "");
+(function keys() {
+  const k = document.getElementById("keys"), W = 52, names = ["C","D","E","F","G","A","B","C"];
+  for (let i = 0; i < 8; i++) {
+    const on = i < 5;
+    el(k, "rect", { x: 30 + i * W, y: 10, width: W - 3, height: 128, rx: 6, fill: on ? "#fff6e8" : "#fff", stroke: "#1d1a17", "stroke-width": 2.5 });
+    el(k, "text", { x: 30 + i * W + (W - 3) / 2, y: 126, "text-anchor": "middle", "font-family": "Nunito", "font-size": 19, "font-weight": 700, fill: on ? "#1d1a17" : "#b5afa7" }, names[i]);
+    if (on) {
+      el(k, "circle", { cx: 30 + i * W + (W - 3) / 2, cy: 92, r: 15, fill: i === 0 ? "#c8102e" : "#1f7a4d" });
+      el(k, "text", { x: 30 + i * W + (W - 3) / 2, y: 99, "text-anchor": "middle", "font-family": "Nunito", "font-size": 19, "font-weight": 700, fill: "#fff" }, i + 1);
+    }
+  }
+  [0, 1, 3, 4, 5].forEach(i => el(k, "rect", { x: 30 + i * W + W - 15, y: 10, width: 26, height: 78, rx: 4, fill: "#1d1a17" }));
+  el(k, "text", { x: 30 + (W - 3) / 2, y: 148, "text-anchor": "middle", "font-family": "Nunito", "font-size": 15, "font-weight": 700, fill: "#c8102e" }, "Middle C");
+})();
+
+// ---------- the music ----------
+(async function music() {
+  const VF = VexFlow;
+  await VF.loadFonts("Bravura", "Academico");
+  VF.setFonts("Bravura", "Academico");
+  await document.fonts.ready;
+  const { Renderer, Stave, StaveNote, Voice, Formatter, Dot, Beam, Barline } = VF;
+
+  const SYSH = 158, S = 860 / (56 + SYSH * 4 - 40), W = 1040, H = 860;                 // page pixels; drawing units = pixels / S
+  const host = document.getElementById("music");
+  const r = new Renderer(host, Renderer.Backends.SVG); r.resize(W, H);
+  const ctx = r.getContext(); ctx.scale(S, S);
+  const UW = W / S, L = 2, R = UW - 4;
+
+  // [key, duration, syllable, finger or puzzle, hyphen-after]
+  const BARS = [
+    [["e/4","q","Jin","3",1],["e/4","q","gle",null],["e/4","h","bells,",null]],
+    [["e/4","q","jin",null,1],["e/4","q","gle",null],["e/4","h","bells,",null]],
+    [["e/4","q","jin",null,1],["g/4","q","gle","5"],["c/4","q","all","1"],["d/4","q","the","2"]],
+    [["e/4","w","way!","3"]],
+    [["f/4","q","Oh,","4"],["f/4","q","what",null],["f/4","q","fun",null],["f/4","q","it",null]],
+    [["f/4","q","is",null],["e/4","q","to","3"],["e/4","q","ride",null],["e/4","q","in a",null]],
+    [["e/4","q","one",null,1],["d/4","q","horse","2"],["d/4","q","o",null,1],["e/4","q","pen","3"]],
+    [["d/4","h","sleigh,","2"],["g/4","h","hey!","5"]],
+    [["e/4","q","Jin","3",1],["e/4","q","gle",null],["e/4","h","bells,",null]],
+    [["e/4","q","jin",null,1],["e/4","q","gle",null],["e/4","h","bells,",null]],
+    [["e/4","q","jin",null,1],["g/4","q","gle","5"],["c/4","q","all","1"],["d/4","q","the","2"]],
+    [["e/4","w","way!","3"]],
+    [["f/4","q","Oh,","4"],["f/4","q","what",null],["f/4","q","fun",null],["f/4","q","it",null]],
+    [["f/4","q","is",null],["e/4","q","to","3"],["e/4","q","ride",null],["e/4","q","in a",null]],
+    [["g/4","q","one","5",1],["g/4","q","horse",null],["f/4","q","o","4",1],["d/4","q","pen","2"]],
+    [["c/4","w","sleigh!","1"]],
+  ];
+  // children's-book spacing: almost even, a long note gets only a little more room; never so tight the words collide
+  const BEATS = { "8": .5, q: 1, qd: 1.5, h: 2, w: 4 };
+  const space = d => Math.max(0.9, 1 + 0.45 * Math.log2(BEATS[d]));
+  const meas = document.createElement("canvas").getContext("2d"); meas.font = "bold 11.5px Academico";
+  // the room each note needs: its rhythm share, but never less than its word (plus a hyphen gap)
+  const need = n => Math.max(29 * space(n[1]), meas.measureText(n[2] || "").width * 1.08 + (n[4] ? 16 : 10));
+  const SYS = [0, 1, 2, 3].map(i => ({ y: 56 + i * SYSH, from: i * 4 }));
+  const svg = host.querySelector("svg");
+  const overlay = [];                                   // text we add after drawing, in drawing units
+
+  SYS.forEach((sys, si) => {
+    const head = si === 0 ? 62 : 34;                    // room for clef (+ time signature)
+    // bar widths follow the number of notes (and syllables) in each bar, so the words never collide
+    const wts = [0, 1, 2, 3].map(b => BARS[sys.from + b].reduce((a, n) => a + need(n), 0) + 8);
+    const tot = wts.reduce((a, c) => a + c, 0);
+    let x = L;
+    for (let b = 0; b < 4; b++) {
+      const w = (R - L - head) * wts[b] / tot + (b === 0 ? head : 0);
+      const st = new Stave(x, sys.y, w);
+      if (b === 0) { st.addClef("treble"); if (si === 0) st.addTimeSignature("4/4"); }
+      if (si === SYS.length - 1 && b === 3) st.setEndBarType(Barline.type.END);
+      st.setContext(ctx).draw();
+      const spec = BARS[sys.from + b];
+      const notes = spec.map(([k, d]) => {
+        const n = new StaveNote({ keys: [k], duration: d, autoStem: true });
+        if (d.endsWith("d")) Dot.buildAndAttach([n], { all: true });
+        return n;
+      });
+      const voice = new Voice({ numBeats: 4, beatValue: 4 }).addTickables(notes);
+      new Formatter().joinVoices([voice]).format([voice], w - (st.getNoteStartX() - x) - 16);
+      const beams = [];
+      for (let i = 0; i < spec.length - 1; i++) if (spec[i][1] === "8" && spec[i + 1][1] === "8") { beams.push(new Beam([notes[i], notes[i + 1]])); i++; }
+      // place each note ourselves (VexFlow's formatter crowds the start of the bar)
+      const pad = 10, avail = w - (st.getNoteStartX() - x) - pad - 14;
+      const sum = spec.reduce((a, n) => a + need(n), 0);
+      let off = pad;
+      notes.forEach((n, i) => { n.getTickContext().setX(off); off += avail * need(spec[i]) / sum; });
+      voice.draw(ctx, st);
+      beams.forEach(bm => bm.setContext(ctx).draw());
+      const top = st.getYForLine(0), bottom = st.getYForLine(4);
+      notes.forEach((n, i) => {
+        const [, , syl, fing, hy] = spec[i];
+        const cx = (n.getNoteHeadBeginX() + n.getNoteHeadEndX()) / 2;
+        overlay.push(["lyric", cx, bottom + 34, syl, "middle", n, hy]);
+        if (fing && fing.puzzle) overlay.push(["puzzle", cx - 4, top - 16, fing.puzzle, "start"]);
+        else if (fing) overlay.push(["finger", cx, top - 10, fing, "middle"]);
+      });
+      if (si === 0 && b === 0) {
+        overlay.push(["tempo", st.getX(), top - 40, "Merrily", "start"]);
+        const n0 = notes[0]; overlay.push(["dyn", n0.getNoteHeadBeginX() - 34, bottom + 20, "", "start"]);   // mf
+      }
+      if (si === 0 && b === 3) overlay.push(["tempo hand", st.getX() + st.getWidth(), top - 40, "Right hand", "end"]);
+      if (si > 0 && b === 0) overlay.push(["barno", st.getX() + 4, top - 20, String(sys.from + 1), "start"]);
+      x += w;
+    }
+  });
+
+  // lyrics, with spaced hyphens between syllables of one word
+  const g = el(svg, "g");
+  const lyr = overlay.filter(o => o[0] === "lyric");
+  overlay.forEach(o => {
+    const [cls, x, y, t, anchor] = o;
+    if (cls === "barno") { el(g, "rect", { x: x - 6, y: y - 10, width: 13, height: 13, fill: "none", stroke: "#1d1a17", "stroke-width": .8 }); el(g, "text", { class: cls, x: x + .5, y: y, "text-anchor": "middle" }, t); return; }
+    el(g, "text", { class: cls, x, y, "text-anchor": anchor }, t);
+  });
+  // the hyphen sits in the middle of the gap between the two syllables, not between their centres
+  const wd = t => meas.measureText(t).width;
+  lyr.forEach((o, i) => { const nx = lyr[i + 1]; if (o[6] && nx) el(g, "text", { class: "lyric", x: ((o[1] + wd(o[3]) / 2) + (nx[1] - wd(nx[3]) / 2)) / 2, y: o[2], "text-anchor": "middle" }, "-"); });
+  document.body.dataset.ready = "1";
+})().catch(e => { document.body.dataset.ready = "error: " + e; console.error(e); });
+</script>
+<script>
+// fit the A4 page to the screen width (phones); printing uses the full page
+function fitPage() { const f = document.getElementById("fit"), s = Math.min(1, (document.documentElement.clientWidth - 16) / 1240);
+  f.style.transform = `scale(${s})`; f.style.width = 1240 * s + "px"; f.style.height = 1754 * s + "px"; }
+addEventListener("resize", fitPage); fitPage();
+</script>
+</body>
+</html>
