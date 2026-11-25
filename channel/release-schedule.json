@@ -30,7 +30,8 @@
       "video": 13,
       "videoId": "yMQNnNaeaYs",
       "publishAfter": "2026-11-25T15:00:00Z",
-      "done": false
+      "done": true,
+      "wiredAt": "2026-11-25T15:27:52Z"
     },
     {
       "game": "space_face.html",
