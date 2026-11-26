@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Name That Carol – Melody &amp; Barnaby</title>
+<meta name="description" content="A free Christmas listening game for children: hear the first notes of a carol and pick which one it is. Watch the keys light up as it plays.">
+<link rel="preload" href="../fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face { font-family: Fredoka; src: url(../fonts/fredoka-one.woff2); }
+  @font-face { font-family: Quicksand; src: url(../fonts/quicksand.woff2); font-weight: 400 700; }
+  :root { --ink: #1d1a17; --night: #2e2a6b; --red: #c8102e; --green: #1f7a4d; --gold: #ffd25a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body { font-family: Quicksand, system-ui, sans-serif; color: #fff; background: radial-gradient(circle at 50% 0%, #4a46a8 0%, var(--night) 55%, #1d1a4f 100%); min-height: 100vh; overflow-x: hidden; }
+  #snow { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  #snow i { position: absolute; top: -12px; border-radius: 50%; background: #fff; opacity: .7; animation: fall linear infinite; }
+  @keyframes fall { to { transform: translateY(110vh); } }
+  main { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 14px 16px 40px; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .back { color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; background: rgba(255,255,255,.14); padding: 6px 14px; border-radius: 30px; }
+  .score { font-family: Fredoka, sans-serif; font-size: 20px; background: rgba(255,255,255,.14); padding: 6px 16px; border-radius: 30px; }
+  header { display: flex; align-items: flex-end; justify-content: center; gap: 6px; margin-top: 6px; }
+  header .pal { width: 86px; height: 122px; flex: none; }
+  header .pal svg { width: 100%; height: 100%; overflow: visible; }
+  h1 { font-family: Fredoka, sans-serif; font-weight: normal; font-size: clamp(34px, 7vw, 56px); margin: 0 0 14px; color: #fff; text-shadow: 0 5px 0 rgba(0,0,0,.3); text-align: center; line-height: 1; }
+  .stages { display: flex; justify-content: center; gap: 8px; margin: 4px 0 12px; flex-wrap: wrap; }
+  .stages button { font: 16px Fredoka, sans-serif; border: 0; border-radius: 30px; padding: 7px 16px; background: rgba(255,255,255,.16); color: #fff; cursor: pointer; }
+  .stages button.on { background: var(--gold); color: var(--night); }
+  .panel { background: rgba(255,255,255,.96); color: var(--ink); border-radius: 28px; padding: 18px 16px 20px; box-shadow: 0 10px 0 rgba(0,0,0,.25); text-align: center; }
+  .q { font-family: Fredoka, sans-serif; font-size: clamp(22px, 4.5vw, 30px); margin: 0 0 10px; }
+  .play { font: 22px Fredoka, sans-serif; background: var(--green); color: #fff; border: 0; border-radius: 40px; padding: 10px 28px; cursor: pointer; box-shadow: 0 5px 0 #145536; }
+  .play:active { transform: translateY(3px); box-shadow: 0 2px 0 #145536; }
+  #kb { position: relative; height: 150px; margin: 58px auto 6px; max-width: 760px; user-select: none; }
+  .wk, .bk { position: absolute; top: 0; border-radius: 0 0 10px 10px; transition: background .08s; }
+  .wk { height: 150px; background: #fff; border: 2px solid var(--ink); }
+  .bk { height: 92px; background: var(--ink); z-index: 2; border-radius: 0 0 7px 7px; }
+  .wk .nm { position: absolute; bottom: 6px; left: 0; right: 0; text-align: center; font: 15px Fredoka, sans-serif; color: #b5afa7; }
+  .wk.mid .nm { color: var(--red); }
+  .wk.lit { background: #ffe066; }
+  .wk.lit .nm { color: var(--ink); }
+  .bubble { position: absolute; top: -40px; transform: translateX(-50%); background: var(--red); color: #fff; font: 22px Fredoka, sans-serif; width: 40px; height: 40px; line-height: 41px; border-radius: 50%; text-align: center; opacity: 0; transition: opacity .1s; z-index: 3; }
+  .choices { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 18px; }
+  .choice { font: inherit; border: 3px solid #e8e2d6; background: #fff; border-radius: 20px; padding: 12px 10px; cursor: pointer; display: flex; align-items: center; gap: 12px; text-align: left; transition: transform .1s; color: var(--ink); }
+  .choice:hover { transform: translateY(-2px); border-color: #cfc6b5; }
+  .choice .em { font-size: 40px; width: 58px; height: 58px; border-radius: 16px; display: grid; place-items: center; flex: none; }
+  .choice .tt { font-family: Fredoka, sans-serif; font-size: clamp(17px, 3.6vw, 22px); line-height: 1.15; }
+  .choice.right { border-color: var(--green); background: #e8f6ee; }
+  .choice.wrong { border-color: var(--red); background: #fdecee; opacity: .7; }
+  .fact { min-height: 28px; margin: 12px 0 0; font-size: 18px; font-weight: 700; color: var(--green); }
+  .stars { font-size: 26px; letter-spacing: 2px; min-height: 34px; margin-top: 6px; }
+  .start, .end { text-align: center; }
+  .start p, .end p { font-size: 19px; line-height: 1.45; color: #5b5650; max-width: 32em; margin: 8px auto 16px; }
+  .big { font: 26px Fredoka, sans-serif; background: var(--red); color: #fff; border: 0; border-radius: 40px; padding: 12px 36px; cursor: pointer; box-shadow: 0 6px 0 #8b0a1c; }
+  .end h2 { font: 40px Fredoka, sans-serif; margin: 4px 0; }
+  .hidden { display: none !important; }
+  #cheer { position: fixed; left: 50%; top: 38%; transform: translate(-50%, -50%) scale(.3); z-index: 20; pointer-events: none; opacity: 0;
+           font: clamp(54px, 13vw, 110px) Fredoka, sans-serif; color: #fff; white-space: nowrap; text-align: center;
+           -webkit-text-stroke: 8px #1f7a4d; paint-order: stroke fill; text-shadow: 0 10px 0 rgba(0,0,0,.3); }
+  #cheer small { display: block; font-size: .36em; -webkit-text-stroke: 5px #1f7a4d; margin-top: 6px; }
+  #cheer.go { animation: cheer 1.9s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes cheer { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.3) rotate(-8deg); } 15% { opacity: 1; transform: translate(-50%,-50%) scale(1.08) rotate(3deg); }
+                     25% { transform: translate(-50%,-50%) scale(1) rotate(0); } 80% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(.9) translateY(-30px); } }
+  .flake { position: fixed; z-index: 19; pointer-events: none; color: #6cb8f5; text-shadow: 0 0 3px #fff, 0 0 8px rgba(120,170,255,.9); animation: burst 1.8s ease-out forwards; }
+  @keyframes burst { 0% { transform: translate(0,0) rotate(0) scale(.4); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(1.1); opacity: 0; } }
+  .choice.right { animation: pulse .5s ease-out 2; }
+  @keyframes pulse { 50% { transform: scale(1.06); box-shadow: 0 0 0 8px #1f7a4d33; } }
+  .grown { color: rgba(255,255,255,.85); font-size: 15px; line-height: 1.5; text-align: center; margin: 18px auto 0; max-width: 40em; }
+  .grown a { color: var(--gold); }
+  @media (max-width: 560px) { .choices { grid-template-columns: 1fr; } #kb { height: 120px; } .wk { height: 120px; } .bk { height: 74px; } header .pal { width: 64px; height: 92px; } }
+</style>
+</head>
+<body>
+<div id="snow"></div>
+<div id="cheer"></div>
+<main>
+  <div class="top"><a class="back" href="./">← Christmas activities</a><div class="score" id="score">⭐ 0</div></div>
+  <header><div class="pal" id="palM"></div><h1>Name That Carol</h1><div class="pal" id="palB"></div></header>
+  <div class="stages" id="stages">
+    <button data-s="1" class="on">1 · Four carols</button><button data-s="2">2 · All eight</button><button data-s="3">3 · First four notes!</button>
+  </div>
+
+  <section class="panel start" id="start">
+    <div class="q">🎄 Listen to the tune. Which carol is it?</div>
+    <p>Watch the keys light up as each note plays. Then tap the carol you think it is.</p>
+    <button class="big" id="go">Start! 🔔</button>
+  </section>
+
+  <section class="panel hidden" id="game">
+    <div class="q" id="qtext">Which carol is this?</div>
+    <button class="play" id="again">▶ Play it again</button>
+    <div id="kb"></div>
+    <div class="choices" id="choices"></div>
+    <div class="fact" id="fact"></div>
+    <div class="stars" id="stars"></div>
+  </section>
+
+  <section class="panel end hidden" id="end">
+    <h2 id="endT">Brilliant!</h2>
+    <p id="endP"></p>
+    <button class="big" id="more">Play again 🎄</button>
+  </section>
+
+  <p class="grown">For grown-ups: each tune is the opening of a traditional carol, played on the piano from Middle C. Naming a tune from its first notes trains musical memory and listening; watching the keys shows whether the tune steps, skips, goes up or goes down. More: <a href="./">Christmas music activities</a> · <a href="jingle_bells_sheet.html">Jingle Bells to print and play</a></p>
+</main>
+
+<script src="../mascots.js"></script>
+<script src="carols.js"></script>
+<script src="../hit-counter.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const HAT = `<g transform="translate(50 6) rotate(-8)"><path d="M-27,12 C-22,-12 6,-30 30,-26 L27,-16 C16,-16 12,-6 27,12 Z" fill="#e8392c" stroke="#2b2250" stroke-width="2.3" stroke-linejoin="round"/><rect x="-31" y="6" width="62" height="13" rx="6.5" fill="#fff" stroke="#2b2250" stroke-width="2.3"/><circle cx="31" cy="-25" r="7" fill="#fff" stroke="#2b2250" stroke-width="2.3"/></g>`;
+const pal = (who, pose) => MASCOTS[who]({ pose }).replace(/viewBox="[^"]*"/, 'viewBox="0 -40 100 163"').replace(/<\/svg>$/, HAT + "</svg>");
+function setPals(pose) { $("palM").innerHTML = pal("melody", pose); $("palB").innerHTML = pal("barnaby", pose === "cheer" ? "cheer" : "wave"); }
+setPals("wave");
+$("snow").innerHTML = [...Array(40)].map(() => { const s = 3 + Math.random() * 6; return `<i style="left:${Math.random() * 100}%;width:${s}px;height:${s}px;animation-duration:${8 + Math.random() * 10}s;animation-delay:-${Math.random() * 18}s"></i>`; }).join("");
+
+// ---------- the keyboard: G below Middle C up to G above the C above ----------
+const LOW = 55, HIGH = 79, WHITE = [0, 2, 4, 5, 7, 9, 11];
+const whites = []; for (let m = LOW; m <= HIGH; m++) if (WHITE.includes(m % 12)) whites.push(m);
+const keyEl = {}, bubbleEl = {};
+(function buildKb() {
+  const kb = $("kb"), n = whites.length, w = 100 / n;
+  whites.forEach((m, i) => {
+    const d = document.createElement("div"); d.className = "wk" + (m === 60 ? " mid" : ""); d.style.left = (i * w) + "%"; d.style.width = `calc(${w}% - 2px)`;
+    d.innerHTML = `<div class="nm">${NOTE_NAME(m)}</div>`; kb.appendChild(d); keyEl[m] = d;
+    const b = document.createElement("div"); b.className = "bubble"; b.style.left = ((i + .5) * w) + "%"; b.textContent = NOTE_NAME(m); kb.appendChild(b); bubbleEl[m] = b;
+    if ([0, 2, 5, 7, 9].includes(m % 12) && m + 1 <= HIGH) { const k = document.createElement("div"); k.className = "bk"; k.style.left = `calc(${(i + 1) * w}% - ${w * 0.3}%)`; k.style.width = (w * 0.6) + "%"; kb.appendChild(k); }
+  });
+})();
+
+// ---------- sound: real piano notes (the same recordings as the videos) ----------
+let ctx = null; const buf = {};
+async function unlock() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state === "suspended") await ctx.resume();
+  await Promise.all([...Array(HIGH - LOW + 1).keys()].map(async i => { const m = LOW + i; if (buf[m]) return;
+    try { const r = await fetch(`piano/${m}.mp3`); buf[m] = await ctx.decodeAudioData(await r.arrayBuffer()); } catch (e) { buf[m] = null; } }));
+}
+function note(m, at, dur) {
+  const g = ctx.createGain(); g.connect(ctx.destination);
+  if (buf[m]) { const s = ctx.createBufferSource(); s.buffer = buf[m]; s.connect(g); g.gain.setValueAtTime(0.9, at); g.gain.setTargetAtTime(0, at + Math.max(0.25, dur), 0.12); s.start(at); s.stop(at + dur + 0.8); }
+  else { const o = ctx.createOscillator(); o.type = "triangle"; o.frequency.value = 440 * 2 ** ((m - 69) / 12); o.connect(g);
+    g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.3, at + .01); g.gain.exponentialRampToValueAtTime(.001, at + dur + .3); o.start(at); o.stop(at + dur + .4); }
+}
+let playTimers = [];
+function stopLights() { playTimers.forEach(clearTimeout); playTimers = []; Object.values(keyEl).forEach(k => k.classList.remove("lit")); Object.values(bubbleEl).forEach(b => b.style.opacity = 0); }
+function playTune(c, limit) {
+  stopLights(); const t0 = ctx.currentTime + 0.12; let t = 0;
+  const ns = limit ? c.notes.slice(0, limit) : c.notes;
+  ns.forEach(([m, b]) => {
+    const d = b * c.beat; note(m, t0 + t, d);
+    const on = (t + 0.12) * 1000, off = (t + d * 0.9 + 0.12) * 1000;
+    playTimers.push(setTimeout(() => { keyEl[m].classList.add("lit"); bubbleEl[m].style.opacity = 1; }, on));
+    playTimers.push(setTimeout(() => { keyEl[m].classList.remove("lit"); bubbleEl[m].style.opacity = 0; }, off));
+    t += d;
+  });
+  return t;
+}
+
+// ---------- celebration: WELL DONE, a burst of snowflakes and a chime ----------
+const PRAISE = ["WELL DONE!", "BRILLIANT!", "YOU GOT IT!", "SUPER EARS!", "HOORAY!"];
+function celebrate(btn, first) {
+  const ch = $("cheer"); ch.innerHTML = (first ? PRAISE[Math.floor(Math.random() * PRAISE.length)] : "WELL DONE!") + "<small>" + (first ? "⭐ first try! ⭐" : "you found it! ❄️") + "</small>";
+  ch.classList.remove("go"); void ch.offsetWidth; ch.classList.add("go");
+  const r = btn.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+  for (let i = 0; i < 26; i++) {
+    const f = document.createElement("div"); f.className = "flake"; f.textContent = ["❄", "❅", "❆", "⭐"][i % 4];
+    const a = Math.random() * Math.PI * 2, dist = 120 + Math.random() * 260;
+    f.style.cssText = `left:${cx}px;top:${cy}px;font-size:${22 + Math.random() * 26}px;--dx:${Math.cos(a) * dist}px;--dy:${Math.sin(a) * dist - 60}px;--r:${(Math.random() - .5) * 540}deg;animation-delay:${Math.random() * .15}s`;
+    document.body.appendChild(f); setTimeout(() => f.remove(), 2200);
+  }
+  if (ctx) { const t = ctx.currentTime + 0.02; [67, 72, 76, 79].forEach((m, i) => note(m, t + i * 0.09, 0.35)); }
+}
+const playLength = c => c.notes.reduce((a, [, b]) => a + b * c.beat, 0);
+
+// ---------- the game: 8 rounds ----------
+let stage = 1, rounds = [], r = 0, score = 0, firstTry = true, locked = false;
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function pool() { return stage === 1 ? CAROLS.slice(0, 4) : CAROLS; }
+function newGame() {
+  const p = pool(); rounds = []; while (rounds.length < 8) rounds.push(...shuffle(p.slice())); rounds = rounds.slice(0, 8);
+  for (let i = 1; i < rounds.length; i++) if (rounds[i] === rounds[i - 1]) { const j = (i + 1) % rounds.length; [rounds[i], rounds[j]] = [rounds[j], rounds[i]]; }
+  r = 0; score = 0; $("score").textContent = "⭐ 0"; $("stars").textContent = "";
+  $("start").classList.add("hidden"); $("end").classList.add("hidden"); $("game").classList.remove("hidden"); round();
+}
+function round() {
+  const c = rounds[r]; firstTry = true; locked = false; $("fact").textContent = ""; setPals("think");
+  $("qtext").textContent = `Tune ${r + 1} of 8: which carol is it?`;
+  const n = stage === 1 ? 3 : 4, others = shuffle(pool().filter(x => x !== c)).slice(0, n - 1), opts = shuffle([c, ...others]);
+  $("choices").innerHTML = "";
+  opts.forEach(o => { const b = document.createElement("button"); b.className = "choice"; b.innerHTML = `<span class="em" style="background:${o.color}22">${o.emoji}</span><span class="tt">${o.title}</span>`;
+    b.onclick = () => answer(o, b); $("choices").appendChild(b); });
+  setTimeout(() => playTune(c, stage === 3 ? 4 : 0), 350);
+}
+function answer(o, b) {
+  if (locked) return; const c = rounds[r];
+  if (o !== c) { b.classList.add("wrong"); firstTry = false; setPals("think"); $("fact").textContent = "Not that one. Listen again! 👂"; playTune(c, stage === 3 ? 4 : 0); return; }
+  locked = true; b.classList.add("right"); setPals("cheer"); celebrate(b, firstTry);
+  if (firstTry) { score++; $("score").textContent = "⭐ " + score; }
+  $("stars").textContent += firstTry ? "⭐" : "✓";
+  const first = c.notes[0][0], up = c.notes[1][0] > first, same = c.notes[1][0] === first;
+  $("fact").textContent = `${c.emoji} ${c.title} starts on ${NOTE_NAME(first)}, then ${same ? "plays the same note again" : up ? "goes up" : "goes down"}.`;
+  let d = 0; setTimeout(() => { d = playTune(c); }, 900);   // a chime, then the whole opening as a reward
+  setTimeout(() => { r++; if (r < rounds.length) round(); else finish(); }, Math.max(3400, 900 + playLength(c) * 1000 + 900));
+}
+function finish() {
+  stopLights(); $("game").classList.add("hidden"); $("end").classList.remove("hidden"); setPals("cheer");
+  $("endT").textContent = score >= 7 ? "Brilliant! 🌟" : score >= 4 ? "Well done! 🎄" : "Good listening! 🔔";
+  $("endP").textContent = `You named ${score} of 8 carols on the first try.` + (stage < 3 ? ` Ready for stage ${stage + 1}?` : " You have super Christmas ears!");
+}
+$("go").onclick = async () => { await unlock(); newGame(); };
+$("more").onclick = () => { if (score >= 6 && stage < 3) setStage(stage + 1); newGame(); };
+$("again").onclick = () => { if (ctx) playTune(rounds[r], stage === 3 ? 4 : 0); };
+function setStage(s) { stage = s; document.querySelectorAll("#stages button").forEach(b => b.classList.toggle("on", +b.dataset.s === s)); }
+document.querySelectorAll("#stages button").forEach(b => b.onclick = async () => { setStage(+b.dataset.s); if (!$("game").classList.contains("hidden") || !$("end").classList.contains("hidden")) { await unlock(); newGame(); } });
+document.body.dataset.ready = "1";
+</script>
+</body>
+</html>
