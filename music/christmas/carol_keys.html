@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carol Keys: play Jingle Bells – Melody &amp; Barnaby</title>
+<meta name="description" content="A free Christmas piano game for children: play Jingle Bells with five fingers. The next key lights up and waits for you, with the words and finger numbers to follow.">
+<link rel="preload" href="../fonts/fredoka-one.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face { font-family: Fredoka; src: url(../fonts/fredoka-one.woff2); }
+  @font-face { font-family: Quicksand; src: url(../fonts/quicksand.woff2); font-weight: 400 700; }
+  :root { --ink: #1d1a17; --night: #2e2a6b; --red: #c8102e; --green: #1f7a4d; --gold: #ffd25a; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { font-family: Quicksand, system-ui, sans-serif; color: #fff; background: radial-gradient(circle at 50% 0%, #4a46a8 0%, var(--night) 55%, #1d1a4f 100%); min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+  #snow { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  #snow i { position: absolute; top: -12px; border-radius: 50%; background: #fff; opacity: .7; animation: fall linear infinite; }
+  @keyframes fall { to { transform: translateY(110vh); } }
+  main { position: relative; z-index: 1; max-width: 980px; margin: 0 auto; padding: 14px 16px 40px; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .back { color: #fff; text-decoration: none; font-weight: 700; font-size: 15px; background: rgba(255,255,255,.14); padding: 6px 14px; border-radius: 30px; }
+  .score { font-family: Fredoka, sans-serif; font-size: 20px; background: rgba(255,255,255,.14); padding: 6px 16px; border-radius: 30px; }
+  header { display: flex; align-items: flex-end; justify-content: center; gap: 6px; margin-top: 6px; }
+  header .pal { width: 86px; height: 122px; flex: none; }
+  header .pal svg { width: 100%; height: 100%; overflow: visible; }
+  h1 { font-family: Fredoka, sans-serif; font-weight: normal; font-size: clamp(34px, 7vw, 56px); margin: 0 0 14px; text-shadow: 0 5px 0 rgba(0,0,0,.3); text-align: center; line-height: 1; }
+  .stages { display: flex; justify-content: center; gap: 8px; margin: 4px 0 12px; flex-wrap: wrap; }
+  .stages button { font: 16px Fredoka, sans-serif; border: 0; border-radius: 30px; padding: 7px 16px; background: rgba(255,255,255,.16); color: #fff; cursor: pointer; }
+  .stages button.on { background: var(--gold); color: var(--night); }
+  .panel { background: rgba(255,255,255,.97); color: var(--ink); border-radius: 28px; padding: 16px 14px 20px; box-shadow: 0 10px 0 rgba(0,0,0,.25); text-align: center; }
+  .q { font-family: Fredoka, sans-serif; font-size: clamp(20px, 4vw, 28px); margin: 0 0 8px; }
+  .row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn { font: 20px Fredoka, sans-serif; border: 0; border-radius: 40px; padding: 9px 22px; cursor: pointer; color: #fff; background: var(--green); box-shadow: 0 5px 0 #145536; }
+  .btn.alt { background: #6366f1; box-shadow: 0 5px 0 #3f42b5; }
+  .btn:active { transform: translateY(3px); box-shadow: none; }
+  /* the words and finger numbers */
+  #strip { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: 4px 0; margin: 16px auto 6px; min-height: 100px; }
+  .bar { display: flex; align-items: flex-end; padding: 0 8px; border-right: 3px solid #e4ded5; }
+  .bar:last-child { border-right: 0; }
+  .cell { display: flex; flex-direction: column; align-items: center; min-width: 52px; padding: 0 3px; transition: transform .12s, opacity .12s; }
+  .cell .f { width: 38px; height: 38px; border-radius: 50%; color: #fff; font: 23px/40px Fredoka, sans-serif; border: 3px solid #fff; box-shadow: 0 3px 0 rgba(0,0,0,.18); }
+  .cell .w { font: clamp(17px, 3.4vw, 24px) Fredoka, sans-serif; margin-top: 4px; white-space: nowrap; }
+  .cell.done { opacity: .45; }
+  .cell.now { transform: scale(1.22); }
+  .cell.now .w { color: var(--red); }
+  .cell.long .w::after { content: " ~"; opacity: .5; }
+  /* keyboard: C D E F G A B C, thumb on Middle C */
+  #kb { position: relative; height: 230px; margin: 22px auto 4px; max-width: 760px; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+  .wk { position: absolute; top: 0; height: 230px; background: #fff; border: 3px solid var(--ink); border-radius: 0 0 14px 14px; cursor: pointer; transition: background .08s, transform .08s; }
+  .wk.off { background: #f1eee8; cursor: default; }
+  .wk .nm { position: absolute; bottom: 8px; left: 0; right: 0; text-align: center; font: 20px Fredoka, sans-serif; color: #b5afa7; }
+  .wk .fg { position: absolute; bottom: 42px; left: 50%; margin-left: -22px; width: 44px; height: 44px; border-radius: 50%; color: #fff; font: 26px/46px Fredoka, sans-serif; text-align: center; border: 3px solid #fff; box-shadow: 0 3px 0 rgba(0,0,0,.2); }
+  .wk.next { background: #fff5b8; box-shadow: 0 0 0 6px var(--gold), 0 0 26px 8px rgba(255,210,90,.8); animation: glow 1s ease-in-out infinite alternate; }
+  @keyframes glow { to { box-shadow: 0 0 0 9px var(--gold), 0 0 34px 12px rgba(255,210,90,.95); } }
+  .wk.down { transform: translateY(5px); background: #d7f5e3; }
+  .wk.oops { animation: oops .35s; background: #fde2e5; }
+  @keyframes oops { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .bk { position: absolute; top: 0; height: 138px; background: var(--ink); z-index: 2; border-radius: 0 0 8px 8px; cursor: pointer; transition: transform .08s, background .08s; }
+  .bk.down { transform: translateY(4px); background: #4b4470; }
+  .bk.oops { animation: oops .35s; background: #8b2a3a; }
+  .tip { min-height: 26px; margin: 10px 0 0; font-size: 18px; font-weight: 700; color: var(--green); }
+  #cheer { position: fixed; left: 50%; top: 36%; transform: translate(-50%, -50%) scale(.3); z-index: 20; pointer-events: none; opacity: 0;
+           font: clamp(50px, 12vw, 104px) Fredoka, sans-serif; color: #fff; white-space: nowrap; text-align: center;
+           -webkit-text-stroke: 8px #1f7a4d; paint-order: stroke fill; text-shadow: 0 10px 0 rgba(0,0,0,.3); }
+  #cheer small { display: block; font-size: .36em; -webkit-text-stroke: 5px #1f7a4d; margin-top: 6px; }
+  #cheer.go { animation: cheer 2.1s cubic-bezier(.2,1.4,.4,1) forwards; }
+  @keyframes cheer { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.3) rotate(-8deg); } 15% { opacity: 1; transform: translate(-50%,-50%) scale(1.08) rotate(3deg); }
+                     25% { transform: translate(-50%,-50%) scale(1); } 80% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-50%) scale(.9) translateY(-30px); } }
+  .flake { position: fixed; z-index: 19; pointer-events: none; color: #6cb8f5; text-shadow: 0 0 3px #fff, 0 0 8px rgba(120,170,255,.9); animation: burst 1.8s ease-out forwards; }
+  @keyframes burst { 0% { transform: translate(0,0) rotate(0) scale(.4); opacity: 1; } 70% { opacity: 1; } 100% { transform: translate(var(--dx), var(--dy)) rotate(var(--r)) scale(1.1); opacity: 0; } }
+  .start p { font-size: 18px; line-height: 1.45; color: #5b5650; max-width: 34em; margin: 8px auto 16px; }
+  .big { font: 26px Fredoka, sans-serif; background: var(--red); color: #fff; border: 0; border-radius: 40px; padding: 12px 36px; cursor: pointer; box-shadow: 0 6px 0 #8b0a1c; }
+  .hidden { display: none !important; }
+  .grown { color: rgba(255,255,255,.85); font-size: 15px; line-height: 1.5; text-align: center; margin: 18px auto 0; max-width: 42em; }
+  .grown a { color: var(--gold); }
+  @media (max-width: 560px) { #kb { height: 190px; } .wk { height: 190px; } .bk { height: 112px; } .wk .fg { width: 36px; height: 36px; margin-left: -18px; font-size: 21px; line-height: 38px; bottom: 36px; } header .pal { width: 64px; height: 92px; } .cell { min-width: 40px; } .cell .f { width: 30px; height: 30px; font-size: 18px; line-height: 31px; } }
+</style>
+</head>
+<body>
+<div id="snow"></div>
+<div id="cheer"></div>
+<main>
+  <div class="top"><a class="back" href="./">← Christmas activities</a><div class="score" id="score">🎹 Line 1</div></div>
+  <header><div class="pal" id="palM"></div><h1>Carol Keys</h1><div class="pal" id="palB"></div></header>
+  <div class="stages" id="stages">
+    <button data-s="1" class="on">1 · The first line</button><button data-s="2">2 · The whole song</button><button data-s="3">3 · Without the lights!</button>
+  </div>
+
+  <section class="panel start" id="start">
+    <div class="q">🔔 Play Jingle Bells with five fingers!</div>
+    <p>Put your right thumb on Middle C. The next key lights up and waits for you: press it and the song moves on. The numbers tell you which finger to use.</p>
+    <button class="big" id="go">Start! 🎹</button>
+  </section>
+
+  <section class="panel hidden" id="game">
+    <div class="q" id="qtext">Line 1</div>
+    <div class="row"><button class="btn alt" id="listen">👂 Listen first</button><button class="btn" id="restart">↺ Start the line again</button></div>
+    <div id="strip"></div>
+    <div id="kb"></div>
+    <div class="tip" id="tip"></div>
+  </section>
+
+  <p class="grown">For grown-ups: this is the super-easy Jingle Bells from Melody &amp; Barnaby's Christmas special: right hand only, thumb on Middle C, five notes. The song waits for each key, so there is no rush. On a computer the keys A S D F G play C D E F G. Print the same music: <a href="jingle_bells_sheet.html">Jingle Bells to print and play</a> · more: <a href="./">Christmas music activities</a></p>
+</main>
+
+<script src="../mascots.js"></script>
+<script src="../hit-counter.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+// ---------- the song: the super-easy arrangement (the same as the printable and the video) ----------
+const L1 = [[64,1,"Jin-"],[64,1,"gle"],[64,2,"bells,"],[64,1,"jin-"],[64,1,"gle"],[64,2,"bells,"],[64,1,"jin-"],[67,1,"gle"],[60,1,"all"],[62,1,"the"],[64,4,"way!"]];
+const L2a = [[65,1,"Oh,"],[65,1,"what"],[65,1,"fun"],[65,1,"it"],[65,1,"is"],[64,1,"to"],[64,1,"ride"],[64,1,"in a"]];
+const L2 = [...L2a, [64,1,"one-"],[62,1,"horse"],[62,1,"o-"],[64,1,"pen"],[62,2,"sleigh,"],[67,2,"hey!"]];
+const L4 = [...L2a, [67,1,"one-"],[67,1,"horse"],[65,1,"o-"],[62,1,"pen"],[60,4,"sleigh!"]];
+const LINES = [L1, L2, L1, L4];
+const FING = { 60: 1, 62: 2, 64: 3, 65: 4, 67: 5 }, FCOL = { 1: "#7c3aed", 2: "#6366f1", 3: "#db2777", 4: "#f59e0b", 5: "#0d9488" };
+const NAME = { 60: "C", 62: "D", 64: "E", 65: "F", 67: "G", 69: "A", 71: "B", 72: "C" };
+const KEYS = [60, 62, 64, 65, 67, 69, 71, 72], COMPUTER = { a: 60, s: 62, d: 64, f: 65, g: 67 };
+
+// ---------- look ----------
+const HAT = `<g transform="translate(50 6) rotate(-8)"><path d="M-27,12 C-22,-12 6,-30 30,-26 L27,-16 C16,-16 12,-6 27,12 Z" fill="#e8392c" stroke="#2b2250" stroke-width="2.3" stroke-linejoin="round"/><rect x="-31" y="6" width="62" height="13" rx="6.5" fill="#fff" stroke="#2b2250" stroke-width="2.3"/><circle cx="31" cy="-25" r="7" fill="#fff" stroke="#2b2250" stroke-width="2.3"/></g>`;
+const pal = (who, pose) => MASCOTS[who]({ pose }).replace(/viewBox="[^"]*"/, 'viewBox="0 -40 100 163"').replace(/<\/svg>$/, HAT + "</svg>");
+function setPals(pose) { $("palM").innerHTML = pal("melody", pose); $("palB").innerHTML = pal("barnaby", pose === "cheer" ? "cheer" : pose === "point" ? "think" : "wave"); }
+setPals("wave");
+$("snow").innerHTML = [...Array(40)].map(() => { const s = 3 + Math.random() * 6; return `<i style="left:${Math.random() * 100}%;width:${s}px;height:${s}px;animation-duration:${8 + Math.random() * 10}s;animation-delay:-${Math.random() * 18}s"></i>`; }).join("");
+
+const keyEl = {};
+(function kb() {
+  const k = $("kb"), w = 100 / KEYS.length;
+  KEYS.forEach((m, i) => {
+    const d = document.createElement("div"); d.className = "wk" + (FING[m] ? "" : " off"); d.style.left = (i * w) + "%"; d.style.width = `calc(${w}% - 3px)`;
+    d.innerHTML = (FING[m] ? `<div class="fg" style="background:${FCOL[FING[m]]}">${FING[m]}</div>` : "") + `<div class="nm"${m === 60 ? ' style="color:#c8102e"' : ""}>${NAME[m]}</div>`;
+    d.addEventListener("pointerdown", e => { e.preventDefault(); press(m); });
+    k.appendChild(d); keyEl[m] = d;
+    if ([60, 62, 65, 67, 69].includes(m)) { const b = document.createElement("div"); b.className = "bk"; b.style.left = `calc(${(i + 1) * w}% - ${w * 0.3}%)`; b.style.width = (w * 0.6) + "%";
+      b.addEventListener("pointerdown", e => { e.preventDefault(); e.stopPropagation(); press(m + 1); }); k.appendChild(b); keyEl[m + 1] = b; }
+  });
+})();
+document.addEventListener("keydown", e => { const m = COMPUTER[e.key.toLowerCase()]; if (m && !e.repeat) press(m); });
+
+// ---------- sound: real piano notes ----------
+let ctx = null; const buf = {};
+async function unlock() {
+  if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (ctx.state === "suspended") await ctx.resume();
+  await Promise.all([...new Set([...KEYS, 61, 63, 66, 68, 70, 76, 79])].map(async m => { if (buf[m] !== undefined) return;
+    try { const r = await fetch(`piano/${m}.mp3`); buf[m] = await ctx.decodeAudioData(await r.arrayBuffer()); } catch (e) { buf[m] = null; } }));
+}
+function note(m, at, dur, vol = 0.9) {
+  if (!ctx) return; at = at ?? ctx.currentTime;
+  const g = ctx.createGain(); g.connect(ctx.destination);
+  if (buf[m]) { const s = ctx.createBufferSource(); s.buffer = buf[m]; s.connect(g); g.gain.setValueAtTime(vol, at); g.gain.setTargetAtTime(0, at + Math.max(0.3, dur), 0.15); s.start(at); s.stop(at + dur + 1); }
+  else { const o = ctx.createOscillator(); o.type = "triangle"; o.frequency.value = 440 * 2 ** ((m - 69) / 12); o.connect(g); g.gain.setValueAtTime(0, at); g.gain.linearRampToValueAtTime(.3 * vol, at + .01); g.gain.exponentialRampToValueAtTime(.001, at + dur + .3); o.start(at); o.stop(at + dur + .4); }
+}
+
+// ---------- the game ----------
+let stage = 1, pos = 0, busy = false, finished = false, demoTimers = [];
+const lines = () => stage === 1 ? [0] : [0, 1, 2, 3];
+let lineList = [0], li = 0;
+function cur() { return LINES[lineList[li]]; }
+function drawStrip() {
+  const s = $("strip"); s.innerHTML = ""; let beats = 0, bar = null;
+  cur().forEach(([m, b, w], i) => {
+    if (!bar || beats >= 4) { bar = document.createElement("div"); bar.className = "bar"; s.appendChild(bar); beats = 0; }
+    const c = document.createElement("div"); c.className = "cell" + (b >= 2 ? " long" : "") + (i < pos ? " done" : "") + (i === pos ? " now" : "");
+    c.innerHTML = `<div class="f" style="background:${FCOL[FING[m]]}">${FING[m]}</div><div class="w">${w}</div>`; bar.appendChild(c); beats += b;
+  });
+}
+function lightNext() {
+  Object.values(keyEl).forEach(k => k.classList.remove("next"));
+  if (stage < 3 && pos < cur().length && !busy) keyEl[cur()[pos][0]].classList.add("next");
+}
+function showLine() {
+  pos = 0; busy = false; drawStrip(); lightNext(); setPals("point");
+  const n = lineList[li] + 1;
+  $("qtext").textContent = stage === 1 ? "Line 1: Jingle bells…" : `Line ${n} of 4` + (lineList[li] === 2 ? ": the same as line 1!" : "");
+  $("score").textContent = `🎹 Line ${n}`;
+  $("tip").textContent = stage === 3 ? "No lights this time: follow the finger numbers! 👀" : "Press the key that lights up. 🎵";
+}
+function press(m) {
+  if (!ctx || busy || $("game").classList.contains("hidden")) { if (ctx) note(m, null, 0.5, 0.6); return; }
+  stopDemo();
+  const want = cur()[pos][0], el = keyEl[m];
+  el.classList.add("down"); setTimeout(() => el.classList.remove("down"), 160);
+  if (m !== want) {
+    note(m, null, 0.4, 0.45); el.classList.remove("oops"); void el.offsetWidth; el.classList.add("oops"); setTimeout(() => el.classList.remove("oops"), 360);
+    const black = [61, 63, 66, 68, 70].includes(m);
+    $("tip").textContent = black ? "Jingle Bells only uses the white keys! Try " + (stage === 3 ? `finger ${FING[want]}.` : "the glowing key.") + " ✨" : stage === 3 ? `Look at the number: finger ${FING[want]}. 👆` : "Try the key that's glowing! ✨";
+    if (stage === 3) { keyEl[want].classList.add("next"); setTimeout(lightNext, 900); }
+    return;
+  }
+  note(m, null, Math.max(0.5, cur()[pos][1] * 0.5));
+  pos++; drawStrip(); lightNext();
+  if (pos >= cur().length) lineDone();
+}
+function lineDone() {
+  busy = true; lightNext(); setPals("cheer");
+  const last = li >= lineList.length - 1;
+  celebrate(last ? (stage === 1 ? "WELL DONE!" : "YOU PLAYED IT ALL!") : ["WELL DONE!", "BRILLIANT!", "SUPER!"][li % 3], last ? "🎄 Jingle Bells! 🎄" : `line ${lineList[li] + 1} ✓`);
+  setTimeout(() => {
+    if (!last) { li++; showLine(); return; }
+    $("tip").textContent = stage < 3 ? `Ready for level ${stage + 1}? Tap it at the top! ⭐` : "You can play Jingle Bells from memory! 🌟";
+    $("qtext").textContent = stage === 1 ? "You played the first line! 🎉" : "You played the whole song! 🎉";
+    finished = true; pos = 0; drawStrip();
+    $("restart").textContent = "↺ Play it again";
+  }, 2300);
+}
+function celebrate(big, small) {
+  const ch = $("cheer"); ch.innerHTML = big + `<small>${small}</small>`; ch.classList.remove("go"); void ch.offsetWidth; ch.classList.add("go");
+  const r = $("kb").getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + 40;
+  for (let i = 0; i < 30; i++) { const f = document.createElement("div"); f.className = "flake"; f.textContent = ["❄", "❅", "❆", "⭐"][i % 4];
+    const a = Math.random() * Math.PI * 2, d = 140 + Math.random() * 280;
+    f.style.cssText = `left:${cx}px;top:${cy}px;font-size:${22 + Math.random() * 26}px;--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d - 60}px;--r:${(Math.random() - .5) * 540}deg;animation-delay:${Math.random() * .15}s`;
+    document.body.appendChild(f); setTimeout(() => f.remove(), 2200); }
+  if (ctx) { const t = ctx.currentTime + 0.05; [67, 72, 76, 79].forEach((m, i) => note(m, t + i * 0.09, 0.35, 0.7)); }
+}
+// listen first: the line plays itself, keys lighting as it goes
+function stopDemo() { demoTimers.forEach(clearTimeout); demoTimers = []; Object.values(keyEl).forEach(k => k.classList.remove("down")); }
+function demo() {
+  if (!ctx) return; stopDemo(); busy = true; lightNext(); let t = 0; const beat = 0.6, t0 = ctx.currentTime + 0.1;
+  cur().forEach(([m, b], i) => { note(m, t0 + t, b * beat);
+    demoTimers.push(setTimeout(() => { keyEl[m].classList.add("down"); [...$("strip").querySelectorAll(".cell")].forEach((c, j) => c.classList.toggle("now", j === i)); }, (t + 0.1) * 1000));
+    demoTimers.push(setTimeout(() => keyEl[m].classList.remove("down"), (t + b * beat * 0.85 + 0.1) * 1000)); t += b * beat; });
+  demoTimers.push(setTimeout(() => { busy = false; pos = 0; drawStrip(); lightNext(); $("tip").textContent = "Now you! Press the key that lights up. 🎵"; }, (t + 0.4) * 1000));
+}
+function begin() { lineList = lines(); li = 0; finished = false; $("restart").textContent = "↺ Start the line again"; $("start").classList.add("hidden"); $("game").classList.remove("hidden"); showLine(); }
+$("go").onclick = async () => { await unlock(); begin(); };
+$("listen").onclick = () => { if (finished) begin(); demo(); };
+$("restart").onclick = () => { stopDemo(); if (finished) { begin(); return; } showLine(); };
+function setStage(s) { stage = s; document.querySelectorAll("#stages button").forEach(b => b.classList.toggle("on", +b.dataset.s === s)); }
+document.querySelectorAll("#stages button").forEach(b => b.onclick = async () => { setStage(+b.dataset.s); await unlock(); stopDemo(); begin(); });
+document.body.dataset.ready = "1";
+</script>
+</body>
+</html>
