@@ -38,7 +38,8 @@
       "video": 14,
       "videoId": "d61T7QOYWpE",
       "publishAfter": "2026-11-28T08:00:00Z",
-      "done": false
+      "done": true,
+      "wiredAt": "2026-11-28T09:59:11Z"
     },
     {
       "game": "together_or_one_by_one.html",
